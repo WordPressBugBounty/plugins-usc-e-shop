@@ -2948,9 +2948,9 @@ function usces_get_cart_button( $out = '' ) {
 function usces_get_customer_button( $out = '' ) {
 	global $usces, $member_regmode;
 
-	$res = '<input name="backCart" type="submit" class="back_cart_button" value="' . __( 'Back', 'usces' ) . '" />&nbsp;&nbsp;';
+	$res = '<input name="backCart" type="submit" class="back_cart_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_customerinfo_pre', NULL ) . ' " />&nbsp;&nbsp;';
 
-	$button = '<input name="deliveryinfo" type="submit" class="to_deliveryinfo_button" value="' . __( ' Next ', 'usces' ) . '" />&nbsp;&nbsp;';
+	$button = '<input name="deliveryinfo" type="submit" class="to_deliveryinfo_button" value="' . __( ' Next ', 'usces' ) . '"' . apply_filters( 'usces_filter_customerinfo_next', NULL ) . ' " />&nbsp;&nbsp;';
 	$res   .= apply_filters( 'usces_filter_customer_button', $button );
 
 	if ( usces_is_membersystem_state() && 'editmemberfromcart' !== $member_regmode && false === usces_is_login() ) {

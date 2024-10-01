@@ -1,10 +1,10 @@
 === Welcart e-Commerce ===
 Contributors: Welcart Inc., uscnanbu
 Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage, plugin, shortcode, widgets, membership
-Requires at least: 5.5
+Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4 - 8.1
-Stable tag: 2.11.3
+Stable tag: 2.11.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,12 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+1 Oct 2024
+= V2.11.4 =
+-----------
+* Added hooks.
+* Fixed a bug that caused jQuery script errors.
 
 17 Sep 2024
 = V2.11.3 =

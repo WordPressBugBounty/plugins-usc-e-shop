@@ -269,7 +269,8 @@ class USCES_DATALIST_UPGRADE {
 					}
 				}
 				if ( isset( $_REQUEST['check'][ $key ] ) ) {
-					$line_row .= $td_h . usces_entity_decode( $array[ $key ], $ext ) . $td_f;
+					$data_value = apply_filters( 'usces_filter_mem_csv_data_value', $array[ $key ], $key, $array );
+					$line_row  .= $td_h . usces_entity_decode( $data_value, $ext ) . $td_f;
 				}
 			}
 			$line_row = preg_replace( "/\n,/", "\n", ltrim( $line_row, ',' ) );
@@ -841,6 +842,9 @@ class USCES_DATALIST_UPGRADE {
 		// ==========================================================================
 
 		foreach ( (array) $rows as $data ) {
+
+			$data = apply_filters( 'usces_filter_orderdetail_csv_data', $data );
+
 			$order_id        = $data['ID'];
 			$deli            = unserialize( $data['deli_name'] );
 			$cart            = usces_get_ordercartdata( $order_id );
@@ -889,6 +893,7 @@ class USCES_DATALIST_UPGRADE {
 							$cscs_key = 'cscs_' . $key;
 							if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -930,6 +935,7 @@ class USCES_DATALIST_UPGRADE {
 							$cscs_key = 'cscs_' . $key;
 							if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -1013,6 +1019,7 @@ class USCES_DATALIST_UPGRADE {
 							$cscs_key = 'cscs_' . $key;
 							if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -1038,6 +1045,7 @@ class USCES_DATALIST_UPGRADE {
 							$csde_key = 'csde_' . $key;
 							if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -1079,6 +1087,7 @@ class USCES_DATALIST_UPGRADE {
 							$csde_key = 'csde_' . $key;
 							if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -1161,6 +1170,7 @@ class USCES_DATALIST_UPGRADE {
 							$csde_key = 'csde_' . $key;
 							if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 								$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+								$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 								if ( empty( $value ) ) {
 									$value = '';
 								} elseif ( is_array( $value ) ) {
@@ -1363,6 +1373,7 @@ class USCES_DATALIST_UPGRADE {
 						$csod_key = 'csod_' . $key;
 						if ( isset( $_REQUEST['check'][ $csod_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $csod_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_csod_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -1961,6 +1972,9 @@ class USCES_DATALIST_UPGRADE {
 		// ==========================================================================
 
 		foreach ( (array) $rows as $data ) {
+
+			$data = apply_filters( 'usces_filter_order_csv_data', $data );
+
 			$order_id        = $data['ID'];
 			$deli            = unserialize( $data['deli_name'] );
 			$reduced_taxrate = usces_is_reduced_taxrate( $order_id );
@@ -2005,6 +2019,7 @@ class USCES_DATALIST_UPGRADE {
 						$cscs_key = 'cscs_' . $key;
 						if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2046,6 +2061,7 @@ class USCES_DATALIST_UPGRADE {
 						$cscs_key = 'cscs_' . $key;
 						if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2129,6 +2145,7 @@ class USCES_DATALIST_UPGRADE {
 						$cscs_key = 'cscs_' . $key;
 						if ( isset( $_REQUEST['check'][ $cscs_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_cscs_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2154,6 +2171,7 @@ class USCES_DATALIST_UPGRADE {
 						$csde_key = 'csde_' . $key;
 						if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2195,6 +2213,7 @@ class USCES_DATALIST_UPGRADE {
 						$csde_key = 'csde_' . $key;
 						if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2277,6 +2296,7 @@ class USCES_DATALIST_UPGRADE {
 						$csde_key = 'csde_' . $key;
 						if ( isset( $_REQUEST['check'][ $csde_key ] ) ) {
 							$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+							$value = apply_filters( 'usces_filter_csv_csde_meta_value', $value, $key, $order_id );
 							if ( empty( $value ) ) {
 								$value = '';
 							} elseif ( is_array( $value ) ) {
@@ -2480,6 +2500,7 @@ class USCES_DATALIST_UPGRADE {
 					$csod_key = 'csod_' . $key;
 					if ( isset( $_REQUEST['check'][ $csod_key ] ) ) {
 						$value = maybe_unserialize( $usces->get_order_meta_value( $csod_key, $order_id ) );
+						$value = apply_filters( 'usces_filter_csv_csod_meta_value', $value, $key, $order_id );
 						if ( empty( $value ) ) {
 							$value = '';
 						} elseif ( is_array( $value ) ) {

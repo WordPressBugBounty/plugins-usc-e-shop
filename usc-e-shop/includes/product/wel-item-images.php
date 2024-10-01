@@ -24,7 +24,7 @@ function usces_item_image_enqueue_scripts( $hook_suffix ) {
 
 		if ( 'welcart-shop_page_usces_itemnew' === $hook_suffix ) {
 
-			$jquery_cookie_url = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery.cookie.js';
+			$jquery_cookie_url = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery-cookie.js';
 			wp_enqueue_script( 'jquery-cookie', $jquery_cookie_url, array( 'jquery', 'jquery-ui-dialog' ), USCES_VERSION, true );
 
 		}

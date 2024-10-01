@@ -2160,6 +2160,9 @@ class usc_e_shop
 					}
 				}
 			}
+
+			<?php do_action( 'usces_action_nextCart_js_check', $item->ID ); ?>
+
 			if( mes != '' ){
 				alert( mes );
 				return false;
@@ -2167,6 +2170,15 @@ class usc_e_shop
 				return true;
 			}
 		},
+
+		customerNext : function () {
+			<?php do_action( 'usces_action_customerNext_js_check', $item->ID ); ?>
+		},
+
+		customerPre : function () {
+			<?php do_action( 'usces_action_customerPre_js_check', $item->ID ); ?>
+		},
+
 
 		previousCart : function () {
 			location.href = uscesL10n.previous_url;
@@ -2554,7 +2566,7 @@ class usc_e_shop
 					break;
 				case 'usces_settlement':
 					wp_enqueue_script('jquery-ui-tabs', array('jquery-ui-core'));
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					$jquery_colorUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/color/jscolor.js';
 					wp_enqueue_script( 'jquery-jscolor', $jquery_colorUrl, array('jquery-color') );
@@ -2563,12 +2575,12 @@ class usc_e_shop
 					break;
 				case 'usces_cart':
 					wp_enqueue_script('jquery-ui-tabs', array('jquery-ui-core'));
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					break;
 				case 'usces_member':
 					wp_enqueue_script('jquery-ui-tabs', array('jquery-ui-core'));
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					break;
 				case 'usces_orderlist':
@@ -2583,7 +2595,7 @@ class usc_e_shop
 					wp_enqueue_script('jquery-ui-sortable');
 					break;
 				case 'usces_itemedit':
-                    $jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+                    $jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
                     wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					if( isset($_REQUEST['action']) && 'upload_register' == $_REQUEST['action'] ){
 						//$upload_registerUrl = USCES_FRONT_PLUGIN_URL . '/js/usces-item-upload.js';
@@ -2598,17 +2610,17 @@ class usc_e_shop
 					break;
 				case 'usces_delivery':
 					wp_enqueue_script('jquery-ui-tabs', array('jquery-ui-core'));
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					break;
 				case 'usces_system':
 					wp_enqueue_script('jquery-ui-tabs', array('jquery-ui-core'));
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL.'/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array('jquery') );
 					break;
 				case 'usces_mail':
 					wp_enqueue_script( 'jquery-ui-tabs', array( 'jquery-ui-core' ) );
-					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery.cookie.js';
+					$jquery_cookieUrl = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery-cookie.js';
 					wp_enqueue_script( 'jquery-cookie', $jquery_cookieUrl, array( 'jquery' ) );
 					break;
 			}

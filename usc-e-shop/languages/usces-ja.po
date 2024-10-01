@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2024-08-08 17:56+0900\n"
+"PO-Revision-Date: 2024-09-25 10:51+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. Plugin Name of the plugin
 msgid "Welcart e-Commerce"
@@ -10901,6 +10901,9 @@ msgstr "予期しないエラーが発生しました。"
 
 msgid "Update Right is invalid. The corresponding plug-in does not exist."
 msgstr "Update Rightは無効です。該当するプラグインが見当たりません。"
+
+msgid "Update Right is invalid. The corresponding theme does not exist."
+msgstr "Update Rightは無効です。該当するテーマが見当たりません。"
 
 msgid "Update Right is invalid. The domain of your site does not match."
 msgstr "Update Rightは無効です。ご利用のサイトのドメインが一致しません。"

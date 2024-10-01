@@ -34,7 +34,6 @@ require_once USCES_PLUGIN_DIR . 'functions/admin_func.php';
 require_once USCES_PLUGIN_DIR . 'functions/system_post.php';
 if ( is_admin() ) {
 	require_once USCES_PLUGIN_DIR . 'functions/admin_page.php';
-	require_once USCES_PLUGIN_DIR . 'includes/update_check.php';
 }
 require_once USCES_PLUGIN_DIR . 'functions/settlement_func.php';
 // require_once USCES_PLUGIN_DIR . 'classes/PaymentYahooWallet.class.php';

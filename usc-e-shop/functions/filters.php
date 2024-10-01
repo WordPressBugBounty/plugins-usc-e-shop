@@ -1498,7 +1498,7 @@ function usces_admin_enqueue_scripts( $hook_suffix ) {
 	if ( 'welcart-management_page_usces_memberlist' == $hook_suffix
 		|| 'toplevel_page_usces_orderlist' == $hook_suffix
 	) {
-		$path = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery.cookie.js';
+		$path = USCES_FRONT_PLUGIN_URL . '/js/jquery/jquery-cookie.js';
 		wp_enqueue_script( 'usces_member_cookie', $path, array( 'jquery' ), USCES_VERSION, true );
 	}
 }
