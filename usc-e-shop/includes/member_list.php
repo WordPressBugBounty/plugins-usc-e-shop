@@ -83,8 +83,8 @@ jQuery(document).ready(function($){
         $data_cookie['arr_search'] = $DT->arr_search;
         $data_cookie['searchSwitchStatus'] = $DT->searchSwitchStatus;
         ?>
-        $.cookie('<?php echo esc_attr( "{$DT->table}_path" ); ?>', '<?php echo esc_attr( $usces_admin_path ); ?>', { path: "<?php echo esc_attr( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"});
-        $.cookie('<?php echo esc_attr( "{$DT->table}" );?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_attr( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"});
+        $.cookie('<?php echo esc_attr( "{$DT->table}_path" ); ?>', '<?php echo esc_attr( $usces_admin_path ); ?>', { path: "<?php echo esc_attr( $usces_admin_path ); ?>", domain: ""});
+        $.cookie('<?php echo esc_attr( "{$DT->table}" );?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_attr( $usces_admin_path ); ?>", domain: ""});
     })();
 
 	$("#dlMemberListDialog").dialog({

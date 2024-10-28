@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4 - 8.1
-Stable tag: 2.11.4
+Stable tag: 2.11.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,15 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+28 Oct 2024
+= V2.11.5 =
+-----------
+* Fixed a bug that caused cookies to function incorrectly when operating with a main domain and subdomain.
+* Fixed a bug that prevented "Prefecture" options from updating on the new member registration page when the "Country" selection was changed and two or more sales countries were specified.
+* Fixed a bug that redirected users to the member information editing page when returning to the member page from the shipping address registration page.
+* Modified the sidebar to avoid displaying "No Category" when there are no categories in "Product Categories."
+* Added hooks.
 
 1 Oct 2024
 = V2.11.4 =

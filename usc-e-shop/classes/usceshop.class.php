@@ -2329,6 +2329,7 @@ class usc_e_shop
 							|| (isset($_GET['page']) && 'usces_ordernew' == $_GET['page'])
 							|| (isset($_GET['order_action']) && 'edit' == $_GET['order_action'])
 							|| (isset($_GET['order_action']) && 'editpost' == $_GET['order_action'])
+							|| (isset($_GET['page']) && 'usces_membernew' == $_GET['page'])
 							|| (isset($_GET['member_action']) && 'edit' == $_GET['member_action'])
 							|| (isset($_GET['member_action']) && 'editpost' == $_GET['member_action'])) ) :
 			switch( $_GET['page'] ){
@@ -2336,6 +2337,7 @@ class usc_e_shop
 				case 'usces_orderlist':
 					$admin_page = 'order';
 					break;
+				case 'usces_membernew':
 				case 'usces_memberlist':
 					$admin_page = 'member';
 					break;

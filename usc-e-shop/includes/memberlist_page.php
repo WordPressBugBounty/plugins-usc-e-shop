@@ -389,11 +389,11 @@ jQuery(document).ready(function($){
 		if ( $("#searchBox").css("display") != "block" ){
 			$("#searchBox").slideDown(300);
 			$("#searchVisiLink").html('<?php _e('Hide the Operation field', 'usces'); ?><span class="dashicons dashicons-arrow-up"></span>');
-			$.cookie("memberSearchBox", 1, { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"}) == true;
+			$.cookie("memberSearchBox", 1, { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: ""}) == true;
 		}else{
 			$("#searchBox").slideUp(300);
 			$("#searchVisiLink").html('<?php _e('Show the Operation field', 'usces'); ?><span class="dashicons dashicons-arrow-down"></span>');
-			$.cookie("memberSearchBox", 0, { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"}) == true;
+			$.cookie("memberSearchBox", 0, { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: ""}) == true;
 		}
 	});
 
@@ -413,8 +413,8 @@ jQuery(document).ready(function($){
         $data_cookie['sortSwitchs'] = $DT->sortSwitchs;	//各フィールド毎の昇順降順スイッチ
         $data_cookie['arr_search'] = $DT->arr_search;
         ?>
-        $.cookie('<?php echo "{$DT->table}" . "_path"?>', '<?php wel_esc_script_e( $usces_admin_path ); ?>', { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"});
-        $.cookie('<?php echo "{$DT->table}"?>', '<?php echo str_replace("'", "\'",json_encode($data_cookie)) ; ?>', { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $_SERVER['SERVER_NAME'] ); ?>"});
+        $.cookie('<?php echo "{$DT->table}" . "_path"?>', '<?php wel_esc_script_e( $usces_admin_path ); ?>', { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: ""});
+        $.cookie('<?php echo "{$DT->table}"?>', '<?php echo str_replace("'", "\'",json_encode($data_cookie)) ; ?>', { path: "<?php wel_esc_script_e( $usces_admin_path ); ?>", domain: ""});
 		// save list current_page_ids to localStorage.
 		window.localStorage.setItem('wel_member_current_page_ids', <?php echo wp_json_encode( $DT->currentPageIds ); ?>);
     })();

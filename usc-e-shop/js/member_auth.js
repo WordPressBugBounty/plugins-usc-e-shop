@@ -1,5 +1,15 @@
 jQuery(document).ready( function($) {
-	if( $('#memberinfo form').has('table.customer_form') ) {
+	let member_auth = true;
+	const urlParams = new URLSearchParams(window.location.search);
+	if( urlParams.has('usces_page') ) {
+		const usces_page = urlParams.get('usces_page');
+		if( 'msa_setting' === usces_page ) {
+			member_auth = false;
+		} else if( 'mda_setting' === usces_page ) {
+			member_auth = false;
+		}
+	}
+	if( member_auth && $('#memberinfo form').has('table.customer_form') ) {
 		$('#memberinfo form').has('table.customer_form').hide();
 		$('#memberinfo h2 a[name="edit"]').parent().hide();
 		$('#memberinfo h3 a[name="edit"]').parent().hide();
@@ -43,7 +53,7 @@ jQuery(document).ready( function($) {
 	$('.member-edit').on('click', function(event) {
 		if( member_params.edit_auth.length == 0 ) {
 			event.preventDefault();
-			var userConfirmed = confirm(member_params.message.edit);
+			let userConfirmed = confirm(member_params.message.edit);
 			if (userConfirmed) {
 				window.location.href = member_params.url.edit;
 			}
@@ -53,7 +63,7 @@ jQuery(document).ready( function($) {
 	$('.settlement-update').on('click', function(event) {
 		if( member_params.edit_auth.length == 0 ) {
 			event.preventDefault();
-			var userConfirmed = confirm(member_params.message.card_upd);
+			let userConfirmed = confirm(member_params.message.card_upd);
 			if (userConfirmed) {
 				window.location.href = member_params.url.card_upd;
 			}
@@ -63,7 +73,7 @@ jQuery(document).ready( function($) {
 	$('.settlement-register').on('click', function(event) {
 		if( member_params.edit_auth.length == 0 ) {
 			event.preventDefault();
-			var userConfirmed = confirm(member_params.message.card_reg);
+			let userConfirmed = confirm(member_params.message.card_reg);
 			if (userConfirmed) {
 				window.location.href = member_params.url.card_reg;
 			}

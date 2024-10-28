@@ -4909,6 +4909,8 @@ function usces_get_tablename( $target ) {
 	}
 	$tablename = $prefix . $target;
 
+	$tablename = apply_filters( 'usces_filter_get_tablename', $tablename, $target );
+
 	return $tablename;
 }
 

@@ -45,8 +45,11 @@ class Welcart_category extends WP_Widget {
 		<?php
 		$cats = get_category_by_slug( $cat_slug );
 		if ( ! empty( $cats ) ) {
-			$cquery = 'use_desc_for_title=1&child_of=' . $cats->term_id . '&title_li=';
-			wp_list_categories( apply_filters( 'usces_filter_welcart_category', $cquery, $cats->term_id ) );
+			$cquery     = '&use_desc_for_title=1&child_of=' . $cats->term_id . '&title_li=';
+			$categories = get_categories( $cquery );
+			if ( ! empty( $categories ) ) {
+				wp_list_categories( apply_filters( 'usces_filter_welcart_category', $cquery, $cats->term_id ) );
+			}
 		}
 		?>
 		</ul>

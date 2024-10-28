@@ -96,7 +96,6 @@ foreach ( (array) $management_status as $key => $value ) {
 }
 $order_status['new'] = __( 'new order', 'usces' );
 $curent_url          = urlencode( esc_url( USCES_ADMIN_URL . '?' . $_SERVER['QUERY_STRING'] ) ); // phpcs:ignore
-$server_name         = $_SERVER['SERVER_NAME']; // phpcs:ignore
 
 $csod_meta         = usces_has_custom_field_meta( 'order' );
 $cscs_meta         = usces_has_custom_field_meta( 'customer' );
@@ -356,8 +355,8 @@ $data_cookie['startdate']          = $DT->startdate;
 $data_cookie['enddate']            = $DT->enddate;
 // phpcs:enable
 ?>
-		$.cookie('<?php echo "{$DT->table}" . "_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"});
-		$.cookie('<?php echo "{$DT->table}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"});
+		$.cookie('<?php echo "{$DT->table}" . "_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
+		$.cookie('<?php echo "{$DT->table}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
 	})();
 	$("table#mainDataTable tr:even").addClass("rowSelection_even");
 	$("table#mainDataTable tr").hover(function() {

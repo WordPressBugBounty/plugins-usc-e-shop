@@ -67,9 +67,7 @@ foreach ( (array) $management_status as $key => $value ) {
 		$process_status['neworder'] = __( 'new order', 'usces' );
 	}
 }
-$curent_url  = urlencode( esc_url( USCES_ADMIN_URL . '?' . $_SERVER['QUERY_STRING'] ) ); // phpcs:ignore
-$server_name = $_SERVER['SERVER_NAME']; // phpcs:ignore
-
+$curent_url        = urlencode( esc_url( USCES_ADMIN_URL . '?' . $_SERVER['QUERY_STRING'] ) ); // phpcs:ignore
 $csod_meta         = usces_has_custom_field_meta( 'order' );
 $cscs_meta         = usces_has_custom_field_meta( 'customer' );
 $csde_meta         = usces_has_custom_field_meta( 'delivery' );
@@ -1519,7 +1517,7 @@ endforeach;
 			enddate = '';
 		}
 		cvalue = 'period=' + period + '&start=' + startdate + '&end=' + enddate;
-		$.cookie("orderPeriod", cvalue, { expires: 30, path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"});
+		$.cookie("orderPeriod", cvalue, { expires: 30, path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
 		$("#orderlistaction").val('');
 		$("#form_tablesearch").append('<input name="searchIn" type="hidden" value="1" />');
 		$('#form_tablesearch').submit();
@@ -1565,11 +1563,11 @@ endforeach;
 		if ( $("#searchBox").css("display") != "block" ){
 			$("#searchBox").slideDown(300);
 			$("#searchVisiLink").html('<?php esc_html_e( 'Hide the Operation field', 'usces' ); ?><span class="dashicons dashicons-arrow-up"></span>');
-			$.cookie("orderSearchBox", 1, { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"}) == true;
+			$.cookie("orderSearchBox", 1, { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""}) == true;
 		}else{
 			$("#searchBox").slideUp(300);
 			$("#searchVisiLink").html('<?php esc_html_e( 'Show the Operation field', 'usces' ); ?><span class="dashicons dashicons-arrow-down"></span>');
-			$.cookie("orderSearchBox", 0, { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"}) == true;
+			$.cookie("orderSearchBox", 0, { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""}) == true;
 		}
 	});
 
@@ -1591,8 +1589,8 @@ $data_cookie['sortSwitchs']        = $DT->sortSwitchs;     /* 各フィールド
 $data_cookie['arr_search']         = $DT->arr_search;
 // phpcs:enable
 ?>
-		$.cookie('<?php echo "{$DT->table}_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"});
-		$.cookie('<?php echo "{$DT->table}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: "<?php echo esc_attr( $server_name ); ?>"});
+		$.cookie('<?php echo "{$DT->table}_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
+		$.cookie('<?php echo "{$DT->table}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
 		// save list current_page_ids to localStorage.
 		window.localStorage.setItem('wel_order_current_page_ids', <?php echo wp_json_encode( $DT->currentPageIds ); ?>);
 	})();
