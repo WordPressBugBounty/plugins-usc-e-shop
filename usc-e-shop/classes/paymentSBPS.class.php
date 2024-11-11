@@ -3473,8 +3473,8 @@ jQuery( document ).ready( function( $ ) {
 				} else {
 					$connection               = $this->get_connection();
 					$sps_cust_info_return_flg = '1';
-					$token                    = trim( $_POST['token'] );
-					$token_key                = trim( $_POST['tokenKey'] );
+					$token                    = sanitize_text_field( wp_unslash( $_POST['token'] ) );
+					$token_key                = sanitize_text_field( wp_unslash( $_POST['tokenKey'] ) );
 					$cardbrand_return_flg     = '0';
 					$encrypted_flg            = '1';
 					$request_date             = wp_date( 'YmdHis' );
@@ -3517,8 +3517,8 @@ jQuery( document ).ready( function( $ ) {
 				} else {
 					$connection               = $this->get_connection();
 					$sps_cust_info_return_flg = '1';
-					$token                    = trim( $_POST['token'] );
-					$token_key                = trim( $_POST['tokenKey'] );
+					$token                    = sanitize_text_field( wp_unslash( $_POST['token'] ) );
+					$token_key                = sanitize_text_field( wp_unslash( $_POST['tokenKey'] ) );
 					$cardbrand_return_flg     = '0';
 					$encrypted_flg            = '1';
 					$request_date             = wp_date( 'YmdHis' );

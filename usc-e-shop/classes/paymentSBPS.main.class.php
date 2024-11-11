@@ -876,8 +876,8 @@ class SBPS_MAIN {
 			$html        = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if (event.keyCode == 13){return false;}">';
 			// if ( ! empty( $token ) && ! empty( $token_key ) ) {
 			$html .= '
-				<input type="hidden" name="cust_quick" value="' . $cust_quick . '" />
-				<input type="hidden" name="cust_manage" value="' . $cust_manage . '" />
+				<input type="hidden" name="cust_quick" value="' . esc_attr( $cust_quick ) . '" />
+				<input type="hidden" name="cust_manage" value="' . esc_attr( $cust_manage ) . '" />
 				<input type="hidden" name="cust_code" value="' . $cust_code . '" />
 				<input type="hidden" name="order_id" value="' . $rand . '" />
 				<input type="hidden" name="item_id" value="' . $item_id . '" />
@@ -887,8 +887,8 @@ class SBPS_MAIN {
 				<input type="hidden" name="free1" value="' . $free1 . '" />
 				<input type="hidden" name="free2" value="" />
 				<input type="hidden" name="free3" value="" />
-				<input type="hidden" name="token" value="' . $token . '" />
-				<input type="hidden" name="token_key" value="' . $token_key . '" />
+				<input type="hidden" name="token" value="' . esc_attr( $token ) . '" />
+				<input type="hidden" name="token_key" value="' . esc_attr( $token_key ) . '" />
 				<input type="hidden" name="limit_second" value="' . $limit_second . '" />';
 			// }
 			$html .= '<div class="send">
@@ -1062,15 +1062,15 @@ class SBPS_MAIN {
 		$acting_opts = $this->get_acting_settings();
 		if ( isset( $acting_opts['card_activate'] ) && 'token' === $acting_opts['card_activate'] ) {
 			$html .= '
-			<input type="hidden" name="token" value="' . $_POST['token'] . '">
-			<input type="hidden" name="tokenKey" value="' . $_POST['tokenKey'] . '">';
+			<input type="hidden" name="token" value="' . esc_attr( $_POST['token'] ) . '">
+			<input type="hidden" name="tokenKey" value="' . esc_attr( $_POST['tokenKey'] ) . '">';
 			if ( isset( $_POST['cust_quick'] ) ) {
 				$html .= '
-			<input type="hidden" name="cust_quick" value="' . $_POST['cust_quick'] . '">';
+			<input type="hidden" name="cust_quick" value="' . esc_attr( $_POST['cust_quick'] ) . '">';
 			}
 			if ( isset( $_POST['cust_manage'] ) ) {
 				$html .= '
-			<input type="hidden" name="cust_manage" value="' . $_POST['cust_manage'] . '">';
+			<input type="hidden" name="cust_manage" value="' . esc_attr( $_POST['cust_manage'] ) . '">';
 			}
 		}
 		return $html;

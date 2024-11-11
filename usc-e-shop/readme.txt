@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4 - 8.1
-Stable tag: 2.11.5
+Stable tag: 2.11.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+11 Nov 2024
+= V2.11.6 =
+-----------
+* [SB Payment Service] Strengthened XSS countermeasures for improved security.
 
 28 Oct 2024
 = V2.11.5 =
