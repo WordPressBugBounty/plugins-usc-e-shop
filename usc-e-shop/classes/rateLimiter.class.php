@@ -6,13 +6,14 @@
  */
 class RateLimiter {
 
-	var $folder_log_path;
-	var $login_failed_log_path;
-	var $ip_blocked_path;
-	var $monitoring; /* minutes */
-	var $num_of_errors;
-	var $rejection_time; /* minutes */
-	var $status;
+	public $folder_log_path;
+	public $login_failed_log_path;
+	public $ip_blocked_path;
+	public $monitoring; /* minutes */
+	public $num_of_errors;
+	public $rejection_time; /* minutes */
+	public $status;
+	public $excluded_ip;
 
 	/**
 	 * Construct.
@@ -29,6 +30,7 @@ class RateLimiter {
 		$this->num_of_errors  = ( ! isset( $options['system']['brute_force']['num_of_errors'] ) ) ? 3 : (int) $options['system']['brute_force']['num_of_errors'];
 		$this->rejection_time = ( ! isset( $options['system']['brute_force']['rejection_time'] ) ) ? 10 : (int) $options['system']['brute_force']['rejection_time'];
 		$this->status         = ( ! isset( $options['system']['brute_force']['status'] ) ) ? 0 : (int) $options['system']['brute_force']['status'];
+		$this->excluded_ip    = ( ! isset( $options['system']['brute_force']['excluded_ip'] ) ) ? array() : $options['system']['brute_force']['excluded_ip'];
 
 		if ( $this->status ) {
 			$this->initLogsFolder();
@@ -43,7 +45,11 @@ class RateLimiter {
 	public function checkBlockIP() {
 		if ( $this->status ) {
 			try {
-				$ip         = $_SERVER['REMOTE_ADDR'];
+				$ip = $_SERVER['REMOTE_ADDR'];
+				if ( in_array( $ip, $this->excluded_ip, true ) ) {
+					return false;
+				}
+
 				$data       = $this->getLoginFailedDataByIP( $ip );
 				$ip_blocked = $this->getIpAddressesBlocked();
 
@@ -81,6 +87,9 @@ class RateLimiter {
 		try {
 			if ( $this->status ) {
 				$ip = $_SERVER['REMOTE_ADDR'];
+				if ( in_array( $ip, $this->excluded_ip, true ) ) {
+					return;
+				}
 
 				$content = $this->getLoginFailedData();
 				$row     = $this->getLoginFailedDataByIP( $ip );

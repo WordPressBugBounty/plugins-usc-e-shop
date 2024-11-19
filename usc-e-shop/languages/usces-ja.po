@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2024-09-25 10:51+0900\n"
+"PO-Revision-Date: 2024-11-12 17:32+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -10794,8 +10794,14 @@ msgstr "「監視スパン」の間に指定回数失敗したとき、「ブル
 msgid "Rejection time"
 msgstr "拒否時間"
 
-msgid "If it is considered a \"brute-force attack\", the login page will not be displayed for a specified period of time. (This will result in a 404 error.)"
-msgstr "「ブルートフォース攻撃」とみなされた場合、指定時間ログインページが表示されません。（404エラーとなります。）"
+msgid "If it is considered a \"brute-force attack\", the login page will not be displayed for a specified period of time. (This will result in a 403 error.)"
+msgstr "「ブルートフォース攻撃」とみなされた場合、指定時間ログインページが表示されません。（403エラーとなります。）"
+
+msgid "Excluded IP Address"
+msgstr "除外IPアドレス"
+
+msgid "Set IP addresses to exclude from attack monitoring. When specifying multiple IP addresses, enter them in a new line. Illegal IP addresses cannot be registered."
+msgstr "攻撃の監視を除外するIPアドレスを設定します。複数指定する場合は改行して入力してください。不正なIPアドレスは登録できません。"
 
 msgid "Please enter a password."
 msgstr "パスワードを入力してください。"

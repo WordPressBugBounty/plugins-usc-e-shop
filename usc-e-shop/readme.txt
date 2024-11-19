@@ -3,8 +3,8 @@ Contributors: Welcart Inc., uscnanbu
 Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage, plugin, shortcode, widgets, membership
 Requires at least: 5.6
 Tested up to: 6.6
-Requires PHP: 7.4 - 8.1
-Stable tag: 2.11.6
+Requires PHP: 7.4 - 8.2
+Stable tag: 2.11.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,16 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+19 Nov 2024
+= V2.11.7 =
+-----------
+* [Compatibility] Added support for PHP 8.2.
+* Fixed a bug that caused item categories not to display on the item information edit page in WordPress 6.7.
+* Fixed a bug that prevented the registration or update of designated delivery time zones for shipping methods on certain servers.
+* [Security Enhancement] Updated the brute force prevention feature for member login to allow specifying exclusion IP addresses.
+* [Epsilon] Fixed functionality to enable the use of "3D Secure" alongside "Registered Billing."
+* [ZEUS] Updated the "Secure API" feature to make the "Authentication Key" a mandatory field.
 
 11 Nov 2024
 = V2.11.6 =

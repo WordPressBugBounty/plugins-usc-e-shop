@@ -3,8 +3,8 @@
  * Settlement Class.
  * Epsilon
  *
- * @package  Welcart
- * @author   Collne Inc.
+ * @package Welcart
+ * @author  Welcart Inc.
  */
 
 /**
@@ -316,27 +316,6 @@ class EPSILON_SETTLEMENT {
 		$("input[id^='conv_activate_epsilon_']").click( function() {
 			conv_activate_epsilon();
 		});
-		$(document).on( 'change', '.multi_currency_epsilon', function() {
-			if( 'on' == $(this).val() ) {
-				$('#3dsecure_epsilon_on').prop('checked',true);
-				$('#process_code_epsilon_off').prop('checked',true);
-			}
-		});
-		$(document).on( 'change', '.3dsecure_epsilon', function() {
-			if( 'on' == $(this).val() ) {
-				$('#process_code_epsilon_off').prop('checked',true);
-			} else if( 'off' == $(this).val() ) {
-				if( $('#multi_currency_epsilon_on').prop('checked') ) {
-					$('#3dsecure_epsilon_on').prop('checked',true);
-				}
-			}
-		});
-		$(document).on( 'change', '.process_code_epsilon', function() {
-			if( 'on' == $(this).val() ) {
-				$('#multi_currency_epsilon_off').prop('checked',true);
-				$('#3dsecure_epsilon_off').prop('checked',true);
-			}
-		});
 	});
 </script>
 					<?php
@@ -552,7 +531,7 @@ class EPSILON_SETTLEMENT {
 					<label><input name="3dsecure" type="radio" class="3dsecure_epsilon" id="3dsecure_epsilon_off" value="off"<?php checked( $threedsecure, 'off' ); ?> /><span>利用しない</span></label>
 				</td>
 			</tr>
-			<tr id="ex_3dsecure_epsilon" class="explanation card_form_epsilon"><td colspan="2">イプシロンとの契約時に3Dセキュアの契約をした場合、「利用する」にしてください。<br />「多通貨決済」では必須です。「登録済み課金」は併用できません。</td></tr>
+			<tr id="ex_3dsecure_epsilon" class="explanation card_form_epsilon"><td colspan="2">イプシロンとの契約時に3Dセキュアの契約をした場合、「利用する」にしてください。<br />「多通貨決済」では必須です。</td></tr>
 			<tr class="card_form_epsilon">
 				<th><a class="explanation-label" id="label_ex_process_code_epsilon">登録済み課金</th>
 				<td><label><input name="process_code" type="radio" class="process_code_epsilon" id="process_code_epsilon_on" value="on"<?php checked( $process_code, 'on' ); ?> /><span>利用する</span></label><br />

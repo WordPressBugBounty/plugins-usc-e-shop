@@ -433,6 +433,12 @@ if ( post_type_supports( $post_type, 'comments' ) ) {
 ?>
 
 <?php if ( ( isset( $post->post_title ) && '' === $post->post_title ) || ( isset( $_GET['message'] ) && 2 > $_GET['message'] ) ) : ?>
+<?php
+global $wp_version;
+$li_category_id = version_compare( $wp_version, '6.7', '>=' )
+	? '#category-all ul#categorychecklist input[type="checkbox"][id*="in-category-' . USCES_ITEM_CAT_PARENT_ID . '-"]'
+	: '#in-category-' . USCES_ITEM_CAT_PARENT_ID;
+?>
 <script type="text/javascript">
 try{document.post.itemCode.focus();}catch(e){}
 try{
@@ -443,7 +449,7 @@ try{
 }catch(e){}
 
 jQuery(document).ready(function($){
-	$("#in-category-"+<?php echo esc_attr( USCES_ITEM_CAT_PARENT_ID ); ?>).prop( "checked", true );
+	$('<?php wel_esc_script_e( $li_category_id ); ?>').prop( "checked", true );
 });
 </script>
 <?php endif; ?>

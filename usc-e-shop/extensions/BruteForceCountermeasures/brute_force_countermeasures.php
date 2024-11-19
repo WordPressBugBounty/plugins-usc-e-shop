@@ -54,6 +54,7 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 		$options['system']['brute_force']['monitoring_span'] = ( ! isset( $options['system']['brute_force']['monitoring_span'] ) ) ? 5 : (int) $options['system']['brute_force']['monitoring_span'];
 		$options['system']['brute_force']['num_of_errors']   = ( ! isset( $options['system']['brute_force']['num_of_errors'] ) ) ? 3 : (int) $options['system']['brute_force']['num_of_errors'];
 		$options['system']['brute_force']['rejection_time']  = ( ! isset( $options['system']['brute_force']['rejection_time'] ) ) ? 10 : (int) $options['system']['brute_force']['rejection_time'];
+		$options['system']['brute_force']['excluded_ip']     = ( ! isset( $options['system']['brute_force']['excluded_ip'] ) ) ? array() : $options['system']['brute_force']['excluded_ip'];
 		update_option( 'usces_ex', $options );
 		self::$opts = $options['system']['brute_force'];
 
@@ -62,6 +63,7 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 			'monitoring_span' => array( 5, 10, 15 ),
 			'num_of_errors'   => array( 3, 5, 10 ),
 			'rejection_time'  => array( 10, 20, 30 ),
+			'excluded_ip'     => array(),
 		);
 	}
 
@@ -102,6 +104,16 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 			self::$opts['monitoring_span'] = ( isset( $_POST['monitoring_span'] ) ) ? (int) $_POST['monitoring_span'] : 5;
 			self::$opts['num_of_errors']   = ( isset( $_POST['num_of_errors'] ) ) ? (int) $_POST['num_of_errors'] : 3;
 			self::$opts['rejection_time']  = ( isset( $_POST['rejection_time'] ) ) ? (int) $_POST['rejection_time'] : 10;
+			if ( isset( $_POST['excluded_ip'] ) ) {
+				$ips         = array();
+				$excluded_ip = explode( "\n", usces_change_line_break( $_POST['excluded_ip'] ) );
+				foreach ( (array) $excluded_ip as $ip ) {
+					if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+						$ips[] = $ip;
+					}
+				}
+				self::$opts['excluded_ip'] = array_unique( $ips );
+			}
 
 			$options                          = get_option( 'usces_ex', array() );
 			$options['system']['brute_force'] = self::$opts;
@@ -117,7 +129,12 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 	 * usces_action_admin_system_extentions
 	 */
 	public function setting_form() {
-		$status = ( self::$opts['status'] || self::$opts['status'] ) ? '<span class="running">' . __( 'Running', 'usces' ) . '</span>' : '<span class="stopped">' . __( 'Stopped', 'usces' ) . '</span>';
+		$status = ( ! empty( self::$opts['status'] ) && 1 === (int) self::$opts['status'] ) ? '<span class="running">' . __( 'Running', 'usces' ) . '</span>' : '<span class="stopped">' . __( 'Stopped', 'usces' ) . '</span>';
+		if ( isset( self::$opts['excluded_ip'] ) && is_array( self::$opts['excluded_ip'] ) ) {
+			$excluded_ip = implode( "\n", self::$opts['excluded_ip'] );
+		} else {
+			$excluded_ip = '';
+		}
 		?>
 		<form action="" method="post" name="option_form" id="brute_force_form">
 			<div class="postbox">
@@ -158,9 +175,14 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 							<th class="system_th"><a style="cursor:pointer;" onclick="toggleVisibility('ex_rejection_time');"><?php esc_html_e( 'Rejection time', 'usces' ); ?></a></th>
 						<?php foreach ( self::$default_option['rejection_time'] as $value ) : ?>
 							<td width="10"><input name="rejection_time" type="radio" id="brute_force_rejection_time_<?php echo esc_attr( $value ); ?>" value="<?php echo esc_attr( $value ); ?>"<?php checked( self::$opts['rejection_time'], $value ); ?> /></td>
-							<td width="100"><label for="brute_force_rejection_time_<?php echo esc_attr( $value ); ?>"><?php printf( __( '%s minutes', 'usces' ), esc_attr( $value )); ?></label></td>
+							<td width="100"><label for="brute_force_rejection_time_<?php echo esc_attr( $value ); ?>"><?php printf( __( '%s minutes', 'usces' ), esc_attr( $value ) ); ?></label></td>
 						<?php endforeach; ?>
-							<td><div id="ex_rejection_time" class="explanation"><?php esc_html_e( 'If it is considered a "brute-force attack", the login page will not be displayed for a specified period of time. (This will result in a 404 error.)', 'usces' ); ?></div></td>
+							<td><div id="ex_rejection_time" class="explanation"><?php esc_html_e( 'If it is considered a "brute-force attack", the login page will not be displayed for a specified period of time. (This will result in a 403 error.)', 'usces' ); ?></div></td>
+						</tr>
+						<tr>
+							<th class="system_th"><a style="cursor:pointer;" onclick="toggleVisibility('ex_excluded_ip');"><?php esc_html_e( 'Excluded IP Address', 'usces' ); ?></a></th>
+							<td colspan="6"><textarea name="excluded_ip" id="excluded_ip"><?php wel_esc_script_e( $excluded_ip ); ?></textarea></td>
+							<td><div id="ex_excluded_ip" class="explanation"><?php esc_html_e( 'Set IP addresses to exclude from attack monitoring. When specifying multiple IP addresses, enter them in a new line. Illegal IP addresses cannot be registered.', 'usces' ); ?></div></td>
 						</tr>
 					</table>
 					<hr/>

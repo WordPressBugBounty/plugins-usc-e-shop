@@ -24,7 +24,19 @@ function get_wcblog_calendar( $initial = true, $echo = true ) {
 
 	// Quick check. If we have no posts at all, abort!.
 	if ( ! $posts ) {
-		$gotsome = $wpdb->get_var( "SELECT 1 as test FROM $wpdb->posts WHERE post_type = 'post' AND post_mime_type <> 'item' AND post_status = 'publish' LIMIT 1" );
+		$gotsome = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT 1 as test 
+				FROM $wpdb->posts 
+				WHERE post_type = %s 
+				AND post_mime_type <> %s 
+				AND post_status = %s 
+				LIMIT 1",
+				'post',   // post_type.
+				'item',   // post_mime_type.
+				'publish' // post_status.
+			)
+		);
 		if ( ! $gotsome ) {
 			$cache[ $key ] = '';
 			wp_cache_set( 'get_calendar', $cache, 'calendar' );
@@ -47,7 +59,13 @@ function get_wcblog_calendar( $initial = true, $echo = true ) {
 		// We need to get the month from MySQL.
 		$thisyear  = '' . intval( substr( $m, 0, 4 ) );
 		$d         = ( ( (int) $w - 1 ) * 7 ) + 6; // it seems MySQL's weeks disagree with PHP's.
-		$thismonth = $wpdb->get_var( "SELECT DATE_FORMAT((DATE_ADD('${thisyear}0101', INTERVAL $d DAY) ), '%m')" );
+		$thismonth = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT DATE_FORMAT((DATE_ADD(%s, INTERVAL %d DAY) ), '%m')",
+				$thisyear . '0101',
+				$d
+			)
+		);
 	} elseif ( ! empty( $m ) ) {
 		$thisyear = '' . intval( substr( $m, 0, 4 ) );
 		if ( strlen( $m ) < 6 ) {
@@ -60,27 +78,43 @@ function get_wcblog_calendar( $initial = true, $echo = true ) {
 		$thismonth = wp_date( 'm' );
 	}
 
-	$unixmonth = mktime( 0, 0, 0, $thismonth, 1, $thisyear );
+	$unixmonth   = mktime( 0, 0, 0, $thismonth, 1, $thisyear );
+	$date_string = sprintf( '%04d-%02d-01', $thisyear, $thismonth );
 
 	// Get the next and previous month and year with at least one post.
 	$previous = $wpdb->get_row(
-		"SELECT DISTINCT MONTH(post_date) AS `month`, YEAR(post_date) AS `year`
-		FROM $wpdb->posts
-		WHERE post_date < '$thisyear-$thismonth-01'
-		AND post_mime_type <> 'item' 
-		AND post_type = 'post' AND post_status = 'publish'
+		$wpdb->prepare(
+			"SELECT DISTINCT MONTH(post_date) AS `month`, YEAR(post_date) AS `year`
+			FROM $wpdb->posts
+			WHERE post_date < %s
+			AND post_mime_type <> %s 
+			AND post_type = %s 
+			AND post_status = %s
 			ORDER BY post_date DESC
-			LIMIT 1"
+			LIMIT 1",
+			$date_string, // This year-month.
+			'item',       // post_mime_type.
+			'post',       // post_type.
+			'publish'     // post_status.
+		)
 	);
 	$next     = $wpdb->get_row(
-		"SELECT DISTINCT MONTH(post_date) AS `month`, YEAR(post_date) AS `year`
-		FROM $wpdb->posts
-		WHERE post_date > '$thisyear-$thismonth-01'
-		AND post_mime_type <> 'item' 
-		AND MONTH( post_date ) != MONTH( '$thisyear-$thismonth-01' )
-		AND post_type = 'post' AND post_status = 'publish'
+		$wpdb->prepare(
+			"SELECT DISTINCT MONTH(post_date) AS `month`, YEAR(post_date) AS `year`
+			FROM $wpdb->posts
+			WHERE post_date > %s
+			AND post_mime_type <> %s 
+			AND MONTH(post_date) != MONTH(%s)
+			AND post_type = %s 
+			AND post_status = %s
 			ORDER BY post_date ASC
-			LIMIT 1"
+			LIMIT 1",
+			$date_string, // This year-month.
+			'item',       // post_mime_type.
+			$date_string, // This year-month.
+			'post',       // post_type.
+			'publish'     // post_status.
+		)
 	);
 
 	/* translators: Calendar caption: 1: month name, 2: 4-digit year */
@@ -132,14 +166,25 @@ function get_wcblog_calendar( $initial = true, $echo = true ) {
 
 	// Get days with posts.
 	$dayswithposts = $wpdb->get_results(
-		"SELECT DISTINCT DAYOFMONTH(post_date)
-		FROM $wpdb->posts WHERE MONTH(post_date) = '$thismonth'
-		AND post_mime_type <> 'item' 
-		AND YEAR(post_date) = '$thisyear'
-		AND post_type = 'post' AND post_status = 'publish'
-		AND post_date < '" . current_time( 'mysql' ) . '\'',
+		$wpdb->prepare(
+			"SELECT DISTINCT DAYOFMONTH(post_date)
+			FROM $wpdb->posts 
+			WHERE MONTH(post_date) = %d
+			AND post_mime_type <> %s 
+			AND YEAR(post_date) = %d
+			AND post_type = %s 
+			AND post_status = %s
+			AND post_date < %s",
+			$thismonth,             // This month.
+			'item',                 // post_mime_type.
+			$thisyear,              // This year.
+			'post',                 // post_type.
+			'publish',              // post_status.
+			current_time( 'mysql' ) // Current time.
+		),
 		ARRAY_N
 	);
+
 	if ( $dayswithposts ) {
 		foreach ( (array) $dayswithposts as $daywith ) {
 			$daywithpost[] = $daywith[0];
@@ -156,13 +201,22 @@ function get_wcblog_calendar( $initial = true, $echo = true ) {
 
 	$ak_titles_for_day = array();
 	$ak_post_titles    = $wpdb->get_results(
-		"SELECT ID, post_title, DAYOFMONTH(post_date) as dom 
-		FROM $wpdb->posts 
-		WHERE YEAR(post_date) = '$thisyear' 
-		AND MONTH(post_date) = '$thismonth' 
-		AND post_mime_type <> 'item' 
-		AND post_date < '" . current_time( 'mysql' ) . "' 
-		AND post_type = 'post' AND post_status = 'publish'"
+		$wpdb->prepare(
+			"SELECT ID, post_title, DAYOFMONTH(post_date) as dom 
+			FROM $wpdb->posts 
+			WHERE YEAR(post_date) = %d
+			AND MONTH(post_date) = %d 
+			AND post_mime_type <> %s 
+			AND post_date < %s 
+			AND post_type = %s 
+			AND post_status = %s",
+			$thisyear,               // This year.
+			$thismonth,              // This month.
+			'item',                  // post_mime_type.
+			current_time( 'mysql' ), // Current time.
+			'post',                  // post_type.
+			'publish'                // post_status.
+		)
 	);
 	if ( $ak_post_titles ) {
 		foreach ( (array) $ak_post_titles as $ak_post_title ) {

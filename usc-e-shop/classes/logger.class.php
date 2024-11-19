@@ -93,6 +93,8 @@ class Logger {
 	 */
 	private $advance_data = array();
 
+	private $screen;
+
 	/**
 	 * Constructor
 	 *
@@ -592,7 +594,7 @@ class Logger {
 		if ( $has_callback ) {
 			$callback = $field['field_data_callback'];
 			if ( method_exists( $this, $callback ) ) {
-				$field_data = $this->{$callback}( $field, $before_value, $after_value );
+				$field_data = $this->$callback( $field, $before_value, $after_value );
 			}
 
 			return $field_data;

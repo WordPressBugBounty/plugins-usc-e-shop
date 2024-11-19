@@ -5,47 +5,50 @@
  *
  * @package Welcart
  */
-class WlcOrderList { // phpcs:ignore
-	// phpcs:disable
-	var $table;               /* テーブル名 */
-	var $rows;                /* データ */
-	var $action;              /* アクション */
-	var $startRow;            /* 表示開始行番号 */
-	var $maxRow;              /* 最大表示行数 */
-	var $currentPage;         /* 現在のページNo */
-	var $firstPage;           /* 最初のページNo */
-	var $previousPage;        /* 前のページNo */
-	var $nextPage;            /* 次のページNo */
-	var $lastPage;            /* 最終ページNo */
-	var $naviMaxButton;       /* ページネーション・ナビのボタンの数 */
-	var $dataTableNavigation; /* ナヴィゲーションhtmlコード */
-	var $arr_period;          /* 表示データ期間 */
-	var $arr_search;          /* サーチ条件 */
-	var $searchSql;           /* 簡易絞込みSQL */
-	var $searchSkuSql;        /* SKU絞り込み */
-	var $searchSwitchStatus;  /* サーチ表示スイッチ */
-	var $columns;             /* データカラム */
-	var $all_columns;         /* 全てのカラム */
-	var $sortColumn;          /* 現在ソート中のフィールド */
-	var $sortOldColumn;
-	var $sortSwitchs;         /* 各フィールド毎の昇順降順スイッチ */
-	var $userHeaderNames;     /* ユーザー指定のヘッダ名 */
-	var $action_status, $action_message;
-	var $pageLimit;           /* ページ制限 */
-	var $management_status;   /* 処理ステータス */
-	var $selectSql;
-	var $joinTableSql;
-	var $cscs_meta;
-	var $csod_meta;
-	var $currentPageIds;
-	var $period;
-	var $placeholder_escape;
-	var $view_column;
-	var $all_column;
-	var $data_cookie;
-	var $searchWhere;
-	var $searchHaving;
-	// phpcs:enable
+class WlcOrderList {
+	public $table;               /* テーブル名 */
+	public $rows;                /* データ */
+	public $action;              /* アクション */
+	public $startRow;            /* 表示開始行番号 */
+	public $maxRow;              /* 最大表示行数 */
+	public $currentPage;         /* 現在のページNo */
+	public $firstPage;           /* 最初のページNo */
+	public $previousPage;        /* 前のページNo */
+	public $nextPage;            /* 次のページNo */
+	public $lastPage;            /* 最終ページNo */
+	public $naviMaxButton;       /* ページネーション・ナビのボタンの数 */
+	public $dataTableNavigation; /* ナヴィゲーションhtmlコード */
+	public $arr_period;          /* 表示データ期間 */
+	public $arr_search;          /* サーチ条件 */
+	public $searchSql;           /* 簡易絞込みSQL */
+	public $searchSkuSql;        /* SKU絞り込み */
+	public $searchSwitchStatus;  /* サーチ表示スイッチ */
+	public $columns;             /* データカラム */
+	public $all_columns;         /* 全てのカラム */
+	public $sortColumn;          /* 現在ソート中のフィールド */
+	public $sortOldColumn;
+	public $sortSwitchs;         /* 各フィールド毎の昇順降順スイッチ */
+	public $userHeaderNames;     /* ユーザー指定のヘッダ名 */
+	public $action_status, $action_message;
+	public $pageLimit;           /* ページ制限 */
+	public $management_status;   /* 処理ステータス */
+	public $selectSql;
+	public $joinTableSql;
+	public $cscs_meta;
+	public $csod_meta;
+	public $currentPageIds;
+	public $period;
+	public $placeholder_escape;
+	public $view_column;
+	public $all_column;
+	public $data_cookie;
+	public $searchWhere;
+	public $searchHaving;
+
+	public $listOption;
+	public $totalRow;
+	public $selectedRow;
+	public $headers;
 
 	/**
 	 * Constructor.
@@ -152,14 +155,14 @@ class WlcOrderList { // phpcs:ignore
 		}
 
 		$arr_column['receipt_status']   = __( 'transfer statement', 'usces' );
-		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
+		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['getpoint']         = __( 'granted points', 'usces' );
 		$arr_column['usedpoint']        = __( 'Used points', 'usces' );
-		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
+		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['deli_method']      = __( 'shipping option', 'usces' );
 		$arr_column['deli_name']        = __( 'Destination name', 'usces' );
 		$arr_column['deli_time']        = __( 'delivery time', 'usces' );
@@ -206,8 +209,8 @@ class WlcOrderList { // phpcs:ignore
 
 		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
-			if ( $this->view_column[$key] ) {
-				$arr_column[$key] = $value['label'];
+			if ( $this->view_column[ $key ] ) {
+				$arr_column[ $key ] = $value['label'];
 			}
 		}
 
@@ -237,14 +240,14 @@ class WlcOrderList { // phpcs:ignore
 		$arr_column['payment_name']     = __( 'payment method', 'usces' );
 		$arr_column['wc_trans_id']      = __( 'Transaction ID', 'usces' );
 		$arr_column['receipt_status']   = __( 'transfer statement', 'usces' );
-		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
+		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['getpoint']         = __( 'granted points', 'usces' );
 		$arr_column['usedpoint']        = __( 'Used points', 'usces' );
-		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
-		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')'; // phpcs:ignore
+		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['deli_method']      = __( 'shipping option', 'usces' );
 		$arr_column['deli_name']        = __( 'Destination name', 'usces' );
 		$arr_column['deli_time']        = __( 'delivery time', 'usces' );
@@ -281,7 +284,7 @@ class WlcOrderList { // phpcs:ignore
 
 		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
-			$arr_column[$key] = $value['label'];
+			$arr_column[ $key ] = $value['label'];
 		}
 
 		$arr_column        = apply_filters( 'usces_filter_orderlist_all_column', $arr_column, $this );
@@ -307,7 +310,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return mixed
 	 */
-	public function MakeTable() { // phpcs:ignore
+	public function MakeTable() {
 		$this->SetParam();
 		switch ( $this->action ) {
 			case 'searchOut':
@@ -372,7 +375,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Default Parameters.
 	 */
-	public function SetDefaultParam() { // phpcs:ignore
+	public function SetDefaultParam() {
 		$this->startRow           = isset( $this->data_cookie['startRow'] ) ? $this->data_cookie['startRow'] : 0;
 		$this->currentPage        = isset( $this->data_cookie['currentPage'] ) ? $this->data_cookie['currentPage'] : 1;
 		$this->sortColumn         = ( isset( $this->data_cookie['sortColumn'] ) ) ? $this->data_cookie['sortColumn'] : 'ID';
@@ -382,7 +385,7 @@ class WlcOrderList { // phpcs:ignore
 		if ( isset( $this->data_cookie['arr_search'] ) ) {
 			$this->arr_search = $this->data_cookie['arr_search'];
 		} else {
-			$arr_search = array(
+			$arr_search       = array(
 				'period'            => array( '', '' ),
 				'order_column'      => array( '', '' ),
 				'order_word'        => array( '', '' ),
@@ -407,14 +410,14 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Set Parameters.
 	 */
-	public function SetParam() { // phpcs:ignore
+	public function SetParam() {
 		$this->startRow = ( $this->currentPage - 1 ) * $this->maxRow;
 	}
 
 	/**
 	 * Set Parameters.
 	 */
-	public function SetParamByQuery() { // phpcs:ignore
+	public function SetParamByQuery() {
 		global $wpdb;
 		if ( isset( $_REQUEST['changePage'] ) ) {
 
@@ -442,27 +445,27 @@ class WlcOrderList { // phpcs:ignore
 
 		} elseif ( isset( $_REQUEST['changeSort'] ) ) {
 
-			$this->action                           = 'changeSort';
-			$this->sortOldColumn                    = $this->sortColumn;
+			$this->action        = 'changeSort';
+			$this->sortOldColumn = $this->sortColumn;
 			// Validate sortColumn.
 			if ( in_array( $_REQUEST['changeSort'], array_keys( $this->columns ) ) ) {
 				$this->sortColumn = $_REQUEST['changeSort'];
 			} else {
 				$this->sortColumn = 'ID'; // default.
 			}
-			$this->sortSwitchs                      = ( isset( $this->data_cookie['sortSwitchs'] ) ) ? $this->data_cookie['sortSwitchs'] : $this->sortSwitchs;
+			$this->sortSwitchs = ( isset( $this->data_cookie['sortSwitchs'] ) ) ? $this->data_cookie['sortSwitchs'] : $this->sortSwitchs;
 			// Validate sortSwitchs.
-			if (isset($_REQUEST['switch']) && in_array($_REQUEST['switch'], array('ASC', 'DESC'))) {
-				$this->sortSwitchs[$this->sortColumn] = $_REQUEST['switch'];
+			if ( isset( $_REQUEST['switch'] ) && in_array( $_REQUEST['switch'], array( 'ASC', 'DESC' ) ) ) {
+				$this->sortSwitchs[ $this->sortColumn ] = $_REQUEST['switch'];
 			} else {
-				$this->sortSwitchs[$this->sortColumn] = 'DESC'; // default.
+				$this->sortSwitchs[ $this->sortColumn ] = 'DESC'; // default.
 			}
-			$this->currentPage                      = ( isset( $this->data_cookie['currentPage'] ) ) ? $this->data_cookie['currentPage'] : $this->currentPage;
-			$this->userHeaderNames                  = ( isset( $this->data_cookie['userHeaderNames'] ) ) ? $this->data_cookie['userHeaderNames'] : $this->userHeaderNames;
-			$this->arr_search                       = ( isset( $this->data_cookie['arr_search'] ) ) ? $this->data_cookie['arr_search'] : $this->arr_search;
-			$this->totalRow                         = ( isset( $this->data_cookie['totalRow'] ) ) ? $this->data_cookie['totalRow'] : $this->totalRow;
-			$this->selectedRow                      = ( isset( $this->data_cookie['selectedRow'] ) ) ? $this->data_cookie['selectedRow'] : $this->selectedRow;
-			$this->placeholder_escape               = ( isset( $this->data_cookie['placeholder_escape'] ) ) ? $this->data_cookie['placeholder_escape'] : $this->placeholder_escape;
+			$this->currentPage        = ( isset( $this->data_cookie['currentPage'] ) ) ? $this->data_cookie['currentPage'] : $this->currentPage;
+			$this->userHeaderNames    = ( isset( $this->data_cookie['userHeaderNames'] ) ) ? $this->data_cookie['userHeaderNames'] : $this->userHeaderNames;
+			$this->arr_search         = ( isset( $this->data_cookie['arr_search'] ) ) ? $this->data_cookie['arr_search'] : $this->arr_search;
+			$this->totalRow           = ( isset( $this->data_cookie['totalRow'] ) ) ? $this->data_cookie['totalRow'] : $this->totalRow;
+			$this->selectedRow        = ( isset( $this->data_cookie['selectedRow'] ) ) ? $this->data_cookie['selectedRow'] : $this->selectedRow;
+			$this->placeholder_escape = ( isset( $this->data_cookie['placeholder_escape'] ) ) ? $this->data_cookie['placeholder_escape'] : $this->placeholder_escape;
 
 		} elseif ( isset( $_REQUEST['searchIn'] ) ) {
 
@@ -569,7 +572,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Validation Search Parameters.
 	 */
-	public function validationSearchParameters() { // phpcs:ignore
+	public function validationSearchParameters() {
 		$default_order_word_term   = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_product_word_term = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_order_term        = [ 'AND', 'OR' ];
@@ -615,7 +618,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return array
 	 */
-	public function GetRows() { // phpcs:ignore
+	public function GetRows() {
 		global $wpdb;
 
 		$order_table          = $wpdb->prefix . 'usces_order';
@@ -806,7 +809,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Set Total Rows.
 	 */
-	public function SetTotalRow() { // phpcs:ignore
+	public function SetTotalRow() {
 		global $wpdb;
 		$query          = "SELECT COUNT(ID) AS `ct` FROM {$this->table}" . apply_filters( 'usces_filter_orderlist_sql_where', '', $this );
 		$query          = apply_filters( 'usces_filter_orderlist_set_total_row', $query, $this );
@@ -819,7 +822,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetHaving() { // phpcs:ignore
+	public function GetHaving() {
 		global $wpdb;
 
 		$lastmonth_s = date_i18n( 'Y-m-d H:i:s', mktime( 0, 0, 0, ( current_time( 'n' ) - 1 ), 1, current_time( 'Y' ) ) );
@@ -876,7 +879,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetWhere() { // phpcs:ignore
+	public function GetWhere() {
 		$str = '';
 		if ( ! WCUtils::is_blank( $this->searchWhere ) ) {
 			$str .= ' WHERE ' . $this->searchWhere;
@@ -888,7 +891,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Search.
 	 */
-	public function SearchIn() { // phpcs:ignore
+	public function SearchIn() {
 		global $wpdb;
 
 		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
@@ -932,7 +935,7 @@ class WlcOrderList { // phpcs:ignore
 				} else {
 					$cond_oc_0 = $print_mail_column . ' LIKE %s ';
 				}
-				$word_oc_0 = '%' . esc_sql( $this->arr_search['order_column'][0] ) . '%';
+				$word_oc_0           = '%' . esc_sql( $this->arr_search['order_column'][0] ) . '%';
 				$this->searchHaving .= '( ' . $wpdb->prepare( $cond_oc_0, $word_oc_0 ) . ' ) ';
 			} else {
 				$is_date_column = $this->is_date_column( $this->arr_search['order_column'][0] );
@@ -1006,7 +1009,7 @@ class WlcOrderList { // phpcs:ignore
 			switch ( $this->arr_search['product_word_term'][0] ) {
 				case 'notcontain':
 					$prowordterm0 = ' NOT LIKE %s';
-					$proword0     = "%" . $this->arr_search['product_word'][0] . "%";
+					$proword0     = '%' . $this->arr_search['product_word'][0] . '%';
 					break;
 				case 'equal':
 					$prowordterm0 = ' = %s';
@@ -1023,14 +1026,14 @@ class WlcOrderList { // phpcs:ignore
 				case 'contain':
 				default:
 					$prowordterm0 = ' LIKE %s';
-					$proword0     = "%" . $this->arr_search['product_word'][0] . "%";
+					$proword0     = '%' . $this->arr_search['product_word'][0] . '%';
 					break;
 			}
 
 			switch ( $this->arr_search['product_word_term'][1] ) {
 				case 'notcontain':
 					$prowordterm1 = ' NOT LIKE %s';
-					$proword1     = "%" . $this->arr_search['product_word'][1] . "%";
+					$proword1     = '%' . $this->arr_search['product_word'][1] . '%';
 					break;
 				case 'equal':
 					$prowordterm1 = ' = %s';
@@ -1047,14 +1050,14 @@ class WlcOrderList { // phpcs:ignore
 				case 'contain':
 				default:
 					$prowordterm1 = ' LIKE %s';
-					$proword1     = "%" . $this->arr_search['product_word'][1] . "%";
+					$proword1     = '%' . $this->arr_search['product_word'][1] . '%';
 					break;
 			}
 
 			$this->searchWhere .= ' ( ';
 
 			if ( 'item_option' == $this->arr_search['product_column'][0] ) {
-				$this->searchWhere .= $wpdb->prepare( '( itemopt.meta_key LIKE %s AND itemopt.meta_value LIKE %s )' , "%" . $this->arr_search['product_word'][0] . "%" , "%" . $this->arr_search['option_word'][0] . "%" );
+				$this->searchWhere .= $wpdb->prepare( '( itemopt.meta_key LIKE %s AND itemopt.meta_value LIKE %s )' , '%' . $this->arr_search['product_word'][0] . '%' , '%' . $this->arr_search['option_word'][0] . '%' );
 			} else {
 				$this->searchWhere .= $wpdb->prepare( esc_sql( $this->arr_search['product_column'][0] ) . $prowordterm0, $proword0 );
 			}
@@ -1062,7 +1065,7 @@ class WlcOrderList { // phpcs:ignore
 			if ( ! empty( $this->arr_search['product_column'][1] ) && ! WCUtils::is_blank( $this->arr_search['product_word'][1] ) ) {
 				$this->searchWhere .= ' ' . $this->arr_search['product_term'] . ' ';
 				if ( 'item_option' == $this->arr_search['product_column'][1] ) {
-					$this->searchWhere .= $wpdb->prepare( '( itemopt.meta_key LIKE %s AND itemopt.meta_value LIKE %s )' , "%" . $this->arr_search['product_word'][1] . "%" , "%" . $this->arr_search['option_word'][1] . "%" );
+					$this->searchWhere .= $wpdb->prepare( '( itemopt.meta_key LIKE %s AND itemopt.meta_value LIKE %s )' , '%' . $this->arr_search['product_word'][1] . '%' , '%' . $this->arr_search['option_word'][1] . '%' );
 				} else {
 					$this->searchWhere .= $wpdb->prepare( esc_sql( $this->arr_search['product_column'][1] ) . $prowordterm1, $proword1 );
 				}
@@ -1179,7 +1182,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Search clear.
 	 */
-	public function SearchOut() { // phpcs:ignore
+	public function SearchOut() {
 		$this->searchWhere  = '';
 		$this->searchHaving = '';
 	}
@@ -1187,7 +1190,7 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Set Navigation.
 	 */
-	public function SetNavi() { // phpcs:ignore
+	public function SetNavi() {
 		$this->lastPage     = ceil( $this->selectedRow / $this->maxRow );
 		$this->previousPage = ( $this->currentPage - 1 == 0 ) ? 1 : $this->currentPage - 1;
 		$this->nextPage     = ( $this->currentPage + 1 > $this->lastPage ) ? $this->lastPage : $this->currentPage + 1;
@@ -1220,13 +1223,13 @@ class WlcOrderList { // phpcs:ignore
 			$html .= '<li class="navigationStr">first&lt;&lt;</li>';
 			$html .= '<li class="navigationStr">prev&lt;</li>';
 		} else {
-			$url       = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changePage=1';
+			$url       = admin_url( 'admin.php?page=usces_orderlist&changePage=1' );
 			$nonce_url = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
-			$html .= '<li class="navigationStr"><a href="' . $nonce_url . '">first&lt;&lt;</a></li>';
+			$html     .= '<li class="navigationStr"><a href="' . $nonce_url . '">first&lt;&lt;</a></li>';
 
-			$url       = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changePage=' . $this->previousPage;
+			$url       = admin_url( 'admin.php?page=usces_orderlist&changePage=' . $this->previousPage );
 			$nonce_url = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
-			$html .= '<li class="navigationStr"><a href="' . $nonce_url . '">prev&lt;</a></li>';
+			$html     .= '<li class="navigationStr"><a href="' . $nonce_url . '">prev&lt;</a></li>';
 		}
 		if ( $this->selectedRow > 0 ) {
 			$box_count = count( $box );
@@ -1234,9 +1237,9 @@ class WlcOrderList { // phpcs:ignore
 				if ( $box[ $i ] == $this->currentPage ) {
 					$html .= '<li class="navigationButtonSelected"><span>' . $box[ $i ] . '</span></li>';
 				} else {
-					$url       = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changePage=' . $box[ $i ];
+					$url       = admin_url( 'admin.php?page=usces_orderlist&changePage=' . $box[ $i ] );
 					$nonce_url = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
-					$html .= '<li class="navigationButton"><a href="' . $nonce_url . '">' . $box[ $i ] . '</a></li>';
+					$html     .= '<li class="navigationButton"><a href="' . $nonce_url . '">' . $box[ $i ] . '</a></li>';
 				}
 			}
 		}
@@ -1245,13 +1248,13 @@ class WlcOrderList { // phpcs:ignore
 			$html .= '<li class="navigationStr">&gt;next</li>';
 			$html .= '<li class="navigationStr">&gt;&gt;last</li>';
 		} else {
-			$url       = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changePage=' . $this->nextPage;
+			$url       = admin_url( 'admin.php?page=usces_orderlist&changePage=' . $this->nextPage );
 			$nonce_url = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
-			$html .= '<li class="navigationStr"><a href="' . $nonce_url . '">&gt;next</a></li>';
+			$html     .= '<li class="navigationStr"><a href="' . $nonce_url . '">&gt;next</a></li>';
 
-			$url       = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changePage=' . $this->lastPage;
+			$url       = admin_url( 'admin.php?page=usces_orderlist&changePage=' . $this->lastPage );
 			$nonce_url = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
-			$html .= '<li class="navigationStr"><a href="' . $nonce_url . '">&gt;&gt;last</a></li>';
+			$html     .= '<li class="navigationStr"><a href="' . $nonce_url . '">&gt;&gt;last</a></li>';
 		}
 		$html .= '</ul>';
 
@@ -1261,21 +1264,21 @@ class WlcOrderList { // phpcs:ignore
 	/**
 	 * Get Cookie.
 	 */
-	public function getCookie() { // phpcs:ignore
-		$this->data_cookie = ( isset( $_COOKIE[ $this->table ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->table ] ) ), true ) : array(); // phpcs:ignore
+	public function getCookie() {
+		$this->data_cookie = ( isset( $_COOKIE[ $this->table ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->table ] ) ), true ) : array();
 	}
 
 	/**
 	 * Set Headers.
 	 */
-	public function SetHeaders() { // phpcs:ignore
+	public function SetHeaders() {
 		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
 		foreach ( $this->columns as $key => $value ) {
 			if ( 'admin_memo' == $key ) {
 				continue;
 			}
 			if ( array_key_exists( $key, $arr_mail_print_fields ) ) {
-				$value = $arr_mail_print_fields[$key]['alias'];
+				$value = $arr_mail_print_fields[ $key ]['alias'];
 			}
 			if ( $key == $this->sortColumn ) {
 				if ( isset( $this->sortSwitchs[ $key ] ) && 'ASC' == $this->sortSwitchs[ $key ] ) {
@@ -1285,12 +1288,12 @@ class WlcOrderList { // phpcs:ignore
 					$str    = __( '[DESC]', 'usces' );
 					$switch = 'ASC';
 				}
-				$url                   = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changeSort=' . $key . '&switch=' . $switch;
+				$url                   = admin_url( 'admin.php?page=usces_orderlist&changeSort=' . $key . '&switch=' . $switch );
 				$nonce_url             = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
 				$this->headers[ $key ] = '<a href="' . $nonce_url . '"><span class="sortcolumn">' . $value . ' ' . $str . '</span></a>';
 			} else {
 				$switch                = isset( $this->sortSwitchs[ $key ] ) ? $this->sortSwitchs[ $key ] : 'DESC';
-				$url                   = site_url() . '/wp-admin/admin.php?page=usces_orderlist&changeSort=' . $key . '&switch=' . $switch;
+				$url                   = admin_url( 'admin.php?page=usces_orderlist&changeSort=' . $key . '&switch=' . $switch );
 				$nonce_url             = wp_nonce_url( $url, 'order_list', 'wc_nonce' );
 				$this->headers[ $key ] = '<a href="' . $nonce_url . '"><span>' . $value . '</span></a>';
 			}
@@ -1302,7 +1305,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetSearchs() { // phpcs:ignore
+	public function GetSearchs() {
 		return $this->arr_search;
 	}
 
@@ -1311,7 +1314,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetListheaders() { // phpcs:ignore
+	public function GetListheaders() {
 		return $this->headers;
 	}
 
@@ -1320,7 +1323,7 @@ class WlcOrderList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetDataTableNavigation() { // phpcs:ignore
+	public function GetDataTableNavigation() {
 		return $this->dataTableNavigation;
 	}
 

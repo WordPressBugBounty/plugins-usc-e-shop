@@ -942,7 +942,7 @@ jQuery(document).ready(function($) {
 			if ( WCUtils::is_blank( $post_data['clientip'] ) ) {
 				$this->error_mes .= '※カード決済IPコードを入力してください<br />';
 			}
-			if ( isset( $post_data['authkey'] ) && WCUtils::is_blank( $post_data['authkey'] ) && isset( $post_data['security'] ) && 3 === (int) $post_data['security'] ) {
+			if ( WCUtils::is_blank( $post_data['authkey'] ) && 2 === (int) $post_data['connection'] ) {
 				$this->error_mes .= '※認証キーを入力してください<br />';
 			}
 			if ( isset( $post_data['batch'] ) && 'on' === $post_data['batch'] ) {

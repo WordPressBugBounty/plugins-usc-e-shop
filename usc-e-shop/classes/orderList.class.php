@@ -5,8 +5,7 @@
  *
  * @package Welcart
  */
-class dataList { // phpcs:ignore
-	// phpcs:disable
+class dataList {
 	var $table;               /* テーブル名 */
 	var $rows;                /* データ */
 	var $action;              /* アクション */
@@ -40,7 +39,11 @@ class dataList { // phpcs:ignore
 	var $data_cookie;
 	var $startdate;
 	var $enddate;
-	// phpcs:enable
+
+	public $listOption;
+	public $totalRow;
+	public $selectedRow;
+	public $headers;
 
 	/**
 	 * Constructor.
@@ -48,7 +51,7 @@ class dataList { // phpcs:ignore
 	 * @param string $tableName Table name.
 	 * @param array  $arr_column Column.
 	 */
-	public function __construct( $tableName, $arr_column ) { // phpcs:ignore
+	public function __construct( $tableName, $arr_column ) {
 		$this->table   = $tableName;
 		$this->columns = $arr_column;
 		$this->rows    = array();
@@ -99,7 +102,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Set Selects.
 	 */
-	public function SetSelects() { // phpcs:ignore
+	public function SetSelects() {
 		global $wpdb;
 
 		$status_sql = '';
@@ -159,7 +162,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Set Join Tables.
 	 */
-	public function SetJoinTables() { // phpcs:ignore
+	public function SetJoinTables() {
 		global $wpdb;
 		$meta_table          = $wpdb->prefix . 'usces_order_meta';
 		$ordercart_table     = $wpdb->prefix . 'usces_ordercart';
@@ -187,7 +190,7 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return mixed
 	 */
-	public function MakeTable() { // phpcs:ignore
+	public function MakeTable() {
 		$this->SetParam();
 		switch ( $this->action ) {
 
@@ -239,7 +242,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Default Parameters.
 	 */
-	public function SetDefaultParam() { // phpcs:ignore
+	public function SetDefaultParam() {
 		$this->startRow           = isset( $this->data_cookie['startRow'] ) ? $this->data_cookie['startRow'] : 0;
 		$this->currentPage        = isset( $this->data_cookie['currentPage'] ) ? $this->data_cookie['currentPage'] : 1;
 		$this->sortColumn         = ( isset( $this->data_cookie['sortColumn'] ) ) ? $this->data_cookie['sortColumn'] : 'ID';
@@ -273,14 +276,14 @@ class dataList { // phpcs:ignore
 	/**
 	 * Set Parameters.
 	 */
-	public function SetParam() { // phpcs:ignore
-		$this->startRow = ( $this->currentPage - 1 ) * $this->maxRow; // phpcs:ignore
+	public function SetParam() {
+		$this->startRow = ( $this->currentPage - 1 ) * $this->maxRow;
 	}
 
 	/**
 	 * Set Parameters.
 	 */
-	public function SetParamByQuery() { // phpcs:ignore
+	public function SetParamByQuery() {
 		global $wpdb;
 		if ( isset( $_REQUEST['changePage'] ) ) {
 
@@ -401,7 +404,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Validation Search Parameters.
 	 */
-	public function validationSearchParameters() { // phpcs:ignore
+	public function validationSearchParameters() {
 		$default_sku_columns = [ 'item_code', 'item_name' ];
 		if ( 'none' != $this->arr_search['column'] && ! in_array( $this->arr_search['column'], $this->columns ) ) {
 			if ( is_array( $this->arr_search['word'] ) && count( $this->arr_search['word'] ) && in_array( $key = key( $this->arr_search['word'] ), $this->columns ) ) {
@@ -424,7 +427,7 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return array
 	 */
-	public function GetRows() { // phpcs:ignore
+	public function GetRows() {
 		global $wpdb;
 		$where = $this->GetWhere();
 		$order = ' ORDER BY `' . esc_sql( $this->sortColumn ) . '` ' . esc_sql( $this->sortSwitchs[ $this->sortColumn ] );
@@ -473,7 +476,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Set Total Rows.
 	 */
-	public function SetTotalRow() { // phpcs:ignore
+	public function SetTotalRow() {
 		global $wpdb;
 		$where = '';
 		if ( $this->period_specified_index == $this->arr_search['period'] ) {
@@ -511,7 +514,7 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetWhere() { // phpcs:ignore
+	public function GetWhere() {
 		global $wpdb;
 		$str   = '';
 		$where = '';
@@ -594,7 +597,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Search.
 	 */
-	public function SearchIn() { // phpcs:ignore
+	public function SearchIn() {
 		global $wpdb;
 		switch ( $this->arr_search['column'] ) {
 			case 'ID':
@@ -657,7 +660,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Search clear.
 	 */
-	public function SearchOut() { // phpcs:ignore
+	public function SearchOut() {
 		$this->searchSql    = '';
 		$this->searchSkuSql = '';
 	}
@@ -665,7 +668,7 @@ class dataList { // phpcs:ignore
 	/**
 	 * Set Navigation.
 	 */
-	public function SetNavi() { // phpcs:ignore
+	public function SetNavi() {
 		$this->lastPage     = ceil( $this->selectedRow / $this->maxRow );
 		$this->previousPage = ( $this->currentPage - 1 == 0 ) ? 1 : $this->currentPage - 1;
 		$this->nextPage     = ( $this->currentPage + 1 > $this->lastPage ) ? $this->lastPage : $this->currentPage + 1;
@@ -733,14 +736,14 @@ class dataList { // phpcs:ignore
 	/**
 	 * Get Cookie.
 	 */
-	public function getCookie() { // phpcs:ignore
-		$this->data_cookie = ( isset( $_COOKIE[ $this->table ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->table ] ) ), true ) : array(); // phpcs:ignore
+	public function getCookie() {
+		$this->data_cookie = ( isset( $_COOKIE[ $this->table ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->table ] ) ), true ) : array();
 	}
 
 	/**
 	 * Set Headers.
 	 */
-	public function SetHeaders() { // phpcs:ignore
+	public function SetHeaders() {
 		foreach ( $this->columns as $key => $value ) {
 			if ( $value == $this->sortColumn ) {
 				if ( 'ASC' == $this->sortSwitchs[ $value ] ) {
@@ -763,7 +766,7 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetSearchs() { // phpcs:ignore
+	public function GetSearchs() {
 		return $this->arr_search;
 	}
 
@@ -772,7 +775,7 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetListheaders() { // phpcs:ignore
+	public function GetListheaders() {
 		return $this->headers;
 	}
 
@@ -781,8 +784,8 @@ class dataList { // phpcs:ignore
 	 *
 	 * @return string
 	 */
-	public function GetDataTableNavigation() { // phpcs:ignore
-		return $this->dataTableNavigation; // phpcs:ignore
+	public function GetDataTableNavigation() {
+		return $this->dataTableNavigation;
 	}
 
 	/**

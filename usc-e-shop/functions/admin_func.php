@@ -491,19 +491,32 @@ function usces_mail_data() {
  * @return void
  */
 function usces_hide_none_item_cat() {
+	global $wp_version;
 	$current_page        = isset( $_GET['page'] ) ? wp_unslash( $_GET['page'] ) : '';
 	$is_new_or_edit_item = in_array( $current_page, array( 'usces_itemnew', 'usces_itemedit' ), true );
 	if ( $is_new_or_edit_item ) :
-		$item_cats             = get_term_children( USCES_ITEM_CAT_PARENT_ID, 'category' );
-		$item_cat_checkbox_ids = array( '#category-' . USCES_ITEM_CAT_PARENT_ID );
+		$item_cats = get_term_children( USCES_ITEM_CAT_PARENT_ID, 'category' );
+		if ( version_compare( $wp_version, '6.7', '>=' ) ) {
+			$li_category_id     = '[id*="in-category-' . USCES_ITEM_CAT_PARENT_ID . '-"]';
+			$li_category_prefix = 'in-category-';
+		} else {
+			$li_category_id     = '#category-' . USCES_ITEM_CAT_PARENT_ID;
+			$li_category_prefix = 'category-';
+		}
+		$item_cat_checkbox_ids = array( $li_category_id );
 		foreach ( $item_cats as $item_cat_id ) {
-			$item_cat_checkbox_ids[] = '#category-' . $item_cat_id;
+			if ( version_compare( $wp_version, '6.7', '>=' ) ) {
+				$li_category_id = '[id*="in-category-' . $item_cat_id . '-"]';
+			} else {
+				$li_category_id = '#category-' . $item_cat_id;
+			}
+			$item_cat_checkbox_ids[] = $li_category_id;
 		}
 		$item_cat_checkbox_ids_str = implode( ',', $item_cat_checkbox_ids );
 		?>
 <script>
 	(function($) {
-		$('#category-all ul#categorychecklist li[id*="category-"]').not('<?php wel_esc_script_e( $item_cat_checkbox_ids_str ); ?>').hide();
+		$('#category-all ul#categorychecklist li[id*="<?php echo esc_attr( $li_category_prefix ); ?>"]').not('<?php wel_esc_script_e( $item_cat_checkbox_ids_str ); ?>').hide();
 	})(jQuery);
 </script>
 		<?php
@@ -753,7 +766,7 @@ function wel_get_plugins() {
 	$result = '';
 
 	$all_plugins    = get_plugins();
-	$active_plugins = get_option('active_plugins');
+	$active_plugins = get_option( 'active_plugins' );
 
 	foreach ( $active_plugins as $plugin_path ) {
 		if ( strpos( $plugin_path, 'wcex' ) === 0 && isset( $all_plugins[ $plugin_path ] ) ) {
@@ -777,7 +790,7 @@ function wel_get_activ_pay_methd() {
 	$payment_method = get_option( 'usces_payment_method' );
 
 	foreach ( $payment_method as $method ) {
-		if ( 'activate' !== $method['use']) {
+		if ( empty( $method['use'] ) || 'activate' !== $method['use'] ) {
 			continue;
 		}
 		$payname = str_replace( 'acting', '', $method['settlement'] );

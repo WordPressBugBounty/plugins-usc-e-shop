@@ -26,6 +26,10 @@ class dataList
 	var $placeholder_escape;
 	var $data_cookie;
 
+	public $totalRow;
+	public $selectedRow;
+	public $headers;
+
 	//Constructor
 	function __construct($tableName, $arr_column)
 	{

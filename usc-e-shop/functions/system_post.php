@@ -494,7 +494,7 @@ function add_delivery_method() {
 	}
 	$index = ( isset( $options['delivery_method'] ) && is_array( $options['delivery_method'] ) ) ? count( $options['delivery_method'] ) : 0;
 
-	$time       = wel_esc_script( str_replace( "\r\n", "\n", wp_unslash( $_POST['time'] ) ) );
+	$time       = wel_esc_script( str_replace( "\r\n", "\n", wp_unslash( $_POST['timeband'] ) ) );
 	$time       = str_replace( "\r", "\n", $time );
 	$time_array = explode( "\n", $time );
 	$times      = array();
@@ -543,7 +543,7 @@ function update_delivery_method() {
 			$index = $i;
 		}
 	}
-	$time       = wel_esc_script( str_replace( "\r\n", "\n", wp_unslash( $_POST['time'] ) ) );
+	$time       = wel_esc_script( str_replace( "\r\n", "\n", wp_unslash( $_POST['timeband'] ) ) );
 	$time       = str_replace( "\r", "\n", $time );
 	$time_array = explode( "\n", $time );
 	$times      = array();
