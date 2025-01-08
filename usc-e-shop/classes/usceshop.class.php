@@ -4117,7 +4117,7 @@ class usc_e_shop {
 		}
 	}
 
-	public function template_redirect () {
+	public function template_redirect() {
 		global $wpdb, $wp_version, $post, $usces_entries, $usces_carts, $usces_members, $usces_gp, $member_regmode;
 
 		if ( version_compare( $wp_version, '4.4-beta', '>' ) && is_embed() ) {
@@ -7060,7 +7060,7 @@ class usc_e_shop {
 			'hierarchical' => 0,
 		);
 		$categories = get_categories( $args );
-		foreach ( $categories as $category ) {
+		foreach ( (array) $categories as $category ) {
 			$ids[] = $category->term_id;
 		}
 		return $ids;
@@ -7075,25 +7075,28 @@ class usc_e_shop {
 	}
 
 	public function get_item_cat_genre_ids( $post_id ) {
-		$ids        = array();
-		$all_ids    = array();
-		$genre      = get_category_by_slug( 'itemgenre' );
-		$genre_id   = $genre->term_id;
-		$args       = array(
-			'child_of'     => $genre_id,
-			'hide_empty'   => 0,
-			'hierarchical' => 0,
-		);
-		$categories = get_categories( $args );
-		foreach ( $categories as $category ) {
-			$ids[] = $category->term_id;
+		$ids     = array();
+		$all_ids = array();
+		$genre   = get_category_by_slug( 'itemgenre' );
+		if ( ! empty( $genre->term_id ) ) {
+			$genre_id = $genre->term_id;
+			$args     = array(
+				'child_of'     => $genre_id,
+				'hide_empty'   => 0,
+				'hierarchical' => 0,
+			);
+			$categories = get_categories( $args );
+			foreach ( (array) $categories as $category ) {
+				$ids[] = $category->term_id;
+			}
+			$allcats = get_the_category( $post_id );
+			foreach ( (array) $allcats as $cat ) {
+				$all_ids[] = $cat->term_id;
+			}
+			$results = array_intersect( $ids, $all_ids );
+		} else {
+			$results = array();
 		}
-		$allcats = get_the_category( $post_id );
-		foreach ( $allcats as $cat ) {
-			$all_ids[] = $cat->term_id;
-		}
-		$results = array_intersect( $ids, $all_ids );
-
 		return $results;
 	}
 

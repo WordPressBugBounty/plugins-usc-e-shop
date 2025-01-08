@@ -2384,7 +2384,7 @@ function usces_get_first_order_mail() {
 function uesces_get_mail_addressform( $type, $data, $order_id, $out = 'return' ) {
 	global $usces, $usces_settings;
 
-	$options       = get_option( 'usces' );
+	$options       = get_option( 'usces', array() );
 	$applyform     = usces_get_apply_addressform( $options['system']['addressform'] );
 	$values        = array();
 	$value_default = array(

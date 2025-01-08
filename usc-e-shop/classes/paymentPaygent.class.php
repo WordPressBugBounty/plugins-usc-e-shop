@@ -1640,7 +1640,7 @@ jQuery( document ).ready( function( $ ) {
 
 		$this->error_mes  = '';
 		$payment_method   = usces_get_system_option( 'usces_payment_method', 'settlement' );
-		$options          = get_option( 'usces' );
+		$options          = get_option( 'usces', array() );
 		$certificate_path = $options['acting_settings']['paygent']['certificate_path'];
 		$post_data        = wp_unslash( $_POST );
 

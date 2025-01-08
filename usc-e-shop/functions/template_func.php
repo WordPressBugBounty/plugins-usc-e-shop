@@ -383,7 +383,7 @@ function usces_the_shipment_aim( $out = '' ) {
 	if ( 0 === $no ) {
 		return '';
 	}
-	$rules = get_option( 'usces_shipping_rule' );
+	$rules = get_option( 'usces_shipping_rule', array() );
 
 	if ( 'return' === $out ) {
 		return $rules[ $no ];
@@ -4350,7 +4350,7 @@ function usces_get_confirm_rows( $out = '' ) {
 function uesces_addressform( $type, $data, $out = 'return' ) {
 	global $usces, $usces_settings;
 
-	$options   = get_option( 'usces' );
+	$options   = get_option( 'usces', array() );
 	$form      = $options['system']['addressform'];
 	$nameform  = $usces_settings['nameform'][ $form ];
 	$applyform = usces_get_apply_addressform( $form );
@@ -5077,7 +5077,7 @@ function usces_the_itemCpriceCr_taxincluded( $out = '' ) {
  */
 function usces_password_policy_message( $out = '' ) {
 
-	$usces_options = get_option( 'usces' );
+	$usces_options = get_option( 'usces', array() );
 	$rules         = array();
 	$sep           = '';
 

@@ -38,7 +38,7 @@ class OPERATION_LOG {
 	 */
 	public function initialize_data() {
 		global $usces;
-		$options                                      = get_option( 'usces_ex' );
+		$options                                      = get_option( 'usces_ex', array() );
 		$options['system']['operation_log']['status'] = isset( $options['system']['operation_log']['status'] ) ? (int) $options['system']['operation_log']['status'] : 1;
 		$options['system']['operation_log']['order_status']  = isset( $options['system']['operation_log']['order_status'] ) ? (int) $options['system']['operation_log']['order_status'] : 1;
 		$options['system']['operation_log']['member_status'] = isset( $options['system']['operation_log']['member_status'] ) ? (int) $options['system']['operation_log']['member_status'] : 1;
@@ -129,7 +129,7 @@ class OPERATION_LOG {
 			self::$opts['member_status']              = (int) $member_status;
 			self::$opts['admin_log_retention_period'] = $admin_log_retention_period;
 
-			$options                            = get_option( 'usces_ex' );
+			$options                            = get_option( 'usces_ex', array() );
 			$options['system']['operation_log'] = self::$opts;
 			update_option( 'usces_ex', $options );
 

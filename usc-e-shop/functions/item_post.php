@@ -337,7 +337,7 @@ function _list_item_sku_meta_row( $sku ) {
 	$skuunit           = $sku['unit'];
 	$skugptekiyo       = $sku['gp'];
 	$id                = (int) $sku['meta_id'];
-	$zaikoselectarray  = get_option( 'usces_zaiko_status' );
+	$zaikoselectarray  = get_option( 'usces_zaiko_status', array() );
 	$zaikoselectarray  = apply_filters( 'usces_filter_zaikoselectarray', $zaikoselectarray );
 	$zaikoselect_count = ( $zaikoselectarray && is_array( $zaikoselectarray ) ) ? count( $zaikoselectarray ) : 0;
 	$sort              = (int) $sku['sort'];
@@ -439,7 +439,7 @@ function item_sku_meta_form() {
 			<td class="item-sku-zaiko">
 				<select id="newskuzaikoselect" name="newskuzaikoselect" class="newskuzaikoselect metaboxfield">
 			<?php
-			$zaikoselectarray = get_option( 'usces_zaiko_status' );
+			$zaikoselectarray = get_option( 'usces_zaiko_status', array() );
 			foreach ( $zaikoselectarray as $v => $l ) {
 				echo "\n" . '<option value="' . esc_attr( $v ) . '">' . esc_html( $l ) . '</option>';
 			}
@@ -725,7 +725,7 @@ function list_item_option_meta( $opts ) {
 function _list_item_option_meta_row( $opt ) {
 	$r     = '';
 	$style = '';
-	$means = get_option( 'usces_item_option_select' );
+	$means = get_option( 'usces_item_option_select', array() );
 
 	$name        = $opt['name'];
 	$meansoption = '';
@@ -784,7 +784,7 @@ function _list_item_option_meta_row( $opt ) {
  * Common option meta form
  */
 function common_option_meta_form() {
-	$means       = get_option( 'usces_item_option_select' );
+	$means       = get_option( 'usces_item_option_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '">' . esc_html( $meanvalue ) . "</option>\n";
@@ -830,7 +830,7 @@ function item_option_meta_form() {
 	$limit       = (int) apply_filters( 'postmeta_form_limit', 30 );
 	$cart_number = (int) get_option( 'usces_cart_number' );
 	$opts        = usces_get_opts( $cart_number );
-	$means       = get_option( 'usces_item_option_select' );
+	$means       = get_option( 'usces_item_option_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '">' . esc_html( $meanvalue ) . "</option>\n";
@@ -1888,14 +1888,14 @@ function item_save_metadata( $post_id, $post ) {
 
 	$item_data['itemIndividualSCharge'] = null !== $inputs['itemIndividualSCharge'] ? 1 : 0;
 
-	$options         = get_option( 'usces' );
+	$options         = get_option( 'usces', array() );
 	$acting_settings = ( isset( $options['acting_settings'] ) ) ? $options['acting_settings'] : array();
-	if ( isset( $acting_settings['welcart'] ) && 'on' === $acting_settings['welcart']['atodene_byitem'] ) {
+	if ( isset( $acting_settings['welcart'] ) && isset( $acting_settings['welcart']['atodene_byitem'] ) && 'on' === $acting_settings['welcart']['atodene_byitem'] ) {
 		$item_data['atodene_propriety'] = null !== $inputs['atodene_propriety'] ? (int) $inputs['atodene_propriety'] : 0;
 	}
-	$options         = get_option( 'usces_ex' );
-	$system_settings = $options['system'];
-	if ( isset( $system_settings['atobaraicsv'] ) && 1 === (int) $system_settings['atobaraicsv']['each_item'] ) {
+	$options_ex      = get_option( 'usces_ex', array() );
+	$system_settings = ( isset( $options_ex['system'] ) ) ? $options_ex['system'] : array();
+	if ( isset( $system_settings['atobaraicsv'] ) && isset( $system_settings['atobaraicsv']['each_item'] ) && 1 === (int) $system_settings['atobaraicsv']['each_item'] ) {
 		$item_data['atobarai_propriety'] = null !== $inputs['deferred_payment_propriety'] ? (int) $inputs['deferred_payment_propriety'] : 0;
 	}
 
@@ -2119,7 +2119,7 @@ function _list_custom_order_meta_row( $key, $entry ) {
 	$key   = esc_attr( $key );
 
 	$name        = esc_attr( $entry['name'] );
-	$means       = get_option( 'usces_custom_order_select' );
+	$means       = get_option( 'usces_custom_order_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '"' . selected( $meankey, $entry['means'], false ) . '>' . esc_html( $meanvalue ) . "</option>\n";
@@ -2416,7 +2416,7 @@ function _list_custom_customer_meta_row( $key, $entry ) {
 	$key   = esc_attr( $key );
 
 	$name        = esc_attr( $entry['name'] );
-	$means       = get_option( 'usces_custom_customer_select' );
+	$means       = get_option( 'usces_custom_customer_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '"' . selected( $meankey, $entry['means'], false ) . '>' . esc_html( $meanvalue ) . "</option>\n";
@@ -2429,7 +2429,7 @@ function _list_custom_customer_meta_row( $key, $entry ) {
 		}
 	}
 	$value           = esc_attr( trim( $value ) );
-	$positions       = get_option( 'usces_custom_field_position_select' );
+	$positions       = get_option( 'usces_custom_field_position_select', array() );
 	$positionsoption = '';
 	foreach ( $positions as $poskey => $posvalue ) {
 		$positionsoption .= '<option value="' . esc_attr( $poskey ) . '"' . selected( $poskey, $entry['position'], false ) . '>' . esc_attr( $posvalue ) . "</option>\n";
@@ -2462,7 +2462,7 @@ function _list_custom_delivery_meta_row( $key, $entry ) {
 	$key   = esc_attr( $key );
 
 	$name        = esc_attr( $entry['name'] );
-	$means       = get_option( 'usces_custom_delivery_select' );
+	$means       = get_option( 'usces_custom_delivery_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '"' . selected( $meankey, $entry['means'], false ) . '>' . esc_html( $meanvalue ) . "</option>\n";
@@ -2475,7 +2475,7 @@ function _list_custom_delivery_meta_row( $key, $entry ) {
 		}
 	}
 	$value           = esc_attr( trim( $value ) );
-	$positions       = get_option( 'usces_custom_field_position_select' );
+	$positions       = get_option( 'usces_custom_field_position_select', array() );
 	$positionsoption = '';
 	foreach ( $positions as $poskey => $posvalue ) {
 		$positionsoption .= '<option value="' . esc_attr( $poskey ) . '"' . selected( $poskey, $entry['position'], false ) . '>' . esc_attr( $posvalue ) . "</option>\n";
@@ -2508,7 +2508,7 @@ function _list_custom_member_meta_row( $key, $entry ) {
 	$key   = esc_attr( $key );
 
 	$name        = esc_attr( $entry['name'] );
-	$means       = get_option( 'usces_custom_member_select' );
+	$means       = get_option( 'usces_custom_member_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '"' . selected( $meankey, $entry['means'], false ) . '>' . esc_html( $meanvalue ) . "</option>\n";
@@ -2521,7 +2521,7 @@ function _list_custom_member_meta_row( $key, $entry ) {
 		}
 	}
 	$value           = esc_attr( trim( $value ) );
-	$positions       = get_option( 'usces_custom_field_position_select' );
+	$positions       = get_option( 'usces_custom_field_position_select', array() );
 	$positionsoption = '';
 	foreach ( $positions as $poskey => $posvalue ) {
 		$positionsoption .= '<option value="' . esc_attr( $poskey ) . '"' . selected( $poskey, $entry['position'], false ) . '>' . esc_attr( $posvalue ) . "</option>\n";
@@ -2553,7 +2553,7 @@ function _list_admin_custom_member_meta_row( $key, $entry ) {
 	$key   = esc_attr( $key );
 
 	$name        = esc_attr( $entry['name'] );
-	$means       = get_option( 'usces_custom_member_select' );
+	$means       = get_option( 'usces_custom_member_select', array() );
 	$meansoption = '';
 	foreach ( $means as $meankey => $meanvalue ) {
 		$meansoption .= '<option value="' . esc_attr( $meankey ) . '"' . selected( $meankey, $entry['means'], false ) . '>' . esc_html( $meanvalue ) . "</option>\n";

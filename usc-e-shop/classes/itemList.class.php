@@ -17,6 +17,7 @@ class dataList {
 	public $lastPage;            /* 最終ページNo */
 	public $naviMaxButton;       /* ページネーション・ナビのボタンの数 */
 	public $dataTableNavigation; /* ナヴィゲーションhtmlコード */
+	public $dataTableNavigationBottom;
 	public $arr_period;          /* 表示データ期間 */
 	public $arr_search;          /* サーチ条件 */
 	public $searchSql;           /* 簡易絞込みSQL */
@@ -32,7 +33,6 @@ class dataList {
 	public $data_cookie;
 	public $totalRow;
 	public $selectedRow;
-
 	public $headers;
 
 	/**
@@ -506,6 +506,7 @@ class dataList {
 			$nonce_url = wp_nonce_url( $url, 'item_master_list', 'wc_nonce' );
 			$html     .= '<li class="navigationStr"><a href="' . $nonce_url . '">&gt;&gt;last</a></li>';
 		}
+		$this->dataTableNavigationBottom = $html;
 		if ( 'OFF' == $this->searchSwitchStatus ) {
 			$html .= '<li class="navigationStr"><a style="cursor:pointer;" id="searchVisiLink">' . __( 'Show the Operation field', 'usces' ) . '</a>';
 		} else {
@@ -587,6 +588,15 @@ class dataList {
 	 */
 	public function GetDataTableNavigation() {
 		return $this->dataTableNavigation;
+	}
+
+	/**
+	 * Get Navigation Bottom.
+	 *
+	 * @return string
+	 */
+	public function GetDataTableNavigationBottom() {
+		return $this->dataTableNavigationBottom;
 	}
 
 	/**

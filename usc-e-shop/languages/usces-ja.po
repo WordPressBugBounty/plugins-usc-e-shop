@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2024-11-12 17:32+0900\n"
+"PO-Revision-Date: 2024-12-06 15:56+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11767,3 +11767,12 @@ msgstr "メールによる本人認証に失敗しました。"
 
 msgid "Authentication URL has expired or invalid access."
 msgstr "認証URLの有効期限が切れているか無効なアクセスです。"
+
+msgid "File is not selected."
+msgstr "ファイルが選択されていません。"
+
+msgid "Uploading now"
+msgstr "アップロード中"
+
+msgid "Data check"
+msgstr "データチェック"

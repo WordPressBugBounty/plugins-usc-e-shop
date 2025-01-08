@@ -50,13 +50,13 @@ class WlcMemberList {
 		$this->admb_meta = usces_has_custom_field_meta( 'admin_member' );
 		$this->csod_meta = usces_has_custom_field_meta( 'order' );
 
-		$this->listOption = get_option( 'usces_memberlist_option' );
+		$this->listOption = get_option( 'usces_memberlist_option', array() );
 
 		$this->table = usces_get_tablename( 'usces_member' );
 		$this->set_column();
 		$this->rows = array();
 
-		$this->maxRow         = $this->listOption['max_row'];
+		$this->maxRow         = $this->listOption['max_row'] ?? 50;
 		$this->naviMaxButton  = 11;
 		$this->firstPage      = 1;
 		$this->pageLimit      = 'on';

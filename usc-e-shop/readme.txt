@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4 - 8.2
-Stable tag: 2.11.7
+Stable tag: 2.11.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,14 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+8 Jan 2025
+= V2.11.8 =
+-----------
+* [ZEUS] Added support for post-payment settlement.
+* Fixed a bug that the customer information page in built-in templates did not support DLSeller and AutoDelivery.
+* Fixed a bug that caused broken links in the details section of the order data editing page when product data was deleted.
+* Fixed PHP errors.
 
 19 Nov 2024
 = V2.11.7 =

@@ -52,7 +52,7 @@ class USCES_STRUCTURED_DATA_PRODUCT {
 	 */
 	public function initialize_data() {
 		global $usces;
-		$options = get_option( 'usces_ex' );
+		$options = get_option( 'usces_ex', array() );
 
 		$options['system']['structured_data_product']['status']        = ( ! isset( $options['system']['structured_data_product']['status'] ) ) ? 0 : (int) $options['system']['structured_data_product']['status'];
 		$options['system']['structured_data_product']['default_price'] = ( ! isset( $options['system']['structured_data_product']['default_price'] ) ) ? 'first' : $options['system']['structured_data_product']['default_price'];
@@ -80,7 +80,7 @@ class USCES_STRUCTURED_DATA_PRODUCT {
 
 			self::$opts['default_price']                  = ( isset( $_POST['default_price'] ) ) ? $_POST['default_price'] : 'first';
 			self::$opts['status']                         = ( isset( $_POST['structured_data_product_status'] ) ) ? (int) $_POST['structured_data_product_status'] : 0;
-			$options                                      = get_option( 'usces_ex' );
+			$options                                      = get_option( 'usces_ex', array() );
 			$options['system']['structured_data_product'] = self::$opts;
 			if ( isset( $options['system']['structured_data_product']['error_message'] ) ) {
 				unset( $options['system']['structured_data_product']['error_message'] );
@@ -93,7 +93,8 @@ class USCES_STRUCTURED_DATA_PRODUCT {
 	 * システム設定 > 拡張機能のフォーム作成.
 	 */
 	public function setting_form() {
-		$status = ( self::$opts['status'] || self::$opts['status'] ) ? '<span class="running">' . __( 'Running', 'usces' ) . '</span>' : '<span class="stopped">' . __( 'Stopped', 'usces' ) . '</span>';
+		$status  = ( self::$opts['status'] || self::$opts['status'] ) ? '<span class="running">' . __( 'Running', 'usces' ) . '</span>' : '<span class="stopped">' . __( 'Stopped', 'usces' ) . '</span>';
+		$colspan = count( self::$default_option['default_price'] );
 		?>
 		<form action="" method="post" name="option_form" id="structured_data_product_form">
 			<div class="postbox">
@@ -129,7 +130,7 @@ class USCES_STRUCTURED_DATA_PRODUCT {
 										id="structured_data_product_status_1"
 										value="1"<?php checked( self::$opts['status'], 1 ); ?> />
 							</td>
-							<td>
+							<td colspan="<?php echo esc_attr( $colspan ); ?>">
 								<label for="structured_data_product_status_1"><?php esc_html_e( 'enable', 'usces' ); ?></label>
 							</td>
 							<td>

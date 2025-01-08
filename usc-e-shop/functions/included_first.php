@@ -25,7 +25,7 @@ function usces_filter_locale( $locale ) {
 		|| ( isset( $_POST['action'] ) && isset( $_POST['mode'] ) && 'order_item_ajax' == $_POST['action'] && in_array( $_POST['mode'], $mode ) )
 		|| ( isset( $_REQUEST['order_action'] ) && 'pdfout' == $_REQUEST['order_action'] )
 	) {
-		$usces_options = get_option( 'usces' );
+		$usces_options = get_option( 'usces', array() );
 		if ( isset( $usces_options['system']['front_lang'] ) && ! empty( $usces_options['system']['front_lang'] ) ) {
 			$locale = $usces_options['system']['front_lang'];
 		}
@@ -38,7 +38,7 @@ function usces_filter_locale( $locale ) {
  */
 function usces_dual_textdomain() {
 	$locale        = get_locale();
-	$usces_options = get_option( 'usces' );
+	$usces_options = get_option( 'usces', array() );
 	if ( isset( $usces_options['system']['front_lang'] ) && ! empty( $usces_options['system']['front_lang'] ) ) {
 		$locale = $usces_options['system']['front_lang'];
 	}

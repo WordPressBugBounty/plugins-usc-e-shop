@@ -40,7 +40,7 @@ class NEW_PRODUCT_IMAGE_REGISTER {
 	 * Handle init data.
 	 */
 	public function initialize_data() {
-		$options = get_option( 'usces_ex' );
+		$options = get_option( 'usces_ex', array() );
 		$options['system']['newproductimage']['switch_flag'] = ! isset( $options['system']['newproductimage']['switch_flag'] ) ? 1 : (int) $options['system']['newproductimage']['switch_flag'];
 		update_option( 'usces_ex', $options );
 		self::$opts = $options['system']['newproductimage'];
@@ -62,7 +62,7 @@ class NEW_PRODUCT_IMAGE_REGISTER {
 				self::$opts['switch_flag'] = (int) $_POST['newproductimage_switch_flag'];
 			}
 
-			$options                              = get_option( 'usces_ex' );
+			$options                              = get_option( 'usces_ex', array() );
 			$options['system']['newproductimage'] = self::$opts;
 			update_option( 'usces_ex', $options );
 		}

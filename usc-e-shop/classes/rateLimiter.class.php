@@ -25,7 +25,7 @@ class RateLimiter {
 		$this->ip_blocked_path       = $this->folder_log_path . 'ip_addresses_blocked.log';
 
 		// get brute force config.
-		$options              = get_option( 'usces_ex' );
+		$options              = get_option( 'usces_ex', array() );
 		$this->monitoring     = ( ! isset( $options['system']['brute_force']['monitoring_span'] ) ) ? 5 : (int) $options['system']['brute_force']['monitoring_span'];
 		$this->num_of_errors  = ( ! isset( $options['system']['brute_force']['num_of_errors'] ) ) ? 3 : (int) $options['system']['brute_force']['num_of_errors'];
 		$this->rejection_time = ( ! isset( $options['system']['brute_force']['rejection_time'] ) ) ? 10 : (int) $options['system']['brute_force']['rejection_time'];

@@ -61,7 +61,7 @@ class DSK_SETTLEMENT extends SBPS_MAIN {
 	 * Initialize
 	 */
 	public function initialize_data() {
-		$options = get_option( 'usces' );
+		$options = get_option( 'usces', array() );
 
 		$options['acting_settings']['dsk']['merchant_id']      = ( isset( $options['acting_settings']['dsk']['merchant_id'] ) ) ? $options['acting_settings']['dsk']['merchant_id'] : '';
 		$options['acting_settings']['dsk']['service_id']       = ( isset( $options['acting_settings']['dsk']['service_id'] ) ) ? $options['acting_settings']['dsk']['service_id'] : '';
@@ -76,13 +76,13 @@ class DSK_SETTLEMENT extends SBPS_MAIN {
 		$options['acting_settings']['dsk']['mobile_activate']  = 'off';
 		update_option( 'usces', $options );
 
-		$available_settlement = get_option( 'usces_available_settlement' );
+		$available_settlement = get_option( 'usces_available_settlement', array() );
 		if ( ! in_array( 'dsk', $available_settlement ) ) {
 			$available_settlement['dsk'] = $this->acting_formal_name;
 			update_option( 'usces_available_settlement', $available_settlement );
 		}
 
-		$noreceipt_status = get_option( 'usces_noreceipt_status' );
+		$noreceipt_status = get_option( 'usces_noreceipt_status', array() );
 		if ( ! in_array( 'acting_dsk_conv', $noreceipt_status ) || ! in_array( 'acting_dsk_payeasy', $noreceipt_status ) ) {
 			$noreceipt_status[] = 'acting_dsk_conv';
 			$noreceipt_status[] = 'acting_dsk_payeasy';
@@ -101,7 +101,7 @@ class DSK_SETTLEMENT extends SBPS_MAIN {
 		$admin_page = ( isset( $_GET['page'] ) ) ? wp_unslash( $_GET['page'] ) : '';
 		switch ( $admin_page ) :
 			case 'usces_settlement':
-				$settlement_selected = get_option( 'usces_settlement_selected' );
+				$settlement_selected = get_option( 'usces_settlement_selected', array() );
 				if ( in_array( $this->paymod_id, (array) $settlement_selected ) ) :
 					$acting_opts = $this->get_acting_settings();
 					?>
@@ -157,7 +157,7 @@ jQuery( document ).ready( function( $ ) {
 		}
 
 		$this->error_mes = '';
-		$options         = get_option( 'usces' );
+		$options         = get_option( 'usces', array() );
 		$payment_method  = usces_get_system_option( 'usces_payment_method', 'settlement' );
 		$post_data       = wp_unslash( $_POST );
 
@@ -297,7 +297,7 @@ jQuery( document ).ready( function( $ ) {
 	 */
 	public function settlement_tab_body() {
 
-		$settlement_selected = get_option( 'usces_settlement_selected' );
+		$settlement_selected = get_option( 'usces_settlement_selected', array() );
 		if ( in_array( 'dsk', (array) $settlement_selected ) ) :
 			$acting_opts = $this->get_acting_settings();
 			$merchant_id = isset( $acting_opts['merchant_id'] ) ? $acting_opts['merchant_id'] : '';

@@ -66,7 +66,7 @@ class USCES_GANBARE_TENCHO {
 
 			self::$opts['activate_flag'] = isset( $_POST['ganbare_activate_flag'] ) ? (int) $_POST['ganbare_activate_flag'] : 0;
 
-			$options                      = get_option( 'usces_ex' );
+			$options                      = get_option( 'usces_ex', array( 'system' => array( 'ganbare' => array() ) ) );
 			$options['system']['ganbare'] = self::$opts;
 			update_option( 'usces_ex', $options );
 		}

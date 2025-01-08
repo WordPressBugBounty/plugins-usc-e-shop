@@ -106,6 +106,31 @@ class ZEUS_SETTLEMENT {
 	);
 
 	/**
+	 * 運送会社コード表
+	 *
+	 * @var array
+	 */
+	protected $shipping_company = array(
+		'11' => '佐川急便',
+		'12' => 'ヤマト運輸',
+		'15' => '郵便書留',
+		'16' => 'ゆうパック',
+		'27' => 'エコ配',
+		'18' => '福山通運',
+		'14' => '西濃運輸',
+		'13' => '日本通運',
+		'26' => 'JPロジスティクス',
+		'30' => 'セイノーエクスプレス',
+		'21' => '名鉄運輸',
+		'23' => '信州名鉄運輸',
+		'20' => '新潟運輸',
+		'29' => 'トナミ運輸',
+		'31' => '大川配送サービス',
+		'32' => 'プラスサービス',
+		'99' => 'その他',
+	);
+
+	/**
 	 * 決済オプション
 	 *
 	 * @var array
@@ -121,6 +146,7 @@ class ZEUS_SETTLEMENT {
 			'acting_zeus_card',
 			'acting_zeus_bank',
 			'acting_zeus_conv',
+			'acting_zeus_bnpl',
 		);
 		$this->acting_name        = 'ゼウス';
 		$this->acting_formal_name = __( 'ZEUS Japanese Settlement', 'usces' );
@@ -135,9 +161,10 @@ class ZEUS_SETTLEMENT {
 			add_action( 'usces_action_admin_settlement_update', array( $this, 'settlement_update' ) );
 			add_action( 'usces_action_settlement_tab_title', array( $this, 'settlement_tab_title' ) );
 			add_action( 'usces_action_settlement_tab_body', array( $this, 'settlement_tab_body' ) );
+			add_action( 'usces_filter_add_payment_method', array( $this, 'add_payment_method' ) );
 		}
 
-		if ( $this->is_validity_acting( 'card' ) || $this->is_validity_acting( 'bank' ) || $this->is_validity_acting( 'conv' ) ) {
+		if ( $this->is_validity_acting( 'card' ) || $this->is_validity_acting( 'bank' ) || $this->is_validity_acting( 'conv' ) || $this->is_validity_acting( 'bnpl' ) ) {
 			add_action( 'plugins_loaded', array( $this, 'acting_construct' ), 11 );
 			add_action( 'usces_after_cart_instant', array( $this, 'acting_transaction' ), 11 );
 			add_filter( 'usces_filter_order_confirm_mail_payment', array( $this, 'order_confirm_mail_payment' ), 10, 5 );
@@ -154,6 +181,7 @@ class ZEUS_SETTLEMENT {
 				add_filter( 'usces_filter_settle_info_field_meta_keys', array( $this, 'settlement_info_field_meta_keys' ) );
 				add_filter( 'usces_filter_settle_info_field_keys', array( $this, 'settlement_info_field_keys' ), 10, 2 );
 				add_filter( 'usces_filter_settle_info_field_value', array( $this, 'settlement_info_field_value' ), 10, 3 );
+				add_filter( 'usces_filter_deli_comps', array( $this, 'bnpl_delivery_company' ), 10, 2 );
 			} else {
 				add_filter( 'usces_filter_payment_detail', array( $this, 'payment_detail' ), 10, 2 );
 				add_filter( 'usces_filter_payments_str', array( $this, 'payments_str' ), 10, 2 );
@@ -163,6 +191,7 @@ class ZEUS_SETTLEMENT {
 				add_filter( 'usces_filter_confirm_inform', array( $this, 'confirm_inform' ), 10, 5 );
 				add_action( 'usces_action_confirm_page_point_inform', array( $this, 'e_point_inform' ), 10, 5 );
 				add_filter( 'usces_filter_confirm_point_inform', array( $this, 'point_inform' ), 10, 5 );
+				add_filter( 'usces_filter_custom_field_info', array( $this, 'confirm_addition_bnpl' ), 20, 4 );
 				if ( defined( 'WCEX_COUPON' ) ) {
 					add_filter( 'wccp_filter_coupon_inform', array( $this, 'point_inform' ), 10, 5 );
 				}
@@ -205,6 +234,11 @@ class ZEUS_SETTLEMENT {
 				add_filter( 'dlseller_filter_contract_renewal_mail_body', array( $this, 'contract_renewal_mail_body' ), 10, 3 );
 			}
 		}
+
+		if ( $this->is_validity_acting( 'bnpl' ) ) {
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+			add_filter( 'usces_fiter_the_payment_method', array( $this, 'payment_method' ) );
+		}
 	}
 
 	/**
@@ -224,36 +258,43 @@ class ZEUS_SETTLEMENT {
 		$options                                        = get_option( 'usces', array() );
 		$options['acting_settings']['zeus']['ipaddrs']  = ( isset( $options['acting_settings']['zeus']['ipaddrs'] ) ) ? $options['acting_settings']['zeus']['ipaddrs'] : array();
 		$options['acting_settings']['zeus']['card_url'] = ( isset( $options['acting_settings']['zeus']['card_url'] ) ) ? $options['acting_settings']['zeus']['card_url'] : '';
-		$options['acting_settings']['zeus']['card_secureurl']       = ( isset( $options['acting_settings']['zeus']['card_secureurl'] ) ) ? $options['acting_settings']['zeus']['card_secureurl'] : '';
-		$options['acting_settings']['zeus']['card_tokenurl']        = ( isset( $options['acting_settings']['zeus']['card_tokenurl'] ) ) ? $options['acting_settings']['zeus']['card_tokenurl'] : '';
-		$options['acting_settings']['zeus']['bank_url']             = ( isset( $options['acting_settings']['zeus']['bank_url'] ) ) ? $options['acting_settings']['zeus']['bank_url'] : '';
-		$options['acting_settings']['zeus']['conv_url']             = ( isset( $options['acting_settings']['zeus']['conv_url'] ) ) ? $options['acting_settings']['zeus']['conv_url'] : '';
-		$options['acting_settings']['zeus']['card_activate']        = ( isset( $options['acting_settings']['zeus']['card_activate'] ) ) ? $options['acting_settings']['zeus']['card_activate'] : 'off';
-		$options['acting_settings']['zeus']['clientip']             = ( isset( $options['acting_settings']['zeus']['clientip'] ) ) ? $options['acting_settings']['zeus']['clientip'] : '';
-		$options['acting_settings']['zeus']['connection']           = ( isset( $options['acting_settings']['zeus']['connection'] ) ) ? $options['acting_settings']['zeus']['connection'] : 1;
-		$options['acting_settings']['zeus']['3dsecur']              = ( isset( $options['acting_settings']['zeus']['3dsecur'] ) ) ? $options['acting_settings']['zeus']['3dsecur'] : 2;
-		$options['acting_settings']['zeus']['3ds_pattern']          = ( isset( $options['acting_settings']['zeus']['3ds_pattern'] ) ) ? $options['acting_settings']['zeus']['3ds_pattern'] : '';
-		$options['acting_settings']['zeus']['security']             = ( isset( $options['acting_settings']['zeus']['security'] ) ) ? $options['acting_settings']['zeus']['security'] : 2;
-		$options['acting_settings']['zeus']['authkey']              = ( isset( $options['acting_settings']['zeus']['authkey'] ) ) ? $options['acting_settings']['zeus']['authkey'] : '';
-		$options['acting_settings']['zeus']['quickcharge']          = ( isset( $options['acting_settings']['zeus']['quickcharge'] ) ) ? $options['acting_settings']['zeus']['quickcharge'] : '';
-		$options['acting_settings']['zeus']['batch']                = ( isset( $options['acting_settings']['zeus']['batch'] ) ) ? $options['acting_settings']['zeus']['batch'] : '';
-		$options['acting_settings']['zeus']['auto_settlement_mail'] = ( isset( $options['acting_settings']['zeus']['auto_settlement_mail'] ) ) ? $options['acting_settings']['zeus']['auto_settlement_mail'] : 'off';
-		$options['acting_settings']['zeus']['howpay']               = ( isset( $options['acting_settings']['zeus']['howpay'] ) ) ? $options['acting_settings']['zeus']['howpay'] : '';
-		$options['acting_settings']['zeus']['howpay_B1']            = ( isset( $options['acting_settings']['zeus']['howpay_B1'] ) ) ? $options['acting_settings']['zeus']['howpay_B1'] : '';
-		$options['acting_settings']['zeus']['howpay_02']            = ( isset( $options['acting_settings']['zeus']['howpay_02'] ) ) ? $options['acting_settings']['zeus']['howpay_02'] : '';
-		$options['acting_settings']['zeus']['bank_activate']        = ( isset( $options['acting_settings']['zeus']['bank_activate'] ) ) ? $options['acting_settings']['zeus']['bank_activate'] : 'off';
-		$options['acting_settings']['zeus']['bank_ope']             = ( isset( $options['acting_settings']['zeus']['bank_ope'] ) ) ? $options['acting_settings']['zeus']['bank_ope'] : '';
-		$options['acting_settings']['zeus']['clientip_bank']        = ( isset( $options['acting_settings']['zeus']['clientip_bank'] ) ) ? $options['acting_settings']['zeus']['clientip_bank'] : '';
-		$options['acting_settings']['zeus']['testid_bank']          = ( isset( $options['acting_settings']['zeus']['testid_bank'] ) ) ? $options['acting_settings']['zeus']['testid_bank'] : '';
-		$options['acting_settings']['zeus']['bank_expired_date']    = ( isset( $options['acting_settings']['zeus']['bank_expired_date'] ) ) ? $options['acting_settings']['zeus']['bank_expired_date'] : '';
-		$options['acting_settings']['zeus']['conv_activate']        = ( isset( $options['acting_settings']['zeus']['conv_activate'] ) ) ? $options['acting_settings']['zeus']['conv_activate'] : 'off';
-		$options['acting_settings']['zeus']['conv_ope']             = ( isset( $options['acting_settings']['zeus']['conv_ope'] ) ) ? $options['acting_settings']['zeus']['conv_ope'] : '';
-		$options['acting_settings']['zeus']['clientip_conv']        = ( isset( $options['acting_settings']['zeus']['clientip_conv'] ) ) ? $options['acting_settings']['zeus']['clientip_conv'] : '';
-		$options['acting_settings']['zeus']['testid_conv']          = ( isset( $options['acting_settings']['zeus']['testid_conv'] ) ) ? $options['acting_settings']['zeus']['testid_conv'] : '';
-		$options['acting_settings']['zeus']['test_type_conv']       = ( isset( $options['acting_settings']['zeus']['test_type_conv'] ) ) ? $options['acting_settings']['zeus']['test_type_conv'] : '';
-		$options['acting_settings']['zeus']['pay_cvs']              = ( isset( $options['acting_settings']['zeus']['pay_cvs'] ) ) ? $options['acting_settings']['zeus']['pay_cvs'] : array();
-		$options['acting_settings']['zeus']['conv_span']            = ( isset( $options['acting_settings']['zeus']['conv_span'] ) ) ? $options['acting_settings']['zeus']['conv_span'] : '';
-		$options['acting_settings']['zeus']['activate']             = ( isset( $options['acting_settings']['zeus']['activate'] ) ) ? $options['acting_settings']['zeus']['activate'] : 'off';
+		$options['acting_settings']['zeus']['card_secureurl']             = ( isset( $options['acting_settings']['zeus']['card_secureurl'] ) ) ? $options['acting_settings']['zeus']['card_secureurl'] : '';
+		$options['acting_settings']['zeus']['card_tokenurl']              = ( isset( $options['acting_settings']['zeus']['card_tokenurl'] ) ) ? $options['acting_settings']['zeus']['card_tokenurl'] : '';
+		$options['acting_settings']['zeus']['bank_url']                   = ( isset( $options['acting_settings']['zeus']['bank_url'] ) ) ? $options['acting_settings']['zeus']['bank_url'] : '';
+		$options['acting_settings']['zeus']['conv_url']                   = ( isset( $options['acting_settings']['zeus']['conv_url'] ) ) ? $options['acting_settings']['zeus']['conv_url'] : '';
+		$options['acting_settings']['zeus']['card_activate']              = ( isset( $options['acting_settings']['zeus']['card_activate'] ) ) ? $options['acting_settings']['zeus']['card_activate'] : 'off';
+		$options['acting_settings']['zeus']['clientip']                   = ( isset( $options['acting_settings']['zeus']['clientip'] ) ) ? $options['acting_settings']['zeus']['clientip'] : '';
+		$options['acting_settings']['zeus']['connection']                 = ( isset( $options['acting_settings']['zeus']['connection'] ) ) ? $options['acting_settings']['zeus']['connection'] : 1;
+		$options['acting_settings']['zeus']['3dsecur']                    = ( isset( $options['acting_settings']['zeus']['3dsecur'] ) ) ? $options['acting_settings']['zeus']['3dsecur'] : 2;
+		$options['acting_settings']['zeus']['3ds_pattern']                = ( isset( $options['acting_settings']['zeus']['3ds_pattern'] ) ) ? $options['acting_settings']['zeus']['3ds_pattern'] : '';
+		$options['acting_settings']['zeus']['security']                   = ( isset( $options['acting_settings']['zeus']['security'] ) ) ? $options['acting_settings']['zeus']['security'] : 2;
+		$options['acting_settings']['zeus']['authkey']                    = ( isset( $options['acting_settings']['zeus']['authkey'] ) ) ? $options['acting_settings']['zeus']['authkey'] : '';
+		$options['acting_settings']['zeus']['quickcharge']                = ( isset( $options['acting_settings']['zeus']['quickcharge'] ) ) ? $options['acting_settings']['zeus']['quickcharge'] : '';
+		$options['acting_settings']['zeus']['batch']                      = ( isset( $options['acting_settings']['zeus']['batch'] ) ) ? $options['acting_settings']['zeus']['batch'] : '';
+		$options['acting_settings']['zeus']['auto_settlement_mail']       = ( isset( $options['acting_settings']['zeus']['auto_settlement_mail'] ) ) ? $options['acting_settings']['zeus']['auto_settlement_mail'] : 'off';
+		$options['acting_settings']['zeus']['howpay']                     = ( isset( $options['acting_settings']['zeus']['howpay'] ) ) ? $options['acting_settings']['zeus']['howpay'] : '';
+		$options['acting_settings']['zeus']['howpay_B1']                  = ( isset( $options['acting_settings']['zeus']['howpay_B1'] ) ) ? $options['acting_settings']['zeus']['howpay_B1'] : '';
+		$options['acting_settings']['zeus']['howpay_02']                  = ( isset( $options['acting_settings']['zeus']['howpay_02'] ) ) ? $options['acting_settings']['zeus']['howpay_02'] : '';
+		$options['acting_settings']['zeus']['bank_activate']              = ( isset( $options['acting_settings']['zeus']['bank_activate'] ) ) ? $options['acting_settings']['zeus']['bank_activate'] : 'off';
+		$options['acting_settings']['zeus']['bank_ope']                   = ( isset( $options['acting_settings']['zeus']['bank_ope'] ) ) ? $options['acting_settings']['zeus']['bank_ope'] : '';
+		$options['acting_settings']['zeus']['clientip_bank']              = ( isset( $options['acting_settings']['zeus']['clientip_bank'] ) ) ? $options['acting_settings']['zeus']['clientip_bank'] : '';
+		$options['acting_settings']['zeus']['testid_bank']                = ( isset( $options['acting_settings']['zeus']['testid_bank'] ) ) ? $options['acting_settings']['zeus']['testid_bank'] : '';
+		$options['acting_settings']['zeus']['bank_expired_date']          = ( isset( $options['acting_settings']['zeus']['bank_expired_date'] ) ) ? $options['acting_settings']['zeus']['bank_expired_date'] : '';
+		$options['acting_settings']['zeus']['conv_activate']              = ( isset( $options['acting_settings']['zeus']['conv_activate'] ) ) ? $options['acting_settings']['zeus']['conv_activate'] : 'off';
+		$options['acting_settings']['zeus']['conv_ope']                   = ( isset( $options['acting_settings']['zeus']['conv_ope'] ) ) ? $options['acting_settings']['zeus']['conv_ope'] : '';
+		$options['acting_settings']['zeus']['clientip_conv']              = ( isset( $options['acting_settings']['zeus']['clientip_conv'] ) ) ? $options['acting_settings']['zeus']['clientip_conv'] : '';
+		$options['acting_settings']['zeus']['testid_conv']                = ( isset( $options['acting_settings']['zeus']['testid_conv'] ) ) ? $options['acting_settings']['zeus']['testid_conv'] : '';
+		$options['acting_settings']['zeus']['test_type_conv']             = ( isset( $options['acting_settings']['zeus']['test_type_conv'] ) ) ? $options['acting_settings']['zeus']['test_type_conv'] : '';
+		$options['acting_settings']['zeus']['pay_cvs']                    = ( isset( $options['acting_settings']['zeus']['pay_cvs'] ) ) ? $options['acting_settings']['zeus']['pay_cvs'] : array();
+		$options['acting_settings']['zeus']['conv_span']                  = ( isset( $options['acting_settings']['zeus']['conv_span'] ) ) ? $options['acting_settings']['zeus']['conv_span'] : '';
+		$options['acting_settings']['zeus']['bnpl_activate']              = ( isset( $options['acting_settings']['zeus']['bnpl_activate'] ) ) ? $options['acting_settings']['zeus']['bnpl_activate'] : 'off';
+		$options['acting_settings']['zeus']['bnpl_linkid']                = ( isset( $options['acting_settings']['zeus']['bnpl_linkid'] ) ) ? $options['acting_settings']['zeus']['bnpl_linkid'] : 'sbifstest1';
+		$options['acting_settings']['zeus']['clientip_bnpl']              = ( isset( $options['acting_settings']['zeus']['clientip_bnpl'] ) ) ? $options['acting_settings']['zeus']['clientip_bnpl'] : '';
+		$options['acting_settings']['zeus']['bnpl_linkpassword']          = ( isset( $options['acting_settings']['zeus']['bnpl_linkpassword'] ) ) ? $options['acting_settings']['zeus']['bnpl_linkpassword'] : '';
+		$options['acting_settings']['zeus']['bnpl_transaction_url']       = ( isset( $options['acting_settings']['zeus']['bnpl_transaction_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_transaction_url'] : '';
+		$options['acting_settings']['zeus']['bnpl_shippingrequest_url']   = ( isset( $options['acting_settings']['zeus']['bnpl_shippingrequest_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_shippingrequest_url'] : '';
+		$options['acting_settings']['zeus']['bnpl_modifytransaction_url'] = ( isset( $options['acting_settings']['zeus']['bnpl_modifytransaction_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_modifytransaction_url'] : '';
+		$options['acting_settings']['zeus']['activate']                   = ( isset( $options['acting_settings']['zeus']['activate'] ) ) ? $options['acting_settings']['zeus']['activate'] : 'off';
 		if ( 'on' === $options['acting_settings']['zeus']['activate'] && 'on' === $options['acting_settings']['zeus']['card_activate'] ) {
 			if ( ! isset( $options['acting_settings']['zeus']['card_order_ref'] ) ) {
 				$options['acting_settings']['zeus']['card_order_ref'] = 'https://linkpt.cardservice.co.jp/cgi-bin/order_ref.cgi';
@@ -336,6 +377,20 @@ class ZEUS_SETTLEMENT {
 				}
 				break;
 
+			case 'bnpl':
+				foreach ( $payment_method as $payment ) {
+					if ( 'acting_zeus_bnpl' === $payment['settlement'] && 'activate' === $payment['use'] ) {
+						$method = true;
+						break;
+					}
+				}
+				if ( $method && $this->is_activate_bnpl() ) {
+					return true;
+				} else {
+					return false;
+				}
+				break;
+
 			default:
 				if ( 'on' === $acting_opts['activate'] ) {
 					return true;
@@ -406,6 +461,22 @@ class ZEUS_SETTLEMENT {
 		$acting_opts = $this->get_acting_settings();
 		if ( ( isset( $acting_opts['activate'] ) && 'on' === $acting_opts['activate'] ) &&
 			( isset( $acting_opts['conv_activate'] ) && 'on' === $acting_opts['conv_activate'] ) ) {
+			$res = true;
+		} else {
+			$res = false;
+		}
+		return $res;
+	}
+
+	/**
+	 * あと払い決済有効判定
+	 *
+	 * @return bool
+	 */
+	public function is_activate_bnpl() {
+		$acting_opts = $this->get_acting_settings();
+		if ( ( isset( $acting_opts['activate'] ) && 'on' === $acting_opts['activate'] ) &&
+			( isset( $acting_opts['bnpl_activate'] ) && 'on' === $acting_opts['bnpl_activate'] ) ) {
 			$res = true;
 		} else {
 			$res = false;
@@ -508,6 +579,20 @@ jQuery(document).ready(function($) {
 			$(".conv_zeus").css("display","none");
 		}
 	});
+
+	var bnpl_activate = "<?php echo esc_js( $acting_opts['bnpl_activate'] ); ?>";
+	if( "on" == bnpl_activate ) {
+		$(".bnpl_zeus").css("display","");
+	} else {
+		$(".bnpl_zeus").css("display","none");
+	}
+	$(document).on( "change", ".bnpl_activate_zeus", function() {
+		if( "on" == $(this).val() ) {
+			$(".bnpl_zeus").css("display","");
+		} else {
+			$(".bnpl_zeus").css("display","none");
+		}
+	});
 });
 </script>
 					<?php
@@ -528,11 +613,14 @@ jQuery(document).ready(function($) {
 						$acting_flg = $this->get_order_acting_flg( $order_id );
 					}
 				}
-				if ( 'acting_zeus_card' === $acting_flg ) :
+				if ( 'acting_zeus_card' === $acting_flg || 'acting_zeus_bnpl' === $acting_flg ) :
 					?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
 	adminOrderEdit = {
+					<?php
+					if ( 'acting_zeus_card' === $acting_flg ) :
+						?>
 		getSettlementCard: function() {
 			$("#settlement-response").html("");
 			$("#settlement-response-loading").html('<img src="'+uscesL10n.USCES_PLUGIN_URL+'/images/loading.gif" />');
@@ -727,7 +815,115 @@ jQuery(document).ready(function($) {
 			});
 			return false;
 		},
-	};
+						<?php
+					elseif ( 'acting_zeus_bnpl' === $acting_flg ) :
+						?>
+		getSettlementBnpl: function() {
+			$("#settlement-response").html("");
+			$("#settlement-response-loading").html('<img src="'+uscesL10n.USCES_PLUGIN_URL+'/images/loading.gif" />');
+			$.ajax({
+				url:ajaxurl,
+				type:"POST",
+				cache:false,
+				dataType:"json",
+				data:{
+					action:"usces_admin_ajax",
+					mode:"get_zeus_bnpl",
+					order_id:$("#order_id").val(),
+					shoporder_id:$("#tracking_id").val(),
+					order_status:$("select[name='offer[taio]'] option:selected").val(),
+					delivery_company:$("select[name='delivery_company'] option:selected").val(),
+					tracking_number:$("input[name='tracking_number']").val(),
+					wc_nonce:$("#wc_nonce").val()
+				}
+			}).done( function(retVal,dataType) {
+				if( retVal.acting_status ) {
+					$("#settlement-status").html(retVal.acting_status);
+				}
+				if( retVal.result ) {
+					$("#settlement-response").html(retVal.result);
+				}
+				$("#settlement-response-loading").html("");
+			}).fail( function(jqXHR,textStatus,errorThrown) {
+				console.log(textStatus);
+				console.log(jqXHR.status);
+				console.log(errorThrown.message);
+				$("#settlement-response-loading").html("");
+			});
+			return false;
+		},
+		shippingRequestBnpl: function() {
+			$("#settlement-response").html("");
+			$("#settlement-response-loading").html('<img src="'+uscesL10n.USCES_PLUGIN_URL+'/images/loading.gif" />');
+			$.ajax({
+				url:ajaxurl,
+				type:"POST",
+				cache:false,
+				dataType:"json",
+				data:{
+					action:"usces_admin_ajax",
+					mode:"shippingrequest_zeus_bnpl",
+					order_id:$("#order_id").val(),
+					shoporder_id:$("#tracking_id").val(),
+					order_status:$("select[name='offer[taio]'] option:selected").val(),
+					delivery_company:$("select[name='delivery_company'] option:selected").val(),
+					tracking_number:$("input[name='tracking_number']").val(),
+					wc_nonce:$("#wc_nonce").val()
+				}
+			}).done( function(retVal,dataType) {
+				if( retVal.acting_status ) {
+					$("#settlement-status").html(retVal.acting_status);
+				}
+				if( retVal.result ) {
+					$("#settlement-response").html(retVal.result);
+				}
+				$("#settlement-response-loading").html("");
+			}).fail( function(jqXHR,textStatus,errorThrown) {
+				console.log(textStatus);
+				console.log(jqXHR.status);
+				console.log(errorThrown.message);
+				$("#settlement-response-loading").html("");
+			});
+			return false;
+		},
+		cancelBnpl: function() {
+			$("#settlement-response").html("");
+			$("#settlement-response-loading").html('<img src="'+uscesL10n.USCES_PLUGIN_URL+'/images/loading.gif" />');
+			$.ajax({
+				url:ajaxurl,
+				type:"POST",
+				cache:false,
+				dataType:"json",
+				data:{
+					action:"usces_admin_ajax",
+					mode:"cancel_zeus_bnpl",
+					order_id:$("#order_id").val(),
+					shoporder_id:$("#tracking_id").val(),
+					order_status:$("select[name='offer[taio]'] option:selected").val(),
+					delivery_company:$("select[name='delivery_company'] option:selected").val(),
+					tracking_number:$("input[name='tracking_number']").val(),
+					wc_nonce:$("#wc_nonce").val()
+				}
+			}).done( function(retVal,dataType) {
+				if( retVal.acting_status ) {
+					$("#settlement-status").html(retVal.acting_status);
+				}
+				if( retVal.result ) {
+					$("#settlement-response").html(retVal.result);
+				}
+				$("#settlement-response-loading").html("");
+			}).fail( function(jqXHR,textStatus,errorThrown) {
+				console.log(textStatus);
+				console.log(jqXHR.status);
+				console.log(errorThrown.message);
+				$("#settlement-response-loading").html("");
+			});
+			return false;
+		},
+						<?php
+					endif;
+					?>
+		};
 
 	$("#settlement_dialog").dialog({
 		dialogClass:"admin-zeus-dialog",
@@ -743,7 +939,17 @@ jQuery(document).ready(function($) {
 			}
 		},
 		open: function() {
+					<?php
+					if ( 'acting_zeus_card' === $acting_flg ) :
+						?>
 			adminOrderEdit.getSettlementCard();
+						<?php
+					elseif ( 'acting_zeus_bnpl' === $acting_flg ) :
+						?>
+			adminOrderEdit.getSettlementBnpl();
+						<?php
+					endif;
+					?>
 		},
 		close: function() {
 		}
@@ -757,7 +963,9 @@ jQuery(document).ready(function($) {
 		$("#settlement_dialog").dialog("option","title","<?php echo esc_js( $this->acting_formal_name ); ?>");
 		$("#settlement_dialog").dialog("open");
 	});
-
+					<?php
+					if ( 'acting_zeus_card' === $acting_flg ) :
+						?>
 	$(document).on( "click", "#sale_settlement", function() {
 		var amount = parseInt($("#amount_change").val())||0;
 		if( 0 == amount ) {
@@ -804,7 +1012,24 @@ jQuery(document).ready(function($) {
 			adminOrderEdit.reSettlementCard( amount );
 		}
 	});
-
+						<?php
+					elseif ( 'acting_zeus_bnpl' === $acting_flg ) :
+						?>
+	$(document).on( "click", "#shippingrequest_bnpl", function() {
+		if( ! confirm("出荷登録を実行します。よろしいですか？") ) {
+			return;
+		}
+		adminOrderEdit.shippingRequestBnpl();
+	});
+	$(document).on( "click", "#cancel_bnpl", function() {
+		if( ! confirm("取引のキャンセルを実行します。よろしいですか？") ) {
+			return;
+		}
+		adminOrderEdit.cancelBnpl();
+	});
+						<?php
+					endif;
+					?>
 	$(document).on( "keydown", ".settlement-amount", function(e) {
 		var halfVal = $(this).val().replace(/[！-～]/g,
 			function(tmpStr) {
@@ -937,6 +1162,9 @@ jQuery(document).ready(function($) {
 		$options['acting_settings']['zeus']['test_type_conv']       = ( ( isset( $post_data['testid_conv'] ) && WCUtils::is_blank( $post_data['testid_conv'] ) ) || ( ! isset( $post_data['test_type'] ) ) ) ? 0 : $post_data['test_type'];
 		$options['acting_settings']['zeus']['pay_cvs']              = ( isset( $post_data['pay_cvs'] ) ) ? $post_data['pay_cvs'] : array();
 		$options['acting_settings']['zeus']['conv_span']            = ( isset( $post_data['conv_span'] ) ) ? trim( $post_data['conv_span'] ) : '';
+		$options['acting_settings']['zeus']['bnpl_activate']        = ( isset( $post_data['bnpl_activate'] ) ) ? $post_data['bnpl_activate'] : '';
+		$options['acting_settings']['zeus']['clientip_bnpl']        = ( isset( $post_data['clientip_bnpl'] ) ) ? trim( $post_data['clientip_bnpl'] ) : '';
+		$options['acting_settings']['zeus']['bnpl_linkpassword']    = ( isset( $post_data['bnpl_linkpassword'] ) ) ? trim( $post_data['bnpl_linkpassword'] ) : '';
 
 		if ( 'on' === $options['acting_settings']['zeus']['card_activate'] ) {
 			if ( WCUtils::is_blank( $post_data['clientip'] ) ) {
@@ -972,7 +1200,15 @@ jQuery(document).ready(function($) {
 				$this->error_mes .= '※コンビニ種類を選択してください<br />';
 			}
 		}
-		if ( 'on' === $options['acting_settings']['zeus']['card_activate'] || 'on' === $options['acting_settings']['zeus']['bank_activate'] || 'on' === $options['acting_settings']['zeus']['conv_activate'] ) {
+		if ( 'on' === $options['acting_settings']['zeus']['bnpl_activate'] ) {
+			if ( WCUtils::is_blank( $post_data['clientip_bnpl'] ) ) {
+				$this->error_mes .= '※あと払い決済IPコードを入力してください<br />';
+			}
+			if ( WCUtils::is_blank( $post_data['bnpl_linkpassword'] ) ) {
+				$this->error_mes .= '※あと払い決済APIキーを入力してください<br />';
+			}
+		}
+		if ( 'on' === $options['acting_settings']['zeus']['card_activate'] || 'on' === $options['acting_settings']['zeus']['bank_activate'] || 'on' === $options['acting_settings']['zeus']['conv_activate'] || 'on' === $options['acting_settings']['zeus']['bnpl_activate'] ) {
 			$unavailable_activate = false;
 			foreach ( $payment_method as $settlement => $payment ) {
 				if ( in_array( $settlement, $this->unavailable_method ) && 'activate' === $payment['use'] ) {
@@ -988,7 +1224,7 @@ jQuery(document).ready(function($) {
 		if ( '' === $this->error_mes ) {
 			$usces->action_status  = 'success';
 			$usces->action_message = __( 'Options are updated.', 'usces' );
-			if ( 'on' === $options['acting_settings']['zeus']['card_activate'] || 'on' === $options['acting_settings']['zeus']['bank_activate'] || 'on' === $options['acting_settings']['zeus']['conv_activate'] ) {
+			if ( 'on' === $options['acting_settings']['zeus']['card_activate'] || 'on' === $options['acting_settings']['zeus']['bank_activate'] || 'on' === $options['acting_settings']['zeus']['conv_activate'] || 'on' === $options['acting_settings']['zeus']['bnpl_activate'] ) {
 				$options['acting_settings']['zeus']['activate'] = 'on';
 				$options['acting_settings']['zeus']['ipaddrs']  = array( '210.164.6.67', '202.221.139.50' );
 				$toactive                                       = array();
@@ -1029,6 +1265,20 @@ jQuery(document).ready(function($) {
 				} else {
 					unset( $usces->payment_structure['acting_zeus_conv'] );
 				}
+				if ( 'on' === $options['acting_settings']['zeus']['bnpl_activate'] ) {
+					$options['acting_settings']['zeus']['bnpl_linkid']                = 'sbifsprd01';
+					$options['acting_settings']['zeus']['bnpl_transaction_url']       = 'https://atobarai.sbi-finsol.co.jp/api/transaction.do';
+					$options['acting_settings']['zeus']['bnpl_shippingrequest_url']   = 'https://atobarai.sbi-finsol.co.jp/api/shippingrequest.do';
+					$options['acting_settings']['zeus']['bnpl_modifytransaction_url'] = 'https://atobarai.sbi-finsol.co.jp/api/modifytransaction.do';
+					$usces->payment_structure['acting_zeus_bnpl']                     = 'あと払い決済（ZEUS）';
+					foreach ( $payment_method as $settlement => $payment ) {
+						if ( 'acting_zeus_bnpl' === $settlement && 'activate' !== $payment['use'] ) {
+							$toactive[] = $payment['name'];
+						}
+					}
+				} else {
+					unset( $usces->payment_structure['acting_zeus_bnpl'] );
+				}
 				$options['acting_settings']['zeus']['vercheck'] = '115';
 				usces_admin_orderlist_show_wc_trans_id();
 				if ( 0 < count( $toactive ) ) {
@@ -1036,7 +1286,7 @@ jQuery(document).ready(function($) {
 				}
 			} else {
 				$options['acting_settings']['zeus']['activate'] = 'off';
-				unset( $usces->payment_structure['acting_zeus_card'], $usces->payment_structure['acting_zeus_bank'], $usces->payment_structure['acting_zeus_conv'] );
+				unset( $usces->payment_structure['acting_zeus_card'], $usces->payment_structure['acting_zeus_bank'], $usces->payment_structure['acting_zeus_conv'], $usces->payment_structure['acting_zeus_bnpl'] );
 			}
 			if ( 'on' !== $options['acting_settings']['zeus']['quickcharge'] || 'off' === $options['acting_settings']['zeus']['activate'] ) {
 				usces_clear_quickcharge( 'zeus_pcid' );
@@ -1059,7 +1309,7 @@ jQuery(document).ready(function($) {
 			$usces->action_status                           = 'error';
 			$usces->action_message                          = __( 'Data have deficiency.', 'usces' );
 			$options['acting_settings']['zeus']['activate'] = 'off';
-			unset( $usces->payment_structure['acting_zeus_card'], $usces->payment_structure['acting_zeus_bank'], $usces->payment_structure['acting_zeus_conv'] );
+			unset( $usces->payment_structure['acting_zeus_card'], $usces->payment_structure['acting_zeus_bank'], $usces->payment_structure['acting_zeus_conv'], $usces->payment_structure['acting_zeus_bnpl'] );
 			$deactivate = array();
 			foreach ( $payment_method as $settlement => $payment ) {
 				if ( in_array( $settlement, $this->pay_method ) ) {
@@ -1102,7 +1352,7 @@ jQuery(document).ready(function($) {
 		$settlement_selected = get_option( 'usces_settlement_selected', array() );
 		if ( in_array( 'zeus', (array) $settlement_selected, true ) ) :
 			$card_activate = ( isset( $acting_opts['card_activate'] ) && 'on' === $acting_opts['card_activate'] ) ? 'on' : 'off';
-			$clientip      = ( isset( $acting_opts['clientip'] ) ) ? $acting_opts['clientip'] : '';
+			$client_ip     = ( isset( $acting_opts['clientip'] ) ) ? $acting_opts['clientip'] : '';
 			$connection    = ( isset( $acting_opts['connection'] ) ) ? (int) $acting_opts['connection'] : 0;
 			$authkey       = ( isset( $acting_opts['authkey'] ) ) ? $acting_opts['authkey'] : '';
 			$threedsecure  = ( 2 === $connection && isset( $acting_opts['3dsecur'] ) && 1 === (int) $acting_opts['3dsecur'] ) ? 1 : 2;
@@ -1123,17 +1373,21 @@ jQuery(document).ready(function($) {
 
 			$bank_activate     = ( isset( $acting_opts['bank_activate'] ) && 'on' === $acting_opts['bank_activate'] ) ? 'on' : 'off';
 			$bank_ope          = ( isset( $acting_opts['bank_ope'] ) && 'public' === $acting_opts['bank_ope'] ) ? 'public' : 'test';
-			$clientip_bank     = ( isset( $acting_opts['clientip_bank'] ) ) ? $acting_opts['clientip_bank'] : '';
+			$client_ip_bank    = ( isset( $acting_opts['clientip_bank'] ) ) ? $acting_opts['clientip_bank'] : '';
 			$testid_bank       = ( isset( $acting_opts['testid_bank'] ) ) ? $acting_opts['testid_bank'] : '';
 			$bank_expired_date = ( isset( $acting_opts['bank_expired_date'] ) ) ? $acting_opts['bank_expired_date'] : '';
 
 			$conv_activate  = ( isset( $acting_opts['conv_activate'] ) && 'on' === $acting_opts['conv_activate'] ) ? 'on' : 'off';
 			$conv_ope       = ( isset( $acting_opts['conv_ope'] ) && 'public' === $acting_opts['conv_ope'] ) ? 'public' : 'test';
-			$clientip_conv  = ( isset( $acting_opts['clientip_conv'] ) ) ? $acting_opts['clientip_conv'] : '';
+			$client_ip_conv = ( isset( $acting_opts['clientip_conv'] ) ) ? $acting_opts['clientip_conv'] : '';
 			$testid_conv    = ( isset( $acting_opts['testid_conv'] ) ) ? $acting_opts['testid_conv'] : '';
 			$test_type_conv = ( isset( $acting_opts['test_type_conv'] ) ) ? (int) $acting_opts['test_type_conv'] : 0;
 			$pay_cvs        = ( isset( $acting_opts['pay_cvs'] ) && is_array( $acting_opts['pay_cvs'] ) ) ? $acting_opts['pay_cvs'] : array();
 			$conv_span      = ( isset( $acting_opts['conv_span'] ) ) ? $acting_opts['conv_span'] : '';
+
+			$bnpl_activate     = ( isset( $acting_opts['bnpl_activate'] ) && 'on' === $acting_opts['bnpl_activate'] ) ? 'on' : 'off';
+			$client_ip_bnpl    = ( isset( $acting_opts['clientip_bnpl'] ) ) ? $acting_opts['clientip_bnpl'] : '';
+			$bnpl_linkpassword = ( isset( $acting_opts['bnpl_linkpassword'] ) ) ? $acting_opts['bnpl_linkpassword'] : '';
 			?>
 	<div id="uscestabs_zeus">
 	<div class="settlement_service"><span class="service_title"><?php echo esc_html( $this->acting_formal_name ); ?></span></div>
@@ -1160,7 +1414,7 @@ jQuery(document).ready(function($) {
 			</tr>
 			<tr class="card_zeus">
 				<th><a class="explanation-label" id="label_ex_clid_zeus">カード決済IPコード</a></th>
-				<td><input name="clientip" type="text" id="clid_zeus" value="<?php echo esc_attr( $clientip ); ?>" class="regular-text" /></td>
+				<td><input name="clientip" type="text" id="clid_zeus" value="<?php echo esc_attr( $client_ip ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr id="ex_clid_zeus" class="explanation card_zeus"><td colspan="2">契約時にゼウスから発行されるクレジットカード決済用のIPコード（半角数字）</td></tr>
 			<tr class="card_zeus">
@@ -1243,7 +1497,7 @@ jQuery(document).ready(function($) {
 			<tr id="ex_bank_ope_zeus" class="explanation bank_zeus"><td colspan="2">動作環境を切り替えます。</td></tr>
 			<tr class="bank_zeus">
 				<th><a class="explanation-label" id="label_ex_bank_clid_zeus">銀行振込決済IPコード</a></th>
-				<td><input name="clientip_bank" type="text" id="bank_clid_zeus" value="<?php echo esc_attr( $clientip_bank ); ?>" class="regular-text" /></td>
+				<td><input name="clientip_bank" type="text" id="bank_clid_zeus" value="<?php echo esc_attr( $client_ip_bank ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr id="ex_bank_clid_zeus" class="explanation bank_zeus"><td colspan="2">契約時にゼウスから発行される入金おまかせサービス用のIPコード（半角数字）</td></tr>
 			<tr class="bank_zeus">
@@ -1279,7 +1533,7 @@ jQuery(document).ready(function($) {
 			<tr id="ex_conv_ope_zeus" class="explanation conv_zeus"><td colspan="2">動作環境を切り替えます。</td></tr>
 			<tr class="conv_zeus">
 				<th><a class="explanation-label" id="label_ex_conv_clid_zeus">コンビニ決済IPコード</a></th>
-				<td><input name="clientip_conv" type="text" id="conv_clid_zeus" value="<?php echo esc_attr( $clientip_conv ); ?>" class="regular-text" /></td>
+				<td><input name="clientip_conv" type="text" id="conv_clid_zeus" value="<?php echo esc_attr( $client_ip_conv ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr id="ex_conv_clid_zeus" class="explanation conv_zeus"><td colspan="2">契約時にゼウスから発行されるコンビニ決済サービス用のIPコード（半角数字）</td></tr>
 			<tr class="conv_zeus">
@@ -1326,6 +1580,24 @@ jQuery(document).ready(function($) {
 			</tr>
 			<tr id="ex_conv_span_zeus" class="explanation"><td colspan="2">お申し込みごとに支払期日を設定することができます。設定がない場合には、予め設定していた加盟店指定の支払期日が設定されます。</td></tr>
 		</table>
+		<table class="settle_table">
+			<tr>
+				<th>あと払い決済</th>
+				<td><label><input name="bnpl_activate" type="radio" class="bnpl_activate_zeus" id="bnpl_activate_zeus_1" value="on"<?php checked( $bnpl_activate, 'on' ); ?> /><span>利用する</span></label><br />
+					<label><input name="bnpl_activate" type="radio" class="bnpl_activate_zeus" id="bnpl_activate_zeus_2" value="off"<?php checked( $bnpl_activate, 'off' ); ?> /><span>利用しない</span></label>
+				</td>
+			</tr>
+			<tr class="bnpl_zeus">
+				<th><a class="explanation-label" id="label_ex_bnpl_clid_zeus">あと払い決済IPコード</a></th>
+				<td><input name="clientip_bnpl" type="text" id="bnpl_clid_zeus" value="<?php echo esc_attr( $client_ip_bnpl ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr id="ex_bnpl_clid_zeus" class="explanation bnpl_zeus"><td colspan="2">契約時にゼウスから発行されるあと払い決済用のIPコード（半角数字）</td></tr>
+			<tr class="bnpl_zeus">
+				<th><a class="explanation-label" id="label_ex_bnpl_linkpassword_zeus">APIキー</a></th>
+				<td><input name="bnpl_linkpassword" type="text" id="bnpl_linkpassword_zeus" value="<?php echo esc_attr( $bnpl_linkpassword ); ?>" class="regular-text" /></td>
+			</tr>
+			<tr id="ex_bnpl_linkpassword_zeus" class="explanation bnpl_zeus"><td colspan="2">契約時にゼウスから発行されるあと払い決済用のAPIキー（半角英数字）</td></tr>
+		</table>
 		<input name="acting" type="hidden" value="zeus" />
 		<input name="usces_option_update" type="submit" class="button button-primary" value="ゼウスの設定を更新する" />
 			<?php wp_nonce_field( 'admin_settlement', 'wc_nonce' ); ?>
@@ -1352,6 +1624,32 @@ jQuery(document).ready(function($) {
 	</div><!--uscestabs_zeus-->
 			<?php
 		endif;
+	}
+
+	/**
+	 * 支払方法追加
+	 * usces_filter_add_payment_method
+	 *
+	 * @param  array $newvalue Payment method data.
+	 * @return array
+	 */
+	public function add_payment_method( $newvalue ) {
+		if ( empty( $newvalue['explanation'] ) ) {
+			if ( 'acting_zeus_bnpl' === $newvalue['settlement'] ) {
+				$newvalue['explanation'] = 'SBIグループのあと払い決済をご利用の際は、<a href="https://www.sbi-finsol.co.jp/atobarai/purchaser/" target="_blank">ご利用規約</a>および下記の注意事項をご確認いただき、ご同意の上お申し込みください。<br>
+<ul>
+<li>ご利用限度額（未払い累計金額）は55,000円（税込）です。</li>
+<li>ご利用にあたり審査がございます。審査結果によっては、あと払い決済をご利用いただけないことがございますので、その場合は別のお支払方法をご利用ください。</li>
+<li>ご請求メールは、購入者さまのメールアドレス宛にSBI FinTech Solutions株式会社（atobarai@sbi-finsol.co.jp）よりお送りします。</li>
+<li>商品をお受取り後、メールに記載のお支払い期日まで（発行日から14日以内）にコンビニエンスストアまたは銀行振込にてお支払いください。コンビニ払いの場合は、電子バーコードを提示してのお支払いになりますので、スマートフォンで受け取れるメールアドレスをご入力ください。</li>
+<li>未成年の方は必ず親権者（法定代理人）の同意を得てご利用ください。</li>
+<li>商品のお届け先住所が「運送業者の営業所留め」「郵便局留め」の場合や「学校」「病院」「ホテル」など一時滞在先の場合は、「あと払い決済」をご利用いただけません。また、商品の海外転送サービスもご利用いただけません。</li>
+<li>あと払い決済のサービス詳細・よくあるご質問は下記をご参照ください。<br><a href="https://www.sbi-finsol.co.jp/atobarai/purchaser/"target="_blank">https://www.sbi-finsol.co.jp/atobarai/purchaser/</a></li>
+</ul>
+<a href="https://www.sbi-finsol.co.jp/atobarai/purchaser/" target="_blank"><img src="https://www.cardservice.co.jp/zmc/manual/images/download_atobarai_01.png"></a>';
+			}
+		}
+		return $newvalue;
 	}
 
 	/**
@@ -1484,7 +1782,7 @@ jQuery(document).ready(function($) {
 				die( 'error3' );
 			}
 
-			/* zeus_bank */
+		/* zeus_bank */
 		} elseif ( isset( $_REQUEST['acting'] ) && 'zeus_bank' === $_REQUEST['acting'] && isset( $_REQUEST['order_no'] ) && isset( $_REQUEST['tracking_no'] ) ) {
 			foreach ( $_REQUEST as $key => $value ) {
 				if ( 'uscesid' === $key ) {
@@ -1566,7 +1864,7 @@ jQuery(document).ready(function($) {
 			header( 'HTTP/1.0 200 OK' );
 			die( 'zeus' );
 
-			/* zeus_conv */
+		/* zeus_conv */
 		} elseif ( isset( $_REQUEST['acting'] ) && 'zeus_conv' === $_REQUEST['acting'] && isset( $_REQUEST['status'] ) && isset( $_REQUEST['sendpoint'] ) && isset( $_REQUEST['clientip'] ) ) {
 			foreach ( $_REQUEST as $key => $value ) {
 				if ( 'uscesid' === $key ) {
@@ -1731,6 +2029,9 @@ jQuery(document).ready(function($) {
 					}
 				}
 				break;
+
+			case 'acting_zeus_bnpl':
+				break;
 		}
 
 		return $msg_payment;
@@ -1746,8 +2047,8 @@ jQuery(document).ready(function($) {
 	 * @return bool
 	 */
 	public function is_complete_settlement( $complete, $payment_name, $status ) {
-		$payment = usces_get_payments_by_name( $payment_name );
-		if ( isset( $payment['settlement'] ) && 'acting_zeus_card' === $payment['settlement'] ) {
+		$acting_flg = $this->get_acting_flg( $payment_name );
+		if ( 'acting_zeus_card' === $acting_flg ) {
 			$complete = true;
 		}
 		return $complete;
@@ -2498,6 +2799,274 @@ jQuery(document).ready(function($) {
 				wp_send_json( $data );
 				break;
 
+			/* あと払い参照 */
+			case 'get_zeus_bnpl':
+				check_admin_referer( 'order_edit', 'wc_nonce' );
+				$order_id         = filter_input( INPUT_POST, 'order_id' );
+				$shoporder_id     = filter_input( INPUT_POST, 'shoporder_id' );
+				$order_status     = filter_input( INPUT_POST, 'order_status' );
+				$delivery_company = filter_input( INPUT_POST, 'delivery_company' );
+				$tracking_number  = filter_input( INPUT_POST, 'tracking_number' );
+				if ( empty( $order_id ) || empty( $shoporder_id ) ) {
+					$data['status'] = 'NG';
+					wp_send_json( $data );
+					break;
+				}
+
+				$res    = '';
+				$status = '';
+
+				$latest_log = $this->get_acting_latest_log( $order_id, $shoporder_id, 'ALL' );
+				if ( ! empty( $latest_log['status'] ) && ! empty( $latest_log['result'] ) ) {
+					if ( 'transaction' === $latest_log['status'] ) {
+						$status      = $latest_log['result'];
+						$status_name = $this->get_status_name( $latest_log['status'] . $latest_log['result'] );
+						$res        .= '<div class="zeus-settlement-admin bnpl-transaction">' . $status_name . '</div>';
+						$res        .= '<div class="settlement-admin-button">';
+						if ( 'OK' === $latest_log['result'] ) {
+							$delivery_company_cd      = array_search( $delivery_company, $this->shipping_company );
+							$shippingrequest_disabled = ( ! $delivery_company_cd || ! $tracking_number ) ? ' disabled="disabled"' : '';
+							$cancel_disabled          = '';
+							$res                     .= '<input id="shippingrequest_bnpl" type="button" class="button" value="出荷登録"' . $shippingrequest_disabled . ' />';
+						} else {
+							$cancel_disabled = ' disabled="disabled"';
+						}
+						$res .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル"' . $cancel_disabled . ' />';
+						$res .= '</div>';
+					} elseif ( 'shippingrequest' === $latest_log['status'] ) {
+						$status      = $latest_log['result'];
+						$status_name = $this->get_status_name( $latest_log['status'] . $latest_log['result'] );
+						if ( 'OK' === $latest_log['result'] ) {
+							$res .= '<div class="zeus-settlement-admin bnpl-shippingrequest">' . $status_name . '</div>';
+							$res .= '<div class="settlement-admin-button">';
+						} else {
+							$res .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+							$res .= '<div class="settlement-admin-button">';
+							$res .= '<input id="shippingrequest_bnpl" type="button" class="button" value="出荷登録" />';
+						}
+						$res .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+						$res .= '</div>';
+					} elseif ( 'canceltransaction' === $latest_log['status'] ) {
+						$status      = $latest_log['result'];
+						$status_name = $this->get_status_name( $latest_log['status'] . $latest_log['result'] );
+						if ( 'OK' === $latest_log['result'] ) {
+							$res .= '<div class="zeus-settlement-admin bnpl-canceltransaction">' . $status_name . '</div>';
+						} else {
+							$res .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+							$res .= '<div class="settlement-admin-button">';
+							$res .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+							$res .= '</div>';
+						}
+					}
+				} else {
+					$status      = 'ERROR';
+					$status_name = $this->get_status_name( 'error' );
+					$res        .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+				}
+
+				$res           .= $this->settlement_history_bnpl( $order_id, $shoporder_id );
+				$data['result'] = $res;
+				$data['status'] = $status;
+				wp_send_json( $data );
+				break;
+
+			/* あと払い出荷登録 */
+			case 'shippingrequest_zeus_bnpl':
+				check_admin_referer( 'order_edit', 'wc_nonce' );
+				$order_id         = filter_input( INPUT_POST, 'order_id' );
+				$shoporder_id     = filter_input( INPUT_POST, 'shoporder_id' );
+				$order_status     = filter_input( INPUT_POST, 'order_status' );
+				$delivery_company = filter_input( INPUT_POST, 'delivery_company' );
+				$tracking_number  = filter_input( INPUT_POST, 'tracking_number' );
+				if ( empty( $order_id ) || empty( $shoporder_id ) ) {
+					$data['status'] = 'NG';
+					wp_send_json( $data );
+					break;
+				}
+
+				$delivery_company_cd = array_search( $delivery_company, $this->shipping_company );
+				if ( ! $delivery_company_cd || ! $tracking_number ) {
+					$data['status'] = 'NG';
+					wp_send_json( $data );
+					break;
+				}
+
+				$res           = '';
+				$status        = '';
+				$acting_status = '';
+
+				$acting_opts = $this->get_acting_settings();
+				$latest_log  = $this->get_acting_latest_log( $order_id, $shoporder_id );
+
+				$data                    = array();
+				$data['linkInfo']        = array(
+					'shopCode'     => $acting_opts['clientip_bnpl'],
+					'linkId'       => $acting_opts['bnpl_linkid'],
+					'linkPassword' => $acting_opts['bnpl_linkpassword'],
+				);
+				$data['transactionInfo'] = array(
+					'deliveryType'        => '1',
+					'transactionId'       => $latest_log['log']['transactionInfo']['transactionId'],
+					'deliveryCompanyCode' => $delivery_company_cd,
+					'deliverySlipNo'      => $tracking_number,
+				);
+
+				$request  = '<?xml version="1.0" encoding="UTF-8"?>';
+				$request .= '<request>';
+				$request .= $this->assoc2xml( $data );
+				$request .= '</request>';
+
+				$xml = $this->get_xml_bnpl( $acting_opts['bnpl_shippingrequest_url'], $request );
+				if ( empty( $xml ) ) {
+					$status = 'NG';
+					wel_zeus_save_acting_log( $data, 'zeus_bnpl', 'shippingrequest', $status, $order_id, $shoporder_id );
+					$status_name   = $this->get_status_name( 'shippingrequest' . $status );
+					$res          .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+					$res          .= '<div class="settlement-admin-button">';
+					$res          .= '<input id="shippingrequest_bnpl" type="button" class="button" value="出荷登録" />';
+					$res          .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+					$res          .= '</div>';
+					$acting_status = '<span class="acting-status bnpl-error">' . $status_name . '</span>';
+				} else {
+					$response = $this->xml2assoc( $xml );
+					$status   = ( isset( $response['response']['result'] ) ) ? $response['response']['result'] : 'NG';
+					wel_zeus_save_acting_log( $response['response'], 'zeus_bnpl', 'shippingrequest', $status, $order_id, $shoporder_id );
+					$status_name = $this->get_status_name( 'shippingrequest' . $status );
+					if ( 'OK' === $status ) {
+						$res          .= '<div class="zeus-settlement-admin bnpl-shippingrequest">' . $status_name . '</div>';
+						$res          .= '<div class="settlement-admin-button">';
+						$res          .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+						$res          .= '</div>';
+						$acting_status = '<span class="acting-status bnpl-shippingrequest">' . $status_name . '</span>';
+					} else {
+						$res          .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+						$res          .= '<div class="settlement-admin-button">';
+						$res          .= '<input id="shippingrequest_bnpl" type="button" class="button" value="出荷登録" />';
+						$res          .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+						$res          .= '</div>';
+						$acting_status = '<span class="acting-status bnpl-error">' . $status_name . '</span>';
+					}
+				}
+
+				$res                  .= $this->settlement_history_bnpl( $order_id, $shoporder_id );
+				$data['result']        = $res;
+				$data['status']        = $status;
+				$data['acting_status'] = $acting_status;
+				wp_send_json( $data );
+				break;
+
+			/* あと払い取消 */
+			case 'cancel_zeus_bnpl':
+				check_admin_referer( 'order_edit', 'wc_nonce' );
+				$order_id     = filter_input( INPUT_POST, 'order_id' );
+				$shoporder_id = filter_input( INPUT_POST, 'shoporder_id' );
+				$order_status = filter_input( INPUT_POST, 'order_status' );
+				if ( empty( $order_id ) || empty( $shoporder_id ) ) {
+					$data['status'] = 'NG';
+					wp_send_json( $data );
+					break;
+				}
+
+				$res           = '';
+				$status        = '';
+				$acting_status = '';
+
+				$acting_opts = $this->get_acting_settings();
+				$latest_log  = $this->get_acting_latest_log( $order_id, $shoporder_id );
+
+				$data             = array();
+				$data['linkInfo'] = array(
+					'shopCode'     => $acting_opts['clientip_bnpl'],
+					'linkId'       => $acting_opts['bnpl_linkid'],
+					'linkPassword' => $acting_opts['bnpl_linkpassword'],
+				);
+				// 出荷登録API　出荷取消.
+				// $data['transactionInfo'] = array(
+				// 	'deliveryType'        => '3',
+				// 	'transactionId'       => $latest_log['log']['transactionInfo']['transactionId'],
+				// 	'deliveryCompanyCode' => '',
+				// 	'deliverySlipNo'      => '',
+				// );
+				// 取引修正API　キャンセル.
+				$data['transactionInfo'] = array(
+					'updateTypeFlag' => '1',
+					'transactionId'  => $latest_log['log']['transactionInfo']['transactionId'],
+				);
+				$data['customer']        = array(
+					'shopOrderId'   => '',
+					'shopOrderDate' => '',
+					'name'          => '',
+					'kanaName'      => '',
+					'zip'           => '',
+					'address'       => '',
+					'companyName'   => '',
+					'sectionName'   => '',
+					'tel'           => '',
+					'email'         => '',
+					'billedAmount'  => '',
+					'expand1'       => '',
+					'service'       => '',
+				);
+				$data['ship']            = array(
+					'shipName'        => '',
+					'shipKananame'    => '',
+					'shipZip'         => '',
+					'shipAddress'     => '',
+					'shipCompanyName' => '',
+					'shipSectionName' => '',
+					'shipTel'         => '',
+				);
+				$data['details']         = array(
+					'detail' => array(
+						'goods'       => '',
+						'goodsPrice'  => '',
+						'goodsAmount' => '',
+						'expand2'     => '',
+						'expand3'     => '',
+						'expand4'     => '',
+					),
+				);
+
+				$request  = '<?xml version="1.0" encoding="UTF-8"?>';
+				$request .= '<request>';
+				$request .= $this->assoc2xml( $data );
+				$request .= '</request>';
+
+				// $xml = $this->get_xml_bnpl( $acting_opts['bnpl_shippingrequest_url'], $request );
+				$xml = $this->get_xml_bnpl( $acting_opts['bnpl_modifytransaction_url'], $request );
+				if ( empty( $xml ) ) {
+					$status = 'NG';
+					wel_zeus_save_acting_log( $data, 'zeus_bnpl', 'canceltransaction', $status, $order_id, $shoporder_id );
+					$status_name   = $this->get_status_name( 'canceltransaction' . $status );
+					$res          .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+					$res          .= '<div class="settlement-admin-button">';
+					$res          .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+					$res          .= '</div>';
+					$acting_status = '<span class="acting-status bnpl-error">' . $status_name . '</span>';
+				} else {
+					$response = $this->xml2assoc( $xml );
+					$status   = ( isset( $response['response']['result'] ) ) ? $response['response']['result'] : 'NG';
+					wel_zeus_save_acting_log( $response['response'], 'zeus_bnpl', 'canceltransaction', $status, $order_id, $shoporder_id );
+					$status_name = $this->get_status_name( 'canceltransaction' . $status );
+					if ( 'OK' === $status ) {
+						$res          .= '<div class="zeus-settlement-admin bnpl-canceltransaction">' . $status_name . '</div>';
+						$acting_status = '<span class="acting-status bnpl-canceltransaction">' . $status_name . '</span>';
+					} else {
+						$res          .= '<div class="zeus-settlement-admin bnpl-error">' . $status_name . '</div>';
+						$res          .= '<div class="settlement-admin-button">';
+						$res          .= '<input id="cancel_bnpl" type="button" class="button" value="取引キャンセル" />';
+						$res          .= '</div>';
+						$acting_status = '<span class="acting-status bnpl-error">' . $status_name . '</span>';
+					}
+				}
+
+				$res                  .= $this->settlement_history_bnpl( $order_id, $shoporder_id );
+				$data['result']        = $res;
+				$data['status']        = $status;
+				$data['acting_status'] = $acting_status;
+				wp_send_json( $data );
+				break;
+
 			/* 継続課金情報更新 */
 			case 'continuation_update':
 				check_admin_referer( 'order_edit', 'wc_nonce' );
@@ -2605,6 +3174,53 @@ jQuery(document).ready(function($) {
 	}
 
 	/**
+	 * 決済履歴（あと払い）
+	 *
+	 * @param  int    $order_id Order number.
+	 * @param  string $tracking_id Tracking ID.
+	 * @return string
+	 */
+	private function settlement_history_bnpl( $order_id, $tracking_id ) {
+		$history  = '';
+		$log_data = $this->get_acting_log( $order_id, $tracking_id, 'ALL' );
+		if ( $log_data ) {
+			$num      = count( $log_data );
+			$history  = '<table class="settlement-history">';
+			$history .= '<thead class="settlement-history-head">';
+			$history .= '<tr><th></th><th>' . __( 'Processing date', 'usces' ) . '</th><th>問い合わせ番号</th><th>処理</th><th>処理結果</th><th>' . __( 'Settlement amount', 'usces' ) . '</th><th>エラーメッセージ</th></tr>';
+			$history .= '</thead>';
+			$history .= '<tbody class="settlement-history-body">';
+			foreach ( (array) $log_data as $data ) {
+				$log            = usces_unserialize( $data['log'] );
+				$transaction_id = ( isset( $log['transactionInfo']['transactionId'] ) ) ? $log['transactionInfo']['transactionId'] : '';
+				$status_name    = $this->get_status_name( $data['status'] );
+				$err_result     = '';
+				$class          = '';
+				$amount         = ( 0 !== (int) $data['amount'] ) ? usces_crform( $data['amount'], false, true, 'return', true ) : '';
+				if ( ! in_array( $data['result'], $this->payment_normal_results, true ) ) {
+					if ( isset( $log['errors']['error']['errorCode'] ) && isset( $log['errors']['error']['errorMessage'] ) ) {
+						$err_result = $log['errors']['error']['errorCode'] . ':' . $log['errors']['error']['errorMessage'];
+					}
+					$class = ' error';
+				}
+				$history .= '<tr>';
+				$history .= '<td class="num">' . $num . '</td>';
+				$history .= '<td class="datetime">' . $data['datetime'] . '</td>';
+				$history .= '<td class="transaction_id">' . $transaction_id . '</td>';
+				$history .= '<td class="status">' . $status_name . '</td>';
+				$history .= '<td class="status">' . $data['result'] . '</td>';
+				$history .= '<td class="amount">' . $amount . '</td>';
+				$history .= '<td class="result' . $class . '">' . $err_result . '</td>';
+				$history .= '</tr>';
+				$num--;
+			}
+			$history .= '</tbody>';
+			$history .= '</table>';
+		}
+		return $history;
+	}
+
+	/**
 	 * 決済状況
 	 * usces_filter_orderlist_detail_value
 	 *
@@ -2624,10 +3240,19 @@ jQuery(document).ready(function($) {
 			$tracking_id = $this->get_tracking_id( $order_id );
 			if ( ! empty( $tracking_id ) ) {
 				$acting_status = $this->get_acting_status( $order_id, $tracking_id, 'ALL' );
-				$class         = ' card-' . $acting_status;
 				$status_name   = $this->get_status_name( $acting_status );
 				if ( ! empty( $status_name ) ) {
-					$detail = '<td>' . esc_html( $value ) . '<span class="acting-status' . esc_html( $class ) . '">' . esc_html( $status_name ) . '</span></td>';
+					$detail = '<td>' . esc_html( $value ) . '<span class="acting-status card-' . esc_html( $acting_status ) . '">' . esc_html( $status_name ) . '</span></td>';
+				}
+			}
+		} elseif ( 'acting_zeus_bnpl' === $acting_flg ) {
+			$tracking_id = $this->get_tracking_id( $order_id );
+			if ( ! empty( $tracking_id ) ) {
+				$acting_status = $this->get_acting_status( $order_id, $tracking_id, 'ALL' );
+				$status_name   = $this->get_status_name( $acting_status );
+				if ( ! empty( $status_name ) ) {
+					$class  = ( 'NG' === substr( $acting_status, -2 ) ) ? 'error' : $acting_status;
+					$detail = '<td>' . esc_html( $value ) . '<span class="acting-status bnpl-' . esc_html( $class ) . '">' . esc_html( $status_name ) . '</span></td>';
 				}
 			}
 		}
@@ -2646,18 +3271,29 @@ jQuery(document).ready(function($) {
 		$order_action = ( isset( $action_args['order_action'] ) ) ? $action_args['order_action'] : '';
 		$order_id     = ( isset( $action_args['order_id'] ) ) ? $action_args['order_id'] : '';
 		if ( 'new' !== $order_action && ! empty( $order_id ) ) {
-			$payment    = usces_get_payments_by_name( $data['order_payment_name'] );
-			$acting_flg = ( isset( $payment['settlement'] ) ) ? $payment['settlement'] : '';
+			$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
 			if ( 'acting_zeus_card' === $acting_flg ) {
 				$tracking_id   = $this->get_tracking_id( $order_id );
 				$acting_status = $this->get_acting_status( $order_id, $tracking_id, 'ALL' );
-				$class         = ' card-' . $acting_status;
 				$status_name   = $this->get_status_name( $acting_status );
 				if ( ! empty( $status_name ) ) {
 					echo '
 					<tr>
 						<td class="label status">' . esc_html__( 'Settlement status', 'usces' ) . '</td>
-						<td class="col1 status"><span id="settlement-status"><span class="acting-status' . esc_attr( $class ) . '">' . esc_html( $status_name ) . '</span></span></td>
+						<td class="col1 status"><span id="settlement-status"><span class="acting-status card-' . esc_attr( $acting_status ) . '">' . esc_html( $status_name ) . '</span></span></td>
+					</tr>';
+				}
+			} elseif ( 'acting_zeus_bnpl' === $acting_flg ) {
+				$tracking_id   = $this->get_tracking_id( $order_id );
+				$acting_status = $this->get_acting_status( $order_id, $tracking_id, 'ALL' );
+				$class         = ' bnpl-' . $acting_status;
+				$status_name   = $this->get_status_name( $acting_status );
+				if ( ! empty( $status_name ) ) {
+					$class = ( 'NG' === substr( $acting_status, -2 ) ) ? 'error' : $acting_status;
+					echo '
+					<tr>
+						<td class="label status">' . esc_html__( 'Settlement status', 'usces' ) . '</td>
+						<td class="col1 status"><span id="settlement-status"><span class="acting-status bnpl-' . esc_attr( $class ) . '">' . esc_html( $status_name ) . '</span></span></td>
 					</tr>';
 				}
 			}
@@ -2675,8 +3311,8 @@ jQuery(document).ready(function($) {
 		$order_action = ( isset( $action_args['order_action'] ) ) ? $action_args['order_action'] : '';
 		$order_id     = ( isset( $action_args['order_id'] ) ) ? $action_args['order_id'] : '';
 		if ( 'new' !== $order_action && ! empty( $order_id ) ) {
-			$payment = usces_get_payments_by_name( $data['order_payment_name'] );
-			if ( isset( $payment['settlement'] ) && 'acting_zeus_card' === $payment['settlement'] ) {
+			$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
+			if ( 'acting_zeus_card' === $acting_flg || 'acting_zeus_bnpl' === $acting_flg ) {
 				$tracking_id = $this->get_tracking_id( $order_id );
 				if ( ! empty( $tracking_id ) ) {
 					echo '<input type="button" class="button settlement-information" id="settlement-information-' . esc_attr( $tracking_id ) . '" data-tracking_id="' . esc_attr( $tracking_id ) . '" data-num="1" value="' . esc_attr__( 'Settlement info', 'usces' ) . '">';
@@ -2696,8 +3332,8 @@ jQuery(document).ready(function($) {
 		$order_action = ( isset( $action_args['order_action'] ) ) ? $action_args['order_action'] : '';
 		$order_id     = ( isset( $action_args['order_id'] ) ) ? $action_args['order_id'] : '';
 		if ( 'new' !== $order_action && ! empty( $order_id ) ) :
-			$payment = usces_get_payments_by_name( $data['order_payment_name'] );
-			if ( isset( $payment['settlement'] ) && 'acting_zeus_card' === $payment['settlement'] ) :
+			$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
+			if ( 'acting_zeus_card' === $acting_flg || 'acting_zeus_bnpl' === $acting_flg ) :
 				?>
 <div id="settlement_dialog" title="">
 	<div id="settlement-response-loading"></div>
@@ -2705,7 +3341,7 @@ jQuery(document).ready(function($) {
 	<div id="settlement-response"></div>
 	<input type="hidden" id="order_num">
 	<input type="hidden" id="tracking_id">
-	<input type="hidden" id="acting" value="<?php echo esc_attr( $payment['settlement'] ); ?>">
+	<input type="hidden" id="acting" value="<?php echo esc_attr( $acting_flg ); ?>">
 	<input type="hidden" id="error">
 	</fieldset>
 </div>
@@ -2722,7 +3358,7 @@ jQuery(document).ready(function($) {
 	 * @return array
 	 */
 	public function settlement_info_field_meta_keys( $keys ) {
-		$keys = array_merge( $keys, array( 'div', 'auth_code' ) );
+		$keys = array_merge( $keys, array( 'div', 'auth_code', 'shopOrderId', 'transactionId' ) );
 		return $keys;
 	}
 
@@ -2735,13 +3371,17 @@ jQuery(document).ready(function($) {
 	 * @return array
 	 */
 	public function settlement_info_field_keys( $keys, $fields ) {
-		if ( isset( $fields['acting'] ) && 'zeus_card' === $fields['acting'] ) {
-			$field_keys  = array( 'div' );
-			$acting_opts = $this->get_acting_settings();
-			if ( 2 === (int) $acting_opts['connection'] && 1 === (int) $acting_opts['3dsecur'] ) {
-				$field_keys[] = 'auth_code';
+		if ( isset( $fields['acting'] ) ) {
+			if ( 'zeus_card' === $fields['acting'] ) {
+				$field_keys  = array( 'div' );
+				$acting_opts = $this->get_acting_settings();
+				if ( 2 === (int) $acting_opts['connection'] && 1 === (int) $acting_opts['3dsecur'] ) {
+					$field_keys[] = 'auth_code';
+				}
+				$keys = array_merge( $keys, $field_keys );
+			} elseif ( 'zeus_bnpl' === $fields['acting'] ) {
+				$keys = array( 'acting', 'shopOrderId', 'transactionId' );
 			}
-			$keys = array_merge( $keys, $field_keys );
 		}
 		return $keys;
 	}
@@ -2852,8 +3492,28 @@ jQuery(document).ready(function($) {
 			} elseif ( 'pay_limit' === $key ) {
 				$value = substr( $value, 0, 4 ) . '年' . substr( $value, 4, 2 ) . '月' . substr( $value, 6, 2 ) . '日';
 			}
+		} elseif ( 'zeus_bnpl' === $acting ) {
+			if ( 'acting' === $key ) {
+				$value = 'あと払い決済（ZEUS）';
+			}
 		}
 		return $value;
+	}
+
+	/**
+	 * あと払い運送会社名
+	 * usces_filter_deli_comps
+	 *
+	 * @param array $deli_comps Delivery company.
+	 * @param array $data Order data.
+	 * @return array
+	 */
+	public function bnpl_delivery_company( $deli_comps, $data ) {
+		$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
+		if ( 'acting_zeus_bnpl' === $acting_flg ) {
+			$deli_comps = array_values( $this->shipping_company );
+		}
+		return $deli_comps;
 	}
 
 	/**
@@ -2943,8 +3603,7 @@ jQuery(document).ready(function($) {
 	 * @return string
 	 */
 	public function payment_detail( $str, $entry ) {
-		$payment    = usces_get_payments_by_name( $entry['order']['payment_name'] );
-		$acting_flg = ( isset( $payment['settlement'] ) ) ? $payment['settlement'] : '';
+		$acting_flg = $this->get_acting_flg( $entry['order']['payment_name'] );
 
 		switch ( $acting_flg ) {
 			case 'acting_zeus_card':
@@ -3020,6 +3679,31 @@ jQuery(document).ready(function($) {
 	}
 
 	/**
+	 * 携帯電話番号
+	 * usces_filter_custom_field_info
+	 *
+	 * @param string $html Custom field information.
+	 * @param array  $entry Entry data.
+	 * @param string $custom_field Custom field.
+	 * @param string $position Position.
+	 * @return string
+	 */
+	public function confirm_addition_bnpl( $html, $entry, $custom_field, $position ) {
+		if ( 'order' === $custom_field ) {
+			$acting_flg = $this->get_acting_flg( $entry['order']['payment_name'] );
+			if ( 'acting_zeus_bnpl' === $acting_flg ) {
+				$tel_mobile = ( isset( $_POST['tel_mobile'] ) ) ? filter_input( INPUT_POST, 'tel_mobile' ) : $entry['customer']['tel'];
+				$html       = '
+					<tr>
+						<th>携帯電話番号</th>
+						<td>' . $tel_mobile . '</td>
+					</tr>' . $html;
+			}
+		}
+		return $html;
+	}
+
+	/**
 	 * 支払方法 JavaScript 用決済名追加
 	 * usces_filter_payments_str
 	 *
@@ -3042,6 +3726,11 @@ jQuery(document).ready(function($) {
 			case 'acting_zeus_conv':
 				if ( $this->is_validity_acting( 'conv' ) ) {
 					$payments_str .= "'" . $payment['name'] . "': 'zeus_conv', ";
+				}
+				break;
+			case 'acting_zeus_bnpl':
+				if ( $this->is_validity_acting( 'bnpl' ) ) {
+					$payments_str .= "'" . $payment['name'] . "': 'zeus_bnpl', ";
 				}
 				break;
 		}
@@ -3073,6 +3762,11 @@ jQuery(document).ready(function($) {
 					$payments_arr[] = 'zeus_conv';
 				}
 				break;
+			case 'acting_zeus_bnpl':
+				if ( $this->is_validity_acting( 'bnpl' ) ) {
+					$payments_arr[] = 'zeus_bnpl';
+				}
+				break;
 		}
 		return $payments_arr;
 	}
@@ -3093,8 +3787,7 @@ jQuery(document).ready(function($) {
 			return $mes;
 		}
 
-		$payment    = usces_get_payments_by_name( $_POST['offer']['payment_name'] );
-		$acting_flg = ( isset( $payment['settlement'] ) ) ? $payment['settlement'] : '';
+		$acting_flg = $this->get_acting_flg( $_POST['offer']['payment_name'] );
 
 		switch ( $acting_flg ) {
 			case 'acting_zeus_card':
@@ -3122,6 +3815,27 @@ jQuery(document).ready(function($) {
 					$mes .= 'お名前を入力してください。<br />';
 				} elseif ( ! preg_match( '/^[ァ-ヶー]+$/u', filter_input( INPUT_POST, 'username_conv' ) ) ) {
 					$mes .= 'お名前は全角カタカナで入力してください。<br />';
+				}
+				break;
+
+			case 'acting_zeus_bnpl':
+				if ( WCUtils::is_blank( $_POST['tel_mobile'] ) ) {
+					$mes .= '携帯電話番号を入力してください。<br />';
+				} else {
+					$tel_mobile = filter_input( INPUT_POST, 'tel_mobile' );
+					if ( ! preg_match( '/^[0-9-]+$/', $tel_mobile ) ) {
+						$mes .= '携帯電話番号は半角数値で入力してください。<br />';
+					} else {
+						$first_three = substr( $tel_mobile, 0, 3 );
+						if ( '070' === $first_three || '080' === $first_three || '090' === $first_three ) {
+							$cleannumber = preg_replace( '/[-\s]/', '', $tel_mobile );
+							if ( 11 !== strlen( $cleannumber ) ) {
+								$mes .= '携帯電話番号が不正です！<br />';
+							}
+						} else {
+							$mes .= '携帯電話番号を入力してください。<br />';
+						}
+					}
 				}
 				break;
 		}
@@ -3279,6 +3993,26 @@ jQuery(document).ready(function($) {
 					</tr>
 				</table>';
 				break;
+
+			case 'acting_zeus_bnpl':
+				$acting_opts = $this->get_acting_settings();
+				if ( ( ! isset( $acting_opts['activate'] ) || 'on' !== $acting_opts['activate'] ) ||
+					( ! isset( $acting_opts['bnpl_activate'] ) || 'on' !== $acting_opts['bnpl_activate'] ) ||
+					'activate' !== $payment['use'] ) {
+					return $form;
+				}
+
+				$entry      = $usces->cart->get_entry();
+				$tel_mobile = ( isset( $_POST['tel_mobile'] ) ) ? filter_input( INPUT_POST, 'tel_mobile' ) : $entry['customer']['tel'];
+
+				$form = '
+				<table class="customer_form" id="' . $this->paymod_id . '_bnpl">
+					<tr>
+					<th scope="row"><em>' . __( '*', 'usces' ) . '</em>携帯電話番号</th>
+					<td colspan="2"><input name="tel_mobile" id="tel_mobile" type="text" size="30" value="' . esc_attr( $tel_mobile ) . '" />' . __( '(Single-byte numbers only)', 'usces' ) . '</td>
+					</tr>
+				</table>';
+				break;
 		}
 
 		return $form;
@@ -3326,8 +4060,8 @@ jQuery(document).ready(function($) {
 				$amount = apply_filters( 'zeus_secure_payreq_amount', usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ), $entry );
 
 				$form .= '<form name="purchase_form" id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}">
-				<input type="hidden" name="card_option" id="card_option" value="' . $zeus_card_option . '">
-				<input type="hidden" name="token_key" id="token_key" value="' . $zeus_token_value . '">
+				<input type="hidden" name="card_option" id="card_option" value="' . esc_attr( $zeus_card_option ) . '">
+				<input type="hidden" name="token_key" id="token_key" value="' . esc_attr( $zeus_token_value ) . '">
 				<input type="hidden" name="money" value="' . $amount . '">
 				<input type="hidden" name="telno" value="' . esc_attr( str_replace( '-', '', $entry['customer']['tel'] ) ) . '">
 				<input type="hidden" name="email" value="' . esc_attr( $entry['customer']['mailaddress1'] ) . '">
@@ -3410,6 +4144,26 @@ jQuery(document).ready(function($) {
 				<div class="send"><input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' /></div>
 				<input type="hidden" name="_nonce" value="' . wp_create_nonce( $acting_flg ) . '">';
 				break;
+
+			case 'acting_zeus_bnpl':
+				$member      = $usces->get_member();
+				$acting_opts = $this->get_acting_settings();
+				$usces->save_order_acting_data( $rand );
+				usces_save_order_acting_data( $rand );
+				$tel_mobile = ( isset( $_POST['tel_mobile'] ) ) ? filter_input( INPUT_POST, 'tel_mobile' ) : '';
+				$form       = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}">
+				<input type="hidden" name="money" value="' . usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ) . '">
+				<input type="hidden" name="tel_mobile" value="' . esc_attr( $tel_mobile ) . '">
+				<input type="hidden" name="sendpoint" value="' . $rand . '">';
+				$form      .= '
+				<div class="send">
+				' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
+				<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
+				<input name="purchase" type="submit" id="purchase_button" class="checkout_button" value="' . apply_filters( 'usces_filter_confirm_checkout_button_value', __( 'Checkout', 'usces' ) ) . '"' . apply_filters( 'usces_filter_confirm_nextbutton', null ) . $purchase_disabled . ' /></div>
+				<input type="hidden" name="tel_mobile" value="' . esc_attr( $tel_mobile ) . '">
+				<input type="hidden" id="fraudbuster" name="fraudbuster" />
+				<input type="hidden" name="_nonce" value="' . wp_create_nonce( $acting_flg ) . '">';
+				break;
 		}
 		return $form;
 	}
@@ -3434,8 +4188,7 @@ jQuery(document).ready(function($) {
 		global $usces;
 
 		$entry      = $usces->cart->get_entry();
-		$payment    = usces_get_payments_by_name( $entry['order']['payment_name'] );
-		$acting_flg = ( isset( $payment['settlement'] ) && 'acting' === $payment['settlement'] ) ? $payment['module'] : $payment['settlement'];
+		$acting_flg = $this->get_acting_flg( $entry['order']['payment_name'] );
 
 		switch ( $acting_flg ) {
 			case 'acting_zeus_card':
@@ -3462,8 +4215,70 @@ jQuery(document).ready(function($) {
 					$form .= '<input type="hidden" name="username_conv" value="' . esc_attr( filter_input( INPUT_POST, 'username_conv' ) ) . '">';
 				}
 				break;
+
+			case 'acting_zeus_bnpl':
+				if ( isset( $_POST['tel_mobile'] ) ) {
+					$form .= '<input type="hidden" name="tel_mobile" value="' . esc_attr( filter_input( INPUT_POST, 'tel_mobile' ) ) . '">';
+				}
+				break;
 		}
 		return $form;
+	}
+
+	/**
+	 * Scripts.
+	 * wp_enqueue_scripts
+	 */
+	public function enqueue_scripts() {
+		global $usces;
+
+		/* 内容確認ページ */
+		if ( ! is_admin() && 'confirm' === $usces->page && $this->is_validity_acting( 'bnpl' ) ) :
+			$entry      = $usces->cart->get_entry();
+			$acting_flg = $this->get_acting_flg( $entry['order']['payment_name'] );
+			if ( 'acting_zeus_bnpl' === $acting_flg ) :
+				?>
+<script type="text/javascript" src="//fraud-buster.appspot.com/js/fraudbuster.js" ></script>
+				<?php
+			endif;
+		endif;
+	}
+
+	/**
+	 * 支払方法
+	 * usces_fiter_the_payment_method
+	 *
+	 * @param  array $payments Payments.
+	 * @return array
+	 */
+	public function payment_method( $payments ) {
+		global $usces;
+
+		$bnpl_exclusion = false;
+		$cart           = $usces->cart->get_cart();
+		foreach ( (array) $cart as $cart_row ) {
+			if ( 'shipped' !== $usces->getItemDivision( $cart_row['post_id'] ) ) {
+				$bnpl_exclusion = true;
+				break;
+			}
+		}
+		if ( ! $bnpl_exclusion ) {
+			if ( usces_have_regular_order() ) {
+				$bnpl_exclusion = true;
+			} elseif ( usces_have_continue_charge() ) {
+				$bnpl_exclusion = true;
+			}
+		}
+
+		if ( $bnpl_exclusion ) {
+			foreach ( $payments as $key => $payment ) {
+				if ( 'acting_zeus_bnpl' === $payment['settlement'] ) {
+					unset( $payments[ $key ] );
+				}
+			}
+		}
+
+		return $payments;
 	}
 
 	/**
@@ -3537,6 +4352,7 @@ jQuery(document).ready(function($) {
 
 			/* Secure Link */
 		} elseif ( 'acting_zeus_card' === $acting_flg && 1 === (int) $acting_opts['connection'] ) {
+
 			$sendid    = ( 'on' === $acting_opts['quickcharge'] && $usces->is_member_logged_in() && isset( $post_data['sendid'] ) ) ? $post_data['sendid'] : '';
 			$sendpoint = ( isset( $post_data['sendpoint'] ) ) ? $post_data['sendpoint'] : '';
 
@@ -3715,6 +4531,202 @@ jQuery(document).ready(function($) {
 				}
 			}
 			exit();
+
+		} elseif ( 'acting_zeus_bnpl' === $acting_flg ) {
+
+			$entry     = $usces->cart->get_entry();
+			$sendpoint = ( isset( $post_data['sendpoint'] ) ) ? $post_data['sendpoint'] : '';
+
+			$httpheader = $this->get_header_information();
+			$deviceinfo = ( ! empty( $post_data['fraudbuster'] ) ) ? $post_data['fraudbuster'] : '';
+
+			$data                = array();
+			$data['linkInfo']    = array(
+				'shopCode'     => $acting_opts['clientip_bnpl'],
+				'linkId'       => $acting_opts['bnpl_linkid'],
+				'linkPassword' => $acting_opts['bnpl_linkpassword'],
+			);
+			$data['browserInfo'] = array(
+				'httpHeader' => $httpheader,
+				'deviceInfo' => $fraudbuster,
+			);
+			$data['customer']    = array(
+				'shopOrderId'   => $sendpoint,
+				'shopOrderDate' => wp_date( 'Y/m/d' ),
+				'name'          => trim( $entry['customer']['name1'] ) . trim( $entry['customer']['name2'] ),
+				'kanaName'      => '',
+				'zip'           => trim( $entry['customer']['zipcode'] ),
+				'address'       => trim( $entry['customer']['pref'] ) . trim( $entry['customer']['address1'] ) . trim( $entry['customer']['address2'] ) . trim( $entry['customer']['address3'] ),
+				'companyName'   => '',
+				'sectionName'   => '',
+				'tel'           => $post_data['tel_mobile'],
+				'email'         => trim( $entry['customer']['mailaddress1'] ),
+				'billedAmount'  => $post_data['money'],
+				'expand1'       => '',
+				'service'       => '2',
+			);
+			if ( defined( 'WCEX_MSA' ) && isset( $entry['delivery']['delivery_flag'] ) && 2 === (int) $entry['delivery']['delivery_flag'] ) {
+				$msacart = ( isset( $_SESSION['msa_cart'] ) ) ? current( $_SESSION['msa_cart'] ) : array();
+				if ( isset( $msacart['delivery']['destination_id'] ) ) {
+					$member       = $usces->get_member();
+					$msadelivery  = msa_get_destination( $member['ID'], $msacart['delivery']['destination_id'] );
+					$data['ship'] = array(
+						'shipName'        => trim( $msadelivery['msa_name'] ) . trim( $msadelivery['msa_name2'] ),
+						'shipKananame'    => '',
+						'shipZip'         => trim( mb_convert_kana( $msadelivery['msa_zip'], 'a', 'UTF-8' ) ),
+						'shipAddress'     => trim( $msadelivery['msa_pref'] ) . trim( $msadelivery['msa_address1'] ) . trim( $msadelivery['msa_address2'] ) . trim( $msadelivery['msa_address3'] ),
+						'shipCompanyName' => '',
+						'shipSectionName' => '',
+						'shipTel'         => trim( $msadelivery['msa_tel'] ),
+					);
+				} else {
+					$data['ship'] = array(
+						'shipName'        => '',
+						'shipKananame'    => '',
+						'shipZip'         => '',
+						'shipAddress'     => '',
+						'shipCompanyName' => '',
+						'shipSectionName' => '',
+						'shipTel'         => '',
+					);
+				}
+			} else {
+				$data['ship'] = array(
+					'shipName'        => trim( $entry['delivery']['name1'] ) . trim( $entry['delivery']['name2'] ),
+					'shipKananame'    => '',
+					'shipZip'         => trim( $entry['delivery']['zipcode'] ),
+					'shipAddress'     => trim( $entry['delivery']['pref'] ) . trim( $entry['delivery']['address1'] ) . trim( $entry['delivery']['address2'] ) . trim( $entry['delivery']['address3'] ),
+					'shipCompanyName' => '',
+					'shipSectionName' => '',
+					'shipTel'         => trim( $entry['delivery']['tel'] ),
+				);
+			}
+			$details    = array();
+			$cart_count = count( $cart );
+			for ( $i = 0; $i < $cart_count; $i++ ) {
+				$cart_row          = $cart[ $i ];
+				$details['detail'] = array(
+					'goods'       => $usces->getItemName( $cart_row['post_id'] ),
+					'goodsPrice'  => usces_crform( $cart_row['price'], false, false, 'return', false ),
+					'goodsAmount' => $cart_row['quantity'],
+					'expand2'     => $i + 1,
+					'expand3'     => '',
+					'expand4'     => '',
+				);
+			}
+			$data['details'] = $details;
+
+			$request  = '<?xml version="1.0" encoding="UTF-8"?>';
+			$request .= '<request>';
+			$request .= $this->assoc2xml( $data );
+			$request .= '</request>';
+
+			$xml = $this->get_xml_bnpl( $acting_opts['bnpl_transaction_url'], $request );
+			if ( empty( $xml ) ) {
+				$log = array(
+					'acting' => 'zeus_bnpl',
+					'key'    => $sendpoint,
+					'result' => 'Request Error',
+					'data'   => $request,
+				);
+				usces_save_order_acting_error( $log );
+				wp_redirect(
+					add_query_arg(
+						array(
+							'acting'        => 'zeus_bnpl',
+							'acting_return' => '0',
+							'status'        => 'error',
+						),
+						USCES_CART_URL
+					)
+				);
+				exit();
+			}
+
+			$response = $this->xml2assoc( $xml );
+			if ( ( isset( $response['response']['result'] ) && 'OK' === $response['response']['result'] ) &&
+				( isset( $response['response']['transactionInfo']['autoAuthoriresult'] ) && 'OK' === $response['response']['transactionInfo']['autoAuthoriresult'] ) ) {
+				$result_data = array(
+					'acting'   => 'zeus_bnpl',
+					'money'    => $post_data['money'],
+					'response' => $response['response'],
+				);
+				$res         = $usces->order_processing( $result_data );
+				if ( 'ordercompletion' === $res ) {
+					$_nonce = ( isset( $post_data['_nonce'] ) ) ? $post_data['_nonce'] : wp_create_nonce( 'acting_zeus_bnpl' );
+					wp_redirect(
+						add_query_arg(
+							array(
+								'acting'        => 'zeus_bnpl',
+								'acting_return' => 1,
+								'result'        => 1,
+								'_nonce'        => $_nonce,
+							),
+							USCES_CART_URL
+						)
+					);
+				} else {
+					$log = array(
+						'acting' => 'zeus_bnpl',
+						'key'    => $sendpoint,
+						'result' => 'ORDER DATA REGISTERED ERROR',
+						'data'   => $result_data,
+					);
+					usces_save_order_acting_error( $log );
+					wp_redirect(
+						add_query_arg(
+							array(
+								'acting'        => 'zeus_bnpl',
+								'acting_return' => 0,
+								'result'        => 0,
+							),
+							USCES_CART_URL
+						)
+					);
+				}
+				exit();
+			} else {
+				if ( ( isset( $response['response']['result'] ) && 'OK' === $response['response']['result'] ) &&
+					( isset( $response['response']['transactionInfo']['autoAuthoriresult'] ) && 'OK' !== $response['response']['transactionInfo']['autoAuthoriresult'] ) ) {
+					$log = array(
+						'acting' => 'zeus_bnpl',
+						'key'    => $sendpoint,
+						'result' => $response['response']['transactionInfo']['autoAuthoriresult'] . ':自動審査結果NG',
+						'data'   => $response,
+					);
+					usces_save_order_acting_error( $log );
+					wp_redirect(
+						add_query_arg(
+							array(
+								'acting'        => 'zeus_bnpl',
+								'acting_return' => '0',
+								'status'        => $response['response']['transactionInfo']['autoAuthoriresult'],
+							),
+							USCES_CART_URL
+						)
+					);
+				} else {
+					$log = array(
+						'acting' => 'zeus_bnpl',
+						'key'    => $sendpoint,
+						'result' => $response['response']['result'] . ':' . $response['errors']['error']['errorCode'],
+						'data'   => $response,
+					);
+					usces_save_order_acting_error( $log );
+					wp_redirect(
+						add_query_arg(
+							array(
+								'acting'        => 'zeus_bnpl',
+								'acting_return' => '0',
+								'status'        => $response['response']['result'],
+								'code'          => $response['errors']['error']['errorCode'],
+							),
+							USCES_CART_URL
+						)
+					);
+				}
+				exit();
+			}
 		}
 	}
 
@@ -3764,6 +4776,11 @@ jQuery(document).ready(function($) {
 				}
 				$results['reg_order'] = true;
 				break;
+
+			case 'zeus_bnpl':
+				$results[0]           = $results['acting_return'];
+				$results['reg_order'] = false;
+				break;
 		}
 
 		return $results;
@@ -3791,6 +4808,9 @@ jQuery(document).ready(function($) {
 			case 'zeus_conv':
 			case 'zeus_bank':
 				$trans_id = ( isset( $result_data['order_no'] ) ) ? $result_data['order_no'] : '';
+				break;
+			case 'zeus_bnpl':
+				$trans_id = ( isset( $result_data['sendpoint'] ) ) ? $result_data['sendpoint'] : '';
 				break;
 		}
 		return $trans_id;
@@ -3919,6 +4939,23 @@ jQuery(document).ready(function($) {
 				$usces->set_order_meta_value( 'wc_trans_id', $results['order_no'], $order_id );
 				$usces->set_order_meta_value( 'trans_id', $results['order_no'], $order_id );
 			}
+
+			/* zeus bnpl */
+		} elseif ( 'acting_zeus_bnpl' === $acting_flg ) {
+			$response    = ( isset( $results['response'] ) ) ? $results['response'] : array();
+			$tracking_id = ( isset( $response['transactionInfo']['shopOrderId'] ) ) ? $response['transactionInfo']['shopOrderId'] : '';
+			if ( ! empty( $tracking_id ) ) {
+				unset( $results['response'] );
+				$results['shopOrderId']       = $tracking_id;
+				$results['transactionId']     = $response['transactionInfo']['transactionId'];
+				$results['autoAuthoriresult'] = $response['transactionInfo']['autoAuthoriresult'];
+				$usces->set_order_meta_value( 'acting_zeus_bnpl', usces_serialize( $results ), $order_id );
+				$usces->set_order_meta_value( 'tracking_id', $tracking_id, $order_id );
+				$usces->set_order_meta_value( 'wc_trans_id', $response['transactionInfo']['transactionId'], $order_id );
+				$usces->set_order_meta_value( 'trans_id', $response['transactionInfo']['transactionId'], $order_id );
+				$response['money'] = $results['money'];
+				wel_zeus_save_acting_log( $response, 'zeus_bnpl', 'transaction', $response['transactionInfo']['autoAuthoriresult'], $order_id, $tracking_id );
+			}
 		}
 	}
 
@@ -3936,7 +4973,7 @@ jQuery(document).ready(function($) {
 				$tracking_id = ( isset( $results['sendpoint'] ) ) ? $results['sendpoint'] : '';
 			}
 			if ( ! empty( $tracking_id ) ) {
-				// usces_ordered_acting_data( $_REQUEST['wctid'] ); 元々の処理
+				// usces_ordered_acting_data( $_REQUEST['wctid'] ); 元々の処理.
 				usces_delete_ordered_acting_data( $tracking_id );
 			}
 		}
@@ -4015,6 +5052,19 @@ jQuery(document).ready(function($) {
 				} else {
 					$form .= '<br />詳細に関してはカスタマーサポートまでお問い合わせください。';
 				}
+			}
+			$form .= '<br /><br />
+			<a href="' . USCES_CUSTOMER_URL . '">もう一度決済を行う 》</a><br /><br />
+			株式会社ゼウス カスタマーサポート　（24時間365日対応）<br />
+			電話番号：0570-08-3000　（つながらないときは 03-3498-9888）<br />
+			E-mail:support@cardservice.co.jp
+			</div>';
+
+		} elseif ( 'zeus_bnpl' === $acting ) {
+			$form .= '<div class="support_box">';
+			if ( isset( $_GET['code'] ) ) {
+				$code  = filter_input( INPUT_GET, 'code' );
+				$form .= '<br />エラーコード：' . esc_html( $code );
 			}
 			$form .= '<br /><br />
 			<a href="' . USCES_CUSTOMER_URL . '">もう一度決済を行う 》</a><br /><br />
@@ -4624,8 +5674,8 @@ jQuery.event.add(window,'load',function() {
 		$regular_order = $wpdb->get_results( $query_order, ARRAY_A );
 		if ( 0 < count( $regular_order ) ) {
 			foreach ( $regular_order as $regular_data ) {
-				$payment = $usces->getPayments( $regular_data['reg_payment_name'] );
-				if ( isset( $payment['settlement'] ) && 'acting_zeus_card' !== $payment['settlement'] ) {
+				$acting_flg = $this->get_acting_flg( $regular_data['reg_payment_name'] );
+				if ( 'acting_zeus_card' !== $acting_flg ) {
 					continue;
 				}
 				$reg_id             = $regular_data['reg_id'];
@@ -4832,8 +5882,8 @@ jQuery.event.add(window,'load',function() {
 			return;
 		}
 
-		$payment = $usces->getPayments( $order_data['order_payment_name'] );
-		if ( isset( $payment['settlement'] ) && 'acting_zeus_card' !== $payment['settlement'] ) {
+		$acting_flg = $this->get_acting_flg( $order_data['order_payment_name'] );
+		if ( 'acting_zeus_card' !== $acting_flg ) {
 			return;
 		}
 
@@ -6096,6 +7146,31 @@ jQuery.event.add(window,'load',function() {
 	}
 
 	/**
+	 * Get XML Response.
+	 *
+	 * @param  string $url Connect url.
+	 * @param  string $params Sending parameters.
+	 * @return string
+	 */
+	protected function get_xml_bnpl( $url, $params ) {
+		$args = array(
+			'method'  => 'POST',
+			'headers' => array(
+				'Content-Type' => 'application/xml; charset=UTF-8',
+				'Accept'       => 'application/xml; charset=UTF-8',
+			),
+			'body'    => $params,
+		);
+
+		$xml      = '';
+		$response = wp_remote_post( $url, $args );
+		if ( ! is_wp_error( $response ) ) {
+			$xml = wp_remote_retrieve_body( $response );
+		}
+		return $xml;
+	}
+
+	/**
 	 * Secure Link Batch.
 	 *
 	 * @param  string $url Connect url.
@@ -6135,20 +7210,20 @@ jQuery.event.add(window,'load',function() {
 	 * @return string
 	 */
 	protected function get_clientip( $acting ) {
-		$clientip    = '';
+		$client_ip    = '';
 		$acting_opts = $this->get_acting_settings();
 		switch ( $acting ) {
 			case 'zeus_card':
-				$clientip = $acting_opts['clientip'];
+				$client_ip = $acting_opts['clientip'];
 				break;
 			case 'zeus_conv':
-				$clientip = $acting_opts['clientip_conv'];
+				$client_ip = $acting_opts['clientip_conv'];
 				break;
 			case 'zeus_bank':
-				$clientip = $acting_opts['clientip_bank'];
+				$client_ip = $acting_opts['clientip_bank'];
 				break;
 		}
-		return $clientip;
+		return $client_ip;
 	}
 
 	/**
@@ -6293,8 +7368,7 @@ jQuery.event.add(window,'load',function() {
 
 		$query              = $wpdb->prepare( "SELECT `order_payment_name` FROM {$wpdb->prefix}usces_order WHERE `ID` = %d", $order_id );
 		$order_payment_name = $wpdb->get_var( $query );
-		$payment            = usces_get_payments_by_name( $order_payment_name );
-		$acting_flg         = ( isset( $payment['settlement'] ) ) ? $payment['settlement'] : '';
+		$acting_flg         = $this->get_acting_flg( $order_payment_name );
 		return $acting_flg;
 	}
 
@@ -6413,6 +7487,8 @@ jQuery.event.add(window,'load',function() {
 					$acting_status = 'auth';
 				} elseif ( '決済完了' === $data['result'] || 'payment' === $data['status'] ) {
 					$acting_status = 'payment';
+				} elseif ( 'transaction' === $data['status'] || 'shippingrequest' === $data['status'] || 'canceltransaction' === $data['status'] ) {
+					$acting_status = $data['status'] . $data['result'];
 				}
 				if ( '' !== $acting_status ) {
 					break;
@@ -6459,6 +7535,33 @@ jQuery.event.add(window,'load',function() {
 				break;
 			case 'autodelivery':
 				$status_name = '定期購入決済エラー';
+				break;
+			case 'transaction':
+				$status_name = '取引登録';
+				break;
+			case 'transactionOK':
+				$status_name = '取引登録完了';
+				break;
+			case 'transactionNG':
+				$status_name = '取引登録エラー';
+				break;
+			case 'shippingrequest':
+				$status_name = '出荷登録';
+				break;
+			case 'shippingrequestOK':
+				$status_name = '出荷登録完了';
+				break;
+			case 'shippingrequestNG':
+				$status_name = '出荷登録エラー';
+				break;
+			case 'canceltransaction':
+				$status_name = '取引キャンセル';
+				break;
+			case 'canceltransactionOK':
+				$status_name = '取引取消完了';
+				break;
+			case 'canceltransactionNG':
+				$status_name = '取引取消エラー';
 				break;
 			default:
 				if ( in_array( $payment_result, $this->payment_normal_results, true ) ) {
@@ -6536,6 +7639,100 @@ jQuery.event.add(window,'load',function() {
 			$interface['host'] = ZEUS_TLS_TEST;
 		}
 		return $interface;
+	}
+
+	/**
+	 * Get acting flg.
+	 *
+	 * @param string $payment_name Payment name.
+	 * @return string
+	 */
+	private function get_acting_flg( $payment_name ) {
+		$payment    = usces_get_payments_by_name( $payment_name );
+		$acting_flg = ( isset( $payment['settlement'] ) && 'acting' === $payment['settlement'] ) ? $payment['module'] : $payment['settlement'];
+		return $acting_flg;
+	}
+
+	/**
+	 * Get Header Information.
+	 *
+	 * @return string
+	 */
+	private function get_header_information() {
+		// ヘッダー情報を格納する配列.
+		$header_info = array();
+
+		// 1-14の指定されたヘッダーを取得.
+		$header_info[] = $_SERVER['HTTP_ACCEPT'] ?? '';
+		$header_info[] = $_SERVER['HTTP_ACCEPT_CHARSET'] ?? '';
+		$header_info[] = $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
+		$header_info[] = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+		$header_info[] = $_SERVER['HTTP_CLIENT_IP'] ?? '';
+		$header_info[] = $_SERVER['HTTP_CONNECTION'] ?? '';
+
+		// 7) DNTヘッダーの処理（Mozilla系ブラウザの判定）.
+		$user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		if ( strpos( $user_agent, 'Mozilla' ) !== false ) {
+			$header_info[] = $_SERVER['HTTP_DNT'] ?? '';
+		} else {
+			$header_info[] = $_SERVER['HTTP_X_DO_NOT_TRACK'] ?? '';
+		}
+
+		$header_info[] = $_SERVER['HTTP_HOST'] ?? '';
+		$header_info[] = $_SERVER['HTTP_REFERER'] ?? '';
+		$header_info[] = $user_agent;
+		$header_info[] = $_SERVER['HTTP_KEEP_ALIVE'] ?? '';
+		$header_info[] = $_SERVER['HTTP_UA_CPU'] ?? '';
+		$header_info[] = $_SERVER['HTTP_VIA'] ?? '';
+		$header_info[] = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+
+		// 15) その他のヘッダーの処理.
+		$other_headers = array();
+		$all_headers   = getallheaders(); // 全ヘッダーを取得.
+
+		// 除外するヘッダー名のリスト（大文字小文字を区別しない比較のため小文字で保持）.
+		$exclude_headers = array_map(
+			'strtolower', [
+				'Accept', 'Accept-Charset', 'Accept-Encoding', 'Accept-Language',
+				'Client-IP', 'Connection', 'DNT', 'X-Do-Not-Track', 'Host',
+				'Referer', 'User-Agent', 'Keep-Alive', 'UA-CPU', 'Via',
+				'X-Forwarded-For',
+			]
+		);
+
+		foreach ( $all_headers as $header => $value ) {
+			if ( ! in_array( strtolower( $header ), $exclude_headers ) ) {
+				$other_headers[] = $header . '--' . $value;
+			}
+		}
+		$header_info[] = implode( '::', $other_headers );
+
+		// 16) クライアントIPアドレスの取得.
+		$client_ip = '';
+		if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+			$client_ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$client_ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+		}
+		$header_info[] = $client_ip;
+
+		// 17) 携帯端末識別IDの取得.
+		$mobile_id = '';
+		if ( isset( $_SERVER['HTTP_X_DCMGUID'] ) ) { // DoCoMo.
+			$mobile_id = $_SERVER['HTTP_X_DCMGUID'];
+		} elseif ( isset( $_SERVER['HTTP_X_UP_SUBNO'] ) ) { // au.
+			$mobile_id = $_SERVER['HTTP_X_UP_SUBNO'];
+		} elseif ( isset( $_SERVER['HTTP_X_JPHONE_UID'] ) ) { // SoftBank.
+			$mobile_id = $_SERVER['HTTP_X_JPHONE_UID'];
+		}
+		$header_info[] = $mobile_id;
+
+		// 全ての値をセミコロンとコロンで連結.
+		return implode( ';:', array_map( function( $value ) {
+			return trim( $value );
+		}, $header_info ) );
 	}
 }
 

@@ -61,8 +61,8 @@ class WlcOrderList {
 		$this->cscs_meta  = usces_has_custom_field_meta( 'customer' );
 		$this->csod_meta  = usces_has_custom_field_meta( 'order' );
 
-		$this->listOption  = get_option( 'usces_orderlist_option' );
-		$this->view_column = $this->listOption['view_column'];
+		$this->listOption  = get_option( 'usces_orderlist_option', array() );
+		$this->view_column = $this->listOption['view_column'] ?? array();
 		if ( $this->all_column ) {
 			foreach ( $this->view_column as $key => $value ) {
 				$this->view_column[ $key ] = 1;
@@ -74,7 +74,7 @@ class WlcOrderList {
 		$this->set_column();
 		$this->rows = array();
 
-		$this->maxRow         = $this->listOption['max_row'];
+		$this->maxRow         = $this->listOption['max_row'] ?? 50;
 		$this->naviMaxButton  = 11;
 		$this->firstPage      = 1;
 		$this->pageLimit      = 'on';
@@ -207,7 +207,7 @@ class WlcOrderList {
 			}
 		}
 
-		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
+		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
 			if ( $this->view_column[ $key ] ) {
 				$arr_column[ $key ] = $value['label'];
@@ -282,7 +282,7 @@ class WlcOrderList {
 			$arr_column[ $csod_key ] = $csod_name;
 		}
 
-		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
+		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
 			$arr_column[ $key ] = $value['label'];
 		}
@@ -665,7 +665,7 @@ class WlcOrderList {
 			}
 		}
 
-		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
+		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
 			if ( $this->view_column[ $key ] ) {
 				$csod .= ", ord.order_check \n";
@@ -894,7 +894,7 @@ class WlcOrderList {
 	public function SearchIn() {
 		global $wpdb;
 
-		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
+		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		$print_mail_column     = 'order_check';
 		$this->searchWhere     = '';
 		$this->searchHaving    = '';
@@ -1272,7 +1272,7 @@ class WlcOrderList {
 	 * Set Headers.
 	 */
 	public function SetHeaders() {
-		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields' );
+		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		foreach ( $this->columns as $key => $value ) {
 			if ( 'admin_memo' == $key ) {
 				continue;

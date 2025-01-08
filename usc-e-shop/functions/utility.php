@@ -48,7 +48,7 @@ function usces_upgrade_141() {
 	global $wpdb, $usces;
 	$rets = array();
 
-	$options = get_option( 'usces' );
+	$options = get_option( 'usces', array() );
 	if ( empty( $options['tax_rate'] ) ) {
 		$options['tax_mode'] = 'include';
 	} else {
@@ -216,7 +216,7 @@ function usces_upgrade_14() {
 	global $wpdb, $usces;
 	$rets = array();
 
-	$options = get_option( 'usces' );
+	$options = get_option( 'usces', array() );
 	if ( empty( $options['tax_rate'] ) ) {
 		$options['tax_mode'] = 'include';
 	} else {
@@ -456,7 +456,7 @@ function usces_upgrade_07() {
  */
 function usces_upgrade_11() {
 
-	$options = get_option( 'usces' );
+	$options = get_option( 'usces', array() );
 	$upgrade = (int) get_option( 'usces_upgrade' );
 	if ( 1 !== $upgrade ) {
 		return true;
@@ -613,7 +613,7 @@ function usces_upgrade_11() {
 	$payment = get_option( 'usces_payment_method' );
 	if ( empty( $payment ) ) {
 
-		$options     = get_option( 'usces' );
+		$options     = get_option( 'usces', array() );
 		$old_payment = isset( $options['payment_method'] ) ? $options['payment_method'] : '';
 		usces_log( 'old_payment : ' . print_r( $old_payment, true ), 'database_error.log' );
 		if ( ! empty( $old_payment ) && is_array( $old_payment ) ) {
@@ -1430,13 +1430,13 @@ function usces_payment_service_suspended() {
 			usces_update_system_option( 'usces_payment_method', $payment['id'], $payment );
 		}
 	}
-	$settlement_selected = get_option( 'usces_settlement_selected' );
+	$settlement_selected = get_option( 'usces_settlement_selected', array() );
 	if ( is_array( $settlement_selected ) && 0 < count( $settlement_selected ) ) {
 		$settlement_selected = array_diff( $settlement_selected, array( 'yahoo', 'veritrans' ) );
 		$settlement_selected = array_values( $settlement_selected );
 		update_option( 'usces_settlement_selected', $settlement_selected );
 	}
-	$available_settlement = get_option( 'usces_available_settlement' );
+	$available_settlement = get_option( 'usces_available_settlement', array() );
 	if ( is_array( $available_settlement ) && 0 < count( $available_settlement ) ) {
 		$available_settlement = array_diff( $available_settlement, array( 'Yahoo!ウォレット', 'ベリトランス Air-Web' ) );
 		update_option( 'usces_available_settlement', $available_settlement );

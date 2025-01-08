@@ -113,7 +113,7 @@ class SBPS_SETTLEMENT extends SBPS_MAIN {
 	 * Initialize
 	 */
 	public function initialize_data() {
-		$options = get_option( 'usces' );
+		$options = get_option( 'usces', array() );
 
 		$options['acting_settings']['sbps']['merchant_id']          = ( isset( $options['acting_settings']['sbps']['merchant_id'] ) ) ? $options['acting_settings']['sbps']['merchant_id'] : '';
 		$options['acting_settings']['sbps']['service_id']           = ( isset( $options['acting_settings']['sbps']['service_id'] ) ) ? $options['acting_settings']['sbps']['service_id'] : '';
@@ -151,13 +151,13 @@ class SBPS_SETTLEMENT extends SBPS_MAIN {
 		$options['acting_settings']['sbps']['paypay_sales']         = ( isset( $options['acting_settings']['sbps']['paypay_sales'] ) ) ? $options['acting_settings']['sbps']['paypay_sales'] : 'manual';
 		update_option( 'usces', $options );
 
-		$available_settlement = get_option( 'usces_available_settlement' );
+		$available_settlement = get_option( 'usces_available_settlement', array() );
 		if ( ! in_array( 'sbps', $available_settlement ) ) {
 			$available_settlement['sbps'] = $this->acting_formal_name;
 			update_option( 'usces_available_settlement', $available_settlement );
 		}
 
-		$noreceipt_status = get_option( 'usces_noreceipt_status' );
+		$noreceipt_status = get_option( 'usces_noreceipt_status', array() );
 		if ( ! in_array( 'acting_sbps_conv', $noreceipt_status ) || ! in_array( 'acting_sbps_payeasy', $noreceipt_status ) ) {
 			$noreceipt_status[] = 'acting_sbps_conv';
 			$noreceipt_status[] = 'acting_sbps_payeasy';
@@ -177,7 +177,7 @@ class SBPS_SETTLEMENT extends SBPS_MAIN {
 		$admin_page = ( isset( $_GET['page'] ) ) ? wp_unslash( $_GET['page'] ) : '';
 		switch ( $admin_page ) :
 			case 'usces_settlement':
-				$settlement_selected = get_option( 'usces_settlement_selected' );
+				$settlement_selected = get_option( 'usces_settlement_selected', array() );
 				if ( in_array( $this->paymod_id, (array) $settlement_selected ) ) :
 					$acting_opts = $this->get_acting_settings();
 					?>
@@ -986,7 +986,7 @@ jQuery( document ).ready( function( $ ) {
 		}
 
 		$this->error_mes = '';
-		$options         = get_option( 'usces' );
+		$options         = get_option( 'usces', array() );
 		$payment_method  = usces_get_system_option( 'usces_payment_method', 'settlement' );
 		$post_data       = wp_unslash( $_POST );
 
@@ -1229,7 +1229,7 @@ jQuery( document ).ready( function( $ ) {
 	 */
 	public function settlement_tab_body() {
 
-		$settlement_selected = get_option( 'usces_settlement_selected' );
+		$settlement_selected = get_option( 'usces_settlement_selected', array() );
 		if ( in_array( 'sbps', (array) $settlement_selected ) ) :
 			$acting_opts      = $this->get_acting_settings();
 			$merchant_id      = isset( $acting_opts['merchant_id'] ) ? $acting_opts['merchant_id'] : '';
@@ -1321,7 +1321,7 @@ jQuery( document ).ready( function( $ ) {
 					<label><input name="sales" type="radio" id="sales_sbps_auto" value="auto"<?php checked( $acting_opts['sales'], 'auto' ); ?> /><span>自動売上（実売上）</span></label>
 				</td>
 			</tr>
-			<tr id="ex_sales_sbps" class="explanation card_link_token_sbps"><td colspan="2">指定売上の場合は、決済時には与信のみ行い、Welcart の管理画面から手動で売上処理を行います。自動売上の場合は、決済時に即時売上計上されます。</td></tr>
+			<tr id="ex_sales_sbps" class="explanation card_link_token_sbps"><td colspan="2">「指定売上」の場合は、決済時には与信のみ行い、Welcart の管理画面から手動で売上処理を行います。「自動売上」の場合は、決済時に即時売上計上されます。</td></tr>
 			<?php if ( defined( 'WCEX_DLSELLER' ) ) : ?>
 			<tr class="card_link_token_sbps">
 				<th><a class="explanation-label" id="label_ex_sales_dlseller_sbps">自動継続課金売上方式</a></th>
@@ -1448,7 +1448,7 @@ jQuery( document ).ready( function( $ ) {
 					<label><input name="paypay_sales" type="radio" id="paypay_sales_sbps_auto" value="auto"<?php checked( $acting_opts['paypay_sales'], 'auto' ); ?> /><span>自動売上（実売上）</span></label>
 				</td>
 			</tr>
-			<tr id="ex_paypay_sales_sbps" class="explanation paypay_sbps"><td colspan="2">指定売上の場合は、決済時には与信のみ行い、Welcart の管理画面から手動で売上処理を行います。自動売上の場合は、決済時に即時売上計上されます。</td></tr>
+			<tr id="ex_paypay_sales_sbps" class="explanation paypay_sbps"><td colspan="2">「指定売上」の場合は、決済時には与信のみ行い、Welcart の管理画面から手動で売上処理を行います。「自動売上」の場合は、決済時に即時売上計上されます。</td></tr>
 		</table>
 		<input name="acting" type="hidden" value="sbps" />
 		<input name="usces_option_update" type="submit" class="button button-primary" value="SBペイメントサービスの設定を更新する" />
@@ -1458,7 +1458,7 @@ jQuery( document ).ready( function( $ ) {
 	</form>
 	<div class="settle_exp">
 		<p><strong>SBペイメントサービス</strong></p>
-		<a href="https://www.welcart.com/wc-settlement/sbps_guide/" target="_blank">SBペイメントサービスの詳細はこちら 》</a>
+		<a href="https://www.sbpayment.jp/service/partner/welcart/lp01/" target="_blank">SBペイメントサービスの詳細はこちら 》</a>
 		<p>クレジットカード決済では、「API型（トークン決済方式）」と「リンク型」が選択できます。</p>
 		<p>「API型」は、決済会社のページへは遷移せず、Welcart のページのみで決済まで完結します。デザインの統一性が保て、スムーズなチェックアウトが可能です。ただし、カード番号を扱いますので専用SSLが必須となります。入力されたカード番号はSBペイメントサービスのシステムに送信されますので、Welcart に保存することはありません。<br />
 「リンク型」は、決済会社のページへ遷移してカード情報を入力します。<br />
@@ -1475,6 +1475,8 @@ jQuery( document ).ready( function( $ ) {
 			?>
 		<p>※Welcart v1.9.34 以前からご利用で、「リンク型」から「API型」へ変更される場合は、SBペイメントサービスへの申請が必要となります。また、管理画面連携機能<?php echo esc_html( $wcex ); ?>を利用したい場合は、「3DES 暗号化キー」「3DES 初期化キー」「Basic 認証ID」「Basic 認証 Password」の設定が必要です。<br />
 各設定値がご不明な場合は、SBペイメントサービスにお問い合わせください。</p>
+		<p>※クレジットカード決済およびPayPay オンライン決済で売上方式を「自動売上」にしていても、決済ステータスが「売上確定」にならなかったり、決済履歴にエラーが表示されている場合は、SBペイメントサービスの加盟店管理画面で売上方式が「自動売上」になっている可能性があります。SBペイメントサービスの売上方式を「指定売上」に変更してください。<br />
+設定方法がご不明な場合は、SBペイメントサービスにお問い合わせください。</p>
 	</div>
 	</div><!-- uscestabs_sbps -->
 			<?php

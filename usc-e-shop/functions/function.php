@@ -4389,12 +4389,21 @@ function usces_get_ordercart_row( $order_id, $cart = array() ) {
 		$cart_thumbnail = ( ! empty( $pictid ) ) ? wp_get_attachment_image( $pictid, array( 80, 80 ), true ) : usces_get_attachment_noimage( array( 80, 80 ), $itemCode );
 		$cart_thumbnail = apply_filters( 'usces_filter_cart_thumbnail', $cart_thumbnail, $post_id, $pictid, $i, $cart_row );
 		$index_column   = apply_filters( 'usces_filter_admin_cart_index', ( $i + 1 ), $materials );
-		$item_editpage  = admin_url( 'admin.php?page=usces_itemedit&action=edit&post=' . $post_id . '&usces_referer=' . urlencode( site_url() . '/wp-admin/admin.php?page=usces_orderlist&order_action=edit&order_id=' . $order_id ) );
+		$post_status    = get_post_status( $post_id );
+		if ( $post_status && in_array( $post_status, array( 'publish', 'draft', 'private' ), true ) ) {
+			$item_editpage = admin_url( 'admin.php?page=usces_itemedit&action=edit&post=' . $post_id . '&usces_referer=' . urlencode( site_url() . '/wp-admin/admin.php?page=usces_orderlist&order_action=edit&order_id=' . $order_id ) );
+		} else {
+			$item_editpage = '';
+		}
 		?>
 	<tr>
 		<td><?php wel_esc_script_e( $index_column ); ?></td>
 		<td><?php wel_esc_script_e( $cart_thumbnail ); ?></td>
-		<td class="aleft"><a href="<?php echo esc_url( $item_editpage ); ?>" title="<?php esc_attr_e( 'To the edit screen for this product.', 'usces' ); ?>" ><?php echo apply_filters( 'usces_filter_admin_cart_item_name', esc_html( $cartItemName ), $materials ); ?></a><?php wel_esc_script_e( $reduced_taxrate_mark ); ?><?php do_action( 'usces_admin_order_item_name', $order_id, $i ); ?><?php usces_make_option_field( $materials, $cart ); ?></td>
+		<td class="aleft">
+		<?php if ( ! empty( $item_editpage ) ) : ?><a href="<?php echo esc_url( $item_editpage ); ?>" title="<?php esc_attr_e( 'To the edit screen for this product.', 'usces' ); ?>" ><?php endif; ?>
+		<?php echo apply_filters( 'usces_filter_admin_cart_item_name', esc_html( $cartItemName ), $materials ); ?>
+		<?php if ( ! empty( $item_editpage ) ) : ?></a><?php endif; ?>
+		<?php wel_esc_script_e( $reduced_taxrate_mark ); ?><?php do_action( 'usces_admin_order_item_name', $order_id, $i ); ?><?php usces_make_option_field( $materials, $cart ); ?></td>
 		<td><input name="skuPrice[<?php echo esc_attr( $ordercart_id ); ?>]" class="text price" type="text" value="<?php echo esc_attr( usces_crform( $skuPrice, false, false, 'return', false ) ); ?>" /><?php do_action( 'usces_admin_order_cart_after_price', $materials ); ?></td>
 		<td><input name="quant[<?php echo esc_attr( $ordercart_id ); ?>]" class="text quantity" type="text" value="<?php echo esc_attr( $cart_row['quantity'] ); ?>" /></td>
 		<td><p id="sub_total[<?php echo esc_attr( $ordercart_id ); ?>]" class="aright">&nbsp;</p><?php do_action( 'usces_admin_order_cart_after_sub_total', $materials ); ?></td>
@@ -5241,8 +5250,8 @@ function get_welcart_system_information() {
 		'verifyemail_login_notify'       => $options_ex['system']['verifyemail']['login_notify'],
 		'number_of_orders'               => usces_get_total_orders(),
 		'number_of_members'              => usces_get_total_members(),
-		'settlement_selected'            => get_option( 'usces_settlement_selected' ),
-		'available_settlement'           => get_option( 'usces_available_settlement' ),
+		'settlement_selected'            => get_option( 'usces_settlement_selected', array() ),
+		'available_settlement'           => get_option( 'usces_available_settlement', array() ),
 		'brute_force_status'             => $options_ex['system']['brute_force']['status'],
 		'google_recaptcha_status'        => $options_ex['system']['google_recaptcha']['status'],
 		'structured_data_product_status' => $options_ex['system']['structured_data_product']['status'],

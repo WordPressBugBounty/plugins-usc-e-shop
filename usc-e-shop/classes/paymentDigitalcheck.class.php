@@ -252,7 +252,7 @@ class DIGITALCHECK_SETTLEMENT {
 		}
 
 		$this->error_mes = '';
-		$options         = get_option( 'usces' );
+		$options         = get_option( 'usces', array() );
 		$payment_method  = usces_get_system_option( 'usces_payment_method', 'settlement' );
 
 		unset( $options['acting_settings']['digitalcheck'] );

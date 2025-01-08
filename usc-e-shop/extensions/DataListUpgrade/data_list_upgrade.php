@@ -91,7 +91,7 @@ class USCES_DATALIST_UPGRADE {
 	 */
 	public function initialize_data() {
 		global $usces;
-		$options = get_option( 'usces_ex' );
+		$options = get_option( 'usces_ex', array() );
 		$options['system']['datalistup']['orderlist_flag']  = ( ! isset( $options['system']['datalistup']['orderlist_flag'] ) ) ? 1 : (int) $options['system']['datalistup']['orderlist_flag'];
 		$options['system']['datalistup']['memberlist_flag'] = ( ! isset( $options['system']['datalistup']['memberlist_flag'] ) ) ? 1 : (int) $options['system']['datalistup']['memberlist_flag'];
 		update_option( 'usces_ex', $options );
@@ -115,7 +115,7 @@ class USCES_DATALIST_UPGRADE {
 			self::$opts['orderlist_flag']  = ( isset( $_POST['datalistup_orderlist_flag'] ) ) ? (int) $_POST['datalistup_orderlist_flag'] : 1;
 			self::$opts['memberlist_flag'] = ( isset( $_POST['datalistup_memberlist_flag'] ) ) ? (int) $_POST['datalistup_memberlist_flag'] : 1;
 
-			$options                         = get_option( 'usces_ex' );
+			$options                         = get_option( 'usces_ex', array() );
 			$options['system']['datalistup'] = self::$opts;
 			update_option( 'usces_ex', $options );
 		}

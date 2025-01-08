@@ -495,7 +495,7 @@ class SBPS_MAIN {
 	 * usces_action_settlement_tab_title
 	 */
 	public function settlement_tab_title() {
-		$settlement_selected = get_option( 'usces_settlement_selected' );
+		$settlement_selected = get_option( 'usces_settlement_selected', array() );
 		if ( in_array( $this->paymod_id, (array) $settlement_selected ) ) {
 			echo '<li><a href="#uscestabs_' . esc_html( $this->paymod_id ) . '">' . esc_html( $this->acting_formal_name ) . '</a></li>';
 		}

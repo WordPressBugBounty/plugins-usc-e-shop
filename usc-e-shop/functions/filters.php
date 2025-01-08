@@ -54,8 +54,8 @@ function usces_action_reg_orderdata( $args ) {
 	global $usces;
 	extract( $args );
 
-	$options = get_option( 'usces' );
-	$prefix  = $options['system']['dec_orderID_prefix'];
+	$options = get_option( 'usces', array() );
+	$prefix  = $options['system']['dec_orderID_prefix'] ?? '';
 	$prefix  = apply_filters( 'usces_filter_dec_order_id_prefix', $prefix, $args );
 
 	$dec_order_id = usces_make_deco_order_id( $order_id );
@@ -1425,7 +1425,7 @@ function usces_add_tracking_number_field( $data, $cscs_meta, $action_args ) {
 	$locale = get_locale();
 
 	$deli_comps = array( 'クロネコヤマト', 'ヤマト運輸', '佐川急便', '日本通運', 'ゆうパック', '日本郵便', '郵便書留', '西濃運輸', '福山通運', '名鉄運輸', '新潟運輸', 'トナミ運輸', '第一貨物', '飛騨倉庫運輸', '西武運輸', 'クリックポスト', 'トールエクスプレス', 'セイノーエクスプレス', '信州名鉄運輸', '大川配送サービス', 'その他' );
-	$deli_comps = apply_filters( 'usces_filter_deli_comps', $deli_comps );
+	$deli_comps = apply_filters( 'usces_filter_deli_comps', $deli_comps, $data );
 
 	$tracking_number = '';
 	if ( ! empty( $data['ID'] ) ) {
@@ -1905,7 +1905,7 @@ function usces_confirm_uscesL10n( $nouse, $post_id ) {
 function usces_search_zipcode_check( $js ) {
 	global $usces;
 
-	$option = get_option( 'usces' );
+	$option = get_option( 'usces', array() );
 	if ( ! isset( $option['address_search'] ) || 'activate' != $option['address_search'] ) {
 		return $js;
 	}
@@ -1943,8 +1943,8 @@ function usces_admin_member_list_hook() {
 		return;
 	}
 
-	$list_option = get_option( 'usces_memberlist_option' );
-	foreach ( $list_option['view_column'] as $key => $value ) {
+	$list_option = get_option( 'usces_memberlist_option', array() );
+	foreach ( (array) $list_option['view_column'] as $key => $value ) {
 		if ( isset( $_POST['hide'][ $key ] ) ) {
 			$list_option['view_column'][ $key ] = 1;
 		} else {
@@ -1968,8 +1968,8 @@ function usces_admin_order_list_hook( $hook ) {
 		return;
 	}
 
-	$list_option = get_option( 'usces_orderlist_option' );
-	foreach ( $list_option['view_column'] as $key => $value ) {
+	$list_option = get_option( 'usces_orderlist_option', array() );
+	foreach ( (array) $list_option['view_column'] as $key => $value ) {
 		if ( isset( $_POST['hide'][ $key ] ) ) {
 			$list_option['view_column'][ $key ] = 1;
 		} else {
@@ -1998,7 +1998,7 @@ function usces_memberlist_screen_settings( $screen_settings, $screen ) {
 	require_once USCES_PLUGIN_DIR . '/classes/memberList.class.php';
 	$memberlist  = new WlcMemberList();
 	$arr_column  = $memberlist->get_column();
-	$list_option = get_option( 'usces_memberlist_option' );
+	$list_option = get_option( 'usces_memberlist_option', array() );
 	$init_view   = array( 'ID', 'name1', 'name2', 'pref', 'address1', 'tel', 'email', 'entrydate', 'rank', 'point' );
 
 	$screen_settings = '
@@ -2052,7 +2052,7 @@ function usces_orderlist_screen_settings( $screen_settings, $screen ) {
 	require_once USCES_PLUGIN_DIR . '/classes/orderList2.class.php';
 	$orderlist   = new WlcOrderList();
 	$arr_column  = $orderlist->get_all_column();
-	$list_option = get_option( 'usces_orderlist_option' );
+	$list_option = get_option( 'usces_orderlist_option', array() );
 	$init_view   = array( 'deco_id', 'order_date', 'process_status', 'payment_name', 'receipt_status', 'total_price', 'deli_method', 'mem_id', 'name1', 'name2', 'pref' );
 	if ( defined( 'WCEX_AUTO_DELIVERY' ) && version_compare( WCEX_AUTO_DELIVERY_VERSION, '1.4.0', '>=' ) ) {
 		$init_view[] = 'reg_id';
@@ -2425,7 +2425,7 @@ function usces_add_google_recaptcha_v3_script() {
  * @return void
  */
 function print_google_recaptcha_response( $action, $parent_element_id, $form_name = '' ) {
-	$option = get_option( 'usces_ex' );
+	$option = get_option( 'usces_ex', array() );
 	if ( isset( $option['system']['google_recaptcha']['status'] ) && $option['system']['google_recaptcha']['status'] && ! ( empty( $option['system']['google_recaptcha']['site_key'] ) ) && ! ( empty( $option['system']['google_recaptcha']['secret_key'] ) ) ) {
 		$site_key = isset( $option['system']['google_recaptcha']['site_key'] ) ? $option['system']['google_recaptcha']['site_key'] : '';
 		echo '<script src="https://www.google.com/recaptcha/api.js?render=' . esc_js( $site_key ) . '"></script>';

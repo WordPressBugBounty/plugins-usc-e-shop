@@ -360,7 +360,7 @@ function usces_get_admin_script_message() {
  */
 function usces_admin_orderlist_show_wc_trans_id() {
 
-	$list_option = get_option( 'usces_orderlist_option' );
+	$list_option = get_option( 'usces_orderlist_option', array() );
 	$wc_trans_id = ( isset( $list_option['view_column']['wc_trans_id'] ) ) ? $list_option['view_column']['wc_trans_id'] : 0;
 	if ( empty( $wc_trans_id ) ) {
 		$list_option['view_column']['wc_trans_id'] = 1;
@@ -410,7 +410,7 @@ jQuery( document ).ready( function( $ ) {
 function usces_mail_data() {
 	global $usces;
 
-	$options          = get_option( 'usces' );
+	$options          = get_option( 'usces', array() );
 	$mail_data_title  = $options['mail_data']['title'];
 	$mail_data_header = $options['mail_data']['header'];
 	$mail_data_footer = $options['mail_data']['footer'];
@@ -766,7 +766,7 @@ function wel_get_plugins() {
 	$result = '';
 
 	$all_plugins    = get_plugins();
-	$active_plugins = get_option( 'active_plugins' );
+	$active_plugins = get_option( 'active_plugins', array() );
 
 	foreach ( $active_plugins as $plugin_path ) {
 		if ( strpos( $plugin_path, 'wcex' ) === 0 && isset( $all_plugins[ $plugin_path ] ) ) {
@@ -787,7 +787,7 @@ function wel_get_activ_pay_methd() {
 	global $usces;
 
 	$result         = '';
-	$payment_method = get_option( 'usces_payment_method' );
+	$payment_method = get_option( 'usces_payment_method', array() );
 
 	foreach ( $payment_method as $method ) {
 		if ( empty( $method['use'] ) || 'activate' !== $method['use'] ) {
