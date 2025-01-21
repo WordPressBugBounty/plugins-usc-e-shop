@@ -656,7 +656,7 @@ jQuery(document).ready(function($) {
 			<div><span id="target_market_loading"></span><span id="target_market_province"></span></div>
 		</th>
 		<td width="150"><textarea name="province" id="province" cols="30" rows="10"></textarea><div id="province_ajax"></div></td>
-		<td><div id="ex_province" class="explanation"><?php esc_html_e( 'The district where sale is possible', 'usces' ); ?>(<?php esc_html_e( 'Province', 'usces' ); ?>) <?php esc_html_e( 'One line one by one.', 'usces' ); ?></div></td>
+		<td><div id="ex_province" class="explanation"><?php esc_html_e( 'The district where sale is possible', 'usces' ); ?>(<?php esc_html_e( 'Province', 'usces' ); ?>) <?php _e( 'One line one by one.', 'usces' ); ?></div></td>
 	</tr>
 </table>
 </div>

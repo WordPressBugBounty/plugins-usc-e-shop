@@ -62,6 +62,11 @@ jQuery( function($) {
 			<ul class="settlement-ui-sortable" id="available-settlement">
 			<?php foreach ( (array) $available_settlement as $key => $name ) : ?>
 				<?php if ( ! in_array( $key, (array) $settlement_selected, true ) ) : ?>
+					<?php
+					if ( 'paypal_cp' === $key ) {
+						$name = __( 'PayPal Commerce Platform', 'usces' );
+					}
+					?>
 				<li class="ui-available-settlement" id="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $name ); ?></li>
 				<?php endif; ?>
 			<?php endforeach; ?>

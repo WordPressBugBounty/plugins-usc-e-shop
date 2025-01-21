@@ -7969,13 +7969,15 @@ jQuery.event.add( window, "load", function() {
 			if ( empty( $trading_id ) ) {
 				if ( RESULT_STATUS_NORMAL == $result ) {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` = %s ORDER BY `datetime` DESC, `ID` DESC",
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` = %s ORDER BY `datetime` DESC, `ID` DESC",
+						$order_id,
 						$order_id,
 						RESULT_STATUS_NORMAL
 					);
 				} else {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log GROUP BY `tracking_id` ) AND `order_id` = %d ORDER BY `datetime` DESC, `ID` DESC",
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d ORDER BY `datetime` DESC, `ID` DESC",
+						$order_id,
 						$order_id
 					);
 				}

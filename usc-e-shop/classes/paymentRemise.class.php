@@ -181,7 +181,7 @@ class REMISE_SETTLEMENT {
 			'acting_remise_conv',
 		);
 		$this->acting_name        = 'ルミーズ';
-		$this->acting_formal_name = __( 'Remise Japanese Settlement', 'usces' );
+		$this->acting_formal_name = 'ルミーズ';
 		$this->acting_company_url = 'http://www.remise.jp/';
 
 		$this->initialize_data();

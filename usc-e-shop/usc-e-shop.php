@@ -3,7 +3,7 @@
  * Plugin Name: Welcart e-Commerce
  * Plugin URI: https://www.welcart.com/
  * Description: Welcart builds the management system with a net shop on WordPress.
- * Version: 2.11.8
+ * Version: 2.11.9
  * Author: Welcart Inc.
  * Author URI: https://www.welcart.com/
  * Text Domain: usces
@@ -14,7 +14,7 @@
  * @package Welcart
  */
 
-define( 'USCES_VERSION', '2.11.8.2501081' );
+define( 'USCES_VERSION', '2.11.9.2501211' );
 define( 'USCES_DB_ACCESS', '1.5' );
 define( 'USCES_DB_MEMBER', '1.1' );
 define( 'USCES_DB_MEMBER_META', '1.1' );
@@ -55,8 +55,6 @@ define( 'USCES_UPLOAD_TEMP', '/uploads/welcart-uptemp' );
 global $usces_settings, $usces_states, $usces_p, $usces_essential_mark;
 require_once USCES_PLUGIN_DIR . 'functions/included_first.php';
 add_filter( 'locale', 'usces_filter_locale' );
-load_plugin_textdomain( 'usces', false, USCES_PLUGIN_FOLDER . '/languages' );
-
 require_once USCES_PLUGIN_DIR . 'includes/settings.php';
 
 global $usces;

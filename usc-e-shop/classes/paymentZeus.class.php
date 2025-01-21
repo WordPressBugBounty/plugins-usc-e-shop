@@ -149,7 +149,7 @@ class ZEUS_SETTLEMENT {
 			'acting_zeus_bnpl',
 		);
 		$this->acting_name        = 'ゼウス';
-		$this->acting_formal_name = __( 'ZEUS Japanese Settlement', 'usces' );
+		$this->acting_formal_name = 'ゼウス';
 		$this->acting_company_url = 'https://www.cardservice.co.jp/';
 
 		$this->initialize_data();
@@ -604,13 +604,19 @@ jQuery(document).ready(function($) {
 			case 'usces_continue':
 				$order_id        = '';
 				$acting_flg      = '';
+				$dialog_title    = '';
 				$order_action    = filter_input( INPUT_GET, 'order_action' );
 				$continue_action = filter_input( INPUT_GET, 'continue_action' );
 				if ( ( 'usces_orderlist' === $admin_page && ( 'edit' === $order_action || 'editpost' === $order_action || 'newpost' === $order_action ) ) ||
 					( 'usces_continue' === $admin_page && 'settlement_zeus_card' === $continue_action ) ) {
 					$order_id = ( isset( $_REQUEST['order_id'] ) ) ? wp_unslash( $_REQUEST['order_id'] ) : '';
 					if ( ! empty( $order_id ) ) {
-						$acting_flg = $this->get_order_acting_flg( $order_id );
+						$payment_name = $this->get_order_payment_name( $order_id );
+						$acting_flg   = $this->get_acting_flg( $payment_name );
+						$payment      = usces_get_payments_by_name( $payment_name );
+						if ( isset( $payment['name'] ) ) {
+							$dialog_title = $payment['name'];
+						}
 					}
 				}
 				if ( 'acting_zeus_card' === $acting_flg || 'acting_zeus_bnpl' === $acting_flg ) :
@@ -960,7 +966,7 @@ jQuery(document).ready(function($) {
 		var order_num = $(this).attr("data-num");
 		$("#tracking_id").val(tracking_id);
 		$("#order_num").val(order_num);
-		$("#settlement_dialog").dialog("option","title","<?php echo esc_js( $this->acting_formal_name ); ?>");
+		$("#settlement_dialog").dialog("option","title","<?php echo esc_js( $dialog_title ); ?>");
 		$("#settlement_dialog").dialog("open");
 	});
 					<?php
@@ -3235,7 +3241,8 @@ jQuery(document).ready(function($) {
 			return $detail;
 		}
 
-		$acting_flg = $this->get_order_acting_flg( $order_id );
+		$payment_name = $this->get_order_payment_name( $order_id );
+		$acting_flg   = $this->get_acting_flg( $payment_name );
 		if ( 'acting_zeus_card' === $acting_flg ) {
 			$tracking_id = $this->get_tracking_id( $order_id );
 			if ( ! empty( $tracking_id ) ) {
@@ -3509,9 +3516,11 @@ jQuery(document).ready(function($) {
 	 * @return array
 	 */
 	public function bnpl_delivery_company( $deli_comps, $data ) {
-		$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
-		if ( 'acting_zeus_bnpl' === $acting_flg ) {
-			$deli_comps = array_values( $this->shipping_company );
+		if ( isset( $data['order_payment_name'] ) ) {
+			$acting_flg = $this->get_acting_flg( $data['order_payment_name'] );
+			if ( 'acting_zeus_bnpl' === $acting_flg ) {
+				$deli_comps = array_values( $this->shipping_company );
+			}
 		}
 		return $deli_comps;
 	}
@@ -7363,13 +7372,12 @@ jQuery.event.add(window,'load',function() {
 	 * @param  int $order_id Order number.
 	 * @return string
 	 */
-	protected function get_order_acting_flg( $order_id ) {
+	protected function get_order_payment_name( $order_id ) {
 		global $wpdb;
 
 		$query              = $wpdb->prepare( "SELECT `order_payment_name` FROM {$wpdb->prefix}usces_order WHERE `ID` = %d", $order_id );
 		$order_payment_name = $wpdb->get_var( $query );
-		$acting_flg         = $this->get_acting_flg( $order_payment_name );
-		return $acting_flg;
+		return $order_payment_name;
 	}
 
 	/**
@@ -7401,14 +7409,16 @@ jQuery.event.add(window,'load',function() {
 			if ( empty( $tracking_id ) ) {
 				if ( 'OK' === $result ) {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` IN( %s ) ORDER BY `ID` DESC, `datetime` DESC",
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` IN( %s ) ORDER BY `ID` DESC, `datetime` DESC",
+						$order_id,
 						$order_id,
 						implode( "','", $this->payment_normal_results )
 					);
 					$query = stripslashes( $query );
 				} else {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log GROUP BY `tracking_id` ) AND `order_id` = %d ORDER BY `ID` DESC, `datetime` DESC",
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d ORDER BY `ID` DESC, `datetime` DESC",
+						$order_id,
 						$order_id
 					);
 				}

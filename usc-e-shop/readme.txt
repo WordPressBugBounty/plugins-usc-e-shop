@@ -2,9 +2,9 @@
 Contributors: Welcart Inc., uscnanbu
 Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage, plugin, shortcode, widgets, membership
 Requires at least: 5.6
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.4 - 8.2
-Stable tag: 2.11.8
+Stable tag: 2.11.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,14 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+21 Jan 2025
+= V2.11.9 =
+-----------
+* [Compatibility] Added support for WordPress 6.7.
+* Fixed a bug that caused payment history to not display for recurring subscription members.
+* Fixed a bug that the "Display State" filter in the item list did not function.
+* Fixed PHP errors.
 
 8 Jan 2025
 = V2.11.8 =

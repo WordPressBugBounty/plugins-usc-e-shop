@@ -125,13 +125,13 @@ class WlcOrderList {
 
 		$arr_column = array();
 
-		if ( $this->view_column['admin_memo'] ) {
+		if ( isset( $this->view_column['admin_memo'] ) ) {
 			$arr_column['admin_memo'] = __( 'Administrator Note', 'usces' );
 		}
 
 		$arr_column['ID'] = __( 'ID', 'usces' );
 
-		if ( $this->view_column['deco_id'] ) {
+		if ( isset( $this->view_column['deco_id'] ) ) {
 			$arr_column['deco_id'] = __( 'Order number', 'usces' );
 		}
 
@@ -144,13 +144,13 @@ class WlcOrderList {
 		$arr_column['estimate_status'] = __( 'Order type', 'usces' );
 		$arr_column['process_status']  = __( 'Processing status', 'usces' );
 
-		if ( $this->view_column['tracking_number'] ) {
+		if ( isset( $this->view_column['tracking_number'] ) ) {
 			$arr_column['tracking_number'] = __( 'Tracking number', 'usces' );
 		}
 
 		$arr_column['payment_name'] = __( 'payment method', 'usces' );
 
-		if ( $this->view_column['wc_trans_id'] ) {
+		if ( isset( $this->view_column['wc_trans_id'] ) ) {
 			$arr_column['wc_trans_id'] = __( 'Transaction ID', 'usces' );
 		}
 
@@ -176,7 +176,7 @@ class WlcOrderList {
 		$arr_column['name4']   = __( 'First Furigana', 'usces' );
 		$arr_column['zipcode'] = __( 'Zip', 'usces' );
 
-		if ( $this->view_column['country'] ) {
+		if ( isset( $this->view_column['country'] ) ) {
 			$arr_column['country'] = __( 'Country', 'usces' );
 		}
 
@@ -209,7 +209,7 @@ class WlcOrderList {
 
 		$arr_mail_print_fields = get_option( 'usces_order_mail_print_fields', array() );
 		foreach ( $arr_mail_print_fields as $key => $value ) {
-			if ( $this->view_column[ $key ] ) {
+			if ( isset( $this->view_column[ $key ] ) ) {
 				$arr_column[ $key ] = $value['label'];
 			}
 		}

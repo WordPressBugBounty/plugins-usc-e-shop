@@ -164,12 +164,12 @@ jQuery(function($){
 			}else if( column == 'display_status' ) {
 				label = '';
 				html = '<select name="search[word][display_status]" class="searchselect">';
-				html += '<option value="publish"<?php selected( isset( $arr_search['word']['display_status'] ) && 'publish' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Published', 'usces' ); ?></option>';
-				html += '<option value="future"<?php selected( isset( $arr_search['word']['display_status'] ) && 'future' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Scheduled', 'usces' ); ?></option>';
-				html += '<option value="draft"<?php selected( isset( $arr_search['word']['display_status'] ) && 'draft' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Draft', 'usces' ); ?></option>';
-				html += '<option value="pending"<?php selected( isset( $arr_search['word']['display_status'] ) && 'pending' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Pending Review', 'usces' ); ?></option>';
-				html += '<option value="private"<?php selected( isset( $arr_search['word']['display_status'] ) && 'private' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Closed', 'usces' ); ?></option>';
-				html += '<option value="trash"<?php selected( isset( $arr_search['word']['display_status'] ) && 'trash' == $arr_search['word']['display_status'], true ); ?>><?php esc_html_e( 'Trash', 'usces' ); ?></option>';
+				html += '<option value="publish"<?php if ( isset( $arr_search['word']['display_status'] ) && 'publish' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Published', 'usces' ); ?></option>';
+				html += '<option value="future"<?php if ( isset( $arr_search['word']['display_status'] ) && 'future' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Scheduled', 'usces' ); ?></option>';
+				html += '<option value="draft"<?php if ( isset( $arr_search['word']['display_status'] ) && 'draft' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Draft', 'usces' ); ?></option>';
+				html += '<option value="pending"<?php if ( isset( $arr_search['word']['display_status'] ) && 'pending' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Pending Review', 'usces' ); ?></option>';
+				html += '<option value="private"<?php if ( isset( $arr_search['word']['display_status'] ) && 'private' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Closed', 'usces' ); ?></option>';
+				html += '<option value="trash"<?php if ( isset( $arr_search['word']['display_status'] ) && 'trash' == $arr_search['word']['display_status'] ) echo ' selected="selected"'; ?>><?php esc_html_e( 'Trash', 'usces' ); ?></option>';
 				html += '</select>';
 			}
 
@@ -320,7 +320,7 @@ jQuery(document).ready(function($){
 			$("#searchVisiLink").html('<?php esc_html_e( 'Hide the Operation field', 'usces' ); ?>');
 		}
 	});
-<?php if ( 'ON' == $DT->searchSwitchStatus ) { ?>
+<?php if ( 'ON' === $DT->searchSwitchStatus ) { ?>
 $("#searchBox").css("display", "block");
 <?php } ?>
 
@@ -348,17 +348,17 @@ operation.change_search_field();
 			<option value="none"> </option>
 <?php
 foreach ( $arr_column as $key => $value ) :
-	if ( $value == $arr_search['column'] ) {
+	if ( $value === $arr_search['column'] ) {
 		$selected = ' selected="selected"';
 	} else {
 		$selected = '';
 	}
-	if ( 'sku_key' != $value && 'price' != $value ) :
-		if ( 'zaiko_num' == $value ) {
+	if ( 'sku_key' !== $value && 'price' !== $value ) :
+		if ( 'zaiko_num' === $value ) {
 			?>
 			<option value="<?php echo esc_attr( $value ); ?>"<?php echo esc_attr( $selected ); ?>><?php esc_html_e( 'items without stock', 'usces' ); ?></option>
 			<?php
-		} elseif ( version_compare( USCES_MYSQL_VERSION, '5.0.0', '<' ) && 'item_code' == $value ) {
+		} elseif ( version_compare( USCES_MYSQL_VERSION, '5.0.0', '<' ) && 'item_code' === $value ) {
 			continue;
 		} else {
 			?>
@@ -417,12 +417,12 @@ foreach ( (array) $arr_header as $key => $value ) :
 	if ( 'post_id' === $key ) {
 		continue;
 	}
-	if ( 'item_code' == $key ) :
+	if ( 'item_code' === $key ) :
 		?>
 		<th scope="col"><?php wel_esc_script_e( $value ); ?>&nbsp;/&nbsp;
-	<?php elseif ( 'item_name' == $key || 'post_title' == $key ) : ?>
+	<?php elseif ( 'item_name' === $key || 'post_title' === $key ) : ?>
 		<?php wel_esc_script_e( $value ); ?></th>
-	<?php elseif ( 'price' == $key ) : ?>
+	<?php elseif ( 'price' === $key ) : ?>
 		<th scope="col"><?php wel_esc_script_e( $value ); ?>(<?php usces_crcode(); ?>)</th>
 	<?php else : ?>
 		<th scope="col"><?php wel_esc_script_e( $value ); ?></th>
@@ -455,7 +455,7 @@ foreach ( (array) $rows as $array ) :
 	</td>
 	<?php
 	foreach ( (array) $array as $key => $value ) :
-		if ( 'item_code' == $key ) :
+		if ( 'item_code' === $key ) :
 			?>
 			<td class="item">
 			<?php if ( '' != $value ) : ?>
@@ -500,7 +500,7 @@ foreach ( (array) $rows as $array ) :
 			</ul>
 			</td>
 			<?php
-		elseif ( 'sku' == $key ) :
+		elseif ( 'sku' === $key ) :
 			if ( is_array( $value ) ) {
 				$no_sku = ( 0 === count( $value ) ) ? '&nbsp;' : '';
 			} else {
@@ -590,7 +590,7 @@ foreach ( (array) $rows as $array ) :
 			}
 			?>
 			</td>
-		<?php elseif ( 'post_status' == $key ) : ?>
+		<?php elseif ( 'post_status' === $key ) : ?>
 			<td>
 			<?php
 			switch ( $value ) {
@@ -629,12 +629,9 @@ foreach ( (array) $rows as $array ) :
 </form>
 
 <div id="upload_dialog" class="upload_dialog">
-	<?php if ( ! current_user_can( 'wel_others_products' ) ) : ?>
-
-		<p><?php esc_html_e( 'You have no permission to upload files.', 'usces' ); ?></p>
-
-	<?php else : ?>
-
+<?php if ( ! current_user_can( 'wel_others_products' ) ) : ?>
+	<p><?php esc_html_e( 'You have no permission to upload files.', 'usces' ); ?></p>
+<?php else : ?>
 	<p id="dialogExp"></p>
 	<form action="<?php echo esc_url( USCES_ADMIN_URL . '?page=usces_itemedit' ); ?>" method="post" enctype="multipart/form-data" name="upform" id="upform" onsubmit="if( jQuery('#usces_upcsv').val() == '' ){alert('<?php esc_attr_e( 'File is not selected.', 'usces' ); ?>'); return false; }else{jQuery('#dialogExp').html('<span><?php esc_attr_e( 'Uploading now', 'usces' ); ?></span>');}">
 	<fieldset>
@@ -653,8 +650,7 @@ foreach ( (array) $rows as $array ) :
 	<input name="action" type="hidden" value="upload_register" />
 	</form>
 	<p><?php esc_html_e( 'Indication is updated after upload completion.', 'usces' ); ?></p>
-
-	<?php endif; ?>
+<?php endif; ?>
 </div><!-- #upload_dialog -->
 <div id="dlItemListDialog" title="<?php esc_attr_e( 'Download Item List', 'usces' ); ?>">
 	<p><?php esc_html_e( 'Choose the file format, and push the download.', 'usces' ); ?></p>
@@ -666,7 +662,8 @@ foreach ( (array) $rows as $array ) :
 <?php echo apply_filters( 'usces_filter_item_list_download_mode', '' ); ?>
 	</fieldset>
 	<fieldset>
-		<label for="chk_header"><input type="checkbox" class="check_item" id="chk_header" value="1"<?php checked( isset( $usces_opt_item['chk_header'] ) && 1 == $usces_opt_item['chk_header'], true ); ?> /><?php esc_html_e( 'To add a subject title at the first line', 'usces' ); ?></label>
+		<?php $chk_header = ( isset( $usces_opt_item['chk_header'] ) && 1 === (int) $usces_opt_item['chk_header'] ) ? ' checked="checked"' : ''; ?>
+		<label for="chk_header"><input type="checkbox" class="check_item" id="chk_header" value="1"<?php echo esc_attr( $chk_header ); ?> /><?php esc_html_e( 'To add a subject title at the first line', 'usces' ); ?></label>
 <?php echo apply_filters( 'usces_filter_item_list_download_dialog', '' ); ?>
 	</fieldset>
 	<div><input type="button" class="button" id="dl_item" value="<?php esc_attr_e( 'Download', 'usces' ); ?>" /></div>
