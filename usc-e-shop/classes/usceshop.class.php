@@ -2630,7 +2630,8 @@ class usc_e_shop {
 		usces_states_form_js();
 		$js = apply_filters( 'usces_filter_shop_foot_js', ob_get_contents() );
 		ob_end_clean();
-		echo $js; // no escape due to script.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $js;
 	}
 
 	public function admin_head() {
@@ -2641,12 +2642,14 @@ class usc_e_shop {
 			$wcex_str .= "'" . esc_js( $key ) . '-' . esc_js( $values['version'] ) . "', ";
 		}
 		$wcex_str = rtrim( $wcex_str, ', ' );
-		if ( version_compare( $wp_version, '3.4', '>=' ) ) {
-			$theme_ob         = wp_get_theme();
-			$theme['Name']    = esc_js( $theme_ob->get( 'Name' ) );
-			$theme['Version'] = esc_js( $theme_ob->get( 'Version' ) );
+		$theme_ob = wp_get_theme();
+		if ( $theme_ob ) {
+			$theme = array(
+				'Name'    => esc_js( $theme_ob->get( 'Name' ) ),
+				'Version' => esc_js( $theme_ob->get( 'Version' ) ),
+			);
 		} else {
-			$theme = get_theme_data( get_stylesheet_directory() . '/style.css' );
+			$theme = array( 'Name' => '', 'Version' => '' );
 		}
 		$message = usces_get_admin_script_message();
 		?>

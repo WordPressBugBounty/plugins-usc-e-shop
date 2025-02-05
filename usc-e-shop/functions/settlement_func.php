@@ -597,8 +597,8 @@ function usces_get_settlement_log( $log_key = '' ) {
 		$html = '<table class="list"><tr><th></th><th></th><th>' . __( 'Register date', 'usces' ) . '</th><th>' . __( 'Link key', 'usces' ) . '</th><th>' . __( 'Name', 'usces' ) . '</th><th>' . __( 'Type of payment', 'usces' ) . '</th><th>IP</th></tr>';
 		foreach ( (array) $log_data as $data ) {
 			$log               = unserialize( $data['log'] );
-			$name              = $log['usces_entry']['customer']['name1'] . $log['usces_entry']['customer']['name2'];
-			$payment_name      = $log['usces_entry']['order']['payment_name'];
+			$name              = esc_html( $log['usces_entry']['customer']['name1'] ) . esc_html( $log['usces_entry']['customer']['name2'] );
+			$payment_name      = esc_html( $log['usces_entry']['order']['payment_name'] );
 			$payments          = usces_get_payments_by_name( $payment_name );
 			$settlement        = ( isset( $payments['settlement'] ) ) ? $payments['settlement'] : '';
 			$payment_structure = ( isset( $usces->payment_structure[ $settlement ] ) ) ? '[' . $usces->payment_structure[ $settlement ] . ']' : '';

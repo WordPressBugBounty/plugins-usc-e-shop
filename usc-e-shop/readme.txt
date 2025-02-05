@@ -1,10 +1,10 @@
 === Welcart e-Commerce ===
-Contributors: Welcart Inc., uscnanbu
-Tags: Welcart, e-Commerce, shopping, cart, eShop, store, admin, calendar, manage, plugin, shortcode, widgets, membership
+Contributors: uscnanbu
+Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.7
-Requires PHP: 7.4 - 8.2
-Stable tag: 2.11.9
+Requires PHP: 7.4
+Stable tag: 2.11.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,7 @@ Welcart is a free e-commerce plugin for Wordpress with top market share in Japan
 Welcart is a free e-commerce plugin for Wordpress with top market share in Japan.
 Welcart comes with many features and customizations for making an online store.
 You can easily create your own original online store.
+This plugin has been tested with PHP versions 7.4 through 8.2.
 
 
 = SHOPPING CART SYSTEM =
@@ -31,7 +32,7 @@ Please refer to the link below (Japanese version).
 
 
 = DESIGN =
-Welcart has free standard templates and themes. 
+Welcart has free standard templates and themes.
 You can customize the design and layout any way you like.
 All themes are compliant to Wordpress standards.
 Welcart provides a free responsive design theme (Welcart Basic), from the link below.
@@ -50,7 +51,7 @@ You can also easily manage an order directly through its edit page, where you ca
 Welcart has it's very own membership system, eliminating the need for any extra plugins.
 Similar to the order list page, a highly functional member list page is also provided.
 You can search for member data by customer information, purchase history, etc.
-Member orders can be edited individually. 
+Member orders can be edited individually.
 You can also enable a point system for Welcart members.
 
 
@@ -68,7 +69,7 @@ In your WordPress admin panel, go to Plugins > New Plugin, search for Welcart e-
 
 
 = ATTENTION =
- 
+
 In the process of activation of plugin, Welcart writes data on tables such as postmeta, options, and terms. When you install a blog existing already, to avoid unexpected damages or any other unexpected situation, backing up is strongly recommended.
 
 Welcart is not responsible or does not have any guarantee for any kind of damage that you get by using or installing Welcart.
@@ -96,11 +97,16 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 1. Item List page on the admin screen
 2. Editing orders page on the admin screen
-3. Top page(Free official theme 'Welcart Basic') 
-4. Item page(Free official theme 'Welcart Basic') 
+3. Top page(Free official theme 'Welcart Basic')
+4. Item page(Free official theme 'Welcart Basic')
 
 
 == Changelog ==
+
+5 Feb 2025
+= V2.11.10 =
+-----------
+* [Security Enhancement] Strengthened XSS protection.
 
 21 Jan 2025
 = V2.11.9 =
@@ -584,7 +590,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * [REMISE] Fixed the bug that the card information remains displayed even after canceling PayQuick.
 * Fixed the bug that the validation check is not checked for the shipping phone number on the shipping and payment method page.
 * Fixed the bug with two slashes in the initial settlement module path.
-* Fixed the bug that "We are sorry, we are unable to process your order" is displayed at the front page when SKU code is only numbers and delimited by ".". 
+* Fixed the bug that "We are sorry, we are unable to process your order" is displayed at the front page when SKU code is only numbers and delimited by ".".
 * Changed member_history logic.
 * Changed the specification to apply the business package discount when editing order data.
 * Fixed the bug in the conditional branching of whether or not an item has been purchased in the past.
@@ -636,7 +642,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * [e-SCOTT and WelcartPay] Compatible with 3DS 2.0
 * [SB Payment] Compatible with 3D Secure 2.0
 * [Epsilon] Added PayPay payment
-* Fixed the bug that the information in the Custom Delivery field specified in "Specify a different delivery address" remains after the field is changed to "Same as Customer Information".	
+* Fixed the bug that the information in the Custom Delivery field specified in "Specify a different delivery address" remains after the field is changed to "Same as Customer Information".
 * Fixed Notice error in "Issue Receipt".
 * Fixed the bug that "Register New Product Image" is not displayed in the system environment information.
 * Fixed the bug that the return value of hook_usces_filter_sku_meta_title1 contains an escape process.
@@ -811,7 +817,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * Fixed the issue that the order list loading speed is slow when using WCEX Auto Delivery.Auto Delivery needs to be updated.
 * Standardized the descriptions of shipping and delivery.
 * Changed the specification of the way "customer name" is displayed in the mail options.Changed the specification to display the customer name in the specified location instead of the beginning when {customer_name} is entered in the header, by using the replacement string {customer_name} for the mail.
-* Changed the specification of the "Frequently Used Items" category in the category field of the item information edit page to enable checking and registration of other categories besides the item category. 
+* Changed the specification of the "Frequently Used Items" category in the category field of the item information edit page to enable checking and registration of other categories besides the item category.
 
 = V2.3.5 =
 -----------
@@ -1117,7 +1123,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * Corrected the display of the number of stock per SKU in Control Panel > Item List.
 * Fixed the bug that unnecessary columns are inserted in the download CSV data for "Order List Output", "Member Data Output", and "Order List Output" .
 * Fixed the bug that some of the button styles on the admin screen are not working.
-* [e-SCOTT] [WelcartPay] Fixed the bug that the display of the number of payments for installment payments is incorrect. 
+* [e-SCOTT] [WelcartPay] Fixed the bug that the display of the number of payments for installment payments is incorrect.
 * Fixed the bug that the error happens in checking for update of extension plugins and failing to activate Welcart.
 * [WelcartPay] Added the function to return to session when SESSION EMPTY.
 * Fixed the error in the getItemDiscount() function.
@@ -1139,7 +1145,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 = V1.9.29 =
 -----------
 7 Apr 2020
-* Improved the performance of a order list response. 
+* Improved the performance of a order list response.
 * Added a session recovery function for recover the session empty error of credit settlements.
 * [e-SCOTT] [WelcartPay] Fixed the bug that Notice error occurs when there is no "TokenResponseCd".
 * Compatible with WordPress 5.4
@@ -1160,7 +1166,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 = V1.9.27 =
 -----------
 2 Mar 2020
-* Fixed the bug that the item option in the past order list is disappear when you change the item option of the item master. 
+* Fixed the bug that the item option in the past order list is disappear when you change the item option of the item master.
 * Fixed the bug that the calendar id tag of the calendar widget is not unique.
 * Compatible with Chrome 80.
 * Fixed the bug that the error occurs the member list in MySQL8.
@@ -1234,7 +1240,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * Added the SKU item mode on item CSV of an item batch registration and an item data output.
 * [WelcartPay] Compatible with 3D Secure.
 * [e-SCOTT Smart] Compatible with 3D Secure.
-* [SBPS] Fixed the bug that the display of option changes to an  incorrect value on wallet settlement. 
+* [SBPS] Fixed the bug that the display of option changes to an  incorrect value on wallet settlement.
 * Fixed the bug that the style of the order completion page is skewed when not using 'wc_templates'.
 * [Paygent] Fixed the bug that the payment method isn't registered on basic settings>payment method>payment method when the settings of the payment is completed.
 * Changed the specification. You can't select the payment method when the settings of the credit payment is wrong.
@@ -1262,7 +1268,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 22 Apr 2019
 * [ZEUS]Fixed the bug that the credit card can't update in My Page in case of using ie11 or iPhone Safari.
 * Changed the specification of the hook that the value status of "Check out" button in confirm page is changeable.
-* Added the hook to get_member_history(). 
+* Added the hook to get_member_history().
 * Fixed the bug that an error occurs when specifying non-charactor in the second argument in is_status().
 * Changed the specification that textarea available in custom order field.
 * [Veritrans]Added the hook to the timing of receiving payment notification.
@@ -1287,10 +1293,10 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * [PayPal EC]Fixed the bug that total amount process isn't match  when the currency is dollar.
 * Fixed the bug that displaying "Security check4" when reload the page after login to my page.
 * Fixed the bug that displaying "Security check2" in case without wc_templetes when click the button of "Next with membership for register".
-* Fixed the bug that the item registration number of Welcart Shop Home doesn't decrease when the item delete(into the trash box). 
+* Fixed the bug that the item registration number of Welcart Shop Home doesn't decrease when the item delete(into the trash box).
 * Fixed the bug that displaying "Notice" on custom order field check.
-* Changed the specification that the bank account for money transfer doesn't display in case of the payment method is post-payment. 
-* Added Serbia to the sales country. 
+* Changed the specification that the bank account for money transfer doesn't display in case of the payment method is post-payment.
+* Added Serbia to the sales country.
 * Added the hook at the status response of the purchase history on the member data edit.
 
 = V1.9.15 =
@@ -1347,7 +1353,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 -----------
 29 Jun 2018
 * [Mizuho factor]changed the connection destination URL of test environment.
-* Fix the bug that there are cases when e-commerce tracking is not recognized(sent) correctly. 
+* Fix the bug that there are cases when e-commerce tracking is not recognized(sent) correctly.
 * [e-SCOTT][WelcartPay]Changed a display of the number of payment  to a blank in case of "lump sum payment only".
 * Fixed the bug that site title on a statement of delivery PDF is garbled.
 * Added the hook to "company" in a statement of delivery PDF.
@@ -1501,9 +1507,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * Added the new payment module "WelcartPay"
 * Fixed the bug that the sub-image is not recognized
 
-
 == Upgrade Notice ==
 
 = 1.9.4 =
 This version fixes an object injection vulnerability. Upgrade immediately.
-
