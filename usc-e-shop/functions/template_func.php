@@ -238,12 +238,13 @@ function usces_internal_tax( $materials, $out = '' ) {
 					$total     = $materials['total_items_price'] + $materials['discount'] - $use_point + $materials['shipping_charge'] + $materials['cod_fee'];
 				}
 			}
-			$total    = apply_filters( 'usces_filter_internal_tax_total', $total, $materials );
-			$tax_rate = (float) $condition['tax_rate'];
-			$tax      = $total * $tax_rate / 100;
-			$tax      = $total - $total / ( 1 + ( $tax_rate / 100 ) );
-			$tax      = usces_tax_rounding_off( $tax, $condition['tax_method'] );
-			$tax      = apply_filters( 'usces_filter_internal_tax', $tax, $materials );
+			$total      = apply_filters( 'usces_filter_internal_tax_total', $total, $materials );
+			$tax_rate   = (float) $condition['tax_rate'];
+			$tax_method = ( isset( $condition['tax_method'] ) ) ? $condition['tax_method'] : $usces->options['tax_method'];
+			$tax        = $total * $tax_rate / 100;
+			$tax        = $total - $total / ( 1 + ( $tax_rate / 100 ) );
+			$tax        = usces_tax_rounding_off( $tax, $tax_method );
+			$tax        = apply_filters( 'usces_filter_internal_tax', $tax, $materials );
 		}
 	}
 

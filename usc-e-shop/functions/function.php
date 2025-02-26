@@ -4679,7 +4679,7 @@ function usces_localized_name( $Familly_name, $Given_name, $out = '' ) {
 	}
 
 	if ( 'return' === $out ) {
-		return $res;
+		return esc_html( $res );
 	} else {
 		echo esc_html( $res );
 	}

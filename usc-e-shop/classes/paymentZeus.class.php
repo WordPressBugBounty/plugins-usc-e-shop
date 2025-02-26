@@ -4062,6 +4062,7 @@ jQuery(document).ready(function($) {
 				}
 				$zeus_card_option = ( isset( $_POST['zeus_card_option'] ) ) ? filter_input( INPUT_POST, 'zeus_card_option' ) : '';
 				$zeus_token_value = ( isset( $_POST['zeus_token_value'] ) ) ? filter_input( INPUT_POST, 'zeus_token_value' ) : '';
+				$zeus_card_name   = ( isset( $_POST['zeus_token_return_card_name'] ) ) ? filter_input( INPUT_POST, 'zeus_token_return_card_name' ) : '';
 				$form             = '';
 				if ( $this->is_activate_card( 'api' ) && 1 === (int) $acting_opts['3dsecur'] ) {
 					$form .= '<div id="3dscontainer"></div>';
@@ -4074,6 +4075,7 @@ jQuery(document).ready(function($) {
 				<input type="hidden" name="money" value="' . $amount . '">
 				<input type="hidden" name="telno" value="' . esc_attr( str_replace( '-', '', $entry['customer']['tel'] ) ) . '">
 				<input type="hidden" name="email" value="' . esc_attr( $entry['customer']['mailaddress1'] ) . '">
+				<input type="hidden" name="card_name" id="card_name" value="' . esc_attr( $zeus_card_name ) . '">
 				<input type="hidden" name="sendid" id="sendid" value="' . $mem_id . '">
 				<input type="hidden" name="sendpoint" id="sendpoint" value="' . $rand . '">';
 				if ( isset( $entry['order']['cbrand'] ) && isset( $entry['order']['howpay'] ) && WCUtils::is_zero( $entry['order']['howpay'] ) ) {
@@ -4207,6 +4209,7 @@ jQuery(document).ready(function($) {
 				}
 				if ( isset( $_POST['zeus_card_option'] ) && 'new' === filter_input( INPUT_POST, 'zeus_card_option' ) ) {
 					$form .= '<input type="hidden" name="zeus_token_value" value="' . esc_attr( filter_input( INPUT_POST, 'zeus_token_value' ) ) . '">';
+					$form .= '<input type="hidden" name="zeus_token_return_card_name" value="' . esc_attr( filter_input( INPUT_POST, 'zeus_token_return_card_name' ) ) . '">';
 				}
 				break;
 
@@ -5129,6 +5132,7 @@ jQuery(document).ready(function($) {
 				$l10n                    .= "'zeus_cardupdate_url': '" . urlencode( $member_update_settlement ) . "',\n";
 			}
 			$l10n .= "'zeus_card_error': '" . __( 'Credit card information is not appropriate.', 'usces' ) . "',\n";
+			$l10n .= "'zeus_3ds': '" . $acting_opts['3dsecur'] . "',\n";
 		} elseif ( $usces->is_member_page( $_SERVER['REQUEST_URI'] ) ) {
 			if ( isset( $_GET['usces_page'] ) && ( 'member_register_settlement' === filter_input( INPUT_GET, 'usces_page' ) || 'member_update_settlement' === filter_input( INPUT_GET, 'usces_page' ) ) ) {
 				$acting_opts = $this->get_acting_settings();
@@ -5143,6 +5147,7 @@ jQuery(document).ready(function($) {
 				$l10n       .= "'zeus_pcid': '" . $pcid . "',\n";
 				$l10n       .= "'zeus_partofcard': '" . $partofcard . "',\n";
 				$l10n       .= "'zeus_card_error': '" . __( 'Credit card information is not appropriate.', 'usces' ) . "',\n";
+				$l10n       .= "'zeus_3ds': '" . $acting_opts['3dsecur'] . "',\n";
 			}
 		}
 		return $l10n;
@@ -5205,6 +5210,7 @@ var zeusTokenIpcode = "<?php echo esc_attr( $acting_opts['clientip'] ); ?>";
 			params.append("action","zeus_3dsecure_enrol");
 			params.append("card_option",document.getElementById("card_option").value);
 			params.append("token_key",document.getElementById("token_key").value);
+			params.append("card_name",document.getElementById("card_name").value);
 			params.append("sendid",document.getElementById("sendid").value);
 			params.append("sendpoint",document.getElementById("sendpoint").value);
 			params.append("_nonce","<?php echo esc_attr( wp_create_nonce( 'acting_zeus_card' ) ); ?>");
@@ -6676,6 +6682,10 @@ jQuery.event.add(window,'load',function() {
 			$data['uniq_key']['sendid']    = $sendid;
 			$data['uniq_key']['sendpoint'] = $sendpoint;
 			$data['use_3ds2_flag']         = '1';
+
+			// リスクベース認証用追加パラメータ.
+			$data['cardHolderInfo']['cardholderName'] = filter_input( INPUT_POST, 'card_name' );
+			$data['cardHolderInfo']['email']          = $entry['customer']['mailaddress1'];
 
 			$enrol_req  = '<?xml version="1.0" encoding="utf-8"?>';
 			$enrol_req .= '<request service="secure_link_3d" action="enroll">';

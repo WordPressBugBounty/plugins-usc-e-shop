@@ -1,4 +1,4 @@
-var zeusTokenClass = function () {
+var zeusTokenClass = function() {
 
 	var today = new Date();
 	var year = today.getFullYear();
@@ -16,8 +16,11 @@ var zeusTokenClass = function () {
 		"zeus_token_card_expires_note" : "例）12月　" + year + "年",
 		"zeus_token_card_cvv_for_new_card_label" : "セキュリティコード",
 		"zeus_token_card_name_label" : "カード名義",
+		"zeus_token_card_name_placeholder" : "TARO\u00A0YAMADA",
 		"zeus_token_card_number_change_label" : "カード情報の変更はこちら",
 		"zeus_token_card_number_last4digits_label" : "（登録済みのカード番号下4桁）",
+		"zeus_agreement_note_label" : "個人情報の第三者提供",
+		"zeus_agree_check_label" : "個人情報の取り扱いに同意する",
 		"zeus_token_error_messages" : {
 			"88888888" : "メンテナンス中です。",
 			"90100100" : "通信に失敗しました。",
@@ -54,8 +57,20 @@ var zeusTokenClass = function () {
 			"02131117" : "「カード名義」を正しく入力してください。",
 			"02131123" : "「カード名義」を正しく入力してください。",
 			"02131124" : "「カード名義」を正しく入力してください。",
+
+			"E0000001" : "「個人情報の取り扱いに同意する」にチェックが入っていません",
+			"E0000002" : "「カード名義」を正しく入力してください。",
 		},
 	};
+
+	this.agreementMessage = "当社がお客様から収集した以下の個人情報等は、カード発行会社が行う不正利用検知・防止のためにお客様が利用されているカード発行会社へ提供させていただきます。\n\n"
+		+"氏名、電話番号、email アドレス、インターネット利用環境に関する情報等、お客様が利用されているカード発行会社が外国にある場合、これらの情報は当該発行会社が所属する国に移転される場合があります。\n\n"
+		+"当社では、お客様から収集した情報からは、ご利用のカード発行会社及び当該会社が所在する国を特定することができないため、以下の個人情報保護措置に関する情報を把握してご提供することはできません。\n"
+		+"・提供先が所在する外国の名称\n"
+		+"・当該国の個人情報保護制度に関する情報\n"
+		+"・発行会社の個人情報保護の措置\n"
+		+"なお、個人情報保護委員会のホームページ（https://www.ppc.go.jp/）では、各国における個人情報保護制度に関する情報について掲載されています。\n"
+		+"お客様が未成年の場合、親権者または後見人の承諾を得た上で、本サービスを利用するものとします。";
 
 	if (typeof zeusTokenCustomItem == "object" && zeusTokenCustomItem) {
 		for (var zeus_token_item_tmp_name in this.zeusTokenItem) {
@@ -73,7 +88,7 @@ var zeusTokenClass = function () {
 	}
 };
 
-zeusTokenClass.prototype.init = function () {
+zeusTokenClass.prototype.init = function() {
 
 	// IPCODEの設定
 	if (typeof zeusTokenIpcode != "string") {
@@ -101,7 +116,7 @@ zeusTokenClass.prototype.init = function () {
 	}
 }
 
-zeusTokenClass.prototype.getErrorMessage = function (error_code) {
+zeusTokenClass.prototype.getErrorMessage = function(error_code) {
 	if (typeof this.zeusTokenItem["zeus_token_error_messages"] != "object") {
 		return error_code + "An error has occurred.";
 	}
@@ -111,11 +126,14 @@ zeusTokenClass.prototype.getErrorMessage = function (error_code) {
 	if (typeof this.zeusTokenItem["zeus_token_error_messages"][error_code] != "string") {
 		return error_code + " : An error has occurred.";
 	}
+	if ("E" == error_code.charAt(0)) {
+		return this.zeusTokenItem["zeus_token_error_messages"][error_code];
+	}
 	return error_code + ' : ' + this.zeusTokenItem["zeus_token_error_messages"][error_code];
 }
 
 // カード入力欄初期化
-zeusTokenClass.prototype.initCardFormItems = function () {
+zeusTokenClass.prototype.initCardFormItems = function() {
 	var label, input, select, option, span, zeus_registerd_card_area, zeus_new_card_area;
 	var card_info_area = document.getElementById('zeus_token_card_info_area');
 	card_info_area.textContent = null;
@@ -341,13 +359,51 @@ zeusTokenClass.prototype.initCardFormItems = function () {
 	input.setAttribute('value', '');
 	input.setAttribute('id', 'zeus_token_card_name');
 	input.setAttribute('name', 'zeus_token_card_name');
+	input.setAttribute('placeholder', this.zeusTokenItem["zeus_token_card_name_placeholder"]);
 	zeus_new_card_area.appendChild(input);
+
+	if (uscesL10n.zeus_3ds == '1') {
+		label1 = document.createElement('label');
+		label1.htmlFor = 'zeus_agreement_note';
+		label1.textContent = this.zeusTokenItem["zeus_agreement_note_label"];
+		textarea = document.createElement('textarea');
+		textarea.id = 'zeus_agreement_note';
+		textarea.readOnly = true;
+		textarea.style.width = '100%';
+		textarea.rows = 5;
+		textarea.textContent = this.agreementMessage;
+
+		div = document.createElement('div');
+		div.style.display = 'flex';
+		div.style.alignItems = 'center';
+		label2 = document.createElement('label');
+		label2.htmlFor = 'zeus_agree_check';
+		label2.className = 'iopt_label';
+		checkbox = document.createElement('input');
+		checkbox.type = 'checkbox';
+		checkbox.id = 'zeus_agree_check';
+		checkbox.value = 'agree';
+		span = document.createElement('span');
+		span.className = 'checkmark';
+		labelText = document.createTextNode(this.zeusTokenItem["zeus_agree_check_label"]);
+		label2.appendChild(checkbox);
+		label2.appendChild(span);
+		label2.appendChild(labelText);
+		div.appendChild(label2);
+
+		container = document.createElement('div');
+		container.style.marginTop = '5px';
+		container.appendChild(label1);
+		container.appendChild(textarea);
+		container.appendChild(div);
+		zeus_new_card_area.appendChild(container);
+	}
 
 	card_info_area.appendChild(zeus_new_card_area);
 };
 
 // 「登録済みのカードを使う」の項目を活性化
-zeusTokenClass.prototype.enableRegisterdCardArea = function () {
+zeusTokenClass.prototype.enableRegisterdCardArea = function() {
 	var obj;
 
 	if (uscesL10n.zeus_security == '1') {
@@ -360,7 +416,7 @@ zeusTokenClass.prototype.enableRegisterdCardArea = function () {
 };
 
 // 「登録済みのカードを使う」の項目を非活性化
-zeusTokenClass.prototype.disableRegisterdCardArea = function () {
+zeusTokenClass.prototype.disableRegisterdCardArea = function() {
 	var obj;
 
 	if (uscesL10n.zeus_security == '1') {
@@ -374,7 +430,7 @@ zeusTokenClass.prototype.disableRegisterdCardArea = function () {
 };
 
 // 「新しいカードを使う」の項目を活性化
-zeusTokenClass.prototype.enableNewCardArea = function () {
+zeusTokenClass.prototype.enableNewCardArea = function() {
 	var obj;
 
 	obj = document.getElementById('zeus_token_card_number');
@@ -411,7 +467,7 @@ zeusTokenClass.prototype.enableNewCardArea = function () {
 };
 
 // 「新しいカードを使う」の項目を非性化
-zeusTokenClass.prototype.disableNewCardArea = function () {
+zeusTokenClass.prototype.disableNewCardArea = function() {
 	var obj;
 
 	obj = document.getElementById('zeus_token_card_number');
@@ -453,7 +509,7 @@ zeusTokenClass.prototype.disableNewCardArea = function () {
 };
 
 // カード情報入力フォームのバリデーション
-zeusTokenClass.prototype.validateCardForm = function () {
+zeusTokenClass.prototype.validateCardForm = function() {
 	var validateResult = true;
 	var error_code = "";
 	var obj;
@@ -515,9 +571,32 @@ zeusTokenClass.prototype.validateCardForm = function () {
 		obj.classList.remove('zeus_token_input_normal');
 		obj.classList.add('zeus_token_input_error');
 	} else {
-		obj.classList.remove('zeus_token_input_disable');
-		obj.classList.remove('zeus_token_input_error');
-		obj.classList.add('zeus_token_input_normal');
+		if (/^[A-Za-z0-9\s]+$/.test(obj.value)) {
+			obj.classList.remove('zeus_token_input_disable');
+			obj.classList.remove('zeus_token_input_error');
+			obj.classList.add('zeus_token_input_normal');
+		} else {
+			validateResult = false;
+			if( error_code == "" ) error_code = "E0000002";
+			obj.classList.remove('zeus_token_input_disable');
+			obj.classList.remove('zeus_token_input_normal');
+			obj.classList.add('zeus_token_input_error');
+		}
+	}
+
+	if (uscesL10n.zeus_3ds == '1') {
+		obj = document.getElementById('zeus_agree_check');
+		if (obj.checked) {
+			obj.classList.remove('zeus_token_input_disable');
+			obj.classList.remove('zeus_token_input_error');
+			obj.classList.add('zeus_token_input_normal');
+		} else {
+			validateResult = false;
+			if( error_code == "" ) error_code = "E0000001";
+			obj.classList.remove('zeus_token_input_disable');
+			obj.classList.remove('zeus_token_input_normal');
+			obj.classList.add('zeus_token_input_error');
+		}
 	}
 
 	// return validateResult;
@@ -525,7 +604,7 @@ zeusTokenClass.prototype.validateCardForm = function () {
 };
 
 // 入力されたカード情報から、トークンを取得する
-zeusTokenClass.prototype.getToken = function (callback_function) {
+zeusTokenClass.prototype.getToken = function(callback_function) {
 	var action_type = ''; // 空欄で送信された場合の入力チェックは、サーバサイドで行われ、エラーコード101020で返却される。
 	if (uscesL10n.zeus_form == 'cart' && uscesL10n.zeus_quickcharge == 'on' && uscesL10n.zeus_cardupdate_url != undefined) {
 		if (document.getElementById('zeus_token_action_type_new').checked) {
@@ -560,7 +639,7 @@ zeusTokenClass.prototype.getToken = function (callback_function) {
 	}
 
 	var request = new XMLHttpRequest();
-	request.onreadystatechange = function () {
+	request.onreadystatechange = function() {
 		switch (this.readyState) {
 			case 4:
 				if (this.status == 0) {
@@ -726,30 +805,30 @@ var zeusToken = new zeusTokenClass();
 var zeusTokenStart = function() {
 	zeusToken.init();
 
-	// document.getElementById('zeus_token_card_name').onchange = function () {
+	// document.getElementById('zeus_token_card_name').onchange = function() {
 	// 	zeusToken.validateCardForm();
 	// };
-	// document.getElementById('zeus_token_card_number').onchange = function () {
+	// document.getElementById('zeus_token_card_number').onchange = function() {
 	// 	zeusToken.validateCardForm();
 	// };
-	// document.getElementById('zeus_token_card_expires_month').onchange = function () {
+	// document.getElementById('zeus_token_card_expires_month').onchange = function() {
 	// 	zeusToken.validateCardForm();
 	// };
-	// document.getElementById('zeus_token_card_expires_year').onchange = function () {
+	// document.getElementById('zeus_token_card_expires_year').onchange = function() {
 	// 	zeusToken.validateCardForm();
 	// };
-	// document.getElementById('zeus_token_card_cvv').onchange = function () {
+	// document.getElementById('zeus_token_card_cvv').onchange = function() {
 	// 	zeusToken.validateCardForm();
 	// };
 
 	if (uscesL10n.zeus_form == 'cart' && uscesL10n.zeus_quickcharge == 'on' && uscesL10n.zeus_cardupdate_url != undefined) {
-		document.getElementById('zeus_token_action_type_new').onclick = function () {
+		document.getElementById('zeus_token_action_type_new').onclick = function() {
 			// zeusToken.disableRegisterdCardArea();
 			zeusToken.enableNewCardArea();
 			// zeusToken.validateCardForm();
 			document.getElementById('zeus_card_option').value = this.value;
 		};
-		document.getElementById('zeus_token_action_type_quick').onclick = function () {
+		document.getElementById('zeus_token_action_type_quick').onclick = function() {
 			// zeusToken.enableRegisterdCardArea();
 			zeusToken.disableNewCardArea();
 			document.getElementById('zeus_card_option').value = this.value;

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.11.10
+Stable tag: 2.11.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,14 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+26 Feb 2025
+= V2.11.11 =
+-----------
+* [ZEUS] Added consent for personal information acquisition when using EMV 3-D Secure.
+* [ZEUS] Added risk-based authentication parameters when using EMV 3-D Secure.
+* Fixed a bug that caused email display issues when symbols were included in the name.
+* Fixed PHP errors.
 
 5 Feb 2025
 = V2.11.10 =

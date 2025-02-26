@@ -1490,7 +1490,7 @@ class ESCOTT_MAIN {
 						}
 						$logdata = array_merge( $param_list, $response_member );
 						$log     = array(
-							'acting' => $acting . '(member_process)',
+							'acting' => $this->acting_card . '(member_process)',
 							'key'    => $rand,
 							'result' => $response_member['ResponseCd'],
 							'data'   => $logdata,

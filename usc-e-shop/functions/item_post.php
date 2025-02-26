@@ -2765,6 +2765,7 @@ function usces_order_recalculation( $order_id, $mem_id, $post_id, $price, $quant
 	$tax_mode            = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : usces_get_tax_mode();
 	$tax_target          = ( isset( $condition['tax_target'] ) ) ? $condition['tax_target'] : usces_get_tax_target();
 	$point_coverage      = ( isset( $condition['point_coverage'] ) ) ? $condition['point_coverage'] : usces_point_coverage();
+	$tax_method          = ( isset( $condition['tax_method'] ) ) ? $condition['tax_method'] : $usces->options['tax_method'];
 
 	$total_items_price = 0;
 	foreach ( $cart as $cart_row ) {
@@ -2885,7 +2886,7 @@ function usces_order_recalculation( $order_id, $mem_id, $post_id, $price, $quant
 				}
 			}
 			$tax         = (float) sprintf( '%.3f', (float) $total * (float) $condition['tax_rate'] / 100 );
-			$tax         = usces_tax_rounding_off( $tax, $condition['tax_method'] );
+			$tax         = usces_tax_rounding_off( $tax, $tax_method );
 			$include_tax = 0;
 		}
 	} else {
@@ -2950,6 +2951,7 @@ function usces_order_recalculation_reduced( $order_id, $mem_id, $post_id, $price
 	$tax_mode            = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : usces_get_tax_mode();
 	$tax_target          = ( isset( $condition['tax_target'] ) ) ? $condition['tax_target'] : usces_get_tax_target();
 	$point_coverage      = ( isset( $condition['point_coverage'] ) ) ? $condition['point_coverage'] : usces_point_coverage();
+	$tax_method          = ( isset( $condition['tax_method'] ) ) ? $condition['tax_method'] : $usces->options['tax_method'];
 
 	$cart          = array();
 	$post_id_count = ( is_array( $post_id ) ) ? count( $post_id ) : 0;
@@ -3109,8 +3111,8 @@ function usces_order_recalculation_reduced( $order_id, $mem_id, $post_id, $price
 			}
 		}
 
-		$tax_standard = usces_tax_rounding_off( $tax_standard, $condition['tax_method'] );
-		$tax_reduced  = usces_tax_rounding_off( $tax_reduced, $condition['tax_method'] );
+		$tax_standard = usces_tax_rounding_off( $tax_standard, $tax_method );
+		$tax_reduced  = usces_tax_rounding_off( $tax_reduced, $tax_method );
 
 		$materials = compact( 'total_items_price', 'shipping_charge', 'discount', 'cod_fee', 'use_point', 'cart' );
 		if ( 'include' === $tax_mode ) {
