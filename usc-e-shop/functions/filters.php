@@ -403,6 +403,7 @@ function usces_reg_ordercartdata( $args ) {
 						$ovalue = urldecode( $value['options'][ $enc_key ] );
 					}
 				}
+				$ovalue = wel_safe_text_serialize( $ovalue );
 				$wpdb->query(
 					$wpdb->prepare(
 						"INSERT INTO {$cart_meta_table} 

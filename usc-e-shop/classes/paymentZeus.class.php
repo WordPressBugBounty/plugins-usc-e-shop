@@ -4079,13 +4079,13 @@ jQuery(document).ready(function($) {
 				<input type="hidden" name="sendid" id="sendid" value="' . $mem_id . '">
 				<input type="hidden" name="sendpoint" id="sendpoint" value="' . $rand . '">';
 				if ( isset( $entry['order']['cbrand'] ) && isset( $entry['order']['howpay'] ) && WCUtils::is_zero( $entry['order']['howpay'] ) ) {
-					$div_name = 'div_' . $entry['order']['cbrand'];
-					$form    .= '<input type="hidden" name="howpay" value="' . $entry['order']['howpay'] . '">
-					<input type="hidden" name="cbrand" value="' . $entry['order']['cbrand'] . '">
-					<input type="hidden" name="div" value="' . $entry['order'][ $div_name ] . '">
-					<input type="hidden" name="div_1" value="' . $entry['order']['div_1'] . '">
-					<input type="hidden" name="div_2" value="' . $entry['order']['div_2'] . '">
-					<input type="hidden" name="div_3" value="' . $entry['order']['div_3'] . '">';
+					$div_name = 'div_' . esc_attr( $entry['order']['cbrand'] );
+					$form    .= '<input type="hidden" name="howpay" value="' . esc_attr( $entry['order']['howpay'] ) . '">
+					<input type="hidden" name="cbrand" value="' . esc_attr( $entry['order']['cbrand'] ) . '">
+					<input type="hidden" name="div" value="' . esc_attr( $entry['order'][ $div_name ] ) . '">
+					<input type="hidden" name="div_1" value="' . esc_attr( $entry['order']['div_1'] ) . '">
+					<input type="hidden" name="div_2" value="' . esc_attr( $entry['order']['div_2'] ) . '">
+					<input type="hidden" name="div_3" value="' . esc_attr( $entry['order']['div_3'] ) . '">';
 				}
 				$form .= '<div class="send">';
 				if ( $this->is_activate_card( 'api' ) && 1 === (int) $acting_opts['3dsecur'] ) {
@@ -4110,7 +4110,7 @@ jQuery(document).ready(function($) {
 				<input type="hidden" name="username" value="' . esc_attr( $username_conv ) . '">
 				<input type="hidden" name="telno" value="' . esc_attr( str_replace( '-', '', $entry['customer']['tel'] ) ) . '">
 				<input type="hidden" name="email" value="' . esc_attr( $entry['customer']['mailaddress1'] ) . '">
-				<input type="hidden" name="pay_cvs" value="' . $pay_cvs . '">
+				<input type="hidden" name="pay_cvs" value="' . esc_attr( $pay_cvs ) . '">
 				<input type="hidden" name="sendid" value="' . $member['ID'] . '">
 				<input type="hidden" name="sendpoint" value="' . $rand . '">';
 				$form         .= '

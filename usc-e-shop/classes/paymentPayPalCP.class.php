@@ -1531,31 +1531,31 @@ Tel：0120-271-888 または 03-6739-7360（携帯電話と海外からはこち
 		$payment = usces_get_payments_by_name( $entry['order']['payment_name'] );
 		if ( isset( $payment['settlement'] ) && 'acting_paypal_card' === $payment['settlement'] ) {
 			if ( isset( $_POST['paypal_tracking_id'] ) ) {
-				$html .= '<input type="hidden" name="paypal_tracking_id" value="' . wp_unslash( $_POST['paypal_tracking_id'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_tracking_id" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_tracking_id'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_resource_id'] ) ) {
-				$html .= '<input type="hidden" name="paypal_resource_id" value="' . wp_unslash( $_POST['paypal_resource_id'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_resource_id" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_resource_id'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_payment_card'] ) ) {
-				$html .= '<input type="hidden" name="paypal_payment_card" value="' . wp_unslash( $_POST['paypal_payment_card'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_payment_card" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_payment_card'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_payment_token_id'] ) ) {
-				$html .= '<input type="hidden" name="paypal_payment_token_id" value="' . wp_unslash( $_POST['paypal_payment_token_id'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_payment_token_id" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_payment_token_id'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_vault'] ) ) {
-				$html .= '<input type="hidden" name="paypal_vault" value="' . wp_unslash( $_POST['paypal_vault'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_vault" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_vault'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_f'] ) ) {
-				$html .= '<input type="hidden" name="paypal_f" value="' . wp_unslash( $_POST['paypal_f'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_f" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_f'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_liability_shift'] ) ) {
-				$html .= '<input type="hidden" name="paypal_liability_shift" value="' . wp_unslash( $_POST['paypal_liability_shift'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_liability_shift" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_liability_shift'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_enrollment_status'] ) ) {
-				$html .= '<input type="hidden" name="paypal_enrollment_status" value="' . wp_unslash( $_POST['paypal_enrollment_status'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_enrollment_status" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_enrollment_status'] ) ) ) . '">';
 			}
 			if ( isset( $_POST['paypal_authentication_status'] ) ) {
-				$html .= '<input type="hidden" name="paypal_authentication_status" value="' . wp_unslash( $_POST['paypal_authentication_status'] ) . '">';
+				$html .= '<input type="hidden" name="paypal_authentication_status" value="' . esc_attr( sanitize_text_field( wp_unslash( $_POST['paypal_authentication_status'] ) ) ) . '">';
 			}
 		}
 		return $html;
@@ -1601,27 +1601,27 @@ Tel：0120-271-888 または 03-6739-7360（携帯電話と海外からはこち
 					</div>';
 
 		} elseif ( 'acting_paypal_card' === $acting_flg ) {
-			$tracking_id           = ( isset( $_POST['paypal_tracking_id'] ) ) ? wp_unslash( $_POST['paypal_tracking_id'] ) : '';
-			$resource_id           = ( isset( $_POST['paypal_resource_id'] ) ) ? wp_unslash( $_POST['paypal_resource_id'] ) : '';
-			$payment_card          = ( isset( $_POST['paypal_payment_card'] ) ) ? wp_unslash( $_POST['paypal_payment_card'] ) : '';
-			$payment_token_id      = ( isset( $_POST['paypal_payment_token_id'] ) ) ? wp_unslash( $_POST['paypal_payment_token_id'] ) : '';
-			$vault                 = ( isset( $_POST['paypal_vault'] ) ) ? wp_unslash( $_POST['paypal_vault'] ) : '';
-			$correlation_id        = ( isset( $_POST['paypal_f'] ) ) ? wp_unslash( $_POST['paypal_f'] ) : '';
-			$liability_shift       = ( isset( $_POST['paypal_liability_shift'] ) ) ? wp_unslash( $_POST['paypal_liability_shift'] ) : '';
-			$enrollment_status     = ( isset( $_POST['paypal_enrollment_status'] ) ) ? wp_unslash( $_POST['paypal_enrollment_status'] ) : '';
-			$authentication_status = ( isset( $_POST['paypal_authentication_status'] ) ) ? wp_unslash( $_POST['paypal_authentication_status'] ) : '';
+			$tracking_id           = ( isset( $_POST['paypal_tracking_id'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_tracking_id'] ) ) : '';
+			$resource_id           = ( isset( $_POST['paypal_resource_id'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_resource_id'] ) ) : '';
+			$payment_card          = ( isset( $_POST['paypal_payment_card'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_payment_card'] ) ) : '';
+			$payment_token_id      = ( isset( $_POST['paypal_payment_token_id'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_payment_token_id'] ) ) : '';
+			$vault                 = ( isset( $_POST['paypal_vault'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_vault'] ) ) : '';
+			$correlation_id        = ( isset( $_POST['paypal_f'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_f'] ) ) : '';
+			$liability_shift       = ( isset( $_POST['paypal_liability_shift'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_liability_shift'] ) ) : '';
+			$enrollment_status     = ( isset( $_POST['paypal_enrollment_status'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_enrollment_status'] ) ) : '';
+			$authentication_status = ( isset( $_POST['paypal_authentication_status'] ) ) ? sanitize_text_field( wp_unslash( $_POST['paypal_authentication_status'] ) ) : '';
 			usces_save_order_acting_data( $tracking_id );
 			$form = '<form name="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
 						<input type="hidden" name="purchase" value="' . $acting_flg . '">
-						<input type="hidden" name="tracking_id" value="' . $tracking_id . '">
-						<input type="hidden" name="resource_id" value="' . $resource_id . '">
-						<input type="hidden" name="payment_card" value="' . $payment_card . '">
-						<input type="hidden" name="payment_token_id" value="' . $payment_token_id . '">
-						<input type="hidden" name="vault" value="' . $vault . '">
-						<input type="hidden" name="correlation_id" value="' . $correlation_id . '">
-						<input type="hidden" name="liability_shift" value="' . $liability_shift . '">
-						<input type="hidden" name="enrollment_status" value="' . $enrollment_status . '">
-						<input type="hidden" name="authentication_status" value="' . $authentication_status . '">
+						<input type="hidden" name="tracking_id" value="' . esc_attr( $tracking_id ) . '">
+						<input type="hidden" name="resource_id" value="' . esc_attr( $resource_id ) . '">
+						<input type="hidden" name="payment_card" value="' . esc_attr( $payment_card ) . '">
+						<input type="hidden" name="payment_token_id" value="' . esc_attr( $payment_token_id ) . '">
+						<input type="hidden" name="vault" value="' . esc_attr( $vault ) . '">
+						<input type="hidden" name="correlation_id" value="' . esc_attr( $correlation_id ) . '">
+						<input type="hidden" name="liability_shift" value="' . esc_attr( $liability_shift ) . '">
+						<input type="hidden" name="enrollment_status" value="' . esc_attr( $enrollment_status ) . '">
+						<input type="hidden" name="authentication_status" value="' . esc_attr( $authentication_status ) . '">
 						<input type="hidden" name="_nonce" value="' . wp_create_nonce( $acting_flg ) . '">
 					<div class="send">' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payment, $acting_flg, $tracking_id ) . '
 						<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />

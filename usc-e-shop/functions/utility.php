@@ -1701,3 +1701,31 @@ function wel_esc_upload_file_name( $file_name ) {
 
 	return wel_esc_script( $filenames[0] );
 }
+
+/**
+ * If the input data is a serialized object, sanitize it.
+ *
+ * @param string $data text.
+ *
+ * @return mixed|object|string
+ */
+function wel_safe_text_serialize( $data ) {
+	if ( ! is_serialized( $data ) ) {
+		return $data; // シリアライズされていないなら、そのまま返す
+	}
+
+	$result = unserialize( $data, [ 'allowed_classes' => false ] ); // オブジェクトを展開しない
+
+	// 配列またはオブジェクトの場合、再帰的に無害化
+	if ( is_array( $result ) ) {
+		array_walk_recursive( $result, function ( &$value ) {
+			$value = sanitize_text_field( $value ); // 文字列を無害化
+		} );
+	} elseif ( is_object( $result ) ) {
+		return sanitize_text_field( $result );
+	} else {
+		return sanitize_text_field( $result );
+	}
+
+	return maybe_serialize( $result );
+}

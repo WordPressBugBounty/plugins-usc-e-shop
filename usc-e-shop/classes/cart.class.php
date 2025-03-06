@@ -527,6 +527,7 @@ class usces_cart {
 		if ( isset( $_POST['custom_order'] ) ) {
 			unset( $_SESSION['usces_entry']['custom_order'] );
 			foreach ( $_POST['custom_order'] as $key => $value ) {
+				$value = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {
 						$_SESSION['usces_entry']['custom_order'][ $key ][ trim( $v ) ] = trim( $v );
@@ -542,6 +543,7 @@ class usces_cart {
 		if ( isset( $_POST['custom_customer'] ) ) {
 			unset( $_SESSION['usces_entry']['custom_customer'] );
 			foreach ( $_POST['custom_customer'] as $key => $value ) {
+				$value = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {
 						$_SESSION['usces_entry']['custom_customer'][ $key ][ trim( $v ) ] = trim( $v );
@@ -554,6 +556,7 @@ class usces_cart {
 		if ( isset( $_POST['custom_delivery'] ) ) {
 			unset( $_SESSION['usces_entry']['custom_delivery'] );
 			foreach ( $_POST['custom_delivery'] as $key => $value ) {
+				$value = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {
 						$_SESSION['usces_entry']['custom_delivery'][ $key ][ trim( $v ) ] = trim( $v );

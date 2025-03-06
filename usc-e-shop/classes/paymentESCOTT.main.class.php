@@ -834,19 +834,19 @@ class ESCOTT_MAIN {
 				$cardlast4    = filter_input( INPUT_POST, 'cardlast4', FILTER_DEFAULT );
 				$quick_member = filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT );
 				$html         = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-					<input type="hidden" name="cardno" value="' . trim( $cardno ) . '">
-					<input type="hidden" name="cardlast4" value="' . trim( $cardlast4 ) . '">';
+					<input type="hidden" name="cardno" value="' . esc_attr( trim( $cardno ) ) . '">
+					<input type="hidden" name="cardlast4" value="' . esc_attr( trim( $cardlast4 ) ) . '">';
 				if ( 'on' === $acting_opts['seccd'] ) {
 					$seccd = filter_input( INPUT_POST, 'seccd', FILTER_DEFAULT );
 					$html .= '
-					<input type="hidden" name="seccd" value="' . trim( $seccd ) . '">';
+					<input type="hidden" name="seccd" value="' . esc_attr( trim( $seccd ) ) . '">';
 				}
 				$html       .= '
-					<input type="hidden" name="expyy" value="' . trim( $expyy ) . '">
-					<input type="hidden" name="expmm" value="' . trim( $expmm ) . '">
-					<input type="hidden" name="paytype" value="' . $usces_entries['order']['paytype'] . '">
+					<input type="hidden" name="expyy" value="' . esc_attr( trim( $expyy ) ) . '">
+					<input type="hidden" name="expmm" value="' . esc_attr( trim( $expmm ) ) . '">
+					<input type="hidden" name="paytype" value="' . esc_attr( $usces_entries['order']['paytype'] ) . '">
 					<input type="hidden" name="rand" value="' . $rand . '">
-					<input type="hidden" name="quick_member" value="' . $quick_member . '">
+					<input type="hidden" name="quick_member" value="' . esc_attr( $quick_member ) . '">
 					<div class="send">
 						' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 						<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -862,7 +862,7 @@ class ESCOTT_MAIN {
 				$quick_member = filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT );
 				$html         = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
 					<input type="hidden" name="rand" value="' . $rand . '">
-					<input type="hidden" name="quick_member" value="' . $quick_member . '">
+					<input type="hidden" name="quick_member" value="' . esc_attr( $quick_member ) . '">
 					<div class="send">
 						' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 						<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -875,12 +875,12 @@ class ESCOTT_MAIN {
 				$quick_member = filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT );
 				$billingname  = filter_input( INPUT_POST, 'billingname', FILTER_DEFAULT );
 				$html         = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-					<input type="hidden" name="token" value="' . trim( $token ) . '">
-					<input type="hidden" name="paytype" value="' . trim( $paytype ) . '">
+					<input type="hidden" name="token" value="' . esc_attr( trim( $token ) ) . '">
+					<input type="hidden" name="paytype" value="' . esc_attr( trim( $paytype ) ) . '">
 					<input type="hidden" name="rand" value="' . $rand . '">
-					<input type="hidden" name="quick_member" value="' . $quick_member . '">
-					<input type="hidden" name="billingname" value="' . $billingname . '">
-					<input type="hidden" name="billingemail" value="' . $usces_entries['customer']['mailaddress1'] . '">
+					<input type="hidden" name="quick_member" value="' . esc_attr( $quick_member ) . '">
+					<input type="hidden" name="billingname" value="' . esc_attr( $billingname ) . '">
+					<input type="hidden" name="billingemail" value="' . esc_attr( $usces_entries['customer']['mailaddress1'] ) . '">
 					<div class="send">
 						' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 						<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -934,24 +934,24 @@ class ESCOTT_MAIN {
 		$acting_opts = $this->get_acting_settings();
 		if ( 'on' === $acting_opts['card_activate'] ) {
 			$html .= '
-			<input type="hidden" name="cardno" value="' . filter_input( INPUT_POST, 'cardno', FILTER_DEFAULT ) . '">
-			<input type="hidden" name="cardlast4" value="' . filter_input( INPUT_POST, 'cardlast4', FILTER_DEFAULT ) . '">';
+			<input type="hidden" name="cardno" value="' . esc_attr( filter_input( INPUT_POST, 'cardno', FILTER_DEFAULT ) ) . '">
+			<input type="hidden" name="cardlast4" value="' . esc_attr( filter_input( INPUT_POST, 'cardlast4', FILTER_DEFAULT ) ) . '">';
 			if ( 'on' === $acting_opts['seccd'] ) {
 				$html .= '
-				<input type="hidden" name="seccd" value="' . filter_input( INPUT_POST, 'seccd', FILTER_DEFAULT ) . '">';
+				<input type="hidden" name="seccd" value="' . esc_attr( filter_input( INPUT_POST, 'seccd', FILTER_DEFAULT ) ) . '">';
 			}
 			$html .= '
-			<input type="hidden" name="expyy" value="' . filter_input( INPUT_POST, 'expyy', FILTER_DEFAULT ) . '">
-			<input type="hidden" name="expmm" value="' . filter_input( INPUT_POST, 'expmm', FILTER_DEFAULT ) . '">
-			<input type="hidden" name="offer[paytype]" value="' . $usces_entries['order']['paytype'] . '">
-			<input type="hidden" name="quick_member" value="' . filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT ) . '">';
+			<input type="hidden" name="expyy" value="' . esc_attr( filter_input( INPUT_POST, 'expyy', FILTER_DEFAULT ) ) . '">
+			<input type="hidden" name="expmm" value="' . esc_attr( filter_input( INPUT_POST, 'expmm', FILTER_DEFAULT ) ) . '">
+			<input type="hidden" name="offer[paytype]" value="' . esc_attr( $usces_entries['order']['paytype'] ) . '">
+			<input type="hidden" name="quick_member" value="' . esc_attr( filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT ) ) . '">';
 
 		} elseif ( 'token' === $acting_opts['card_activate'] ) {
 			$html .= '
-			<input type="hidden" name="token" value="' . filter_input( INPUT_POST, 'token' ) . '">
-			<input type="hidden" name="paytype" value="' . filter_input( INPUT_POST, 'paytype', FILTER_DEFAULT ) . '">
-			<input type="hidden" name="quick_member" value="' . filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT ) . '">
-			<input type="hidden" name="billingname" value="' . filter_input( INPUT_POST, 'billingname', FILTER_DEFAULT ) . '">';
+			<input type="hidden" name="token" value="' . esc_attr( filter_input( INPUT_POST, 'token' ) ) . '">
+			<input type="hidden" name="paytype" value="' . esc_attr( filter_input( INPUT_POST, 'paytype', FILTER_DEFAULT ) ) . '">
+			<input type="hidden" name="quick_member" value="' . esc_attr( filter_input( INPUT_POST, 'quick_member', FILTER_DEFAULT ) ) . '">
+			<input type="hidden" name="billingname" value="' . esc_attr( filter_input( INPUT_POST, 'billingname', FILTER_DEFAULT ) ) . '">';
 		}
 		return $html;
 	}

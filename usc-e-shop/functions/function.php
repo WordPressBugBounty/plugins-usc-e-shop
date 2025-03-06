@@ -226,6 +226,7 @@ function usces_reg_orderdata( $results = array() ) {
 	if ( ! empty( $entry['custom_order'] ) ) {
 		foreach ( $entry['custom_order'] as $key => $value ) {
 			$csod_key = 'csod_' . $key;
+			$value    = wel_safe_text_serialize( $value );
 			if ( is_array( $value ) ) {
 				$value = serialize( $value );
 			}
@@ -235,6 +236,7 @@ function usces_reg_orderdata( $results = array() ) {
 	if ( ! empty( $entry['custom_customer'] ) ) {
 		foreach ( $entry['custom_customer'] as $key => $value ) {
 			$cscs_key = 'cscs_' . $key;
+			$value    = wel_safe_text_serialize( $value );
 			if ( is_array( $value ) ) {
 				$value = serialize( $value );
 			}
@@ -244,6 +246,7 @@ function usces_reg_orderdata( $results = array() ) {
 	if ( ! empty( $entry['custom_delivery'] ) ) {
 		foreach ( $entry['custom_delivery'] as $key => $value ) {
 			$csde_key = 'csde_' . $key;
+			$value    = wel_safe_text_serialize( $value );
 			if ( is_array( $value ) ) {
 				$value = serialize( $value );
 			}

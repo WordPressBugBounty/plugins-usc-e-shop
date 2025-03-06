@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.11.11
+Stable tag: 2.11.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,11 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+6 Mar 2025
+= V2.11.12 =
+-----------
+* [Security Enhancement] Strengthened countermeasures against object injection (custom member fields, etc.).
 
 26 Feb 2025
 = V2.11.11 =

@@ -9418,6 +9418,7 @@ class usc_e_shop {
 		if ( ! empty( $_POST['custom_member'] ) ) {
 			foreach ( $_POST['custom_member'] as $key => $value ) {
 				$csmb_key = 'csmb_' . $key;
+				$value    = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					$value = serialize( $value );
 				}
@@ -9429,6 +9430,7 @@ class usc_e_shop {
 		} elseif ( isset( $_POST['custom_customer'] ) ) {
 			foreach ( $_POST['custom_customer'] as $key => $value ) {
 				$csmb_key = 'csmb_' . $key;
+				$value    = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					$value = serialize( $value );
 				}

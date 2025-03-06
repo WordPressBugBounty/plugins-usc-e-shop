@@ -7,6 +7,7 @@
  * @version  1.0.0
  * @since    2.2.6
  */
+
 require_once USCES_PLUGIN_DIR . '/classes/pageant.config.php';
 require_once USCES_PLUGIN_DIR . '/classes/paymentPaygent.module.class.php';
 
@@ -4127,21 +4128,21 @@ jQuery( document ).ready( function( $ ) {
 					$stock_card_mode    = ( isset( $_POST['stock_card_mode'] ) ) ? wp_unslash( $_POST['stock_card_mode'] ) : '';
 					$split_count        = ( isset( $_POST['split_count'] ) ) ? wp_unslash( $_POST['split_count'] ) : '';
 
-					$form = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-						<input type="hidden" name="token" value="' . $token . '">
-						<input type="hidden" name="masked_card_number" value="' . $masked_card_number . '">
-						<input type="hidden" name="valid_until" value="' . $valid_until . '">
-						<input type="hidden" name="fingerprint" value="' . $fingerprint . '">
-						<input type="hidden" name="hc" value="' . $hc . '">
-						<input type="hidden" name="trading_id" value="' . $rand . '">';
+					$form = '<form id="purchase_form" action="' . esc_url( USCES_CART_URL ) . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
+						<input type="hidden" name="token" value="' . esc_attr( $token ) . '">
+						<input type="hidden" name="masked_card_number" value="' . esc_attr( $masked_card_number ) . '">
+						<input type="hidden" name="valid_until" value="' . esc_attr( $valid_until ) . '">
+						<input type="hidden" name="fingerprint" value="' . esc_attr( $fingerprint ) . '">
+						<input type="hidden" name="hc" value="' . esc_attr( $hc ) . '">
+						<input type="hidden" name="trading_id" value="' . esc_attr( $rand ) . '">';
 					if ( ! empty( $stock_card ) ) {
-						$form .= '<input type="hidden" name="stock_card" value="' . $stock_card . '">';
+						$form .= '<input type="hidden" name="stock_card" value="' . esc_attr( $stock_card ) . '">';
 					}
 					if ( ! empty( $stock_card_mode ) ) {
-						$form .= '<input type="hidden" name="stock_card_mode" value="' . $stock_card_mode . '">';
+						$form .= '<input type="hidden" name="stock_card_mode" value="' . esc_attr( $stock_card_mode ) . '">';
 					}
 					if ( ! empty( $split_count ) ) {
-						$form .= '<input type="hidden" name="split_count" value="' . $split_count . '">';
+						$form .= '<input type="hidden" name="split_count" value="' . esc_attr( $split_count ) . '">';
 					}
 					$form .= '<div class="send">
 						' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
@@ -4174,12 +4175,12 @@ jQuery( document ).ready( function( $ ) {
 					$customer_name        = ( isset( $_POST['customer_name'] ) ) ? wp_unslash( $_POST['customer_name'] ) : '';
 					$customer_tel         = ( isset( $_POST['customer_tel'] ) ) ? wp_unslash( $_POST['customer_tel'] ) : '';
 
-					$form  = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-						<input type="hidden" name="cvs_company_id" value="' . $cvs_company_id . '">
-						<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-						<input type="hidden" name="customer_name" value="' . $customer_name . '">
-						<input type="hidden" name="customer_tel" value="' . $customer_tel . '">
-						<input type="hidden" name="trading_id" value="' . $rand . '">';
+					$form  = '<form id="purchase_form" action="' . esc_url( USCES_CART_URL ) . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
+						<input type="hidden" name="cvs_company_id" value="' . esc_attr( $cvs_company_id ) . '">
+						<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+						<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+						<input type="hidden" name="customer_tel" value="' . esc_attr( $customer_tel ) . '">
+						<input type="hidden" name="trading_id" value="' . esc_attr( $rand ) . '">';
 					$form .= '<div class="send">
 						' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 						<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -4210,12 +4211,12 @@ jQuery( document ).ready( function( $ ) {
 				$customer_family_name_kana = ( isset( $_POST['customer_family_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_family_name_kana'] ) ) : '';
 				$customer_name_kana        = ( isset( $_POST['customer_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_name_kana'] ) ) : '';
 
-				$form  = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-					<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-					<input type="hidden" name="customer_name" value="' . $customer_name . '">
-					<input type="hidden" name="customer_family_name_kana" value="' . $customer_family_name_kana . '">
-					<input type="hidden" name="customer_name_kana" value="' . $customer_name_kana . '">
-					<input type="hidden" name="trading_id" value="' . $rand . '">';
+				$form  = '<form id="purchase_form" action="' . esc_url( USCES_CART_URL ) . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
+					<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+					<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+					<input type="hidden" name="customer_family_name_kana" value="' . esc_attr( $customer_family_name_kana ) . '">
+					<input type="hidden" name="customer_name_kana" value="' . esc_attr( $customer_name_kana ) . '">
+					<input type="hidden" name="trading_id" value="' . esc_attr( $rand ) . '">';
 				$form .= '<div class="send">
 					' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 					<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -4231,12 +4232,12 @@ jQuery( document ).ready( function( $ ) {
 				$customer_family_name_kana = ( isset( $_POST['customer_family_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_family_name_kana'] ) ) : '';
 				$customer_name_kana        = ( isset( $_POST['customer_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_name_kana'] ) ) : '';
 
-				$form  = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-					<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-					<input type="hidden" name="customer_name" value="' . $customer_name . '">
-					<input type="hidden" name="customer_family_name_kana" value="' . $customer_family_name_kana . '">
-					<input type="hidden" name="customer_name_kana" value="' . $customer_name_kana . '">
-					<input type="hidden" name="trading_id" value="' . $rand . '">';
+				$form  = '<form id="purchase_form" action="' . esc_url( USCES_CART_URL ) . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
+					<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+					<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+					<input type="hidden" name="customer_family_name_kana" value="' . esc_attr( $customer_family_name_kana ) . '">
+					<input type="hidden" name="customer_name_kana" value="' . esc_attr( $customer_name_kana ) . '">
+					<input type="hidden" name="trading_id" value="' . esc_attr( $rand ) . '">';
 				$form .= '<div class="send">
 					' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flg, $rand ) . '
 					<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -4247,9 +4248,9 @@ jQuery( document ).ready( function( $ ) {
 			/* Paidy */
 			case 'acting_paygent_paidy':
 				usces_save_order_acting_data( $rand );
-				$form = '<form name="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
-						<input type="hidden" name="purchase" value="' . $acting_flg . '">
-						<input type="hidden" name="trading_id" value="' . $rand . '">
+				$form = '<form name="purchase_form" action="' . esc_url( USCES_CART_URL ) . '" method="post" onKeyDown="if(event.keyCode == 13){return false;}">
+						<input type="hidden" name="purchase" value="' . esc_attr( $acting_flg ) . '">
+						<input type="hidden" name="trading_id" value="' . esc_attr( $rand ) . '">
 						<input type="hidden" name="paidy_id">
 						<input type="hidden" name="paidy_created_at">
 						<input type="hidden" name="paidy_status">
@@ -4272,7 +4273,8 @@ jQuery( document ).ready( function( $ ) {
 	 */
 	public function e_point_inform() {
 		$form = $this->point_inform( '' );
-		echo( $form );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $form;
 	}
 
 	/**
@@ -4301,19 +4303,19 @@ jQuery( document ).ready( function( $ ) {
 					$split_count        = ( isset( $_POST['split_count'] ) ) ? wp_unslash( $_POST['split_count'] ) : '';
 
 					$form .= '
-					<input type="hidden" name="token" value="' . $token . '">
-					<input type="hidden" name="masked_card_number" value="' . $masked_card_number . '">
-					<input type="hidden" name="valid_until" value="' . $valid_until . '">
-					<input type="hidden" name="fingerprint" value="' . $fingerprint . '">
-					<input type="hidden" name="hc" value="' . $hc . '">';
+					<input type="hidden" name="token" value="' . esc_attr( $token ) . '">
+					<input type="hidden" name="masked_card_number" value="' . esc_attr( $masked_card_number ) . '">
+					<input type="hidden" name="valid_until" value="' . esc_attr( $valid_until ) . '">
+					<input type="hidden" name="fingerprint" value="' . esc_attr( $fingerprint ) . '">
+					<input type="hidden" name="hc" value="' . esc_attr( $hc ) . '">';
 					if ( ! empty( $stock_card ) ) {
-						$form .= '<input type="hidden" name="stock_card" value="' . $stock_card . '">';
+						$form .= '<input type="hidden" name="stock_card" value="' . esc_attr( $stock_card ) . '">';
 					}
 					if ( ! empty( $stock_card_mode ) ) {
-						$form .= '<input type="hidden" name="stock_card_mode" value="' . $stock_card_mode . '">';
+						$form .= '<input type="hidden" name="stock_card_mode" value="' . esc_attr( $stock_card_mode ) . '">';
 					}
 					if ( ! empty( $split_count ) ) {
-						$form .= '<input type="hidden" name="split_count" value="' . $split_count . '">';
+						$form .= '<input type="hidden" name="split_count" value="' . esc_attr( $split_count ) . '">';
 					}
 				}
 				break;
@@ -4326,10 +4328,10 @@ jQuery( document ).ready( function( $ ) {
 					$customer_tel         = ( isset( $_POST['customer_tel'] ) ) ? wp_unslash( $_POST['customer_tel'] ) : '';
 
 					$form .= '
-					<input type="hidden" name="cvs_company_id" value="' . $cvs_company_id . '">
-					<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-					<input type="hidden" name="customer_name" value="' . $customer_name . '">
-					<input type="hidden" name="customer_tel" value="' . $customer_tel . '">';
+					<input type="hidden" name="cvs_company_id" value="' . esc_attr( $cvs_company_id ) . '">
+					<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+					<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+					<input type="hidden" name="customer_tel" value="' . esc_attr( $customer_tel ) . '">';
 				}
 				break;
 
@@ -4341,10 +4343,10 @@ jQuery( document ).ready( function( $ ) {
 					$customer_name_kana        = ( isset( $_POST['customer_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_name_kana'] ) ) : '';
 
 					$form .= '
-					<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-					<input type="hidden" name="customer_name" value="' . $customer_name . '">
-					<input type="hidden" name="customer_family_name_kana" value="' . $customer_family_name_kana . '">
-					<input type="hidden" name="customer_name_kana" value="' . $customer_name_kana . '">';
+					<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+					<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+					<input type="hidden" name="customer_family_name_kana" value="' . esc_attr( $customer_family_name_kana ) . '">
+					<input type="hidden" name="customer_name_kana" value="' . esc_attr( $customer_name_kana ) . '">';
 				}
 				break;
 
@@ -4356,10 +4358,10 @@ jQuery( document ).ready( function( $ ) {
 					$customer_name_kana        = ( isset( $_POST['customer_name_kana'] ) ) ? String_Utitily::convert_katakana_zen2han( wp_unslash( $_POST['customer_name_kana'] ) ) : '';
 
 					$form .= '
-					<input type="hidden" name="customer_family_name" value="' . $customer_family_name . '">
-					<input type="hidden" name="customer_name" value="' . $customer_name . '">
-					<input type="hidden" name="customer_family_name_kana" value="' . $customer_family_name_kana . '">
-					<input type="hidden" name="customer_name_kana" value="' . $customer_name_kana . '">';
+					<input type="hidden" name="customer_family_name" value="' . esc_attr( $customer_family_name ) . '">
+					<input type="hidden" name="customer_name" value="' . esc_attr( $customer_name ) . '">
+					<input type="hidden" name="customer_family_name_kana" value="' . esc_attr( $customer_family_name_kana ) . '">
+					<input type="hidden" name="customer_name_kana" value="' . esc_attr( $customer_name_kana ) . '">';
 				}
 				break;
 		}
@@ -4531,7 +4533,7 @@ jQuery( document ).ready( function( $ ) {
 			$header .= $vars;
 			$fp      = @stream_socket_client( 'tlsv1.2://' . $interface['host'] . ':443', $errno, $errstr, 30 );
 			if ( ! $fp ) {
-				usces_log( $acting . ' : TLS(v1.2) Error', 'acting_transaction.log' );
+				// usces_log( $acting . ' : TLS(v1.2) Error', 'acting_transaction.log' );
 				$log = array(
 					'acting' => $acting,
 					'key'    => $trading_id,
