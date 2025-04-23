@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.11.12
+Stable tag: 2.11.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,16 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+23 Apr 2025
+ = V2.11.13 =
+-----------
+* [ZEUS] Added a fee option for post-payment settlements.
+* [Paygent] Added an action hook to deposit notifications.
+* [SB Payment Service] Modified the behavior so that when using the link type, credit card registration and updates from My Page are also executed in link type.
+* Implemented common parts of the import feature.
+* Fixed a bug that the titles in the widget list are not translated.
+* Fixed PHP errors.
 
 6 Mar 2025
 = V2.11.12 =

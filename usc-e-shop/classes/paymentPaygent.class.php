@@ -2501,6 +2501,9 @@ jQuery( document ).ready( function( $ ) {
 										} else {
 											usces_action_acting_getpoint( $order_id );
 											$usces->set_order_meta_value( 'acting_paygent_conv', usces_serialize( $post_data ), $order_id );
+											if ( STATUS_CLEARED === $payment_status ) {
+												do_action( 'usces_action_paygent_conv_payment_completion', $post_data, $order_id );
+											}
 										}
 									}
 								}
@@ -2562,6 +2565,7 @@ jQuery( document ).ready( function( $ ) {
 										} else {
 											usces_action_acting_getpoint( $order_id );
 											$usces->set_order_meta_value( 'acting_paygent_atm', usces_serialize( $post_data ), $order_id );
+											do_action( 'usces_action_paygent_atm_payment_completion', $post_data, $order_id );
 										}
 									}
 								}
@@ -2596,6 +2600,7 @@ jQuery( document ).ready( function( $ ) {
 										} else {
 											usces_action_acting_getpoint( $order_id );
 											$usces->set_order_meta_value( 'acting_paygent_bank', usces_serialize( $post_data ), $order_id );
+											do_action( 'usces_action_paygent_bank_payment_completion', $post_data, $order_id );
 										}
 									}
 								}

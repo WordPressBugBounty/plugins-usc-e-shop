@@ -11,7 +11,8 @@
 function wel_textdomain() {
 	load_plugin_textdomain( 'usces', false, USCES_PLUGIN_FOLDER . '/languages' );
 }
-add_action( 'init', 'wel_textdomain' );
+add_action( 'init', 'wel_textdomain', 1 );
+add_action( 'widgets_init', 'wel_textdomain' );
 
 /**
  * Initial value settings that need translation.

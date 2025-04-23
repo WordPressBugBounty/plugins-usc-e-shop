@@ -454,14 +454,17 @@ class SBPS_MAIN {
 			$connection['send_url']  = $acting_opts['send_url'];
 			$connection['token_url'] = $acting_opts['token_url'];
 			$connection['api_url']   = $acting_opts['api_url'];
+			$connection['cust_url']  = $acting_opts['cust_url'];
 		} elseif ( 'test' === $acting_opts['ope'] ) {
 			$connection['send_url']  = $acting_opts['send_url_test'];
 			$connection['token_url'] = $acting_opts['token_url_test'];
 			$connection['api_url']   = $acting_opts['api_url_test'];
+			$connection['cust_url']  = $acting_opts['cust_url_test'];
 		} else {
 			$connection['send_url']  = $acting_opts['send_url_check'];
 			$connection['token_url'] = $acting_opts['token_url_test'];
 			$connection['api_url']   = $acting_opts['api_url_test'];
+			$connection['cust_url']  = $acting_opts['cust_url_test'];
 		}
 		return $connection;
 	}
@@ -521,7 +524,7 @@ class SBPS_MAIN {
 			if ( in_array( $acting_flg, $this->pay_method ) ) {
 				usces_restore_order_acting_data( $rand );
 			}
-			usces_log( $this->acting_name . ' construct : ' . $rand, 'acting_transaction.log' );
+			// usces_log( $this->acting_name . ' construct : ' . $rand, 'acting_transaction.log' );
 		}
 	}
 
@@ -537,10 +540,21 @@ class SBPS_MAIN {
 			foreach ( $post_data as $key => $value ) {
 				$data[ $key ] = mb_convert_encoding( $value, 'UTF-8', 'SJIS' );
 			}
-			$acting_flg     = ( isset( $data['free1'] ) ) ? $data['free1'] : '';
+			$acting_flg = ( isset( $data['free1'] ) ) ? $data['free1'] : '';
+
+			/* マイページからの会員登録・会員変更 */
+			if ( $acting_flg === $this->acting_flg_card && isset( $_GET['acting'] ) ) {
+				return;
+			} elseif ( $acting_flg === $this->acting_flg_card && ! isset( $data['res_tracking_id'] ) ) {
+				if ( 'OK' === $data['res_result'] ) {
+					die( 'OK,' );
+				} else {
+					die( 'NG,card update error' );
+				}
+			}
+
 			$acting         = substr( $acting_flg, 7 );
 			$_GET['acting'] = $acting;
-
 			switch ( $data['res_result'] ) {
 				case 'OK': /* 決済処理OK */
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
@@ -549,67 +563,66 @@ class SBPS_MAIN {
 						if ( 'ordercompletion' === $res ) {
 							// $usces->set_order_meta_value( 'wc_trans_id', $data['res_tracking_id'], $order_id );
 						} else {
-							usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' order processing error : ' . print_r( $data, true ), 'acting_transaction.log' );
+							// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' order processing error : ' . print_r( $data, true ), 'acting_transaction.log' );
 							die( 'NG,order processing error' );
 						}
 					}
-
-					usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [OK] transaction : ' . $data['res_tracking_id'], 'acting_transaction.log' );
+					// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [OK] transaction : ' . $data['res_tracking_id'], 'acting_transaction.log' );
 					die( 'OK,' );
 					break;
 
 				case 'PY': /* 入金結果通知 */
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
 					if ( ! $order_id ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,order_id error' );
 					}
 
 					$order_status = $this->get_order_status( $order_id );
 					if ( $usces->is_status( 'receipted', $order_status ) ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] second transaction : ' . $order_id, 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] second transaction : ' . $order_id, 'acting_transaction.log' );
 						die( 'OK,' );
 					}
 
 					$res = usces_change_order_receipt( $order_id, 'receipted' );
 					if ( false === $res ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,usces_order update error' );
 					}
 
 					$res = $usces->set_order_meta_value( $acting_flg, serialize( $data ), $order_id );
 					if ( false === $res ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,usces_order_meta update error' );
 					}
 
 					usces_action_acting_getpoint( $order_id );
 					do_action( 'usces_action_' . $this->paymod_id . '_payment_completion', $data, $order_id );
 
-					usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] transaction : ' . $order_id, 'acting_transaction.log' );
+					// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] transaction : ' . $order_id, 'acting_transaction.log' );
 					die( 'OK,' );
 					break;
 
 				case 'CN': /* 期限切通知 */
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
 					if ( ! $order_id ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,order_id error' );
 					}
 
 					$res = usces_change_order_receipt( $order_id, 'noreceipt' );
 					if ( false === $res ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,usces_order update error' );
 					}
 
 					$res = $usces->set_order_meta_value( $acting_flg, serialize( $data ), $order_id );
 					if ( false === $res ) {
-						usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'NG,usces_order_meta update error' );
 					}
 
-					usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] transaction : ' . $order_id, 'acting_transaction.log' );
+					// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] transaction : ' . $order_id, 'acting_transaction.log' );
 					die( 'OK,' );
 					break;
 
@@ -628,7 +641,7 @@ class SBPS_MAIN {
 					if ( empty( $data['res_result'] ) ) {
 						return;
 					}
-					usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [' . $data['res_result'] . '] : ' . print_r( $data, true ), 'acting_transaction.log' );
+					// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [' . $data['res_result'] . '] : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'OK,' );
 			}
 		}
@@ -1318,7 +1331,7 @@ class SBPS_MAIN {
 
 		$fp = @stream_socket_client( 'tlsv1.2://' . $interface['host'] . ':443', $errno, $errstr, 30 );
 		if ( ! $fp ) {
-			usces_log( $this->paymod_id . ' API : TLS(v1.2) Error', 'acting_transaction.log' );
+			// usces_log( $this->paymod_id . ' API : TLS(v1.2) Error', 'acting_transaction.log' );
 		}
 
 		$xml = '';

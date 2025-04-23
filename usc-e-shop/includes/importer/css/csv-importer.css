@@ -1,0 +1,353 @@
+/* 進捗バーコンテナ */
+#progress-container {
+    border: 1px solid #ccc;
+    width: 100%;
+    background: #f7f7f7;
+    margin: 15px 0;
+}
+
+/* 進捗バー本体 */
+#progress-bar {
+    width: 0%;
+    height: 30px;
+    background: #0073aa;
+}
+
+/* 進捗テキスト */
+#progress-text {
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+/* インポート詳細部分 */
+#import-details p {
+    margin: 5px 0;
+}
+
+/* プレビュー用テーブルのヘッダー */
+#csv-preview-thead th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    white-space: nowrap;
+    padding: 8px;
+}
+
+/* プレビュー用テーブルのデータセル */
+#csv-preview-tbody td {
+    white-space: nowrap;
+    padding: 8px;
+}
+
+/* 全体レイアウト */
+.wrap {
+  margin: 20px;
+  padding: 20px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ページタイトル */
+.wrap h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* 説明文、ガイドエリア */
+.wrap p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* ガイドエリア */
+.guide-area {
+  background-color: #f9f9f9;
+  border-left: 4px solid #0073aa;
+  padding: 15px;
+  margin: 20px 0 10px 0;
+}
+.guide-area p {
+  margin: 5px 0;
+}
+
+/* トグルボタン */
+#toggle-upload-container {
+  margin: 15px 0;
+}
+#toggle-upload {
+  background-color: #99aa00;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+#toggle-upload:hover {
+  background-color: #307700;
+}
+
+/* アップロードコンテナ */
+#upload-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fafafa;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* フォームエリア */
+.form-area {
+  margin-bottom: 15px;
+}
+.form-area p {
+  margin: 10px 0;
+}
+.form-area p.field-exp {
+	font-size: 12px;
+}
+
+/* フィールドエリア */
+.field-area {
+  margin-bottom: 20px;
+}
+.field-area span {
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+/* セレクトボックス、ラジオボタン */
+select,
+input[type="radio"] {
+  margin-left: 20px;
+}
+select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* CSVプレビューエリア */
+#csv-preview-container {
+  margin: 0 0 40px 0;
+}
+#csv-preview-container p {
+	font-weight: bold;
+	margin-bottom: 0;
+}
+#csv-preview-container p.csvfile-name {
+	font-weight: normal;
+	margin: 0;
+}
+table.widefat {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+table.widefat th,
+table.widefat td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+/* データ・マッピングテーブル */
+#mapping-container table.form-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#mapping-container table.form-table th,
+#mapping-container table.form-table td {
+  padding: 10px;
+  vertical-align: top;
+  border: none;
+}
+#mapping-container table.form-table th {
+  width: 30%;
+  font-weight: bold;
+}
+
+/* 更新開始ボタン */
+#submit-container {
+  margin-top: 20px;
+  text-align: right;
+}
+
+/* ボタン共通スタイル（WordPressの管理画面風に） */
+input[type="submit"]{
+  background-color: #0073aa;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+input[type="submit"]:hover {
+  background-color: #005177;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .wrap {
+    padding: 10px;
+  }
+  #mapping-container table.form-table th,
+  #mapping-container table.form-table td {
+    display: block;
+    width: 100%;
+  }
+  #mapping-container table.form-table th {
+    margin-top: 10px;
+  }
+}
+
+/***************************************************/
+
+/* # インポート終了画面 - 取込データ情報 */
+.admin_page_welcart-csv-importer .wrap h1+p+table {
+	margin-bottom: 30px;
+	border-radius: 8px;
+}
+
+.admin_page_welcart-csv-importer .wrap h1+p+table th,
+.admin_page_welcart-csv-importer .wrap h1+p+table td {
+	padding: 8px 16px;
+	vertical-align: middle;
+}
+
+.admin_page_welcart-csv-importer .wrap h1+p+table th {
+	width: 7rem;
+	font-weight: bold;
+}
+
+.admin_page_welcart-csv-importer .wrap h1+p+table tr:first-child th,
+.admin_page_welcart-csv-importer .wrap h1+p+table tr:first-child td {
+	padding-top: 24px;
+}
+
+.admin_page_welcart-csv-importer .wrap h1+p+table tr:last-child th,
+.admin_page_welcart-csv-importer .wrap h1+p+table tr:last-child td {
+	padding-bottom: 24px;
+}
+
+/* # 3.インポート終了画面 - エラーログ */
+.admin_page_welcart-csv-importer pre {
+	margin-top: 1em;
+	padding: 10px 16px !important;
+	background-color: #fff4f4 !important;
+	color: #d63638;
+	line-height: 2;
+}
+
+
+/* # 1.CSVプレビュー&マッピング画面 - 文字コード・フィールド名 */
+.form-area:not(#upload-container .form-area) {
+	display: grid;
+	grid-template-columns: max-content;
+	width: fit-content;
+	margin: 30px 0 10px;
+	gap: 0 20px;
+}
+
+.form-area:not(#upload-container .form-area) .field-area {
+	padding: 24px 16px 16px;
+	border-bottom: none;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 1px 1px 4px rgba(0, 0, 0, .2);
+}
+
+.form-area:not(#upload-container .form-area) .field-area p:first-child {
+	width: 100%;
+	margin-top: 0;
+}
+
+.form-area:not(#upload-container .form-area) .field-area p:last-child {
+	margin-bottom: 0;
+}
+
+.form-area:not(#upload-container .form-area) .field-area p span {
+	display: block;
+	margin: 0 0 12px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+/* ## 文字コード */
+.form-area:not(#upload-container .form-area) .field-area:nth-child(1) {
+	display: flex;
+	grid-column: 1/2;
+	flex-wrap: wrap;
+}
+
+/* ## 先頭行はフィールド名 */
+.form-area:not(#upload-container .form-area) .field-area:nth-child(2) {
+	grid-column: 2/3;
+}
+
+.form-area:not(#upload-container .form-area) .field-area:nth-child(2) label {
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-right: 20px;
+}
+
+/* # 1.CSVプレビュー&マッピング画面 - 再アップロード */
+#upload-container form {
+	margin-top: 10px;
+	padding: 12px 16px !important;
+	border: none !important;
+	border-radius: 8px;
+	background-color: #fff !important;
+	box-shadow: 1px 1px 6px rgba(0, 0, 0, .2);
+}
+
+#upload-container form:hover {
+	box-shadow: 1px 1px 6px rgba(0, 0, 0, .2);
+}
+
+#upload-container form p.submit {
+	margin-bottom: 0;
+	padding-top: 20px;
+	padding-bottom: 10px;
+	border-top: 1px solid #aaa;
+}
+
+/* # 1.CSVプレビュー&マッピング画面 - データ・マッピング */
+#mapping-container {
+	padding: 24px 16px 16px;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 1px 1px 6px rgba(0, 0, 0, .2);
+}
+
+#mapping-container h2 {
+	margin: 0;
+}
+
+#mapping-container th,
+#mapping-container td {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	vertical-align: middle;
+}
+
+#mapping-container th {
+	width: 7rem;
+}
+
+/* # 2.インポート進捗画面 */
+#csv-preview-container table th,
+#csv-preview-container table td {
+	padding: 4px 10px;
+}
+
+/* マッピング済みの列の背景色を変更（お好みの色に変更してください） */
+.mapped-column {
+	background-color: #ffffcc;
+}

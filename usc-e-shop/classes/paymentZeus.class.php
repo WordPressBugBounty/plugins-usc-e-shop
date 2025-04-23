@@ -238,6 +238,11 @@ class ZEUS_SETTLEMENT {
 		if ( $this->is_validity_acting( 'bnpl' ) ) {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			add_filter( 'usces_fiter_the_payment_method', array( $this, 'payment_method' ) );
+			add_filter( 'usces_filter_cod_label', array( $this, 'set_fee_label' ) );
+			add_filter( 'usces_filter_member_history_cod_label', array( $this, 'set_member_history_fee_label' ), 10, 2 );
+			add_filter( 'usces_filter_set_cart_fees_cod', array( $this, 'add_fee' ), 10, 7 );
+			add_filter( 'usces_filter_delivery_check', array( $this, 'check_fee_limit' ) );
+			add_filter( 'usces_filter_point_check_last', array( $this, 'check_fee_limit' ) );
 		}
 	}
 
@@ -294,6 +299,14 @@ class ZEUS_SETTLEMENT {
 		$options['acting_settings']['zeus']['bnpl_transaction_url']       = ( isset( $options['acting_settings']['zeus']['bnpl_transaction_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_transaction_url'] : '';
 		$options['acting_settings']['zeus']['bnpl_shippingrequest_url']   = ( isset( $options['acting_settings']['zeus']['bnpl_shippingrequest_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_shippingrequest_url'] : '';
 		$options['acting_settings']['zeus']['bnpl_modifytransaction_url'] = ( isset( $options['acting_settings']['zeus']['bnpl_modifytransaction_url'] ) ) ? $options['acting_settings']['zeus']['bnpl_modifytransaction_url'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_type']              = ( isset( $options['acting_settings']['zeus']['bnpl_fee_type'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_type'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee']                   = ( isset( $options['acting_settings']['zeus']['bnpl_fee'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_limit_amount']      = ( isset( $options['acting_settings']['zeus']['bnpl_fee_limit_amount'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_limit_amount'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_first_amount']      = ( isset( $options['acting_settings']['zeus']['bnpl_fee_first_amount'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_first_amount'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_first_fee']         = ( isset( $options['acting_settings']['zeus']['bnpl_fee_first_fee'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_first_fee'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_amounts']           = ( isset( $options['acting_settings']['zeus']['bnpl_fee_amounts'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_amounts'] : array();
+		$options['acting_settings']['zeus']['bnpl_fee_fees']              = ( isset( $options['acting_settings']['zeus']['bnpl_fee_fees'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_fees'] : array();
+		$options['acting_settings']['zeus']['bnpl_fee_end_fee']           = ( isset( $options['acting_settings']['zeus']['bnpl_fee_end_fee'] ) ) ? $options['acting_settings']['zeus']['bnpl_fee_end_fee'] : '';
 		$options['acting_settings']['zeus']['activate']                   = ( isset( $options['acting_settings']['zeus']['activate'] ) ) ? $options['acting_settings']['zeus']['activate'] : 'off';
 		if ( 'on' === $options['acting_settings']['zeus']['activate'] && 'on' === $options['acting_settings']['zeus']['card_activate'] ) {
 			if ( ! isset( $options['acting_settings']['zeus']['card_order_ref'] ) ) {
@@ -593,6 +606,207 @@ jQuery(document).ready(function($) {
 			$(".bnpl_zeus").css("display","none");
 		}
 	});
+
+	adminSettlementZeus = {
+		openFee : function(mode) {
+			$("#fee_change_field").html("");
+			$("#fee_fix").val($("#"+mode+"_fee").val());
+			$("#fee_limit_amount_fix").val($("#"+mode+"_fee_limit_amount_fix").val());
+			$("#fee_first_amount").val($("#"+mode+"_fee_first_amount").val());
+			$("#fee_first_fee").val($("#"+mode+"_fee_first_fee").val());
+			$("#fee_limit_amount_change").val($("#"+mode+"_fee_limit_amount_change").val());
+			var fee_amounts = new Array();
+			var fee_fees = new Array();
+			if( 0 < $("#"+mode+"_fee_amounts").val().length ) {
+				fee_amounts = $("#"+mode+"_fee_amounts").val().split("|");
+			}
+			if( 0 < $("#"+mode+"_fee_fees").val().length ) {
+				fee_fees = $("#"+mode+"_fee_fees").val().split("|");
+			}
+			if( 0 < fee_amounts.length ) {
+				var amount = parseInt($("#fee_first_amount").val()) + 1;
+				for( var i = 0; i < fee_amounts.length; i++ ) {
+					html = '<tr id="row_'+i+'"><td class="cod_f"><span id="amount_'+i+'">'+amount+'</span></td><td class="cod_m"><?php esc_html_e( ' - ', 'usces' ); ?></td><td class="cod_e"><input name="fee_amounts['+i+']" type="text" class="short_str num" value="'+fee_amounts[i]+'" /></td><td class="cod_cod"><input name="fee_fees['+i+']" type="text" class="short_str num" value="'+fee_fees[i]+'" /></td></tr>';
+					$("#fee_change_field").append(html);
+					amount = parseInt(fee_amounts[i]) + 1;
+				}
+				$("#end_amount").html(amount);
+			} else {
+				$("#end_amount").html(parseInt($("#"+mode+"_fee_first_amount").val()) + 1);
+			}
+			$("#fee_end_fee").val($("#"+mode+"_fee_end_fee").val());
+
+			var fee_type = $("#"+mode+"_fee_type").val();
+			if( "change" == fee_type ) {
+				$("#fee_type_change").prop("checked",true);
+				$("#zeus_fee_fix_table").css("display","none");
+				$("#zeus_fee_change_table").css("display","");
+			} else {
+				$("#fee_type_fix").prop("checked",true);
+				$("#zeus_fee_fix_table").css("display","");
+				$("#zeus_fee_change_table").css("display","none");
+			}
+		},
+
+		updateFee : function(mode) {
+			var fee_type = $("input[name='fee_type']:checked").val();
+			$("#"+mode+"_fee_type").val(fee_type);
+			$("#"+mode+"_fee").val($("#fee_fix").val());
+			$("#"+mode+"_fee_limit_amount_"+fee_type).val($("#fee_limit_amount_"+fee_type).val());
+			$("#"+mode+"_fee_first_amount").val($("#fee_first_amount").val());
+			$("#"+mode+"_fee_first_fee").val($("#fee_first_fee").val());
+			var fee_amounts = "";
+			var fee_fees = "";
+			var sp = "";
+			var fee_amounts_length = $("input[name^='fee_amounts']").length;
+			for( var i = 0; i < fee_amounts_length; i++ ) {
+				fee_amounts += sp + $("input[name='fee_amounts\["+i+"\]']").val();
+				fee_fees += sp + $("input[name='fee_fees\["+i+"\]']").val();
+				sp = "|";
+			}
+			$("#"+mode+"_fee_amounts").val(fee_amounts);
+			$("#"+mode+"_fee_fees").val(fee_fees);
+			$("#"+mode+"_fee_end_fee").val($("#fee_end_fee").val());
+		},
+
+		setFeeType : function( mode, closed ) {
+			var fee_type = $("input[name='fee_type']:checked").val();
+			if( "change" == fee_type ) {
+				if( "" == $("#fee_first_fee").val() && closed ) {
+					$("#"+mode+"_fee_type_field").html("");
+				} else {
+					$("#"+mode+"_fee_type_field").html("<?php esc_attr_e( 'Variable', 'usces' ); ?> ");
+				}
+				if( !closed ) {
+					$("#zeus_fee_fix_table").css("display","none");
+					$("#zeus_fee_change_table").css("display","");
+				}
+			} else if( "fix" == fee_type ) {
+				if( "" == $("#fee_fix").val() && closed ) {
+					$("#"+mode+"_fee_type_field").html("");
+				} else {
+					$("#"+mode+"_fee_type_field").html("<?php esc_attr_e( 'Fixation', 'usces' ); ?> ");
+				}
+				if( !closed ) {
+					$("#zeus_fee_fix_table").css("display","");
+					$("#zeus_fee_change_table").css("display","none");
+				}
+			}
+		}
+	};
+
+	$("#zeus_fee_dialog").dialog({
+		autoOpen: false,
+		height: 500,
+		width: 450,
+		modal: true,
+		open: function() {
+			adminSettlementZeus.openFee($("#zeus_fee_mode").val());
+		},
+		buttons: {
+			"<?php esc_attr_e( 'Settings' ); ?>": function() {
+				adminSettlementZeus.updateFee($("#zeus_fee_mode").val());
+			},
+			"<?php esc_attr_e( 'Close' ); ?>": function() {
+				$(this).dialog('close');
+			}
+		},
+		close: function() {
+			adminSettlementZeus.setFeeType($("#zeus_fee_mode").val(),true);
+		}
+	});
+
+	$(document).on( "click", "#bnpl_fee_setting", function() {
+		$("#zeus_fee_mode").val("bnpl");
+		$("#zeus_fee_dialog").dialog("option","title","請求手数料設定");
+		$("#zeus_fee_dialog").dialog("open");
+	});
+
+	$(document).on( "click", ".fee_type", function() {
+		if( "change" == $(this).val() ) {
+			$("#zeus_fee_fix_table").css("display","none");
+			$("#zeus_fee_change_table").css("display","");
+		} else {
+			$("#zeus_fee_fix_table").css("display","");
+			$("#zeus_fee_change_table").css("display","none");
+		}
+	});
+
+	$(document).on( "change", "input[name='fee_first_amount']", function() {
+		var rows = $("input[name^='fee_amounts']");
+		var first_amount = $("input[name='fee_first_amount']");
+		if( 0 == rows.length && $(first_amount).val() != '' ) {
+			$("#end_amount").html(parseInt($(first_amount).val()) + 1);
+		} else if( 0 < rows.length && $(first_amount).val() != '' ) {
+			$('#amount_0').html(parseInt($(first_amount).val()) + 1);
+		}
+	});
+
+	$(document).on( "change", "#fee_limit_amount_change", function() {
+		if( "change" == $("input[name='fee_type']:checked").val() ) {
+			var amount = parseInt($("#end_amount").html());
+			var limit = parseInt($("#fee_limit_amount_change").val());
+			if( amount >= limit ) {
+				alert("<?php esc_attr_e( 'A value of the amount of upper limit is incorrect.', 'usces' ); ?>"+amount+' : '+limit);
+			}
+		}
+	});
+
+	$(document).on( "change", "input[name^='fee_amounts']", function() {
+		var rows = $("input[name^='fee_amounts']");
+		var cnt = $(rows).length;
+		var end_amount = $("#end_amount");
+		var id = $(rows).index(this);
+		if( id >= cnt-1 ) {
+			$( end_amount ).html(parseInt($(rows).eq(id).val()) + 1);
+		} else if( id < cnt - 1 ) {
+			$("#amount_"+(id + 1)).html(parseInt($(rows).eq(id).val()) + 1);
+		}
+	});
+
+	$(document).on( "click", "#fee_add_row", function() {
+		var rows = $("input[name^='fee_amounts']");
+		$(rows).unbind("change");
+		var first_amount = $("input[name='fee_first_amount']");
+		var first_fee = $("input[name='fee_first_fee']");
+		var end_amount = $("#end_amount");
+		var enf_fee = $("input[name='fee_end_fee']");
+		if( 0 == rows.length ) {
+			amount = ( $(first_amount).val() == '' ) ? '' : parseInt($(first_amount).val()) + 1;
+		} else if( 0 < rows.length ) {
+			amount = ( $(rows).eq(rows.length-1).val() == '' ) ? '' : parseInt($(rows).eq(rows.length-1).val()) + 1;
+		}
+		html = '<tr id="row_'+rows.length+'"><td class="cod_f"><span id="amount_'+rows.length+'">'+amount+'</span></td><td class="cod_m"><?php esc_html_e( ' - ', 'usces' ); ?></td><td class="cod_e"><input name="fee_amounts['+rows.length+']" type="text" class="short_str num" /></td><td class="cod_cod"><input name="fee_fees['+rows.length+']" type="text" class="short_str num" /></td></tr>';
+		$("#fee_change_field").append(html);
+		rows = $("input[name^='fee_amounts']");
+		$(rows).bind( "change", function() {
+			var cnt = $(rows).length - 1;
+			var id = $(rows).index(this);
+			if( id >= cnt ) {
+				$(end_amount).html(parseInt($(rows).eq(id).val()) + 1);
+			} else if( id < cnt ) {
+				$("#amount_"+(id + 1)).html(parseInt($(rows).eq(id).val()) + 1);
+			}
+		});
+	});
+
+	$(document).on( "click", "#fee_del_row", function() {
+		var rows = $("input[name^='fee_amounts']");
+		var first_amount = $("input[name='fee_first_amount']");
+		var end_amount = $("#end_amount");
+		var del_id = rows.length - 1;
+		if( 0 < rows.length ) {
+			$("#row_"+del_id).remove();
+		}
+		rows = $("input[name^='fee_amounts']");
+		if( 0 == rows.length && $(first_amount).val() != "" ) {
+			$(end_amount).html(parseInt($(first_amount).val()) + 1);
+		} else if( 0 < rows.length && $(rows).eq(rows.length - 1).val() != "" ) {
+			$(end_amount).html(parseInt($(rows).eq(rows.length - 1).val()) + 1);
+		}
+	});
+
+	adminSettlementZeus.setFeeType("bnpl",false);
 });
 </script>
 					<?php
@@ -1150,27 +1364,35 @@ jQuery(document).ready(function($) {
 		if ( isset( $post_data['authkey'] ) ) {
 			$options['acting_settings']['zeus']['authkey'] = trim( $post_data['authkey'] );
 		}
-		$options['acting_settings']['zeus']['quickcharge']          = ( isset( $post_data['quickcharge'] ) ) ? $post_data['quickcharge'] : '';
-		$options['acting_settings']['zeus']['batch']                = ( isset( $post_data['batch'] ) ) ? $post_data['batch'] : '';
-		$options['acting_settings']['zeus']['auto_settlement_mail'] = ( isset( $post_data['auto_settlement_mail'] ) ) ? $post_data['auto_settlement_mail'] : 'off';
-		$options['acting_settings']['zeus']['howpay']               = ( isset( $post_data['howpay'] ) ) ? $post_data['howpay'] : '';
-		$options['acting_settings']['zeus']['howpay_B1']            = ( isset( $post_data['howpay_B1'] ) ) ? $post_data['howpay_B1'] : '';
-		$options['acting_settings']['zeus']['howpay_02']            = ( isset( $post_data['howpay_02'] ) ) ? $post_data['howpay_02'] : '';
-		$options['acting_settings']['zeus']['bank_activate']        = ( isset( $post_data['bank_activate'] ) ) ? $post_data['bank_activate'] : '';
-		$options['acting_settings']['zeus']['bank_ope']             = ( isset( $post_data['bank_ope'] ) ) ? $post_data['bank_ope'] : '';
-		$options['acting_settings']['zeus']['clientip_bank']        = ( isset( $post_data['clientip_bank'] ) ) ? trim( $post_data['clientip_bank'] ) : '';
-		$options['acting_settings']['zeus']['testid_bank']          = ( isset( $post_data['testid_bank'] ) ) ? trim( $post_data['testid_bank'] ) : '';
-		$options['acting_settings']['zeus']['bank_expired_date']    = ( isset( $post_data['bank_expired_date'] ) ) ? trim( $post_data['bank_expired_date'] ) : '';
-		$options['acting_settings']['zeus']['conv_activate']        = ( isset( $post_data['conv_activate'] ) ) ? $post_data['conv_activate'] : '';
-		$options['acting_settings']['zeus']['conv_ope']             = ( isset( $post_data['conv_ope'] ) ) ? $post_data['conv_ope'] : '';
-		$options['acting_settings']['zeus']['clientip_conv']        = ( isset( $post_data['clientip_conv'] ) ) ? trim( $post_data['clientip_conv'] ) : '';
-		$options['acting_settings']['zeus']['testid_conv']          = ( isset( $post_data['testid_conv'] ) ) ? trim( $post_data['testid_conv'] ) : '';
-		$options['acting_settings']['zeus']['test_type_conv']       = ( ( isset( $post_data['testid_conv'] ) && WCUtils::is_blank( $post_data['testid_conv'] ) ) || ( ! isset( $post_data['test_type'] ) ) ) ? 0 : $post_data['test_type'];
-		$options['acting_settings']['zeus']['pay_cvs']              = ( isset( $post_data['pay_cvs'] ) ) ? $post_data['pay_cvs'] : array();
-		$options['acting_settings']['zeus']['conv_span']            = ( isset( $post_data['conv_span'] ) ) ? trim( $post_data['conv_span'] ) : '';
-		$options['acting_settings']['zeus']['bnpl_activate']        = ( isset( $post_data['bnpl_activate'] ) ) ? $post_data['bnpl_activate'] : '';
-		$options['acting_settings']['zeus']['clientip_bnpl']        = ( isset( $post_data['clientip_bnpl'] ) ) ? trim( $post_data['clientip_bnpl'] ) : '';
-		$options['acting_settings']['zeus']['bnpl_linkpassword']    = ( isset( $post_data['bnpl_linkpassword'] ) ) ? trim( $post_data['bnpl_linkpassword'] ) : '';
+		$options['acting_settings']['zeus']['quickcharge']           = ( isset( $post_data['quickcharge'] ) ) ? $post_data['quickcharge'] : '';
+		$options['acting_settings']['zeus']['batch']                 = ( isset( $post_data['batch'] ) ) ? $post_data['batch'] : '';
+		$options['acting_settings']['zeus']['auto_settlement_mail']  = ( isset( $post_data['auto_settlement_mail'] ) ) ? $post_data['auto_settlement_mail'] : 'off';
+		$options['acting_settings']['zeus']['howpay']                = ( isset( $post_data['howpay'] ) ) ? $post_data['howpay'] : '';
+		$options['acting_settings']['zeus']['howpay_B1']             = ( isset( $post_data['howpay_B1'] ) ) ? $post_data['howpay_B1'] : '';
+		$options['acting_settings']['zeus']['howpay_02']             = ( isset( $post_data['howpay_02'] ) ) ? $post_data['howpay_02'] : '';
+		$options['acting_settings']['zeus']['bank_activate']         = ( isset( $post_data['bank_activate'] ) ) ? $post_data['bank_activate'] : '';
+		$options['acting_settings']['zeus']['bank_ope']              = ( isset( $post_data['bank_ope'] ) ) ? $post_data['bank_ope'] : '';
+		$options['acting_settings']['zeus']['clientip_bank']         = ( isset( $post_data['clientip_bank'] ) ) ? trim( $post_data['clientip_bank'] ) : '';
+		$options['acting_settings']['zeus']['testid_bank']           = ( isset( $post_data['testid_bank'] ) ) ? trim( $post_data['testid_bank'] ) : '';
+		$options['acting_settings']['zeus']['bank_expired_date']     = ( isset( $post_data['bank_expired_date'] ) ) ? trim( $post_data['bank_expired_date'] ) : '';
+		$options['acting_settings']['zeus']['conv_activate']         = ( isset( $post_data['conv_activate'] ) ) ? $post_data['conv_activate'] : '';
+		$options['acting_settings']['zeus']['conv_ope']              = ( isset( $post_data['conv_ope'] ) ) ? $post_data['conv_ope'] : '';
+		$options['acting_settings']['zeus']['clientip_conv']         = ( isset( $post_data['clientip_conv'] ) ) ? trim( $post_data['clientip_conv'] ) : '';
+		$options['acting_settings']['zeus']['testid_conv']           = ( isset( $post_data['testid_conv'] ) ) ? trim( $post_data['testid_conv'] ) : '';
+		$options['acting_settings']['zeus']['test_type_conv']        = ( ( isset( $post_data['testid_conv'] ) && WCUtils::is_blank( $post_data['testid_conv'] ) ) || ( ! isset( $post_data['test_type'] ) ) ) ? 0 : $post_data['test_type'];
+		$options['acting_settings']['zeus']['pay_cvs']               = ( isset( $post_data['pay_cvs'] ) ) ? $post_data['pay_cvs'] : array();
+		$options['acting_settings']['zeus']['conv_span']             = ( isset( $post_data['conv_span'] ) ) ? trim( $post_data['conv_span'] ) : '';
+		$options['acting_settings']['zeus']['bnpl_activate']         = ( isset( $post_data['bnpl_activate'] ) ) ? $post_data['bnpl_activate'] : '';
+		$options['acting_settings']['zeus']['clientip_bnpl']         = ( isset( $post_data['clientip_bnpl'] ) ) ? trim( $post_data['clientip_bnpl'] ) : '';
+		$options['acting_settings']['zeus']['bnpl_linkpassword']     = ( isset( $post_data['bnpl_linkpassword'] ) ) ? trim( $post_data['bnpl_linkpassword'] ) : '';
+		$options['acting_settings']['zeus']['bnpl_fee_type']         = ( isset( $post_data['bnpl_fee_type'] ) ) ? $post_data['bnpl_fee_type'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee']              = ( isset( $post_data['bnpl_fee'] ) ) ? $post_data['bnpl_fee'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_limit_amount'] = ( isset( $post_data[ 'bnpl_fee_limit_amount_' . $options['acting_settings']['zeus']['bnpl_fee_type'] ] ) ) ? $post_data[ 'bnpl_fee_limit_amount_' . $options['acting_settings']['zeus']['bnpl_fee_type'] ] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_first_amount'] = ( isset( $post_data['bnpl_fee_first_amount'] ) ) ? $post_data['bnpl_fee_first_amount'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_first_fee']    = ( isset( $post_data['bnpl_fee_first_fee'] ) ) ? $post_data['bnpl_fee_first_fee'] : '';
+		$options['acting_settings']['zeus']['bnpl_fee_amounts']      = ( isset( $post_data['bnpl_fee_amounts'] ) ) ? explode( '|', $post_data['bnpl_fee_amounts'] ) : array();
+		$options['acting_settings']['zeus']['bnpl_fee_fees']         = ( isset( $post_data['bnpl_fee_fees'] ) ) ? explode( '|', $post_data['bnpl_fee_fees'] ) : array();
+		$options['acting_settings']['zeus']['bnpl_fee_end_fee']      = ( isset( $post_data['bnpl_fee_end_fee'] ) ) ? $post_data['bnpl_fee_end_fee'] : '';
 
 		if ( 'on' === $options['acting_settings']['zeus']['card_activate'] ) {
 			if ( WCUtils::is_blank( $post_data['clientip'] ) ) {
@@ -1394,6 +1616,14 @@ jQuery(document).ready(function($) {
 			$bnpl_activate     = ( isset( $acting_opts['bnpl_activate'] ) && 'on' === $acting_opts['bnpl_activate'] ) ? 'on' : 'off';
 			$client_ip_bnpl    = ( isset( $acting_opts['clientip_bnpl'] ) ) ? $acting_opts['clientip_bnpl'] : '';
 			$bnpl_linkpassword = ( isset( $acting_opts['bnpl_linkpassword'] ) ) ? $acting_opts['bnpl_linkpassword'] : '';
+
+			if ( 'fix' === $acting_opts['bnpl_fee_type'] ) {
+				$bnpl_fee_type_field = ( ! empty( $acting_opts['bnpl_fee'] ) ) ? $this->get_fee_name( $acting_opts['bnpl_fee_type'] ) . ' ' : '';
+			} elseif ( 'change' === $acting_opts['bnpl_fee_type'] ) {
+				$bnpl_fee_type_field = ( ! empty( $acting_opts['bnpl_fee_first_fee'] ) ) ? $this->get_fee_name( $acting_opts['bnpl_fee_type'] ) . ' ' : '';
+			} else {
+				$bnpl_fee_type_field = '';
+			}
 			?>
 	<div id="uscestabs_zeus">
 	<div class="settlement_service"><span class="service_title"><?php echo esc_html( $this->acting_formal_name ); ?></span></div>
@@ -1603,8 +1833,22 @@ jQuery(document).ready(function($) {
 				<td><input name="bnpl_linkpassword" type="text" id="bnpl_linkpassword_zeus" value="<?php echo esc_attr( $bnpl_linkpassword ); ?>" class="regular-text" /></td>
 			</tr>
 			<tr id="ex_bnpl_linkpassword_zeus" class="explanation bnpl_zeus"><td colspan="2">契約時にゼウスから発行されるあと払い決済用のAPIキー（半角英数字）</td></tr>
+			<tr class="bnpl_zeus">
+				<th><a class="explanation-label" id="label_ex_bnpl_fee_zeus">請求手数料</a></th>
+				<td><span id="bnpl_fee_type_field" class="fee_type_field"><?php echo esc_html( $bnpl_fee_type_field ); ?></span><input type="button" class="button" value="<?php esc_attr_e( 'Detailed setting', 'usces' ); ?>" id="bnpl_fee_setting" /></td>
+			</tr>
+			<tr id="ex_bnpl_fee_zeus" class="explanation bnpl_zeus"><td colspan="2">あと払い決済手数料と決済上限額を設定します。必要ない場合は空白にしておきます。</td></tr>
 		</table>
 		<input name="acting" type="hidden" value="zeus" />
+		<input type="hidden" name="bnpl_fee_type" id="bnpl_fee_type" value="<?php echo esc_attr( $acting_opts['bnpl_fee_type'] ); ?>" />
+		<input type="hidden" name="bnpl_fee" id="bnpl_fee" value="<?php echo esc_attr( $acting_opts['bnpl_fee'] ); ?>" />
+		<input type="hidden" name="bnpl_fee_limit_amount_fix" id="bnpl_fee_limit_amount_fix" value="<?php echo esc_attr( $acting_opts['bnpl_fee_limit_amount'] ); ?>" />
+		<input type="hidden" name="bnpl_fee_first_amount" id="bnpl_fee_first_amount" value="<?php echo esc_attr( $acting_opts['bnpl_fee_first_amount'] ); ?>" />
+		<input type="hidden" name="bnpl_fee_first_fee" id="bnpl_fee_first_fee" value="<?php echo esc_attr( $acting_opts['bnpl_fee_first_fee'] ); ?>" />
+		<input type="hidden" name="bnpl_fee_limit_amount_change" id="bnpl_fee_limit_amount_change" value="<?php echo esc_attr( $acting_opts['bnpl_fee_limit_amount'] ); ?>" />
+		<input type="hidden" name="bnpl_fee_amounts" id="bnpl_fee_amounts" value="<?php echo esc_attr( implode( '|', $acting_opts['bnpl_fee_amounts'] ) ); ?>" />
+		<input type="hidden" name="bnpl_fee_fees" id="bnpl_fee_fees" value="<?php echo esc_attr( implode( '|', $acting_opts['bnpl_fee_fees'] ) ); ?>" />
+		<input type="hidden" name="bnpl_fee_end_fee" id="bnpl_fee_end_fee" value="<?php echo esc_attr( $acting_opts['bnpl_fee_end_fee'] ); ?>" />
 		<input name="usces_option_update" type="submit" class="button button-primary" value="ゼウスの設定を更新する" />
 			<?php wp_nonce_field( 'admin_settlement', 'wc_nonce' ); ?>
 	</form>
@@ -1628,6 +1872,56 @@ jQuery(document).ready(function($) {
 		また、本稼働の際には、「本番環境」を選択して更新してください。</p>
 	</div>
 	</div><!--uscestabs_zeus-->
+
+	<div id="zeus_fee_dialog" class="cod_dialog">
+		<fieldset>
+		<table id="zeus_fee_type_table" class="cod_type_table">
+			<tr>
+				<th><?php esc_html_e( 'Type of the fee', 'usces' ); ?></th>
+				<td class="radio"><input name="fee_type" type="radio" id="fee_type_fix" class="fee_type" value="fix" /></td><td><label for="fee_type_fix"><?php esc_html_e( 'Fixation', 'usces' ); ?></label></td>
+				<td class="radio"><input name="fee_type" type="radio" id="fee_type_change" class="fee_type" value="change" /></td><td><label for="fee_type_change"><?php esc_html_e( 'Variable', 'usces' ); ?></label></td>
+			</tr>
+		</table>
+		<table id="zeus_fee_fix_table" class="cod_fix_table">
+			<tr>
+				<th><?php esc_html_e( 'Fee', 'usces' ); ?></th>
+				<td><input name="fee" type="text" id="fee_fix" class="short_str num" /><?php usces_crcode(); ?></td>
+			</tr>
+			<tr>
+				<th><?php esc_html_e( 'Upper limit', 'usces' ); ?></th>
+				<td><input name="fee_limit_amount_fix" type="text" id="fee_limit_amount_fix" class="short_str num" /><?php usces_crcode(); ?></td>
+			</tr>
+		</table>
+		<div id="zeus_fee_change_table" class="cod_change_table">
+		<input type="button" class="button" id="fee_add_row" value="<?php esc_attr_e( 'Add row', 'usces' ); ?>" />
+		<input type="button" class="button" id="fee_del_row" value="<?php esc_attr_e( 'Delete row', 'usces' ); ?>" />
+		<table>
+			<thead>
+				<tr>
+					<th colspan="3"><?php esc_html_e( 'A purchase amount', 'usces' ); ?>(<?php usces_crcode(); ?>)</th>
+					<th><?php esc_html_e( 'Fee', 'usces' ); ?>(<?php usces_crcode(); ?>)</th>
+				</tr>
+				<tr>
+					<td class="cod_f">0</td>
+					<td class="cod_m"><?php esc_html_e( ' - ', 'usces' ); ?></td>
+					<td class="cod_e"><input name="fee_first_amount" id="fee_first_amount" type="text" class="short_str num" /></td>
+					<td class="cod_cod"><input name="fee_first_fee" id="fee_first_fee" type="text" class="short_str num" /></td>
+				</tr>
+			</thead>
+			<tbody id="fee_change_field"></tbody>
+			<tfoot>
+				<tr>
+					<td class="cod_f"><span id="end_amount"></span></td>
+					<td class="cod_m"><?php esc_html_e( ' - ', 'usces' ); ?></td>
+					<td class="cod_e"><input name="fee_limit_amount_change" type="text" id="fee_limit_amount_change" class="short_str num" /></td>
+					<td class="cod_cod"><input name="fee_end_fee" type="text" id="fee_end_fee" class="short_str num" /></td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+		</fieldset>
+		<input type="hidden" id="zeus_fee_mode">
+	</div><!--zeus_fee_dialog-->
 			<?php
 		endif;
 	}
@@ -4291,6 +4585,150 @@ jQuery(document).ready(function($) {
 		}
 
 		return $payments;
+	}
+
+	/**
+	 * 手数料ラベル
+	 * usces_filter_cod_label
+	 *
+	 * @param  string $label Fee label.
+	 * @return string
+	 */
+	public function set_fee_label( $label ) {
+		global $usces;
+
+		if ( is_admin() ) {
+			$order_id = ( isset( $_REQUEST['order_id'] ) ) ? wp_unslash( $_REQUEST['order_id'] ) : '';
+			if ( ! empty( $order_id ) ) {
+				$payment_name = $this->get_order_payment_name( $order_id );
+				$payment      = usces_get_payments_by_name( $payment_name );
+				if ( 'acting_zeus_bnpl' === $payment['settlement'] ) {
+					$label = $payment['name'] . __( 'Fee', 'usces' );
+				}
+			}
+		} else {
+			$entry   = $usces->cart->get_entry();
+			$payment = usces_get_payments_by_name( $entry['order']['payment_name'] );
+			if ( 'acting_zeus_bnpl' === $payment['settlement'] ) {
+				$label = $payment['name'] . __( 'Fee', 'usces' );
+			}
+		}
+		return $label;
+	}
+
+	/**
+	 * 手数料ラベル
+	 * usces_filter_member_history_cod_label
+	 *
+	 * @param  string $label Fee label.
+	 * @param  int    $order_id Order number.
+	 * @return string
+	 */
+	public function set_member_history_fee_label( $label, $order_id ) {
+		$payment_name = $this->get_order_payment_name( $order_id );
+		$payment      = usces_get_payments_by_name( $payment_name );
+		if ( 'acting_zeus_bnpl' === $payment['settlement'] ) {
+			$label = $payment['name'] . __( 'Fee', 'usces' );
+		}
+		return $label;
+	}
+
+	/**
+	 * 決済手数料
+	 * usces_filter_set_cart_fees_cod
+	 *
+	 * @param  float $cod_fee COD fee.
+	 * @param  array $usces_entries Entry data.
+	 * @param  float $total_items_price Total amount of items.
+	 * @param  int   $use_point Use point.
+	 * @param  float $discount Discount.
+	 * @param  float $shipping_charge Shipping charge.
+	 * @param  float $amount_by_cod COD.
+	 * @return float
+	 */
+	public function add_fee( $cod_fee, $usces_entries, $total_items_price, $use_point, $discount, $shipping_charge, $amount_by_cod ) {
+		global $usces;
+
+		$payment = usces_get_payments_by_name( $usces_entries['order']['payment_name'] );
+		if ( 'acting_zeus_bnpl' !== $payment['settlement'] ) {
+			return $cod_fee;
+		}
+
+		$acting_opts = $this->get_acting_settings();
+		$acting      = explode( '_', $payment['settlement'] );
+		$fee         = 0;
+		if ( ! empty( $acting_opts[ $acting[2] . '_fee_type' ] ) ) {
+			if ( 'fix' === $acting_opts[ $acting[2] . '_fee_type' ] ) {
+				$fee = (int) $acting_opts[ $acting[2] . '_fee' ];
+			} else {
+				$materials     = array(
+					'total_items_price' => $total_items_price,
+					'discount'          => $discount,
+					'shipping_charge'   => $shipping_charge,
+					'cod_fee'           => $cod_fee,
+					'use_point'         => $use_point,
+				);
+				$amount_by_fee = $total_items_price - $use_point + $discount;
+				if ( 'all' === usces_is_fee_subject() ) {
+					$amount_by_fee += $shipping_charge;
+				}
+				$price = $amount_by_fee + $usces->getTax( $amount_by_fee, $materials );
+				if ( $price <= (int) $acting_opts[ $acting[2] . '_fee_first_amount' ] ) {
+					$fee = $acting_opts[ $acting[2] . '_fee_first_fee' ];
+				} elseif ( isset( $acting_opts[ $acting[2] . '_fee_amounts' ] ) && ! empty( $acting_opts[ $acting[2] . '_fee_amounts' ] ) ) {
+					$last = count( $acting_opts[ $acting[2] . '_fee_amounts' ] ) - 1;
+					if ( $price > $acting_opts[ $acting[2] . '_fee_amounts' ][ $last ] ) {
+						$fee = $acting_opts[ $acting[2] . '_fee_end_fee' ];
+					} else {
+						foreach ( $acting_opts[ $acting[2] . '_fee_amounts' ] as $key => $value ) {
+							if ( $price <= $value ) {
+								$fee = $acting_opts[ $acting[2] . '_fee_fees' ][ $key ];
+								break;
+							}
+						}
+					}
+				} else {
+					$fee = $acting_opts[ $acting[2] . '_fee_end_fee' ];
+				}
+			}
+		}
+		return $cod_fee + $fee;
+	}
+
+	/**
+	 * 決済手数料チェック
+	 * usces_filter_delivery_check usces_filter_point_check_last
+	 *
+	 * @param  string $mes Message.
+	 * @return string
+	 */
+	public function check_fee_limit( $mes ) {
+		global $usces;
+
+		$member = $usces->get_member();
+		$usces->set_cart_fees( $member, array() );
+		$entry   = $usces->cart->get_entry();
+		$payment = usces_get_payments_by_name( $entry['order']['payment_name'] );
+		if ( 'acting_zeus_bnpl' !== $payment['settlement'] ) {
+			return $mes;
+		}
+
+		if ( 2 === (int) $entry['delivery']['delivery_flag'] ) {
+			$mes .= sprintf( __( "If you specify multiple shipping address, you cannot use '%s' payment method.", 'usces' ), $entry['order']['payment_name'] );
+			return $mes;
+		}
+
+		$acting_opts      = $this->get_acting_settings();
+		$fee_limit_amount = 0;
+		if ( ! empty( $acting_opts['bnpl_fee_limit_amount'] ) ) {
+			$fee_limit_amount = (int) $acting_opts['bnpl_fee_limit_amount'];
+		}
+
+		if ( 0 < $fee_limit_amount && $entry['order']['total_full_price'] > $fee_limit_amount ) {
+			$mes .= sprintf( __( 'It exceeds the maximum amount of "%1$s" (total amount %2$s).', 'usces' ), $entry['order']['payment_name'], usces_crform( $fee_limit_amount, true, false, 'return', true ) );
+		}
+
+		return $mes;
 	}
 
 	/**
@@ -7753,6 +8191,22 @@ jQuery.event.add(window,'load',function() {
 		return implode( ';:', array_map( function( $value ) {
 			return trim( $value );
 		}, $header_info ) );
+	}
+
+	/**
+	 * 手数料名称
+	 *
+	 * @param  string $fee_type Fee type.
+	 * @return string
+	 */
+	protected function get_fee_name( $fee_type ) {
+		$fee_name = '';
+		if ( 'fix' === $fee_type ) {
+			$fee_name = __( 'Fixation', 'usces' );
+		} elseif ( 'change' === $fee_type ) {
+			$fee_name = __( 'Variable', 'usces' );
+		}
+		return $fee_name;
 	}
 }
 

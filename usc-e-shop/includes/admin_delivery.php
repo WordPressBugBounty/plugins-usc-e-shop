@@ -200,7 +200,7 @@ $cool_categories = array(
 		$("#delivery_method_name").html('<input name="delivery_method_name" type="text" value="" />');
 		$("#delivery_method_name2").html('');
 		$("#delivery_method_time").val('');
-		$("#delivery_method_button").html('<input name="cancel_delivery_method" id="cancel_delivery_method" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_delivery_method(0);" /><input name="add_delivery_method" id="add_delivery_method" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_delivery_method();" />');
+		$("#delivery_method_button").html('<input name="cancel_delivery_method" id="cancel_delivery_method" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_delivery_method(0);" /> <input name="add_delivery_method" id="add_delivery_method" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_delivery_method();" />');
 		$("#delivery_method_nocod").html('<input name="delivery_method_nocod" type="checkbox" value="1" />');
 		$("#delivery_method_intl").html('<input name="delivery_method_intl" id="delivery_method_intl_0" type="radio" value="0" checked /><label for="delivery_method_intl_0"><?php esc_html_e( 'Domestic Shipment', 'usces' ); ?></label>&nbsp;&nbsp;&nbsp;<input name="delivery_method_intl" id="delivery_method_intl_1" type="radio" value="1" /><label for="delivery_method_intl_1"><?php esc_html_e( 'International Shipment', 'usces' ); ?></label>');
 		$("input[name='delivery_method_name']").focus().select();
@@ -236,7 +236,7 @@ $cool_categories = array(
 		$("#shipping_charge_name").html('<input name="shipping_charge_name" type="text" value="" />');
 		$("#shipping_charge_name2").html('');
 		$("#shipping_charge_value").html(valuehtml);
-		$("#shipping_charge_button").html('<input name="cancel_shipping_charge" id="cancel_shipping_charge" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_shipping_charge(0);" /><input name="add_shipping_charge" id="add_shipping_charge" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_shipping_charge();" />');
+		$("#shipping_charge_button").html('<input name="cancel_shipping_charge" id="cancel_shipping_charge" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_shipping_charge(0);" /> <input name="add_shipping_charge" id="add_shipping_charge" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_shipping_charge();" />');
 		$("input[name='shipping_charge_name']").focus().select();
 		$(".charge_text").bind("change", function(){ usces_check_money($(this)); });
 		for( var i = 0; i < target_market.length; i++ ) {
@@ -263,7 +263,7 @@ $cool_categories = array(
 		$("#delivery_days_name").html('<input name="delivery_days_name" type="text" value="" />');
 		$("#delivery_days_name2").html('');
 		$("#delivery_days_value").html(valuehtml);
-		$("#delivery_days_button").html('<input name="cancel_delivery_days" id="cancel_delivery_days" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_delivery_days(0);" /><input name="add_delivery_days" id="add_delivery_days" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_delivery_days();" />');
+		$("#delivery_days_button").html('<input name="cancel_delivery_days" id="cancel_delivery_days" type="button" class="button" value="<?php esc_attr_e( 'Cancel', 'usces' ); ?>" onclick="operation.disp_delivery_days(0);" /> <input name="add_delivery_days" id="add_delivery_days" type="button" class="button" value="<?php esc_attr_e( 'Add', 'usces' ); ?>" onclick="operation.add_delivery_days();" />');
 		$("input[name='delivery_days_name']").focus().select();
 		$(".days_text").bind("change", function(){ usces_check_num($(this)); });
 		for( var i = 0; i < target_market.length; i++ ) {
@@ -1331,7 +1331,7 @@ jQuery(document).ready(function($){
 	</tr>
 	<tr style="height:40px;">
 		<th class="sec"><?php esc_html_e( 'Delivery Days', 'usces' ); ?></th>
-		<td><label class="delivery_days_label"><input name="allbutton_delivery_days" type="button" class="allbutton button" onclick="operation.allDeliveryDays();" value="<?php esc_attr_e( 'same as', 'usces' ); ?>"  /></label><input name="all_delivery_days" id="all_delivery_days" type="text" class="days_text" /><?php esc_html_e( 'day', 'usces' ); ?></td>
+		<td><label class="delivery_days_label"><input name="allbutton_delivery_days" type="button" class="allbutton button" onclick="operation.allDeliveryDays();" value="<?php esc_attr_e( 'same as', 'usces' ); ?>" /></label><input name="all_delivery_days" id="all_delivery_days" type="text" class="days_text" /><?php esc_html_e( 'day', 'usces' ); ?></td>
 	</tr>
 	<tr>
 		<th class="sec"></th>

@@ -156,10 +156,10 @@ if ( 'new' === $order_action ) {
 	$order_id = isset( $_REQUEST['order_id'] ) ? (int) wp_kses( wp_unslash( $_REQUEST['order_id'] ), array() ) : 0;
 	$data     = $this->get_order_data( $order_id, 'direct' );
 
-	$deli            = stripslashes_deep( unserialize( $data['order_delivery'] ) );
-	$seriarized_cart = stripslashes_deep( unserialize( $data['order_cart'] ) );
+	$deli            = stripslashes_deep( maybe_unserialize( $data['order_delivery'] ) );
+	$seriarized_cart = stripslashes_deep( maybe_unserialize( $data['order_cart'] ) );
 	$cart            = usces_get_ordercartdata( $order_id );
-	$condition       = stripslashes_deep( unserialize( $data['order_condition'] ) );
+	$condition       = stripslashes_deep( maybe_unserialize( $data['order_condition'] ) );
 	$ordercheck      = stripslashes_deep( maybe_unserialize( $data['order_check'] ) );
 
 	if ( ! is_array( $ordercheck ) ) {
@@ -212,7 +212,7 @@ if ( 'new' === $order_action ) {
 			$csod_meta[ $key ]['data'] = maybe_unserialize( $this->get_order_meta_value( $csod_key, $order_id ) );
 		}
 	}
-	// Start - Display data of the deleted order custom fields
+	// Start - Display data of the deleted order custom fields.
 	global $wpdb;
 	$deleted_csod_meta_display = '';
 	$order_meta_table          = $wpdb->prefix . 'usces_order_meta';
@@ -220,8 +220,7 @@ if ( 'new' === $order_action ) {
 		"SELECT * FROM {$order_meta_table} WHERE order_id = %d AND meta_key LIKE 'csod_%'",
 		$order_id
 	);
-
-	$order_meta_data = $wpdb->get_results( $query, ARRAY_A );
+	$order_meta_data           = $wpdb->get_results( $query, ARRAY_A );
 	if ( ! empty( $order_meta_data ) ) {
 		foreach ( $order_meta_data as $order_meta ) {
 			$order_meta_key = str_replace( 'csod_', '', $order_meta['meta_key'] );
@@ -253,9 +252,9 @@ if ( 'new' === $order_action ) {
 		}
 	}
 
-	$exopt = get_option( 'usces_ex' );
+	$exopt = get_option( 'usces_ex', array() );
 	if ( isset( $exopt['system']['datalistup']['orderlist_flag'] ) && $exopt['system']['datalistup']['orderlist_flag'] ) {
-		$navibutton = '';
+		$navibutton  = '';
 		$navibutton .= '<a href="javascript:;" class="prev-page" style="display:none"><span class="dashicons dashicons-arrow-left-alt2"></span>' . __( 'to prev page', 'usces' ) . '</a>';
 		$navibutton .= '<a href="' . admin_url( 'admin.php?page=usces_orderlist&returnList=1&wc_nonce=' . wp_create_nonce( 'order_list' ) ) . '" class="back-list"><span class="dashicons dashicons-list-view"></span>' . __( 'to order list', 'usces' ) . '</a>';
 		$navibutton .= '<a href="javascript:;" class="next-page"  style="display:none">' . __( 'to next page', 'usces' ) . '<span class="dashicons dashicons-arrow-right-alt2"></span></a>';
@@ -315,7 +314,7 @@ if ( 'new' === $order_action ) {
 			$include_tax = '(' . usces_crform( usces_internal_tax( $materials, 'return' ), false, false, 'return', true ) . ')';
 		}
 	}
-	$tax_readonly = ( 'include' === $tax_mode ) ? ' readonly' : '';
+	$tax_readonly   = ( 'include' === $tax_mode ) ? ' readonly' : '';
 	$change_taxrate = '<span><label><input type="checkbox" name="change_taxrate" id="change_taxrate" value="change">' . __( 'Apply the changed tax rate', 'usces' ) . '</label></span>';
 
 	if ( isset( $data['mem_id'] ) ) {
@@ -353,7 +352,7 @@ $no_preference = apply_filters( 'usces_filter_label_delivery_date_no_preference'
 
 $mailsenddialog_height = ( 1 === $this->options['email_attach_feature'] || 1 === $add_html_email_option ) ? 628 : 578;
 $mailsenddialog_width  = 700;
-$mail_data = usces_mail_data();
+$mail_data             = usces_mail_data();
 
 $usedpoint_readonly = ( usces_is_membersystem_point() && ! empty( $data['mem_id'] ) ) ? '' : ' readonly';
 $getpoint_readonly  = ( usces_is_membersystem_point() ) ? '' : ' readonly';
@@ -373,7 +372,7 @@ $email_attach_file_extension = wel_email_attach_file_extension( explode( ',', st
 	}
 	#wrap_icon_loading > img {
 		position: absolute;
-		top: 10px; 
+		top: 10px;
 	}
 </style>
 <script type='text/javascript'>
@@ -408,9 +407,7 @@ jQuery(function($){
 	$("#order_payment_name").change(function () {
 		var pay_name = $("select[name='offer\[payment_name\]'] option:selected").val();
 		var noreceipt_status = [ '<?php echo wp_kses_data( implode( "','", $noreceipt_status ) ); ?>' ];
-
 		if( $.inArray( uscesPayments[pay_name], noreceipt_status ) >= 0 ) {
-
 			var label = '<?php esc_html_e( 'transfer statement', 'usces' ); ?>';
 			var html  = "<select name='offer[receipt]'>\n";
 			html += "<option value='noreceipt'><?php echo wp_kses_data( $management_status['noreceipt'] ); ?></option>\n";
@@ -468,7 +465,7 @@ jQuery(function($){
 				text: "<?php esc_html_e( 'Preview', 'usces' ); ?>",
 				"class": 'button',
 				"id": 'usces_email_bnt_preview',
-				click: function() {                     
+				click: function() {
 					uscesMail.previewMail();
 				}
 			},
@@ -477,13 +474,13 @@ jQuery(function($){
 				text: "<?php esc_html_e( 'send', 'usces' ); ?>",
 				"class": 'button',
 				"id": 'usces_email_bnt_send',
-				click: function() {                     
+				click: function() {
 					uscesMail.sendmail();
 				}
 			},
 			{
 				text: "<?php esc_html_e( 'close', 'usces' ); ?>",
-				click: function() {    
+				click: function() {
 					$(this).dialog('close');
 				}
 			}
@@ -491,7 +488,7 @@ jQuery(function($){
 		appendTo:"#dialog_parent",
 		close: function() {
 			<?php if ( 1 === $add_html_email_option ) { ?>
-				$('#iframeLoadEditor').attr('src', ''); 
+				$('#iframeLoadEditor').attr('src', '');
 			<?php } else { ?>
 				$("#sendmailmessage").html( "" );
 			<?php } ?>
@@ -509,7 +506,7 @@ jQuery(function($){
 		buttons: [
 			{
 				text: "<?php esc_html_e( 'close', 'usces' ); ?>",
-				click: function() {    
+				click: function() {
 					$(this).dialog('close');
 				}
 			}
@@ -677,7 +674,7 @@ jQuery(function($){
 		sumPrice : function(obj) {
 			if(obj != null) {
 				if(!checkNumMinus(obj.val())) {
-					alert('<?php esc_html_e( "Please enter a numeric value.", "usces" ); ?>');
+					alert('<?php esc_html_e( 'Please enter a numeric value.', 'usces' ); ?>');
 					obj.focus();
 					return false;
 				}
@@ -824,14 +821,13 @@ jQuery(function($){
 							$(":input[name='" + key + "']").val(value);
 						}
 					}
-
 				}else if(data.status_code === 'none'){
-					alert( '<?php esc_html_e( "The relevant membership information does not exist.", "usces" ); ?>' );
+					alert( '<?php esc_html_e( 'The relevant membership information does not exist.', 'usces' ); ?>' );
 				}else{
-					alert( '<?php esc_html_e( "Membership information could not be retrieved.", "usces" ); ?>' );
+					alert( '<?php esc_html_e( 'Membership information could not be retrieved.', 'usces' ); ?>' );
 				}
 			}).fail(function( data ){
-				alert( '<?php esc_html_e( "Membership information could not be retrieved.", "usces" ); ?>' );
+				alert( '<?php esc_html_e( 'Membership information could not be retrieved.', 'usces' ); ?>' );
 			});
 			return false;
 		},
@@ -1067,7 +1063,7 @@ jQuery(function($){
 			// Attach file
 			if (email_attach_feature == 1) {
 				if (attachFile.files[0]) {
-					formData.append('attachFile', attachFile.files[0]); 
+					formData.append('attachFile', attachFile.files[0]);
 				} else {
 					if (!confirm('<?php esc_html_e( 'Are you sure you want to send it without attachments?', 'usces' ); ?>')) return;
 				}
@@ -1100,14 +1096,14 @@ jQuery(function($){
 					}else if(checked == 'othermail'){
 						$("input[name='check\[othermail\]']").prop( "checked", true );
 					}
-				<?php echo apply_filters( 'usces_filter_order_check_mail_js', '' ); ?>
+					<?php echo apply_filters( 'usces_filter_order_check_mail_js', '' ); ?>
 
 					$('#mailSendAlert').dialog('option', 'buttons', {
-															'OK': function() {
-																	$(this).dialog('close');
-																	$('#mailSendDialog').dialog('close');
-																}
-															});
+						'OK': function() {
+							$(this).dialog('close');
+							$('#mailSendDialog').dialog('close');
+						}
+					});
 					$('#mailSendAlert').dialog('option', 'title', 'SUCCESS');
 					$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'E-mail has been sent.', 'usces' ); ?></p>');
 					$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1119,10 +1115,10 @@ jQuery(function($){
 
 				}else if(data == 'error'){
 					$('#mailSendAlert').dialog('option', 'buttons', {
-															'OK': function() {
-																	$(this).dialog('close');
-																}
-															});
+						'OK': function() {
+							$(this).dialog('close');
+						}
+					});
 					$('#mailSendAlert').dialog('option', 'title', 'ERROR');
 					$('#mailSendAlert fieldset').html('<p><?php _e( 'Failure in sending e-mails.', 'usces' ); ?></p>');
 					$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1130,11 +1126,12 @@ jQuery(function($){
 					});
 					$('#mailSendAlert').dialog( "option", "modal", true );
 					$('#mailSendAlert').dialog('open');
+
 				}else if(data == 'attachFileError'){
 					$('#mailSendAlert').dialog('option', 'buttons', {
 						'OK': function() {
 							$(this).dialog('close');
-						}	
+						}
 					});
 					$('#mailSendAlert').dialog('option', 'title', 'ERROR');
 					$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'Failure in attach file e-mails.', 'usces' ); ?></p>');
@@ -1148,12 +1145,12 @@ jQuery(function($){
 				$("#wrap_icon_loading").remove();
 				$("#usces_email_bnt_send").removeAttr('disabled');
 				$('#mailSendAlert').dialog('option', 'buttons', {
-														'OK': function() {
-																$(this).dialog('close');
-															}
-														});
+					'OK': function() {
+						$(this).dialog('close');
+					}
+				});
 				$('#mailSendAlert').dialog('option', 'title', 'ERROR');
-				$('#mailSendAlert fieldset').html('<p><?php _e('Failure in sending e-mails.', 'usces'); ?></p>');
+				$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'Failure in sending e-mails.', 'usces' ); ?></p>');
 				$('#mailSendAlert').dialog('option', 'close', function() {
 					$(this).dialog('close');
 				});
@@ -1231,7 +1228,7 @@ jQuery(function($){
 					msgSize = "<p><?php esc_html_e( 'The maximum file size that can be attached has been exceeded.', 'usces' ); ?></p>";
 				}
 				if (!checkValidExtension) {
-					msgExtension = "<p><?php _e('This is not a file extension that can be attached.', 'usces'); ?></p>";
+					msgExtension = "<p><?php esc_html_e( 'This is not a file extension that can be attached.', 'usces' ); ?></p>";
 				}
 				var content = msgSize + msgExtension;
 				$('#mailSendAlert').dialog('option', 'title', 'ERROR');
@@ -1270,7 +1267,7 @@ jQuery(function($){
 					$('#previewEmailDialog').dialog('option', 'title', "<?php esc_html_e( 'Preview email content', 'usces' ); ?>");
 					$('#previewEmailDialog').dialog('open');
 				} else {
-					uscesMail.contentPreviewErrorShow( '<?php _e( 'Failure preview email.', 'usces' ); ?>' );
+					uscesMail.contentPreviewErrorShow( '<?php esc_html_e( 'Failure preview email.', 'usces' ); ?>' );
 				}
 				$("#usces_email_bnt_preview").removeAttr('disabled');
 			}).fail(function(msg) {
@@ -1358,11 +1355,11 @@ jQuery(function($){
 		$.datepicker.setDefaults( $.datepicker.regional['ja'] );
 		$( '#delivery_date_select' ).datepicker({
 			dateFormat: 'yy-mm-dd',
-			minDate: new Date( " . $order_yy . ", " . $order_mm . ", " . $order_dd . " )
+			minDate: new Date( " . $order_yy . ', ' . $order_mm . ', ' . $order_dd . " )
 		});
 		$( '#delidue_date_select' ).datepicker({
 			dateFormat: 'yy-mm-dd',
-			minDate: new Date( " . $order_yy . ", " . $order_mm . ", " . $order_dd . " )
+			minDate: new Date( " . $order_yy . ', ' . $order_mm . ', ' . $order_dd . " )
 		});
 	});\n";
 	echo apply_filters( 'usces_filter_order_edit_delivery_days_select_script', $delivery_date_select_script );
@@ -1470,7 +1467,7 @@ function check_usedPoint( usedpoint ) {
 }
 
 function delConfirm(){
-	if(confirm('<?php _e( 'Are you sure of deleting items?', 'usces' ); ?>')){
+	if(confirm('<?php esc_html_e( 'Are you sure of deleting items?', 'usces' ); ?>')){
 		return true;
 	}else{
 		return false;
@@ -1480,7 +1477,7 @@ function delConfirm(){
 jQuery(document).ready(function($){
 	// load show nav prev, next link.
 	<?php
-		$nonce_url = esc_url_raw( USCES_ADMIN_URL ) . '?page=usces_orderlist&order_action=edit&wc_nonce=' . wp_create_nonce( 'order_edit' ) . '&order_id=';
+	$nonce_url = esc_url_raw( USCES_ADMIN_URL ) . '?page=usces_orderlist&order_action=edit&wc_nonce=' . wp_create_nonce( 'order_edit' ) . '&order_id=';
 	?>
 	var sub_uri_link = '<?php echo $nonce_url; ?>';
 
@@ -1489,10 +1486,10 @@ jQuery(document).ready(function($){
 	$(document).on( "click", "#mailVisiLink", function() {
 		if( $("#mailBox").css("display") == "block" ) {
 			$("#mailBox").css("display", "none");
-			$("#mailVisiLink").html('<?php _e( 'Show the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-down"></span>');
+			$("#mailVisiLink").html('<?php esc_html_e( 'Show the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-down"></span>');
 		} else {
 			$("#mailBox").css("display", "block");
-			$("#mailVisiLink").html('<?php _e( 'Hide the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-up"></span>');
+			$("#mailVisiLink").html('<?php esc_html_e( 'Hide the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-up"></span>');
 		}
 	});
 
@@ -1511,7 +1508,7 @@ jQuery(document).ready(function($){
 		orderfunc.sumPrice( $("#order_usedpoint") );
 	});
 	<?php
-	if ( $reduced_taxrate ):
+	if ( $reduced_taxrate ) :
 		?>
 	$( document ).on( "change", "#order_discount_standard", function() {
 		orderfunc.sumDiscount();
@@ -1551,8 +1548,8 @@ jQuery(document).ready(function($){
 		orderfunc.sumPrice( $("#order_tax") );
 	});
 	$( document ).on( "click", "input[name*='update_order_edit']", function() {
-		if( ('completion' == $("#order_taio option:selected").val() || 'continuation' == $("#order_taio option:selected").val()) && '<?php echo substr(get_date_from_gmt(gmdate('Y-m-d H:i:s', time())), 0, 10); ?>' != $('#modified').val() ){
-			if( confirm("<?php esc_html_e( "Are you sure you want to change to today's date Date of renovation?", "usces") ; ?>\n<?php esc_html_e( "Please press the cancel If you want to update without changing the modified date.", "usces" ); ?>") ){
+		if( ('completion' == $("#order_taio option:selected").val() || 'continuation' == $("#order_taio option:selected").val()) && '<?php echo substr( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', time() ) ), 0, 10 ); ?>' != $('#modified').val() ){
+			if( confirm("<?php esc_html_e( "Are you sure you want to change to today's date Date of renovation?", 'usces' ); ?>\n<?php esc_html_e( 'Please press the cancel If you want to update without changing the modified date.', 'usces' ); ?>") ){
 				$('#up_modified').val('update');
 			}else{
 				$('#up_modified').val('');
@@ -1565,11 +1562,11 @@ jQuery(document).ready(function($){
 
 	$( document ).on( "click", "#get_member", function() {
 		if( '' == $("input[name='customer[mailaddress]']").val() ){
-			alert("<?php esc_html_e( 'Enter the e-mail.','usces' ); ?>");
+			alert("<?php esc_html_e( 'Enter the e-mail.', 'usces' ); ?>");
 			return;
 		}
 		if( '' != $("input[name='customer[name1]']").val() || '' != $("input[name='delivery[name1]']").val() ){
-			if( !confirm("<?php esc_html_e( "I will overwrite the ship-to address the customer's address. Would you like?", "usces" ); ?>") ){
+			if( !confirm("<?php esc_html_e( "I will overwrite the ship-to address the customer's address. Would you like?", 'usces' ); ?>") ){
 				return;
 			}
 		}
@@ -1589,8 +1586,9 @@ jQuery(document).ready(function($){
 			'' != $("input[name='delivery[address3]']").val() || 
 			'' != $("input[name='delivery[tel]']").val() || 
 			'' != $("input[name='delivery[fax]']").val() ) {
-			if( !confirm("<?php esc_html_e( 'I will overwrite the ship-to address the customer\'s address. Would you like?', 'usces' ); ?>") ) 
+			if( !confirm("<?php esc_html_e( 'I will overwrite the ship-to address the customer\'s address. Would you like?', 'usces' ); ?>") ) {
 				return;
+			}
 		}
 		$("input[name='delivery[name1]']").val($("input[name='customer[name1]']").val());
 		$("input[name='delivery[name2]']").val($("input[name='customer[name2]']").val());
@@ -1650,7 +1648,7 @@ jQuery(document).ready(function($) {
 <div class="wrap">
 <div class="usces_admin">
 <form id="order_editpost_form" action="<?php echo esc_url_raw( USCES_ADMIN_URL . '?page=usces_orderlist&order_action=' . $oa ); ?>" method="post" name="editpost">
-<h1>Welcart Management <?php esc_html_e( 'Edit order data','usces' ); ?></h1>
+<h1>Welcart Management <?php esc_html_e( 'Edit order data', 'usces' ); ?></h1>
 <p class="version_info">Version <?php echo esc_html( USCES_VERSION ); ?></p>
 <?php
 usces_admin_action_status();
@@ -1659,33 +1657,56 @@ if ( $navibutton ) {
 }
 ?>
 <div class="usces_tablenav usces_tablenav_top">
-<div class="ordernavi"><input name="update_order_edit" class="button button-primary" type="submit" value="<?php _e( 'change decision', 'usces' ); ?>" /><?php _e( "When you change amount, please click 'Edit' before you finish your process.", 'usces' ); ?></div>
-<div id="mailVisiLink" class="screen-field"><?php _e( 'Show the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-down"></span></div>
-</div>
+<div class="ordernavi"><input name="update_order_edit" class="button button-primary" type="submit" value="<?php esc_attr_e( 'change decision', 'usces' ); ?>" /><?php esc_html_e( "When you change amount, please click 'Edit' before you finish your process.", 'usces' ); ?></div>
+<div id="mailVisiLink" class="screen-field"><?php esc_html_e( 'Show the mail/print field', 'usces' ); ?><span class="dashicons dashicons-arrow-down"></span></div>
+</div><!-- .usces_tablenav .usces_tablenav_top -->
 <div id="mailBox">
+<?php
+$chk_ordermail      = ( isset( $ordercheck['ordermail'] ) ) ? ' checked="checked"' : '';
+$chk_changemail     = ( isset( $ordercheck['changemail'] ) ) ? ' checked="checked"' : '';
+$chk_receiptmail    = ( isset( $ordercheck['receiptmail'] ) ) ? ' checked="checked"' : '';
+$chk_mitumorimail   = ( isset( $ordercheck['mitumorimail'] ) ) ? ' checked="checked"' : '';
+$chk_cancelmail     = ( isset( $ordercheck['cancelmail'] ) ) ? ' checked="checked"' : '';
+$chk_othermail      = ( isset( $ordercheck['othermail'] ) ) ? ' checked="checked"' : '';
+$chk_completionmail = ( isset( $ordercheck['completionmail'] ) ) ? ' checked="checked"' : '';
+$chk_mitumoriprint  = ( isset( $ordercheck['mitumoriprint'] ) ) ? ' checked="checked"' : '';
+$chk_nohinprint     = ( isset( $ordercheck['nohinprint'] ) ) ? ' checked="checked"' : '';
+$chk_billprint      = ( isset( $ordercheck['billprint'] ) ) ? ' checked="checked"' : '';
+$chk_receiptprint   = ( isset( $ordercheck['receiptprint'] ) ) ? ' checked="checked"' : '';
+?>
 <table>
 <tr>
-<td><input name="check[ordermail]" type="checkbox" value="ordermail"<?php if ( isset( $ordercheck['ordermail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="orderConfirmMail"><?php _e( 'Mail for confirmation of order', 'usces' ); ?></a></td>
-<td><input name="check[changemail]" type="checkbox" value="changemail"<?php if ( isset( $ordercheck['changemail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="changeConfirmMail"><?php _e( 'Mail for confiemation of change', 'usces' ); ?></a></td>
-<td><input name="check[receiptmail]" type="checkbox" value="receiptmail"<?php if ( isset( $ordercheck['receiptmail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="receiptConfirmMail"><?php _e( 'Mail for confirmation of transter', 'usces' ); ?></a></td>
-<td><input name="check[mitumorimail]" type="checkbox" value="mitumorimail"<?php if ( isset( $ordercheck['mitumorimail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="mitumoriConfirmMail"><?php _e( 'estimate mail', 'usces' ); ?></a></td>
-<td><input name="check[cancelmail]" type="checkbox" value="cancelmail"<?php if ( isset( $ordercheck['cancelmail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="cancelConfirmMail"><?php _e( 'Cancelling mail', 'usces' ); ?></a></td>
-<td><input name="check[othermail]" type="checkbox" value="othermail"<?php if ( isset( $ordercheck['othermail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="otherConfirmMail"><?php _e( 'Other mail', 'usces' ); ?></a></td>
+<td><input name="check[ordermail]" type="checkbox" value="ordermail"<?php echo esc_attr( $chk_ordermail ); ?> /><a href="#" id="orderConfirmMail"><?php esc_html_e( 'Mail for confirmation of order', 'usces' ); ?></a></td>
+<td><input name="check[changemail]" type="checkbox" value="changemail"<?php echo esc_attr( $chk_changemail ); ?> /><a href="#" id="changeConfirmMail"><?php esc_html_e( 'Mail for confiemation of change', 'usces' ); ?></a></td>
+<td><input name="check[receiptmail]" type="checkbox" value="receiptmail"<?php echo esc_attr( $chk_receiptmail ); ?> /><a href="#" id="receiptConfirmMail"><?php esc_html_e( 'Mail for confirmation of transter', 'usces' ); ?></a></td>
+<td><input name="check[mitumorimail]" type="checkbox" value="mitumorimail"<?php echo esc_attr( $chk_mitumorimail ); ?> /><a href="#" id="mitumoriConfirmMail"><?php esc_html_e( 'estimate mail', 'usces' ); ?></a></td>
+<td><input name="check[cancelmail]" type="checkbox" value="cancelmail"<?php echo esc_attr( $chk_cancelmail ); ?> /><a href="#" id="cancelConfirmMail"><?php esc_html_e( 'Cancelling mail', 'usces' ); ?></a></td>
+<td><input name="check[othermail]" type="checkbox" value="othermail"<?php echo esc_attr( $chk_othermail ); ?> /><a href="#" id="otherConfirmMail"><?php esc_html_e( 'Other mail', 'usces' ); ?></a></td>
 </tr>
 <tr>
-<td><input name="check[completionmail]" type="checkbox" value="completionmail"<?php if ( isset( $ordercheck['completionmail'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="completionMail"><?php _e( 'Mail for Shipping', 'usces' ); ?></a></td>
-<td><input name="check[mitumoriprint]" type="checkbox" value="mitumoriprint"<?php if ( isset( $ordercheck['mitumoriprint'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="mitumoriprint"><?php _e( 'print out the estimate', 'usces' ); ?></a></td>
-<td><input name="check[nohinprint]" type="checkbox" value="nohinprint"<?php if ( isset( $ordercheck['nohinprint'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="nohinprint"><?php _e( 'print out Delivery Statement', 'usces' ); ?></a></td>
-<td><input name="check[billprint]" type="checkbox" value="billprint"<?php if ( isset( $ordercheck['billprint'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="billprint"><?php _e( 'Print Invoice', 'usces' ); ?></a></td>
-<td><input name="check[receiptprint]" type="checkbox" value="receiptprint"<?php if ( isset( $ordercheck['receiptprint'] ) ) {echo ' checked="checked"';} ?> /><a href="#" id="receiptprint"><?php _e( 'Print Receipt', 'usces' ); ?></a></td>
+<td><input name="check[completionmail]" type="checkbox" value="completionmail"<?php echo esc_attr( $chk_completionmail ); ?> /><a href="#" id="completionMail"><?php esc_html_e( 'Mail for Shipping', 'usces' ); ?></a></td>
+<td><input name="check[mitumoriprint]" type="checkbox" value="mitumoriprint"<?php echo esc_attr( $chk_mitumoriprint ); ?> /><a href="#" id="mitumoriprint"><?php esc_html_e( 'print out the estimate', 'usces' ); ?></a></td>
+<td><input name="check[nohinprint]" type="checkbox" value="nohinprint"<?php echo esc_attr( $chk_nohinprint ); ?> /><a href="#" id="nohinprint"><?php esc_html_e( 'print out Delivery Statement', 'usces' ); ?></a></td>
+<td><input name="check[billprint]" type="checkbox" value="billprint"<?php echo esc_attr( $chk_billprint ); ?> /><a href="#" id="billprint"><?php esc_html_e( 'Print Invoice', 'usces' ); ?></a></td>
+<td><input name="check[receiptprint]" type="checkbox" value="receiptprint"<?php echo esc_attr( $chk_receiptprint ); ?> /><a href="#" id="receiptprint"><?php esc_html_e( 'Print Receipt', 'usces' ); ?></a></td>
 <?php echo apply_filters( 'usces_filter_admin_ordernavi', '<td colspan="2">&nbsp;</td>', $ordercheck ); ?>
 </tr>
 <tr>
-<td colspan="12"><span style="color:#CC3300"><?php _e( "When there is any change, please press the 'change decision' before you send or print.", 'usces' ); ?></span></td>
+<td colspan="12"><span style="color:#CC3300"><?php esc_html_e( "When there is any change, please press the 'change decision' before you send or print.", 'usces' ); ?></span></td>
 </tr>
 </table>
-</div>
-
+</div><!-- #mailBox -->
+<?php
+$dsp_order_id       = ( isset( $data['ID'] ) ) ? $data['ID'] : '';
+$dsp_order_deco_id  = ( isset( $data['ID'] ) ) ? usces_get_deco_order_id( $data['ID'] ) : '';
+$dsp_order_date     = ( isset( $data['order_date'] ) ) ? $data['order_date'] : '';
+$dsp_order_modified = ( isset( $data['order_modified'] ) ) ? $data['order_modified'] : '';
+$dsp_member_id      = ( ! empty( $data['mem_id'] ) ) ? $data['mem_id'] : '-';
+$hdn_member_id      = ( isset( $data['mem_id'] ) ) ? $data['mem_id'] : '';
+$hdn_getpoint       = ( isset( $data['order_getpoint'] ) ) ? $data['order_getpoint'] : '';
+$hdn_usedpoint      = ( isset( $data['order_usedpoint'] ) ) ? $data['order_usedpoint'] : '';
+$usces_referer      = ( isset( $_REQUEST['usces_referer'] ) ) ? $_REQUEST['usces_referer'] : '';
+?>
 <div class="info_head">
 <table>
 
@@ -1696,31 +1717,39 @@ if ( $navibutton ) {
 	<?php do_action( 'usces_action_order_edit_form_detail_top', $data, $csod_meta, $filter_args ); ?>
 
 	<tr>
-		<td class="label border"><?php esc_html_e( 'Order number', 'usces'); ?><br />(<?php echo ( isset( $data['ID'] ) ? $data['ID'] : '' ); ?>)</td>
-		<td class="col1 border"><div class="rod"><?php echo ( isset( $data['ID'] ) ? usces_get_deco_order_id( $data['ID'] ) : '' ); ?></div></td>
+		<td class="label border"><?php esc_html_e( 'Order number', 'usces' ); ?><br />(<?php echo esc_html( $dsp_order_id ); ?>)</td>
+		<td class="col1 border"><div class="rod"><?php echo esc_html( $dsp_order_deco_id ); ?></div></td>
 		<td class="col3 label border"><?php esc_html_e( 'order date', 'usces' ); ?></td>
-		<td class="col2 border"><div class="rod long"><?php echo esc_html( isset( $data['order_date'] ) ? $data['order_date'] : '' ); ?></div></td>
+		<td class="col2 border"><div class="rod long"><?php echo esc_html( $dsp_order_date ); ?></div></td>
 		<td class="label border"><?php echo apply_filters( 'usces_filter_admin_modified_label', __( 'shpping date', 'usces' ) ); ?></td>
-		<td class="border"><div id="order_modified" class="rod long"><?php echo esc_html( isset( $data['order_modified']) ? $data['order_modified'] : '' ); ?></div></td>
+		<td class="border"><div id="order_modified" class="rod long"><?php echo esc_html( $dsp_order_modified ); ?></div></td>
 	</tr>
 
 	<tr>
 		<td class="label"><?php esc_html_e( 'membership number', 'usces' ); ?></td>
-		<td class="col1"><div id="member_id_label" class="rod large short"><?php echo ( isset($data['mem_id'] ) ? $data['mem_id'] : '' ); ?></div><?php if ( 'new' === $order_action ){ ?><input name="member_id" id="member_id" type="hidden" /><?php } else { ?><input name="member_id" id="member_id" type="hidden" value="<?php echo ( isset($data['mem_id'] ) ? $data['mem_id'] : ''); ?>" /><?php } ?></td>
+		<td class="col1"><div id="member_id_label" class="rod large short"><?php echo esc_html( $dsp_member_id ); ?></div>
+		<?php if ( 'new' === $order_action ) { ?>
+			<input name="member_id" id="member_id" type="hidden" />
+		<?php } else { ?>
+			<input name="member_id" id="member_id" type="hidden" value="<?php echo esc_attr( $hdn_member_id ); ?>" />
+		<?php } ?>
+		</td>
 
 		<td colspan="2" class="wrap_td">
 			<table border="0" cellspacing="0" class="cus_info">
 				<tr>
 					<td class="label"><?php esc_html_e( 'e-mail adress', 'usces' ); ?></td>
-					<td class="col2"><input name="customer[mailaddress]" type="text" class="text long" value="<?php echo esc_attr( isset( $data['order_email'] ) ? $data['order_email'] : ''); ?>" /><input name="get_member" type="button" class="button" id="get_member" value="<?php _e('Membership information acquisition', 'usces'); ?>" /></td>
+					<td class="col2"><input name="customer[mailaddress]" type="text" class="text long" value="<?php echo esc_attr( isset( $data['order_email'] ) ? $data['order_email'] : '' ); ?>" />
+						<input name="get_member" type="button" class="button" id="get_member" value="<?php esc_attr_e( 'Membership information acquisition', 'usces' ); ?>" />
+					</td>
 				</tr>
 			</table>
 		</td>
 
 		<?php
 		if ( 'new' === $order_action ) :
-		?>
-		<td colspan="2" class="midasi1"><?php esc_html_e( 'shipping address', 'usces' ); ?><input type="button" class="button" id="customercopy" value="<?php esc_html_e( "Same shipping address", "usces" ); ?>"></td>
+			?>
+		<td colspan="2" class="midasi1"><?php esc_html_e( 'shipping address', 'usces' ); ?><input type="button" class="button" id="customercopy" value="<?php esc_attr_e( 'Same shipping address', 'usces' ); ?>"></td>
 		<?php else : ?>
 		<td colspan="2" class="midasi1"><?php esc_html_e( 'shipping address', 'usces' ); ?></td>
 		<?php endif; ?>
@@ -1731,14 +1760,14 @@ if ( $navibutton ) {
 			<!-- Delivery brock -->
 			<table border="0" cellspacing="0" class="cus_info">
 				<tr>
-					<td class="label"><?php esc_html_e('payment method', 'usces'); ?></td>
+					<td class="label"><?php esc_html_e( 'payment method', 'usces' ); ?></td>
 					<td class="col1">
 						<select name="offer[payment_name]" id="order_payment_name">
-							<option value="#none#"><?php _e( '-- Select --', 'usces' ); ?></option>
-							<?php 
-							if( $payment_method ) {
+							<option value="#none#"><?php esc_html_e( '-- Select --', 'usces' ); ?></option>
+							<?php
+							if ( $payment_method ) {
 								foreach ( (array) $payment_method as $payments ) {
-									if ( $payments['name'] != '' ) {
+									if ( '' != $payments['name'] ) {
 										$selected = ( isset( $data['order_payment_name'] ) && $payments['name'] === $data['order_payment_name'] ) ? ' selected="selected"' : '';
 										?>
 							<option value="<?php echo esc_attr( $payments['name'] ); ?>"<?php echo esc_attr( $selected ); ?>><?php echo esc_attr( $payments['name'] ); ?></option>
@@ -1751,7 +1780,7 @@ if ( $navibutton ) {
 					</td>
 				</tr>
 				<tr>
-					<td class="label"><?php esc_html_e( 'shipping option','usces' ); ?></td>
+					<td class="label"><?php esc_html_e( 'shipping option', 'usces' ); ?></td>
 					<td class="col1">
 						<select name="offer[delivery_method]" id="delivery_method_select">
 							<option value="-1"><?php esc_html_e( 'Non-request', 'usces_dual' ); ?></option>
@@ -1816,14 +1845,14 @@ if ( $navibutton ) {
 					<td class="col1 status">
 						<select name="offer[taio]" id="order_taio">
 							<option value='#none#'><?php esc_html_e( 'new order', 'usces' ); ?></option>
-							<?php 
+							<?php
 							$exclusion_status = apply_filters( 'usces_filter_taio_exclusion_status', array( 'noreceipt', 'receipted', 'pending', 'estimate', 'adminorder' ) );
-							foreach ( $management_status as $status_key => $status_name ):
-								if( in_array( $status_key, $exclusion_status ) ) {
+							foreach ( $management_status as $status_key => $status_name ) :
+								if ( in_array( $status_key, $exclusion_status ) ) {
 									continue;
 								}
 								?>
-								<option value="<?php echo esc_attr( $status_key ); ?>"<?php if ( $taio == $status_key ){ echo ' selected="selected"'; } ?>><?php echo esc_html( $status_name ); ?></option>
+								<option value="<?php echo esc_attr( $status_key ); ?>"<?php selected( $taio, $status_key ); ?>><?php echo esc_html( $status_name ); ?></option>
 								<?php
 							endforeach;
 							?>
@@ -1833,33 +1862,33 @@ if ( $navibutton ) {
 				<?php
 				$receiptlabel = '&nbsp;';
 				$receiptbox   = '&nbsp;';
-				if ( $receipt != '' ) {
-						$receiptlabel = __( 'transfer statement', 'usces' );
-						$selected     = array( 'noreceipt' => '', 'receipted' => '', 'pending' => '' );
-						if ( array_key_exists( $receipt, $selected ) ) {
-							$selected[$receipt] = ' selected="selected"';
-						}
-						$receiptbox = '
-						<select name="offer[receipt]">
-							<option value="noreceipt"' . $selected['noreceipt'] . '>' . $management_status['noreceipt'] . '</option>
-							<option value="receipted"' . $selected['receipted'] . '>' . $management_status['receipted'] . '</option>
-							<option value="pending"' . $selected['pending'] . '>' . $management_status['pending'] . '</option>
-						</select>';
+				if ( '' != $receipt ) {
+					$receiptlabel = __( 'transfer statement', 'usces' );
+					$selected     = array( 'noreceipt' => '', 'receipted' => '', 'pending' => '' );
+					if ( array_key_exists( $receipt, $selected ) ) {
+						$selected[ $receipt ] = ' selected="selected"';
+					}
+					$receiptbox = '
+					<select name="offer[receipt]">
+						<option value="noreceipt"' . $selected['noreceipt'] . '>' . $management_status['noreceipt'] . '</option>
+						<option value="receipted"' . $selected['receipted'] . '>' . $management_status['receipted'] . '</option>
+						<option value="pending"' . $selected['pending'] . '>' . $management_status['pending'] . '</option>
+					</select>';
 				}
 				?>
 				<tr>
-					<td class="label status" id="receiptlabel"><?php echo( $receiptlabel ); ?></td>
-					<td class="col1 status" id="receiptbox"><?php echo( $receiptbox ); ?></td>
+					<td class="label status" id="receiptlabel"><?php echo $receiptlabel; ?></td>
+					<td class="col1 status" id="receiptbox"><?php echo $receiptbox; ?></td>
 				</tr>
 				<?php
-				if ( $admin != '' ) :
+				if ( '' != $admin ) :
 					?>
 				<tr>
 					<td class="label status"><?php esc_html_e( 'estimate order', 'usces' ); ?></td>
 					<td class="col1 status">
 					<select name="offer[admin]">
-						<option value='adminorder'<?php if ( $admin == 'adminorder' ) {echo 'selected="selected"';} ?>><?php echo esc_html( $management_status['adminorder'] ); ?></option>
-						<option value='estimate'<?php if ( $admin == 'estimate' ) {echo 'selected="selected"';} ?>><?php echo esc_html( $management_status['estimate'] ); ?></option>
+						<option value='adminorder'<?php selected( $admin, 'adminorder' ); ?>><?php echo esc_html( $management_status['adminorder'] ); ?></option>
+						<option value='estimate'<?php selected( $admin, 'estimate' ); ?>><?php echo esc_html( $management_status['estimate'] ); ?></option>
 					</select>
 					</td>
 				</tr>
@@ -1867,13 +1896,33 @@ if ( $navibutton ) {
 				<?php do_action( 'usces_action_order_edit_form_status_block_middle', $data, $cscs_meta, $action_args ); ?>
 				<tr>
 					<td colspan="2" class="status">
-					<div class="midasi2"><?php if ( $condition['display_mode'] == 'Usualsale' ) { esc_html_e( 'normal sale', 'usces' ); } elseif ( $condition['display_mode'] == 'Promotionsale' ) { esc_html_e( 'Sale Campaign', 'usces' );} ?></div>
+					<div class="midasi2">
+						<?php
+						if ( 'Usualsale' == $condition['display_mode'] ) {
+							esc_html_e( 'normal sale', 'usces' );
+						} elseif ( 'Promotionsale' == $condition['display_mode'] ) {
+							esc_html_e( 'Sale Campaign', 'usces' );
+						}
+						?>
+					</div>
 					<div class="condition">
 					<?php
-					if ( $condition['display_mode'] == 'Promotionsale' ) :
-					?>
-					<span><?php esc_html_e( 'Special Benefits', 'usces' ); ?> : </span><?php echo esc_html( $condition["campaign_privilege"] ); ?> (<?php if ( $condition["campaign_privilege"] == 'discount') { esc_html_e( $condition["privilege_discount"] ) . __('% Discount', 'usces');} elseif ( $condition["campaign_privilege"] == 'point' ){echo esc_html( $condition["privilege_point"] ) . __(" times (limited to members)", 'usces');} ?>) <br />
-					<span><?php esc_html_e( 'applied material', 'usces' ); ?> : </span><?php if ( ! isset($condition["campaign_category"] ) || $condition["campaign_category"] == 0) { esc_html_e( 'all the items', 'usces' ); } else { esc_html_e( get_cat_name( $condition["campaign_category"] ) );} ?><br />
+					if ( 'Promotionsale' == $condition['display_mode'] ) :
+						if ( 'discount' == $condition['campaign_privilege'] ) {
+							$dsp_campaign_privilege = $condition['privilege_discount'] . __( '% Discount', 'usces' );
+						} elseif ( 'point' == $condition['campaign_privilege'] ) {
+							$dsp_campaign_privilege = $condition['privilege_point'] . __( ' times (limited to members)', 'usces' );
+						} else {
+							$dsp_campaign_privilege = '';
+						}
+						if ( ! isset( $condition['campaign_category'] ) || 0 == $condition['campaign_category'] ) {
+							$dsp_campaign_category = __( 'all the items', 'usces' );
+						} else {
+							$dsp_campaign_category = get_cat_name( $condition['campaign_category'] );
+						}
+						?>
+					<span><?php esc_html_e( 'Special Benefits', 'usces' ); ?> : </span><?php echo esc_html( $condition['campaign_privilege'] ); ?> (<?php echo esc_html( $dsp_campaign_privilege ); ?>) <br />
+					<span><?php esc_html_e( 'applied material', 'usces' ); ?> : </span><?php echo esc_html( $dsp_campaign_category ); ?><br />
 					<?php endif; ?>
 					</div></td>
 				</tr>
@@ -1884,11 +1933,11 @@ if ( $navibutton ) {
 
 	<tr>
 		<td class="label cus_note_label"><?php esc_html_e( 'Notes', 'usces' ); ?></td>
-		<td colspan="3" class="cus_note_value"><textarea name="offer[note]"><?php echo esc_attr( isset( $data['order_note'] ) ? $data['order_note'] : ''); ?></textarea></td>
+		<td colspan="3" class="cus_note_value"><textarea name="offer[note]"><?php echo esc_attr( isset( $data['order_note'] ) ? $data['order_note'] : '' ); ?></textarea></td>
 	</tr>
 	<?php do_action( 'usces_action_order_edit_form_detail_bottom', $data, $cscs_meta, $action_args ); ?>
 </table>
-</div>
+</div><!-- .info_head -->
 
 <div class="info_head">
 <table>
@@ -1908,18 +1957,17 @@ if ( ! empty( $deleted_csod_meta_display ) ) {
 }
 ?>
 </tr>
-
-</table>
+</table><!-- .order_custom_wrap -->
 </td>
 <td class="wrap_td">
 <table class="settle_info_wrap">
 <?php usces_settle_info_field( $order_id, 'tr' ); ?>
-</table>
+</table><!-- .settle_info_wrap -->
 <?php do_action( 'usces_action_order_edit_form_settle_info', $data, $action_args ); ?>
 </td>
 </tr>
 </table>
-</div>
+</div><!-- .info_head -->
 
 <div id="cart">
 <?php
@@ -1934,7 +1982,7 @@ ob_start();
 		</tr>
 	<tr>
 		<th scope="row" class="num"><?php esc_html_e( 'No.', 'usces' ); ?></th>
-		<th class="thumbnail"> <?php //echo __('thumbnail','usces'); ?></th>
+		<th class="thumbnail"> <?php // esc_html_e( 'thumbnail', 'usces' ); ?></th>
 		<th class="productname"><?php esc_html_e( 'Items', 'usces' ); ?></th>
 		<th class="price"><?php esc_html_e( 'Unit price', 'usces' ); ?></th>
 		<th class="quantity"><?php esc_html_e( 'Quantity', 'usces' ); ?></th>
@@ -1944,7 +1992,7 @@ ob_start();
 	</tr>
 	</thead>
 	<tbody id="orderitemlist">
-<?php echo usces_get_ordercart_row( $order_id, $cart ); ?>
+		<?php echo usces_get_ordercart_row( $order_id, $cart ); ?>
 	</tbody>
 		<tfoot>
 		<tr>
@@ -1954,159 +2002,183 @@ ob_start();
 		</tr>
 	<?php
 	if ( $reduced_taxrate ) :
-		if( 'products' == $tax_target ):
+		if ( 'products' == $tax_target ) :
+			$dsp_subtotal_standard = ( ! empty( $order_subtotal_standard ) ) ? usces_crform( $order_subtotal_standard, false, false, 'return', false ) : '0';
+			$dsp_subtotal_reduced  = ( ! empty( $order_subtotal_reduced ) ) ? usces_crform( $order_subtotal_reduced, false, false, 'return', false ) : '0';
 			?>
 		<tr>
-			<th colspan="5" class="aright"><?php printf( __( "Applies to %s%%", 'usces' ), $usces_tax->tax_rate_standard ); ?></th>
+			<th colspan="5" class="aright"><?php printf( __( 'Applies to %s%%', 'usces' ), $usces_tax->tax_rate_standard ); ?></th>
 			<th id="subtotal_standard" class="aright">&nbsp;</th>
-			<th colspan="2"><input type="hidden" name="order_subtotal_standard" id="order_subtotal_standard" value="<?php if ( ! empty( $order_subtotal_standard ) ) { usces_crform( $order_subtotal_standard, false, false, '', false ); } else { echo '0'; } ?>">&nbsp;</th>
+			<th colspan="2"><input type="hidden" name="order_subtotal_standard" id="order_subtotal_standard" value="<?php echo esc_attr( $dsp_subtotal_standard ); ?>">&nbsp;</th>
 		</tr>
 		<tr>
-			<th colspan="5" class="aright"></span><?php printf( __( "Applies to %s%%", 'usces' ), $usces_tax->tax_rate_reduced ); ?></th>
+			<th colspan="5" class="aright"></span><?php printf( __( 'Applies to %s%%', 'usces' ), $usces_tax->tax_rate_reduced ); ?></th>
 			<th id="subtotal_reduced" class="aright">&nbsp;</th>
-			<th colspan="2"><input type="hidden" name="order_subtotal_reduced" id="order_subtotal_reduced" value="<?php if ( ! empty( $order_subtotal_reduced ) ) { usces_crform( $order_subtotal_reduced, false, false, '', false ); } else { echo '0'; } ?>">&nbsp;</th>
+			<th colspan="2"><input type="hidden" name="order_subtotal_reduced" id="order_subtotal_reduced" value="<?php echo esc_attr( $dsp_subtotal_reduced ); ?>">&nbsp;</th>
 		</tr>
 			<?php
 		endif;
+		$dsp_discount_standard = ( ! empty( $order_discount_standard ) ) ? usces_crform( $order_discount_standard, false, false, 'return', false ) : '0';
+		$dsp_discount_reduced  = ( ! empty( $order_discount_reduced ) ) ? usces_crform( $order_discount_reduced, false, false, 'return', false ) : '0';
+		$dsp_discount          = ( isset( $data['order_discount'] ) && ! empty( $data['order_discount'] ) ) ? usces_crform( $data['order_discount'], false, false, 'return', false ) : '0';
 		?>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "Discount from the subtotal applies to %s%%", 'usces' ), $usces_tax->tax_rate_standard ); ?></td>
-			<td class="aright"><input name="order_discount_standard" id="order_discount_standard" type="text" class="text price" value="<?php if ( ! empty( $order_discount_standard ) ) { usces_crform( $order_discount_standard, false, false, '', false ); } else { echo '0'; } ?>" /></td>
+			<td colspan="5" class="aright"><?php printf( __( 'Discount from the subtotal applies to %s%%', 'usces' ), $usces_tax->tax_rate_standard ); ?></td>
+			<td class="aright"><input name="order_discount_standard" id="order_discount_standard" type="text" class="text price" value="<?php echo esc_attr( $dsp_discount_standard ); ?>" /></td>
 			<td colspan="2"><?php esc_html_e( 'Discounted amount should be shown by -(Minus)', 'usces' ); ?>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "Discount from the subtotal applies to %s%%", 'usces' ), $usces_tax->tax_rate_reduced ); ?></td>
-			<td class="aright"><input name="order_discount_reduced" id="order_discount_reduced" type="text" class="text price" value="<?php if ( ! empty( $order_discount_reduced ) ) { usces_crform( $order_discount_reduced, false, false, '', false ); } else { echo '0'; } ?>" /></td>
+			<td colspan="5" class="aright"><?php printf( __( 'Discount from the subtotal applies to %s%%', 'usces' ), $usces_tax->tax_rate_reduced ); ?></td>
+			<td class="aright"><input name="order_discount_reduced" id="order_discount_reduced" type="text" class="text price" value="<?php echo esc_attr( $dsp_discount_reduced ); ?>" /></td>
 			<td colspan="2"><?php esc_html_e( 'Discounted amount should be shown by -(Minus)', 'usces' ); ?>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="5" class="aright"><?php echo apply_filters('usces_confirm_discount_label', __( 'Discount', 'usces' ), $order_id ); ?></td>
-			<td class="aright"><input name="offer[discount]" id="order_discount" class="text price" type="text" value="<?php if ( isset( $data['order_discount'] ) && !empty( $data['order_discount'] ) ) { usces_crform( $data['order_discount'], false, false, '', false ); } else { echo '0'; } ?>" readonly /></td>
+			<td colspan="5" class="aright"><?php echo apply_filters( 'usces_confirm_discount_label', __( 'Discount', 'usces' ), $order_id ); ?></td>
+			<td class="aright"><input name="offer[discount]" id="order_discount" class="text price" type="text" value="<?php echo esc_attr( $dsp_discount ); ?>" readonly /></td>
 			<td colspan="2">&nbsp;</td>
 		</tr>
 		<?php
-		else :
-			?>
+	else :
+		$dsp_discount = ( isset( $data['order_discount'] ) && ! empty( $data['order_discount'] ) ) ? usces_crform( $data['order_discount'], false, false, 'return', false ) : '0';
+		?>
 		<tr>
-			<td colspan="5" class="aright"><?php echo apply_filters('usces_confirm_discount_label', __( 'Campaign discount', 'usces' ), $order_id ); ?></td>
-			<td class="aright"><input name="offer[discount]" id="order_discount" class="text price" type="text" value="<?php if ( isset( $data['order_discount'] ) && !empty( $data['order_discount'] ) ) { usces_crform( $data['order_discount'], false, false, '', false ); } else { echo '0'; } ?>" /></td>
+			<td colspan="5" class="aright"><?php echo apply_filters( 'usces_confirm_discount_label', __( 'Campaign discount', 'usces' ), $order_id ); ?></td>
+			<td class="aright"><input name="offer[discount]" id="order_discount" class="text price" type="text" value="<?php echo esc_attr( $dsp_discount ); ?>" /></td>
 			<td colspan="2"><?php esc_html_e( 'Discounted amount should be shown by -(Minus)', 'usces' ); ?>&nbsp;</td>
 		</tr>
 		<?php
 	endif;
-		if ( $reduced_taxrate ) :
-			if ( 'products' == $tax_target ) :
-				if ( 'exclude' == $tax_mode ) {
-					if ( empty( $order_tax_standard ) && empty( $order_tax_reduced ) ) {
-						$order_tax_standard = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? $data['order_tax'] : 0;
-					}
+	if ( $reduced_taxrate ) :
+		if ( 'products' == $tax_target ) :
+			if ( 'exclude' == $tax_mode ) {
+				if ( empty( $order_tax_standard ) && empty( $order_tax_reduced ) ) {
+					$order_tax_standard = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? $data['order_tax'] : 0;
 				}
-				?>
+				$msg_notice = __( 'It will be not caluculated automatically.', 'usces' );
+			} else {
+				$msg_notice = '';
+			}
+			$dsp_tax_standard = ( ! empty( $order_tax_standard ) ) ? usces_crform( $order_tax_standard, false, false, 'return', false ) : '0';
+			$dsp_tax_reduced  = ( ! empty( $order_tax_reduced ) ) ? usces_crform( $order_tax_reduced, false, false, 'return', false ) : '0';
+			$dsp_tax          = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? usces_crform( $data['order_tax'], false, false, 'return', false ) : '0';
+			?>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "%s%% consumption tax", 'usces' ), $usces_tax->tax_rate_standard ); ?><span id="include_tax_standard"><?php echo esc_html( $include_tax_standard ); ?></span></td>
-			<td class="aright"><input name="order_tax_standard" id="order_tax_standard" type="text" class="text price" value="<?php if( !empty( $order_tax_standard ) ) { usces_crform( $order_tax_standard, false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
-			<td colspan="2"><?php if( 'exclude' == $tax_mode ) echo __( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
+			<td colspan="5" class="aright"><?php printf( __( '%s%% consumption tax', 'usces' ), $usces_tax->tax_rate_standard ); ?><span id="include_tax_standard"><?php echo esc_html( $include_tax_standard ); ?></span></td>
+			<td class="aright"><input name="order_tax_standard" id="order_tax_standard" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax_standard ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td colspan="2"><?php echo esc_html( $msg_notice ); ?>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "%s%% consumption tax", 'usces' ), $usces_tax->tax_rate_reduced ); ?><span id="include_tax_reduced"><?php echo esc_html( $include_tax_reduced ); ?></span></td>
-			<td class="aright"><input name="order_tax_reduced" id="order_tax_reduced" type="text" class="text price" value="<?php if ( ! empty( $order_tax_reduced ) ) { usces_crform( $order_tax_reduced, false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
-			<td colspan="2"><?php if( 'exclude' == $tax_mode ) echo __( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
+			<td colspan="5" class="aright"><?php printf( __( '%s%% consumption tax', 'usces' ), $usces_tax->tax_rate_reduced ); ?><span id="include_tax_reduced"><?php echo esc_html( $include_tax_reduced ); ?></span></td>
+			<td class="aright"><input name="order_tax_reduced" id="order_tax_reduced" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax_reduced ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td colspan="2"><?php echo esc_html( $msg_notice ); ?>&nbsp;</td>
 		</tr>
 		<tr>
 			<td colspan="5" class="aright"><?php echo esc_html( $tax_label ); ?><span id="include_tax"><?php echo esc_html( $include_tax ); ?></span></td>
-			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php if ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) { usces_crform( $data['order_tax'], false, false, '', false ); } else { echo '0'; } ?>" readonly /></td>
+			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax ); ?>" readonly /></td>
 			<td colspan="2"></td>
 		</tr>
-				<?php
-			endif;
-		else :
-			if ( 'products' == $tax_target ) :
-				?>
+			<?php
+		endif;
+	else :
+		if ( 'products' == $tax_target ) :
+			$dsp_tax = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? usces_crform( $data['order_tax'], false, false, 'return', false ) : '0';
+			?>
 		<tr>
 			<td colspan="5" class="aright"><?php echo esc_html( $tax_label ); ?><span id="include_tax"><?php echo esc_html( $include_tax ); ?></span></td>
-			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php if ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) { usces_crform( $data['order_tax'], false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
-			<td colspan="2"><?php _e('It will be not caluculated automatically.', 'usces'); ?>&nbsp;</td>
+			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td colspan="2"><?php esc_html_e( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
 		</tr>
-				<?php
-			endif;
+			<?php
 		endif;
-		?>
+	endif;
+	$dsp_shipping_charge = ( isset( $data['order_shipping_charge'] ) && ! empty( $data['order_shipping_charge'] ) ) ? usces_crform( $data['order_shipping_charge'], false, false, 'return', false ) : '0';
+	$dsp_cod_fee         = ( isset( $data['order_cod_fee'] ) && ! empty( $data['order_cod_fee'] ) ) ? usces_crform( $data['order_cod_fee'], false, false, 'return', false ) : '0';
+	?>
 		<tr>
-			<td colspan="5" class="aright"><?php _e('Shipping', 'usces'); ?></td>
-			<td class="aright"><input name="offer[shipping_charge]" id="order_shipping_charge" class="text price" type="text" value="<?php if( isset($data['order_shipping_charge']) && !empty($data['order_shipping_charge']) ) { usces_crform( $data['order_shipping_charge'], false, false, '', false ); } else { echo '0'; } ?>" /></td>
-			<td colspan="2"><?php _e('It will be not caluculated automatically.', 'usces'); ?>&nbsp;</td>
+			<td colspan="5" class="aright"><?php esc_html_e( 'Shipping', 'usces' ); ?></td>
+			<td class="aright"><input name="offer[shipping_charge]" id="order_shipping_charge" class="text price" type="text" value="<?php echo esc_attr( $dsp_shipping_charge ); ?>" /></td>
+			<td colspan="2"><?php esc_html_e( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
 		</tr>
 		<tr>
 			<td colspan="5" class="aright"><?php echo apply_filters( 'usces_filter_cod_label', __( 'COD fee', 'usces' ), $order_id ); ?></td>
-			<td class="aright"><input name="offer[cod_fee]" id="order_cod_fee" class="text price" type="text" value="<?php if ( isset( $data['order_cod_fee'] ) && ! empty( $data['order_cod_fee'] ) ) { usces_crform( $data['order_cod_fee'], false, false, '', false ); } else { echo '0'; } ?>" /></td>
+			<td class="aright"><input name="offer[cod_fee]" id="order_cod_fee" class="text price" type="text" value="<?php echo esc_attr( $dsp_cod_fee ); ?>" /></td>
 			<td colspan="2"><?php esc_html_e( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
 		</tr>
 	<?php
-	if( $reduced_taxrate ):
-		if( 'all' == $tax_target ):
-			if( 'exclude' == $tax_mode ) {
-				if( empty( $order_tax_standard ) && empty( $order_tax_reduced ) ) {
+	if ( $reduced_taxrate ) :
+		if ( 'all' == $tax_target ) :
+			if ( 'exclude' == $tax_mode ) {
+				if ( empty( $order_tax_standard ) && empty( $order_tax_reduced ) ) {
 					$order_tax_standard = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? $data['order_tax'] : 0;
 				}
+				$msg_notice = __( 'It will be not caluculated automatically.', 'usces' );
+			} else {
+				$msg_notice = '';
 			}
+			$dsp_tax_standard = ( ! empty( $order_tax_standard ) ) ? usces_crform( $order_tax_standard, false, false, 'return', false ) : '0';
+			$dsp_tax_reduced  = ( ! empty( $order_tax_reduced ) ) ? usces_crform( $order_tax_reduced, false, false, 'return', false ) : '0';
+			$dsp_tax          = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? usces_crform( $data['order_tax'], false, false, 'return', false ) : '0';
 			?>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "%s%% consumption tax", 'usces' ), $usces_tax->tax_rate_standard ); ?><span id="include_tax_standard"><?php echo esc_html( $include_tax_standard ); ?></span></td>
-			<td class="aright"><input name="order_tax_standard" id="order_tax_standard" type="text" class="text price" value="<?php if( !empty( $order_tax_standard ) ) { usces_crform( $order_tax_standard, false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
-			<td colspan="2"><?php if( 'exclude' == $tax_mode ) echo __( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
+			<td colspan="5" class="aright"><?php printf( __( '%s%% consumption tax', 'usces' ), $usces_tax->tax_rate_standard ); ?><span id="include_tax_standard"><?php echo esc_html( $include_tax_standard ); ?></span></td>
+			<td class="aright"><input name="order_tax_standard" id="order_tax_standard" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax_standard ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td colspan="2"><?php echo esc_html( $msg_notice ); ?>&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="5" class="aright"><?php printf( __( "%s%% consumption tax", 'usces' ), $usces_tax->tax_rate_reduced ); ?><span id="include_tax_reduced"><?php echo esc_html( $include_tax_reduced ); ?></span></td>
-			<td class="aright"><input name="order_tax_reduced" id="order_tax_reduced" type="text" class="text price" value="<?php if( !empty( $order_tax_reduced ) ) { usces_crform( $order_tax_reduced, false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
-			<td colspan="2"><?php if( 'exclude' == $tax_mode ) echo __( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
+			<td colspan="5" class="aright"><?php printf( __( '%s%% consumption tax', 'usces' ), $usces_tax->tax_rate_reduced ); ?><span id="include_tax_reduced"><?php echo esc_html( $include_tax_reduced ); ?></span></td>
+			<td class="aright"><input name="order_tax_reduced" id="order_tax_reduced" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax_reduced ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td colspan="2"><?php echo esc_html( $msg_notice ); ?>&nbsp;</td>
 		</tr>
 		<tr>
 			<td colspan="5" class="aright"><?php echo esc_html( $tax_label ); ?><span id="include_tax"><?php echo esc_html( $include_tax ); ?></span></td>
-			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php if( isset( $data['order_tax'] ) && !empty( $data['order_tax'] ) ) { usces_crform( $data['order_tax'], false, false, '', false ); } else { echo '0'; } ?>" readonly /></td>
+			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax ); ?>" readonly /></td>
 			<td colspan="2"></td>
 		</tr>
 			<?php
 		endif;
-		?>
-	<?php
 	else :
-		if( 'all' == $tax_target ) :
+		if ( 'all' == $tax_target ) :
+			$dsp_tax = ( isset( $data['order_tax'] ) && ! empty( $data['order_tax'] ) ) ? usces_crform( $data['order_tax'], false, false, 'return', false ) : '0';
 			?>
 		<tr>
 			<td colspan="5" class="aright"><?php echo esc_html( $tax_label ); ?><span id="include_tax"><?php echo esc_html( $include_tax ); ?></span></td>
-			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php if ( isset( $data['order_tax'] ) && !empty( $data['order_tax'] ) ) { usces_crform( $data['order_tax'], false, false, '', false ); } else { echo '0'; } ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
+			<td class="aright"><input name="offer[tax]" id="order_tax" type="text" class="text price" value="<?php echo esc_attr( $dsp_tax ); ?>"<?php echo esc_html( $tax_readonly ); ?> /></td>
 			<td colspan="2"><?php esc_html_e( 'It will be not caluculated automatically.', 'usces' ); ?>&nbsp;</td>
 		</tr>
 			<?php
 		endif;
 	endif;
+	$dsp_usedpoint = ( isset( $data['order_usedpoint'] ) && ! empty( $data['order_usedpoint'] ) ) ? $data['order_usedpoint'] : '0';
+	$dsp_getpoint  = ( isset( $data['order_getpoint'] ) && ! empty( $data['order_getpoint'] ) ) ? $data['order_getpoint'] : '0';
 	?>
 		<tr>
-			<td colspan="5" class="aright"><?php esc_html_e( 'Used points','usces' ); ?></td>
-			<td class="aright"><input name="offer[usedpoint]" id="order_usedpoint" class="text price red" type="text" value="<?php if ( isset( $data['order_usedpoint'] ) && ! empty( $data['order_usedpoint'] ) ) {echo esc_attr( $data['order_usedpoint']); } else { echo '0'; } ?>"<?php echo esc_html( $usedpoint_readonly ); ?> /></td>
-			<td><?php _e('granted points', 'usces'); ?></td>
-			<td class="aright"><input name="offer[getpoint]" id="order_getpoint" class="text price" type="text" value="<?php if ( isset( $data['order_getpoint'] ) && ! empty( $data['order_getpoint'] ) ) {echo esc_attr( $data['order_getpoint']); } else { echo '0'; } ?>"<?php echo esc_html( $getpoint_readonly ); ?> /></td>
+			<td colspan="5" class="aright"><?php esc_html_e( 'Used points', 'usces' ); ?></td>
+			<td class="aright"><input name="offer[usedpoint]" id="order_usedpoint" class="text price red" type="text" value="<?php echo esc_attr( $dsp_usedpoint ); ?>"<?php echo esc_html( $usedpoint_readonly ); ?> /></td>
+			<td><?php esc_html_e( 'granted points', 'usces' ); ?></td>
+			<td class="aright"><input name="offer[getpoint]" id="order_getpoint" class="text price" type="text" value="<?php echo esc_attr( $dsp_getpoint ); ?>"<?php echo esc_html( $getpoint_readonly ); ?> /></td>
 		</tr>
 	<?php
-	if( $reduced_taxrate && 'all' == $tax_target ) :
-	?>
+	if ( $reduced_taxrate && 'all' == $tax_target ) :
+		$dsp_subtotal_standard = ( ! empty( $order_subtotal_standard ) ) ? usces_crform( $order_subtotal_standard, false, false, 'return', false ) : '0';
+		$dsp_subtotal_reduced  = ( ! empty( $order_subtotal_reduced ) ) ? usces_crform( $order_subtotal_reduced, false, false, 'return', false ) : '0';
+		?>
 		<tr>
-			<th colspan="5" class="aright"><?php printf( __( "Applies to %s%%", 'usces' ), $usces_tax->tax_rate_standard ); ?></th>
+			<th colspan="5" class="aright"><?php printf( __( 'Applies to %s%%', 'usces' ), $usces_tax->tax_rate_standard ); ?></th>
 			<th id="subtotal_standard" class="aright">&nbsp;</th>
-			<th colspan="2"><input type="hidden" name="order_subtotal_standard" id="order_subtotal_standard" value="<?php if ( ! empty( $order_subtotal_standard ) ) { usces_crform( $order_subtotal_standard, false, false, '', false ); } else { echo '0'; } ?>">&nbsp;</th>
+			<th colspan="2"><input type="hidden" name="order_subtotal_standard" id="order_subtotal_standard" value="<?php echo esc_attr( $dsp_subtotal_standard ); ?>">&nbsp;</th>
 		</tr>
 		<tr>
-			<th colspan="5" class="aright"></span><?php printf( __( "Applies to %s%%", 'usces' ), $usces_tax->tax_rate_reduced ); ?></th>
+			<th colspan="5" class="aright"></span><?php printf( __( 'Applies to %s%%', 'usces' ), $usces_tax->tax_rate_reduced ); ?></th>
 			<th id="subtotal_reduced" class="aright">&nbsp;</th>
-			<th colspan="2"><input type="hidden" name="order_subtotal_reduced" id="order_subtotal_reduced" value="<?php if ( ! empty( $order_subtotal_reduced ) ) { usces_crform( $order_subtotal_reduced, false, false, '', false ); } else { echo '0'; } ?>">&nbsp;</th>
+			<th colspan="2"><input type="hidden" name="order_subtotal_reduced" id="order_subtotal_reduced" value="<?php echo esc_attr( $dsp_subtotal_reduced ); ?>">&nbsp;</th>
 		</tr>
-	<?php
+		<?php
 	endif;
 	?>
 		<tr>
-			<th colspan="5" class="aright"><?php _e( 'Total Amount', 'usces' ); ?></th>
+			<th colspan="5" class="aright"><?php esc_html_e( 'Total Amount', 'usces' ); ?></th>
 			<th id="total_full" class="aright">&nbsp;</th>
-			<th colspan="2"><input name="recalc" id="recalc" class="button" type="button" value="<?php _e( 'Recalculation', 'usces' ); ?>" /><?php wel_esc_script_e( $change_taxrate ); ?></th>
+			<th colspan="2"><input name="recalc" id="recalc" class="button" type="button" value="<?php esc_attr_e( 'Recalculation', 'usces' ); ?>" /><?php wel_esc_script_e( $change_taxrate ); ?></th>
 		</tr>
 		</tfoot>
 </table>
@@ -2119,12 +2191,12 @@ echo apply_filters( 'usces_filter_ordereditform_carttable', $cart_table, $filter
 <?php
 if ( $reduced_taxrate ) :
 	?>
-	<div class="order_edit_notice_reduced_tax_rate"><span class="reduced_taxrate_mark"><?php echo esc_html( $usces_tax->reduced_taxrate_mark ); ?></span><?php _e( ' is reduced tax rate', 'usces' ); ?></div>
+	<div class="order_edit_notice_reduced_tax_rate"><span class="reduced_taxrate_mark"><?php echo esc_html( $usces_tax->reduced_taxrate_mark ); ?></span><?php esc_html_e( ' is reduced tax rate', 'usces' ); ?></div>
 	<?php
 endif;
 ?>
 <div class="usces_tablenav usces_tablenav_bottom">
-<div class="ordernavi"><input name="update_order_edit2" class="button button-primary" type="submit" value="<?php _e('change decision', 'usces'); ?>" /><?php _e("When you change amount, please click 'Edit' before you finish your process.", 'usces'); ?></div>
+<div class="ordernavi"><input name="update_order_edit2" class="button button-primary" type="submit" value="<?php esc_attr_e( 'change decision', 'usces' ); ?>" /><?php esc_html_e( "When you change amount, please click 'Edit' before you finish your process.", 'usces' ); ?></div>
 </div>
 
 <?php if ( 'new' !== $order_action ) : ?>
@@ -2134,67 +2206,63 @@ endif;
 <?php endif; ?>
 
 <input name="order_action" type="hidden" value="<?php echo esc_attr( $oa ); ?>" />
-<input name="order_id" id="order_id" type="hidden" value="<?php echo (isset($data['ID']) ? $data['ID'] : ''); ?>" />
-<input name="old_getpoint" type="hidden" value="<?php echo (isset($data['order_getpoint']) ? $data['order_getpoint'] : ''); ?>" />
-<input name="old_usedpoint" type="hidden" value="<?php echo (isset($data['order_usedpoint']) ? $data['order_usedpoint'] : ''); ?>" />
+<input name="order_id" id="order_id" type="hidden" value="<?php echo esc_attr( $dsp_order_id ); ?>" />
+<input name="old_getpoint" type="hidden" value="<?php echo esc_attr( $hdn_getpoint ); ?>" />
+<input name="old_usedpoint" type="hidden" value="<?php echo esc_attr( $hdn_usedpoint ); ?>" />
 <input name="up_modified" id="up_modified" type="hidden" value="" />
-<input name="modified" id="modified" type="hidden" value="<?php echo esc_attr(isset($data['order_modified']) ? $data['order_modified'] : ''); ?>" />
-
-
+<?php $hdn_modified = ( isset( $data['order_modified'] ) ) ? $data['order_modified'] : ''; ?>
+<input name="modified" id="modified" type="hidden" value="<?php echo esc_attr( $hdn_modified ); ?>" />
 
 <div id="dialog_parent" style="position:fixed"></div>
-<div id="addItemDialog" title="<?php _e('Add item', 'usces'); ?>">
+<div id="addItemDialog" title="<?php esc_attr_e( 'Add item', 'usces' ); ?>">
 	<div id="order-response"></div>
 	<fieldset>
 	<div class="clearfix">
 		<div class="dialogsearch">
-		<label><?php _e('Item Category', 'usces'); ?></label>
-	<?php
-		$idObj = get_category_by_slug('item');
-		$dropdown_options = apply_filters( 'usces_filter_ordereditform_dropdown_options', array( 'show_option_none' => __('Select a category', 'usces'), 'name' => 'newitemcategory', 'id' => 'newitemcategory', 'hide_empty' => 1, 'hierarchical' => 1, 'orderby' => 'name', 'child_of' => $idObj->term_id ) );
-		wp_dropdown_categories($dropdown_options);
-	?>
+		<label><?php esc_html_e( 'Item Category', 'usces' ); ?></label>
+		<?php
+		$idobj            = get_category_by_slug( 'item' );
+		$dropdown_options = apply_filters( 'usces_filter_ordereditform_dropdown_options', array( 'show_option_none' => __( 'Select a category', 'usces' ), 'name' => 'newitemcategory', 'id' => 'newitemcategory', 'hide_empty' => 1, 'hierarchical' => 1, 'orderby' => 'name', 'child_of' => $idobj->term_id ) );
+		wp_dropdown_categories( $dropdown_options );
+		?>
 		<br />
-		<label><?php _e('Item to be added', 'usces'); ?></label><select name="newitemcode" id="newitemcode"></select><br />
+		<label><?php esc_html_e( 'Item to be added', 'usces' ); ?></label><select name="newitemcode" id="newitemcode"></select><br />
 		<div id="loading"></div>
-		<label for="name"><?php _e('item code', 'usces'); ?></label>
+		<label for="name"><?php esc_html_e( 'item code', 'usces' ); ?></label>
 		<input type="text" name="newitemcodein" id="newitemcodein" class="text" />
-		<input name="getitem" id="getitembutton" type="button" class="button" value="<?php _e('Obtain', 'usces'); ?>" onclick="if( jQuery('#newitemcodein').val() == '' ) return; orderItem.getitem(encodeURIComponent(jQuery('#newitemcodein').val()));" />
+		<input name="getitem" id="getitembutton" type="button" class="button" value="<?php esc_attr_e( 'Obtain', 'usces' ); ?>" onclick="if( jQuery('#newitemcodein').val() == '' ) return; orderItem.getitem(encodeURIComponent(jQuery('#newitemcodein').val()));" />
 		</div>
 		<div id="newitemform"></div>
 	</div>
 	</fieldset>
 </div>
 
-
-
 <div id="mailSendDialog" title="">
 	<div id="order-response"></div>
 	<fieldset>
-		<p><?php _e( "Check the mail and click 'send'", 'usces' ); ?></p>
-		<label><?php _e( 'e-mail adress', 'usces' ); ?></label><input type="text" name="sendmailaddress" id="sendmailaddress" class="text" /><br />
-		<label><?php _e( 'Client name', 'usces' ); ?></label><input type="text" name="sendmailname" id="sendmailname" class="text" /><br />
-		<label><?php _e( 'subject', 'usces' ); ?></label><input type="text" name="sendmailsubject" id="sendmailsubject" class="text" /><br />
-		<?php if ( $this->options['email_attach_feature'] == 1 ) { ?>
-			<label><?php _e('Attachment file', 'usces'); ?></label><input type="file" name="sendmailattachfile" id="sendmailattachfile" class="text" />
+		<p><?php esc_html_e( "Check the mail and click 'send'", 'usces' ); ?></p>
+		<label><?php esc_html_e( 'e-mail adress', 'usces' ); ?></label><input type="text" name="sendmailaddress" id="sendmailaddress" class="text" /><br />
+		<label><?php esc_html_e( 'Client name', 'usces' ); ?></label><input type="text" name="sendmailname" id="sendmailname" class="text" /><br />
+		<label><?php esc_html_e( 'subject', 'usces' ); ?></label><input type="text" name="sendmailsubject" id="sendmailsubject" class="text" /><br />
+		<?php if ( 1 === (int) $this->options['email_attach_feature'] ) { ?>
+			<label><?php esc_html_e( 'Attachment file', 'usces' ); ?></label><input type="file" name="sendmailattachfile" id="sendmailattachfile" class="text" />
 			<div class="attachment-extension">
-				<?php 
-				if ( $this->options['email_attach_file_size'] > 0) {
-					_e( 'Maximum size of email attachment', 'usces' );
-					echo ": " . $this->options['email_attach_file_size'] . "MB. ";
-				} 
+				<?php
+				if ( $this->options['email_attach_file_size'] > 0 ) {
+					esc_html_e( 'Maximum size of email attachment', 'usces' );
+					echo ': ' . $this->options['email_attach_file_size'] . 'MB. ';
+				}
 				if ( ! empty( $email_attach_file_extension ) ) {
-					_e( 'File extension support', 'usces' );
-					echo " ("  . implode( ',', $email_attach_file_extension ) . ")";
+					esc_html_e( 'File extension support', 'usces' );
+					echo ' (' . implode( ',', $email_attach_file_extension ) . ')';
 				}
 				?>
 			</div>
 		<?php } ?>
-			
-		<?php if ($add_html_email_option == 1) { ?>
+		<?php if ( 1 === (int) $add_html_email_option ) { ?>
 			<div id="wrap_load_rich_editor" style="margin-top: 10px">
 				<div id="loading_iframe"></div>
-				<iframe style="display:none" width="<?php echo ($mailsenddialog_width - 40); ?>" height="700" id="iframeLoadEditor" src="" ></iframe>
+				<iframe style="display:none" width="<?php echo esc_attr( $mailsenddialog_width - 40 ); ?>" height="700" id="iframeLoadEditor" src="" ></iframe>
 			</div>
 		<?php } else { ?>
 			<textarea name="sendmailmessage" id="sendmailmessage"></textarea>
@@ -2203,9 +2271,9 @@ endif;
 	</fieldset>
 </div>
 
-<?php if ($add_html_email_option == 1) { ?>
+<?php if ( 1 === (int) $add_html_email_option ) { ?>
 <div id="previewEmailDialog" title="">
-	<iframe src="" width="<?php echo ($mailsenddialog_width - 40); ?>" height="4000" frameborder="0" class="content_email_preview" id='iframePreviewEmail'></iframe>
+	<iframe src="" width="<?php echo esc_attr( $mailsenddialog_width - 40 ); ?>" height="4000" frameborder="0" class="content_email_preview" id='iframePreviewEmail'></iframe>
 </div>
 <?php } ?>
 
@@ -2214,7 +2282,7 @@ endif;
 	<fieldset>
 	</fieldset>
 </div>
-<input name="usces_referer" type="hidden" id="usces_referer" value="<?php if ( isset($_REQUEST['usces_referer'] ) ) echo esc_url( $_REQUEST['usces_referer'] ); ?>" />
+<input name="usces_referer" type="hidden" id="usces_referer" value="<?php echo esc_url( $usces_referer ); ?>" />
 <?php wp_nonce_field( 'order_edit', 'wc_nonce' ); ?>
 </form>
 

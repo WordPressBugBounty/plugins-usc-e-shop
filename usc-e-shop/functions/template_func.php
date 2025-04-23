@@ -2420,8 +2420,9 @@ function usces_the_inquiry_form() {
  * @return int
  */
 function usces_get_cat_id( $slug ) {
-	$cat = get_category_by_slug( $slug );
-	return $cat->term_id;
+	$cat     = get_category_by_slug( $slug );
+	$term_id = $cat->term_id ?? 0;
+	return $term_id;
 }
 
 /**

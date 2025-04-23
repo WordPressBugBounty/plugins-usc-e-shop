@@ -122,6 +122,8 @@ class SBPS_SETTLEMENT extends SBPS_MAIN {
 		$options['acting_settings']['sbps']['send_url']             = ( isset( $options['acting_settings']['sbps']['send_url'] ) ) ? $options['acting_settings']['sbps']['send_url'] : '';
 		$options['acting_settings']['sbps']['send_url_check']       = ( isset( $options['acting_settings']['sbps']['send_url_check'] ) ) ? $options['acting_settings']['sbps']['send_url_check'] : '';
 		$options['acting_settings']['sbps']['send_url_test']        = ( isset( $options['acting_settings']['sbps']['send_url_test'] ) ) ? $options['acting_settings']['sbps']['send_url_test'] : '';
+		$options['acting_settings']['sbps']['cust_url']             = ( ! empty( $options['acting_settings']['sbps']['cust_url'] ) ) ? $options['acting_settings']['sbps']['cust_url'] : 'https://fep.sps-system.com/f04/FepPayInfoReceive.do';
+		$options['acting_settings']['sbps']['cust_url_test']        = ( ! empty( $options['acting_settings']['sbps']['cust_url_test'] ) ) ? $options['acting_settings']['sbps']['cust_url_test'] : 'https://stbfep.sps-system.com/f04/FepPayInfoReceive.do';
 		$options['acting_settings']['sbps']['card_activate']        = ( isset( $options['acting_settings']['sbps']['card_activate'] ) ) ? $options['acting_settings']['sbps']['card_activate'] : 'off';
 		$options['acting_settings']['sbps']['3d_secure']            = ( isset( $options['acting_settings']['sbps']['3d_secure'] ) ) ? $options['acting_settings']['sbps']['3d_secure'] : 'off';
 		$options['acting_settings']['sbps']['cust_manage']          = ( isset( $options['acting_settings']['sbps']['cust_manage'] ) ) ? $options['acting_settings']['sbps']['cust_manage'] : 'off';
@@ -1166,6 +1168,8 @@ jQuery( document ).ready( function( $ ) {
 				$options['acting_settings']['sbps']['token_url_test'] = 'https://stbtoken.sps-system.com/sbpstoken/com_sbps_system_token.js';
 				$options['acting_settings']['sbps']['api_url']        = 'https://api.sps-system.com/api/xmlapi.do';
 				$options['acting_settings']['sbps']['api_url_test']   = 'https://stbfep.sps-system.com/api/xmlapi.do';
+				$options['acting_settings']['sbps']['cust_url']       = 'https://fep.sps-system.com/f04/FepPayInfoReceive.do';
+				$options['acting_settings']['sbps']['cust_url_test']  = 'https://stbfep.sps-system.com/f04/FepPayInfoReceive.do';
 				usces_admin_orderlist_show_wc_trans_id();
 				if ( 0 < count( $toactive ) ) {
 					$usces->action_message .= __( 'Please update the payment method to "Activate". <a href="admin.php?page=usces_initial#payment_method_setting">General Setting > Payment Methods</a>', 'usces' );
@@ -3358,7 +3362,7 @@ jQuery( document ).ready( function( $ ) {
 			}
 
 			$acting_opts = $this->get_acting_settings();
-			if ( 'off' === $acting_opts['cust_manage'] ) {
+			if ( 'off' === $acting_opts['cust_manage'] || 'on' === $acting_opts['card_activate'] ) {
 				return;
 			}
 
@@ -3411,28 +3415,66 @@ jQuery( document ).ready( function( $ ) {
 	 * @return string
 	 */
 	public function update_settlement( $html, $member ) {
+		global $usces;
 
 		$acting_opts = $this->get_acting_settings();
 		if ( 'on' === $acting_opts['cust_manage'] || 'choice' === $acting_opts['cust_manage'] ) {
 			$cust_ref = $this->api_customer_reference( $member['ID'] );
-			if ( isset( $cust_ref['result'] ) && 'OK' === $cust_ref['result'] ) {
-				$update_settlement_url = add_query_arg(
-					array(
-						'usces_page' => 'member_update_settlement',
-						're-enter'   => 1,
-					),
-					USCES_MEMBER_URL
-				);
-				$html                 .= '<li class="settlement-update gotoedit"><a href="' . $update_settlement_url . '">' . __( 'Change the credit card is here >>', 'usces' ) . '</a></li>';
+			if ( 'on' === $acting_opts['card_activate'] ) {
+				$connection   = $this->get_connection();
+				$pay_method   = ( 'on' === $acting_opts['3d_secure'] ) ? 'credit3d2' : 'credit';
+				$cust_code    = $member['ID'];
+				$success_url  = USCES_MEMBER_URL . $usces->delim . 'acting=' . $this->acting_card;
+				$cancel_url   = USCES_MEMBER_URL . $usces->delim . 'acting=' . $this->acting_card;
+				$error_url    = USCES_MEMBER_URL . $usces->delim . 'acting=' . $this->acting_card;
+				$pagecon_url  = USCES_MEMBER_URL;
+				$free1        = $this->acting_flg_card;
+				$free_csv     = '';
+				$request_date = wp_date( 'YmdHis' );
+				$limit_second = '600';
+				$sps_hashcode = $pay_method . $acting_opts['merchant_id'] . $acting_opts['service_id'] . $cust_code . $success_url . $cancel_url . $error_url . $pagecon_url . $free1 . $free_csv . $request_date . $limit_second . $acting_opts['hash_key'];
+				$sps_hashcode = sha1( $sps_hashcode );
+				if ( isset( $cust_ref['result'] ) && 'OK' === $cust_ref['result'] ) {
+					$html = '<li class="settlement-update"><a href="#" onclick="redirect_form.submit(); return false;">' . __( 'Change the credit card is here >>', 'usces' ) . '</a></li>';
+				} else {
+					$html = '<li class="settlement-register"><a href="#" onclick="redirect_form.submit(); return false;">' . __( 'Credit card registration is here >>', 'usces' ) . '</a></li>';
+				}
+				$html .= '<form id="redirect_form" name="redirect_form" action="' . $connection['cust_url'] . '" method="post" accept-charset="Shift_JIS">
+					<input type="hidden" name="pay_method" value="' . $pay_method . '" />
+					<input type="hidden" name="merchant_id" value="' . $acting_opts['merchant_id'] . '" />
+					<input type="hidden" name="service_id" value="' . $acting_opts['service_id'] . '" />
+					<input type="hidden" name="cust_code" value="' . $cust_code . '" />
+					<input type="hidden" name="success_url" value="' . $success_url . '" />
+					<input type="hidden" name="cancel_url" value="' . $cancel_url . '" />
+					<input type="hidden" name="error_url" value="' . $error_url . '" />
+					<input type="hidden" name="pagecon_url" value="' . $pagecon_url . '" />
+					<input type="hidden" name="free1" value="' . $free1 . '" />
+					<input type="hidden" name="free_csv" value="' . $free_csv . '" />
+					<input type="hidden" name="request_date" value="' . $request_date . '" />
+					<input type="hidden" name="limit_second" value="' . $limit_second . '" />
+					<input type="hidden" name="sps_hashcode" value="' . $sps_hashcode . '" />
+					<input type="hidden" name="dummy" value="&#65533;" />
+					</form>';
 			} else {
-				$register_settlement_url = add_query_arg(
-					array(
-						'usces_page' => 'member_register_settlement',
-						're-enter'   => 1,
-					),
-					USCES_MEMBER_URL
-				);
-				$html                   .= '<li class="settlement-register gotoedit"><a href="' . $register_settlement_url . '">' . __( 'Credit card registration is here >>', 'usces' ) . '</a></li>';
+				if ( isset( $cust_ref['result'] ) && 'OK' === $cust_ref['result'] ) {
+					$update_settlement_url = add_query_arg(
+						array(
+							'usces_page' => 'member_update_settlement',
+							're-enter'   => 1,
+						),
+						USCES_MEMBER_URL
+					);
+					$html                 .= '<li class="settlement-update gotoedit"><a href="' . $update_settlement_url . '">' . __( 'Change the credit card is here >>', 'usces' ) . '</a></li>';
+				} else {
+					$register_settlement_url = add_query_arg(
+						array(
+							'usces_page' => 'member_register_settlement',
+							're-enter'   => 1,
+						),
+						USCES_MEMBER_URL
+					);
+					$html                   .= '<li class="settlement-register gotoedit"><a href="' . $register_settlement_url . '">' . __( 'Credit card registration is here >>', 'usces' ) . '</a></li>';
+				}
 			}
 		}
 		return $html;

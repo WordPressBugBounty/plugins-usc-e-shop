@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2024-12-06 15:56+0900\n"
+"PO-Revision-Date: 2025-02-28 05:42+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11776,3 +11776,390 @@ msgstr "アップロード中"
 
 msgid "Data check"
 msgstr "データチェック"
+
+msgid "Data Import"
+msgstr "データインポート"
+
+msgid "Welcart CSV Import"
+msgstr "Welcart CSV インポート"
+
+msgid "Welcart CSV Importer"
+msgstr "Welcart CSV インポーター"
+
+msgid "CSV or ZIP File"
+msgstr "CSVまたはZIPファイル"
+
+msgid "Permission error."
+msgstr "権限エラー。"
+
+msgid "Type does not match."
+msgstr "タイプが一致しません。"
+
+msgid "Invalid access."
+msgstr "不正なアクセスです。"
+
+msgid "Failed to get file name."
+msgstr "ファイル名が取得できません。"
+
+msgid "Please specify a CSV or ZIP file."
+msgstr "CSVまたはZIPファイルを指定してください。"
+
+msgid "Failed to save file."
+msgstr "ファイルの保存に失敗しました。"
+
+msgid "Too many files in ZIP."
+msgstr "ZIP 内のファイルが多すぎます。"
+
+msgid "Failed to extract CSV file from ZIP."
+msgstr "ZIP内CSVファイルの抽出に失敗しました。"
+
+msgid "CSV file not found in ZIP."
+msgstr "ZIPファイル内にCSVが見つかりません。"
+
+msgid "Unable to open ZIP file."
+msgstr "ZIPファイルを開けませんでした。"
+
+msgid "Import session not found."
+msgstr "インポートセッションがありません。"
+
+msgid "Temporary file not found. Please start over from the beginning."
+msgstr "一時ファイルが見つかりません。もう一度最初からやり直してください。"
+
+msgid "Failed to read file. Please start over from the beginning."
+msgstr "ファイルの読み込みに失敗しました。もう一度最初からやり直してください。"
+
+msgid "CSV Preview & Mapping"
+msgstr "CSVプレビュー & マッピング"
+
+msgid "Preview the CSV file and perform data mapping."
+msgstr "CSVファイルのプレビューとデータマッピングを行います。"
+
+msgid "If you wish to re-upload the CSV file, you can do so using the \"Re-upload\" option."
+msgstr "CSVファイルをアップロードしなおす場合は「再アップロード」オプションから実施できます。"
+
+msgid "Re-upload"
+msgstr "再アップロード"
+
+msgid "Character Encoding"
+msgstr "文字コード"
+
+msgid "※ If characters are garbled, please select the appropriate encoding."
+msgstr "※ 文字化けしている場合は、適切な文字コードを選択してください。"
+
+msgid "Header Row"
+msgstr "先頭行"
+
+msgid "Field Names"
+msgstr "フィールド名"
+
+msgid "Data"
+msgstr "データ"
+
+msgid "※ If the first row contains field names, it will not be processed."
+msgstr "※ 先頭行がフィールド名の場合、１行目は処理されません。"
+
+msgid "CSV Preview"
+msgstr "CSVプレビュー"
+
+msgid "File Name"
+msgstr "ファイル名"
+
+msgid "Valid Data Count: "
+msgstr "有効データ件数: "
+
+msgid "Data Mapping"
+msgstr "データ・マッピング"
+
+msgid "The first column is required. At least one additional column must be selected."
+msgstr "先頭の項目は必須です。それ以外の項目は最低一つは選択する必要があります。"
+
+msgid "Start Update"
+msgstr "更新開始"
+
+msgid "Unable to load data"
+msgstr "データを読み込めませんでした"
+
+msgid "Column"
+msgstr "カラム"
+
+msgid "Import Progress"
+msgstr "インポート進捗"
+
+msgid "Please keep this page open until the import process is complete. Do not refresh, change pages, or close your browser."
+msgstr "取り込み処理が完了するまでは、このページを維持してください。再表示、ページ移動、ブラウザの閉鎖は行わないでください。"
+
+msgid "If the sum of added and updated records does not equal the total count, some data was not imported. Please check the error log after processing."
+msgstr "追加件数 + 更新件数が全件数に満たない場合は、取り込みに失敗したデータがあります。処理完了後にエラーログをご確認ください。"
+
+msgid "Total Count"
+msgstr "全件数"
+
+msgid "Processed Count"
+msgstr "処理済み件数"
+
+msgid "Added Count"
+msgstr "追加件数"
+
+msgid "Updated Count"
+msgstr "更新件数"
+
+msgid "Memory Usage"
+msgstr "使用メモリー"
+
+msgid "Estimated Remaining Time"
+msgstr "推定残り時間"
+
+msgid "Import Completed"
+msgstr "インポート終了"
+
+msgid "File Name: "
+msgstr "CSVファイル名: "
+
+msgid "No Error"
+msgstr "エラー無し"
+
+msgid "More..."
+msgstr "その他・・・・"
+
+msgid "Download Error Log"
+msgstr "エラーログをダウンロード"
+
+msgid "No log file found."
+msgstr "ログファイルがありません。"
+
+msgid "An error occurred"
+msgstr "エラーが発生しました"
+
+msgid "No message provided."
+msgstr "メッセージがありません。"
+
+msgid "Please select a file to upload."
+msgstr "アップロードするファイルを選択してください。"
+
+msgid "File size is too large."
+msgstr "ファイルサイズが大きすぎます。"
+
+msgid "Exceeds maximum file size specified in the form."
+msgstr "フォームで指定された最大ファイルサイズを超えています。"
+
+msgid "File was only partially uploaded."
+msgstr "ファイルが一部しかアップロードされませんでした。"
+
+msgid "No file selected."
+msgstr "ファイルが選択されていません。"
+
+msgid "Missing a temporary folder."
+msgstr "一時フォルダがありません。"
+
+msgid "Failed to write file to disk."
+msgstr "ディスクへの書き込みに失敗しました。"
+
+msgid "File upload stopped by extension."
+msgstr "拡張機能によりアップロードが停止されました。"
+
+msgid "An unknown error occurred."
+msgstr "不明なエラーが発生しました。"
+
+msgid "CSV file is empty. Please check the content."
+msgstr "CSV ファイルが空です。内容を確認してください。"
+
+msgid "Security check failed. Please reload the page."
+msgstr "セキュリティチェックに失敗しました。ページをリロードしてください。"
+
+msgid "Type is invalid."
+msgstr "タイプが適正ではありません。"
+
+msgid "Invalid import ID. "
+msgstr "インポート ID が無効です。"
+
+msgid "Please re-upload the CSV."
+msgstr "再度 CSV をアップロードしてください。"
+
+msgid "Import session has expired."
+msgstr "インポートのセッションが期限切れになりました。"
+
+msgid "CSV file not found."
+msgstr "CSVファイルが見つかりません。"
+
+msgid "Unable to open CSV file."
+msgstr "CSVファイルを開けませんでした。"
+
+msgid "Error log file not found."
+msgstr "エラーログファイルがありません。"
+
+msgid "Import is in progress. Leaving this page will interrupt the process."
+msgstr "インポート処理中です。ページを離れると処理が中断されます。"
+
+msgid " hours "
+msgstr "時間 "
+
+msgid " minutes "
+msgstr "分 "
+
+msgid " seconds"
+msgstr "秒"
+
+#: wel_member_csv_importer_init
+msgid "Member Data Import"
+msgstr "会員データ取込"
+
+#: wel_member_csv_importer_init
+msgid "Member No."
+msgstr "会員No."
+
+#: wel_member_csv_importer_init
+msgid "E-mail"
+msgstr "Eメール"
+
+#: wel_member_csv_importer_init
+msgid "Password"
+msgstr "パスワード"
+
+#: wel_member_csv_importer_init
+msgid "Last Name (Furigana)"
+msgstr "姓フリガナ"
+
+#: wel_member_csv_importer_init
+msgid "First Name (Furigana)"
+msgstr "名フリガナ"
+
+#: wel_member_csv_importer_init
+msgid "Postal Code"
+msgstr "郵便番号"
+
+#: wel_member_csv_importer_init
+msgid "Country Code"
+msgstr "国コード"
+
+#: wel_member_csv_importer_init
+msgid "Prefecture"
+msgstr "都道府県"
+
+#: wel_member_csv_importer_init
+msgid "City / Ward / Town"
+msgstr "市区群町村"
+
+#: wel_member_csv_importer_init
+msgid "Street Address"
+msgstr "番地"
+
+#: wel_member_csv_importer_init
+msgid "Building Name"
+msgstr "ビル名"
+
+#: wel_member_csv_importer_init
+msgid "Telephone"
+msgstr "電話番号"
+
+#: wel_member_csv_importer_init
+msgid "FAX"
+msgstr "FAX番号"
+
+#: wel_member_csv_importer_init
+msgid "Registration Date"
+msgstr "入会日"
+
+#: wel_member_csv_importer_init
+msgid "Point Balance"
+msgstr "保有ポイント"
+
+#: wel_member_csv_preview_top_guide
+msgid "If the CSV member number already exists in the database, it will update the record. Please be careful not to overwrite other data."
+msgstr "CSVの会員Noが既にデータベースにある場合は更新となります。他のデータに上書きしてしまわないよう注意してください。"
+
+#: wel_member_csv_preview_top_guide
+msgid "Make sure to backup your database before proceeding with the import."
+msgstr "データ取り込みを行う前に必ずデータベースのバックアップを取ってから処理を行ってください。"
+
+#: wel_member_csv_mapping_top_guide
+msgid "Leave fields that you do not want to update unselected."
+msgstr "更新しない項目は未選択にしてください。"
+
+#: wel_member_csv_mapping_top_guide
+msgid "Passwords cannot be updated. They are only registered during new registration."
+msgstr "パスワードは更新できません。新規登録のみパスワードが登録されます。"
+
+#: wel_member_csv_mapping_top_guide
+msgid "If left unselected during new registration, the import time will be recorded as the registration date."
+msgstr "新規登録の場合、入会日を未選択にすると取り込みを行った日時が登録されます。"
+
+#: wel_member_csv_mapping_option
+msgid "Password Encryption"
+msgstr "パスワード暗号化"
+
+#: wel_member_csv_mapping_option
+msgid "Already Encrypted"
+msgstr "暗号化済み"
+
+#: wel_member_csv_mapping_option
+msgid "Welcart Encryption"
+msgstr "Welcart暗号化"
+
+#: wel_member_csv_mapping_option
+msgid "ECCUBE Encryption"
+msgstr "ECCUBE暗号化"
+
+#: wel_member_csv_mapping_option
+msgid "※ Normally, please select \"Welcart Encryption\". Plain text will be encrypted upon registration."
+msgstr "※ 通常は「Welcart暗号化」を選択してください。平文字を暗号化して登録します。"
+
+#: wel_member_csv_importer_chunk_process
+msgid "ID is empty"
+msgstr "IDが空白"
+
+#: wel_member_csv_importer_chunk_process
+msgid "ID is not a number"
+msgstr "IDが数値でない"
+
+#: wel_member_csv_data_validation
+msgid " Error: Email address is not set"
+msgstr " Error: メールアドレスが未設定"
+
+#: wel_member_csv_data_validation
+msgid " Error: Email address is empty"
+msgstr " Error: メールアドレスが空白"
+
+#: wel_member_csv_data_validation
+msgid " Error: Email address is invalid"
+msgstr " Error: メールアドレスが適正でない"
+
+#: wel_member_csv_data_validation
+msgid " Error: Email address"
+msgstr " Error: メールアドレス"
+
+#: wel_member_csv_data_validation
+msgid " is already registered"
+msgstr "は既に登録されている"
+
+#: wel_member_csv_data_validation
+msgid " Error: Password is not set"
+msgstr " Error: パスワードが未設定"
+
+#: wel_member_csv_data_validation
+msgid " Error: Password is empty"
+msgstr " Error: パスワードが空白"
+
+#: wel_member_csv_data_validation
+msgid " Error: Name is not set"
+msgstr " Error: 名前が未設定"
+
+#: wel_member_csv_data_validation
+msgid " Error: Name is empty"
+msgstr " Error: 名前が空白"
+
+#: wel_member_csv_after_mapping_table
+msgid "EC CUBE Meta Fields"
+msgstr "EC CUBE メタフィールド"
+
+#: wel_member_csv_after_mapping_table
+msgid "Salt Key"
+msgstr "ソルトキー"
+
+msgid "(Not Set)"
+msgstr "（未設定）"
+
+msgid "CSV File Name"
+msgstr "CSVファイル名"
+
+msgid "Error Log"
+msgstr "エラーログ"

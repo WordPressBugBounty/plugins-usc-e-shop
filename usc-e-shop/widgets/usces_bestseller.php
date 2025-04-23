@@ -86,6 +86,9 @@ class Welcart_bestseller extends WP_Widget {
 			$before_title .= '<img src="' . $img_path . '" alt="' . $title . '" />';
 		}
 		$list = WCUtils::is_blank( $instance['list'] ) ? 1 : (int) $instance['list'];
+		if ( 2 === $list ) {
+			$rows_num = 10;
+		}
 
 		wel_esc_script_e( $before_widget );
 		wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
