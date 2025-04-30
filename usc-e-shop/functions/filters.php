@@ -2466,6 +2466,7 @@ function print_google_recaptcha_response( $action, $parent_element_id, $form_nam
  * @return void
  */
 function wel_item_upload_ajax() {
+	check_ajax_referer();
 	$_REQUEST['action'] = 'upload_register';
 	usces_item_uploadcsv();
 }

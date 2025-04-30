@@ -648,6 +648,7 @@ foreach ( (array) $rows as $array ) :
 	<input name="itemcsv" type="submit" id="upcsv" class="button" value="<?php esc_attr_e( 'Registration start', 'usces' ); ?>" />
 	<input name="checkcsv" type="submit" id="checkcsv" class="button" value="<?php esc_attr_e( 'Data check', 'usces' ); ?>" />
 	<input name="action" type="hidden" value="upload_register" />
+	<?php wp_nonce_field( 'wel_item' ); ?>
 	</form>
 	<p><?php esc_html_e( 'Indication is updated after upload completion.', 'usces' ); ?></p>
 <?php endif; ?>

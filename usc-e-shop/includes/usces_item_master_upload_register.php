@@ -1,3 +1,16 @@
+<?php
+/**
+ * Item data upload screen
+ *
+ * @package     Welcart
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+check_admin_referer( 'wel_item' );
+
+?>
 <style type="text/css">
 .label {
 	font-size: small;
@@ -66,7 +79,7 @@
 <div class="wrap">
 <div class="usces_admin">
 <h1>Welcart Shop <?php esc_html_e( 'Item list', 'usces' ); ?></h1>
-<p class="version_info">Version <?php echo( USCES_VERSION ); ?></p>
+<p class="version_info">Version <?php echo esc_html( USCES_VERSION ); ?></p>
 <?php usces_admin_action_status(); ?>
 
 <div class="label"><?php esc_html_e( 'File Information', 'usces' ); ?></div>
@@ -102,21 +115,20 @@ $progress_ajax_nonce = wp_create_nonce( 'wel_progress_check_ajax' );
 $progressfile        = 'progress.txt';
 $logfile_txt         = 'log.txt';
 $logfile             = WP_CONTENT_URL . USCES_UPLOAD_TEMP . '/log.txt';
+$_REQUEST['action']  = 'itemcsv';
 
-$_REQUEST['action'] = 'itemcsv';
-$tempfilename       = usces_item_uploadcsv();
-
-$upload_mode = isset( $_REQUEST['upload_mode'] ) ? sanitize_text_field( $_REQUEST['upload_mode'] ) : '';
-$check_mode  = isset( $_REQUEST['checkcsv'] ) ? 1 : 0;
+$tempfilename = usces_item_uploadcsv();
+$upload_mode  = isset( $_REQUEST['upload_mode'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['upload_mode'] ) ) : '';
+$check_mode   = isset( $_REQUEST['checkcsv'] ) ? 1 : 0;
 ?>
 <script type='text/javascript'>
 (function($) {
-	var progressfile = '<?php echo( $progressfile ); ?>';
-	var progress_ajax_nonce = '<?php echo( $progress_ajax_nonce ); ?>';
-	var tempfilename = '<?php echo( $tempfilename ); ?>';
-	var logfile = '<?php echo( $logfile ); ?>';
-	var check_mode = '<?php echo esc_attr( $check_mode ); ?>';
-	var upload_mode = '<?php echo esc_attr( $upload_mode ); ?>';
+	var progressfile = '<?php echo esc_js( $progressfile ); ?>';
+	var progress_ajax_nonce = '<?php echo esc_js( $progress_ajax_nonce ); ?>';
+	var tempfilename = '<?php echo esc_js( $tempfilename ); ?>';
+	var logfile = '<?php echo esc_js( $logfile ); ?>';
+	var check_mode = '<?php echo esc_js( $check_mode ); ?>';
+	var upload_mode = '<?php echo esc_js( $upload_mode ); ?>';
 
 	checkPRG = {
 		settings: {
@@ -181,7 +193,7 @@ $check_mode  = isset( $_REQUEST['checkcsv'] ) ? 1 : 0;
 				cache: false,
 				data: {
 					'action': 'wel_item_progress_completed_ajax',
-					'logfile': '<?php echo( $logfile_txt ); ?>',
+					'logfile': '<?php echo esc_js( $logfile_txt ); ?>',
 					'nonce': progress_ajax_nonce,
 					'noheader': 'true'
 				}
@@ -213,7 +225,8 @@ $check_mode  = isset( $_REQUEST['checkcsv'] ) ? 1 : 0;
 					'comp_num'    : comp_num,
 					'err_num'     : err_num,
 					'checkcsv'    : 1,
-					'noheader'    : 'true'
+					'noheader'    : 'true',
+					'_wpnonce'    : '<?php echo esc_js( wp_create_nonce() ); ?>'
 				};
 			} else {
 				s.data = {
@@ -223,7 +236,8 @@ $check_mode  = isset( $_REQUEST['checkcsv'] ) ? 1 : 0;
 					'work_number' : work_number,
 					'comp_num'    : comp_num,
 					'err_num'     : err_num,
-					'noheader'    : 'true'
+					'noheader'    : 'true',
+					'_wpnonce'    : '<?php echo esc_js( wp_create_nonce() ); ?>'
 				};
 			}
 

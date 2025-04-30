@@ -1897,33 +1897,39 @@ $usces_referer      = ( isset( $_REQUEST['usces_referer'] ) ) ? $_REQUEST['usces
 				<tr>
 					<td colspan="2" class="status">
 					<div class="midasi2">
-						<?php
+					<?php
+					if ( isset( $condition['display_mode'] ) ) {
 						if ( 'Usualsale' == $condition['display_mode'] ) {
 							esc_html_e( 'normal sale', 'usces' );
 						} elseif ( 'Promotionsale' == $condition['display_mode'] ) {
 							esc_html_e( 'Sale Campaign', 'usces' );
 						}
-						?>
+					}
+					?>
 					</div>
 					<div class="condition">
 					<?php
-					if ( 'Promotionsale' == $condition['display_mode'] ) :
-						if ( 'discount' == $condition['campaign_privilege'] ) {
-							$dsp_campaign_privilege = $condition['privilege_discount'] . __( '% Discount', 'usces' );
-						} elseif ( 'point' == $condition['campaign_privilege'] ) {
-							$dsp_campaign_privilege = $condition['privilege_point'] . __( ' times (limited to members)', 'usces' );
-						} else {
-							$dsp_campaign_privilege = '';
-						}
-						if ( ! isset( $condition['campaign_category'] ) || 0 == $condition['campaign_category'] ) {
-							$dsp_campaign_category = __( 'all the items', 'usces' );
-						} else {
-							$dsp_campaign_category = get_cat_name( $condition['campaign_category'] );
-						}
-						?>
+					if ( isset( $condition['display_mode'] ) && isset( $condition['campaign_privilege'] ) ) :
+						if ( 'Promotionsale' == $condition['display_mode'] ) :
+							if ( 'discount' == $condition['campaign_privilege'] && isset( $condition['privilege_discount'] ) ) {
+								$dsp_campaign_privilege = $condition['privilege_discount'] . __( '% Discount', 'usces' );
+							} elseif ( 'point' == $condition['campaign_privilege'] && isset( $condition['privilege_point'] ) ) {
+								$dsp_campaign_privilege = $condition['privilege_point'] . __( ' times (limited to members)', 'usces' );
+							} else {
+								$dsp_campaign_privilege = '';
+							}
+							if ( ! isset( $condition['campaign_category'] ) || 0 == $condition['campaign_category'] ) {
+								$dsp_campaign_category = __( 'all the items', 'usces' );
+							} else {
+								$dsp_campaign_category = get_cat_name( $condition['campaign_category'] );
+							}
+							?>
 					<span><?php esc_html_e( 'Special Benefits', 'usces' ); ?> : </span><?php echo esc_html( $condition['campaign_privilege'] ); ?> (<?php echo esc_html( $dsp_campaign_privilege ); ?>) <br />
 					<span><?php esc_html_e( 'applied material', 'usces' ); ?> : </span><?php echo esc_html( $dsp_campaign_category ); ?><br />
-					<?php endif; ?>
+							<?php
+						endif;
+					endif;
+					?>
 					</div></td>
 				</tr>
 				<?php do_action( 'usces_action_order_edit_form_status_block', $data, $cscs_meta, $action_args ); ?>

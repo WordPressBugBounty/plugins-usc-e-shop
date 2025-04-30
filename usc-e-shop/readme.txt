@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.11.13
+Stable tag: 2.11.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+30 Apr 2025
+ = V2.11.14 =
+-----------
+* [Security Enhancement] Strengthened countermeasures against arbitrary file deletion in the bulk item registration page.
+* Fixed PHP errors.
 
 23 Apr 2025
  = V2.11.13 =

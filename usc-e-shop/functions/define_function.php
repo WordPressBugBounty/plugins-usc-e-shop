@@ -6,6 +6,10 @@
  */
 
 defined( 'ABSPATH' ) || exit;
+// phpcs:disable WordPress.Security.NonceVerification -- Already verified inside 'wel_item_upload_ajax' function
+// phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
+// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
+// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 /**
  * CSV generation process and bulk update by CSV.
@@ -23,7 +27,6 @@ function usces_define_functions() {
 		 */
 		function usces_item_uploadcsv() {
 			global $wpdb, $usces, $user_ID;
-
 			$check_mode  = isset( $_REQUEST['checkcsv'] ) ? true : false;
 			$check_label = $check_mode ? __( '[Check mode]', 'usces' ) : '';
 			if ( $check_mode ) {
@@ -32,6 +35,8 @@ function usces_define_functions() {
 				define( 'USCES_ITEM_UP_INTERBAL', 100 );
 			}
 
+			// Custom capability 'wel_others_products' is registered on the plugins_loaded hook.
+			// phpcs:ignore WordPress.WP.Capabilities.Unknown
 			if ( ! current_user_can( 'wel_others_products' ) ) {
 				$progress = array(
 					'status'   => __( 'forced termination', 'usces' ) . $check_label,
@@ -44,6 +49,7 @@ function usces_define_functions() {
 			}
 
 			$upload_folder = WP_CONTENT_DIR . USCES_UPLOAD_TEMP . '/';
+			$datas         = array();
 
 			// Upload.
 			if ( isset( $_REQUEST['action'] ) && 'itemcsv' === $_REQUEST['action'] ) {
@@ -51,10 +57,13 @@ function usces_define_functions() {
 				$progress = array( 'log' => 'clear' );
 				record_item_up_progress( $progress );
 
-				$upload_mode  = isset( $_REQUEST['upload_mode'] ) ? $_REQUEST['upload_mode'] : '';
+				$upload_mode  = isset( $_REQUEST['upload_mode'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['upload_mode'] ) ) : '';
 				$mode_name    = usces_get_upmode_name( $upload_mode );
-				$org_filename = $_FILES['usces_upcsv']['name'];
-				$tmp_filename = $_FILES['usces_upcsv']['tmp_name'];
+				$org_filename = isset( $_FILES['usces_upcsv']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['usces_upcsv']['name'] ) ) : '';
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				$filechecked = wp_check_filetype_and_ext( $_FILES['usces_upcsv']['tmp_name'], $org_filename, array( 'csv' => 'text/csv' ) );
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				$tmp_filename = $filechecked ? $_FILES['usces_upcsv']['tmp_name'] : '';
 
 				list( $fname, $fext ) = explode( '.', $org_filename, 2 );
 				$new_filename         = base64_encode( $fname . '_' . time() . '.' . $fext );
@@ -105,16 +114,19 @@ function usces_define_functions() {
 						'info'     => $file_info,
 						'status'   => __( 'forced termination', 'usces' ) . $check_label,
 						'progress' => __( 'The process was not completed', 'usces' ),
-						'flag'     => 'complete',
 						'log'      => 'Error : ' . __( 'The file is not supported.', 'usces' ) . ' ( ' . $org_filename . ' )',
 						'flag'     => 'complete',
 					);
 					record_item_up_progress( $progress );
-					unlink( $upload_folder . $file_name );
+					$file_path = $upload_folder . $new_filename;
+					$real_path = realpath( $file_path );
+					if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+						unlink( $file_path );
+					}
 					return;
 				}
 
-				if ( ! move_uploaded_file( $_FILES['usces_upcsv']['tmp_name'], $upload_folder . $new_filename ) ) {
+				if ( ! move_uploaded_file( $tmp_filename, $upload_folder . $new_filename ) ) {
 					$progress = array(
 						'info'     => $file_info,
 						'status'   => __( 'forced termination', 'usces' ) . $check_label,
@@ -123,7 +135,11 @@ function usces_define_functions() {
 						'flag'     => 'complete',
 					);
 					record_item_up_progress( $progress );
-					unlink( $upload_folder . $file_name );
+					$file_path = $upload_folder . $new_filename;
+					$real_path = realpath( $file_path );
+					if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+						unlink( $file_path );
+					}
 					return;
 				}
 
@@ -138,13 +154,14 @@ function usces_define_functions() {
 			}
 
 			// Registration.
-			if ( isset( $_REQUEST['regfile'] ) && ! WCUtils::is_blank( $_REQUEST['regfile'] ) && isset( $_REQUEST['action'] ) && 'upload_register' === $_REQUEST['action'] ) {
+			if ( isset( $_REQUEST['regfile'] ) && ! empty( $_REQUEST['regfile'] ) && isset( $_REQUEST['action'] ) && 'upload_register' === $_REQUEST['action'] ) {
 
 				$csv_encode_type_sjis = ( isset( $usces->options['system']['csv_encode_type'] ) && 1 === (int) $usces->options['system']['csv_encode_type'] ) ? false : true;
 
-				$upload_mode     = isset( $_REQUEST['mode'] ) ? $_REQUEST['mode'] : '';
+				$upload_mode     = isset( $_REQUEST['mode'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['mode'] ) ) : '';
 				$mode_name       = usces_get_upmode_name( $upload_mode );
-				$file_name       = $_REQUEST['regfile'];
+				$file_name       = sanitize_text_field( wp_unslash( $_REQUEST['regfile'] ) );
+				$file_name       = wel_esc_upload_file_name( $file_name );
 				$decode_filename = base64_decode( $file_name );
 				$decode_filename = wel_esc_upload_file_name( $decode_filename );
 
@@ -172,7 +189,11 @@ function usces_define_functions() {
 						'log'      => 'Error : ' . __( 'The file is not supported.', 'usces' ) . ' ( ' . $file_name . ' )',
 					);
 					record_item_up_progress( $progress );
-					unlink( $upload_folder . $file_name );
+					$file_path = $upload_folder . $file_name;
+					$real_path = realpath( $file_path );
+					if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+						unlink( $file_path );
+					}
 					die( wp_json_encode( $progress ) );
 				}
 				$progress = array(
@@ -203,12 +224,18 @@ function usces_define_functions() {
 					'flag'     => 'complete',
 				);
 				record_item_up_progress( $progress );
-				unlink( $upload_folder . $file_name );
+				$file_path = $upload_folder . $file_name;
+				$real_path = realpath( $file_path );
+				if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+					unlink( $file_path );
+				}
 				die( wp_json_encode( $progress ) );
 			}
 
 			/* read data */
-			if ( ! ( $fpo = fopen( $upload_folder . $file_name, 'r' ) ) ) {
+			$file_path = $upload_folder . $file_name;
+			$fpo       = fopen( $file_path, 'r' );
+			if ( false === $fpo ) {
 				$progress = array(
 					'info'     => $file_info,
 					'status'   => __( 'forced termination', 'usces' ) . $check_label,
@@ -217,7 +244,10 @@ function usces_define_functions() {
 					'flag'     => 'complete',
 				);
 				record_item_up_progress( $progress );
-				unlink( $upload_folder . $file_name );
+				$real_path = realpath( $file_path );
+				if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+					unlink( $file_path );
+				}
 				die( wp_json_encode( $progress ) );
 			}
 
@@ -385,7 +415,6 @@ function usces_define_functions() {
 						'rowcount' => __( 'Number of lines', 'usces' ) . ' ' . $total_num . ' ' . __( 'Number of items', 'usces' ) . ' ' . $column_num,
 						'header'   => $header,
 					);
-
 					if ( $min_field_num > $column_num || ( 0 === $rows_num && 'Post ID' !== $datas[ USCES_COL_POST_ID ] ) ) {
 						$progress = array(
 							'info'     => $file_info,
@@ -395,7 +424,11 @@ function usces_define_functions() {
 							'flag'     => 'complete',
 						);
 						record_item_up_progress( $progress );
-						unlink( $upload_folder . $file_name );
+						$file_path = $upload_folder . $file_name;
+						$real_path = realpath( $file_path );
+						if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+							unlink( $file_path );
+						}
 						die( wp_json_encode( $progress ) );
 					}
 
@@ -405,12 +438,12 @@ function usces_define_functions() {
 					}
 
 					$line_num  = $rows_num + 1;
-					$item_code = ( $usces->options['system']['csv_encode_type'] == 0 ) ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_CODE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_CODE ] );
+					$item_code = ( 0 === (int) $usces->options['system']['csv_encode_type'] ) ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_CODE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_CODE ] );
 
 					// Split processing.
 					if ( $start_number > $work_number ) {
 						if ( $pre_code !== $item_code ) {
-							$work_number++;
+							++$work_number;
 						}
 						$pre_code = $item_code;
 
@@ -433,7 +466,7 @@ function usces_define_functions() {
 							die( wp_json_encode( $progress ) );
 						}
 
-						$work_number++;
+						++$work_number;
 					}
 
 					// Update mode determined.
@@ -441,12 +474,12 @@ function usces_define_functions() {
 						$mode = 'add';
 
 					} else {
-						$post_id = ( ! WCUtils::is_blank( $datas[ USCES_COL_POST_ID ] ) ) ? (int) $datas[ USCES_COL_POST_ID ] : NULL;
+						$post_id = ( ! WCUtils::is_blank( $datas[ USCES_COL_POST_ID ] ) ) ? (int) $datas[ USCES_COL_POST_ID ] : null;
 						if ( $post_id ) {
 							$db_res = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE ID = %d AND post_mime_type = %s", $post_id, 'item' ) );
 							if ( ! $db_res ) {
-								$err_num++;
-								$mes      = 'No.' . $line_num . "\t" . sprintf( __( "Post-ID %s is not product data.", 'usces' ), $post_id );
+								++$err_num;
+								$mes      = 'No.' . $line_num . "\t" . sprintf( __( 'Post-ID %s is not product data.', 'usces' ), $post_id );
 								$progress = array(
 									'log' => $mes,
 								);
@@ -513,12 +546,11 @@ function usces_define_functions() {
 											}
 											$logtemp .= $mes . $yn;
 										}
-
 									} elseif ( 'add' === $mode ) {
 
 										if ( $data != $pre_code ) {
 											if ( $db_res1 && is_array( $db_res1 ) && 0 < count( $db_res1 ) ) {
-												$mes      = 'No.' . $line_num . "\t" . __('This Item-Code has already been used.', 'usces' );
+												$mes      = 'No.' . $line_num . "\t" . __( 'This Item-Code has already been used.', 'usces' );
 												$logtemp .= $mes . $yn;
 												$mes      = '';
 												foreach ( $db_res1 as $res_val ) {
@@ -550,37 +582,37 @@ function usces_define_functions() {
 								break;
 							case USCES_COL_ITEM_GPNUM1:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "1-" . __( 'umerical value is abnormality.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '1-' . __( 'umerical value is abnormality.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
 							case USCES_COL_ITEM_GPDIS1:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) || ( 0 < $datas[ USCES_COL_ITEM_GPNUM1 ] && 1 > $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "1-" . __( 'rate is abnormal.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '1-' . __( 'rate is abnormal.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
 							case USCES_COL_ITEM_GPNUM2:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) || ( $datas[ USCES_COL_ITEM_GPNUM1 ] >= $data && 0 != $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "2-" . __( 'umerical value is abnormality.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '2-' . __( 'umerical value is abnormality.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
 							case USCES_COL_ITEM_GPDIS2:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) || ( 0 < $datas[ USCES_COL_ITEM_GPNUM2 ] && 1 > $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "2-" . __( 'rate is abnormal.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '2-' . __( 'rate is abnormal.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
 							case USCES_COL_ITEM_GPNUM3:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) || ( $datas[ USCES_COL_ITEM_GPNUM2 ] >= $data && 0 != $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "3-" . __( 'umerical value is abnormality.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '3-' . __( 'umerical value is abnormality.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
 							case USCES_COL_ITEM_GPDIS3:
 								if ( ! preg_match( '/^[0-9;]+$/', $data ) || ( 0 < $datas[ USCES_COL_ITEM_GPNUM3 ] && 1 > $data ) ) {
-									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . "3-" . __( 'rate is abnormal.', 'usces' );
+									$mes      = 'No.' . $line_num . "\t" . __( 'Business package discount', 'usces' ) . '3-' . __( 'rate is abnormal.', 'usces' );
 									$logtemp .= $mes . $yn;
 								}
 								break;
@@ -701,8 +733,8 @@ function usces_define_functions() {
 								break;
 							case USCES_COL_SKU_ZAIKONUM:
 								if ( 0 < strlen( $data ) ) {
-									$itemOrderAcceptable = (int) $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ];
-									if ( 1 !== $itemOrderAcceptable ) {
+									$item_oder_acceptable = (int) $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ];
+									if ( 1 !== $item_oder_acceptable ) {
 										if ( ! preg_match( '/^[0-9;]+$/', $data ) ) {
 											$mes      = 'No.' . $line_num . "\t" . __( 'A value of the stock amount is abnormal.', 'usces' );
 											$logtemp .= $mes . $yn;
@@ -785,7 +817,7 @@ function usces_define_functions() {
 
 					// End of data check.
 					if ( 0 < strlen( $logtemp ) ) {
-						$err_num++;
+						++$err_num;
 						$progress = array(
 							'log' => $logtemp,
 						);
@@ -898,7 +930,7 @@ function usces_define_functions() {
 
 								$cdatas['guid'] = '';
 								if ( false === $wpdb->insert( $wpdb->posts, $cdatas ) ) {
-									$err_num++;
+									++$err_num;
 									$pre_code = $item_code;
 
 									$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.', 'usces' );
@@ -917,7 +949,7 @@ function usces_define_functions() {
 
 								$where = array( 'ID' => $post_id );
 								if ( false === $wpdb->update( $wpdb->posts, $cdatas, $where ) ) {
-									$err_num++;
+									++$err_num;
 									$pre_code = $item_code;
 
 									$mes      = 'No.' . $line_num . "\t" . __( 'The data were not registered with a database.', 'usces' );
@@ -968,7 +1000,7 @@ function usces_define_functions() {
 							$query          = stripslashes( $query );
 							$db_res         = $wpdb->query( $query );
 							if ( false === $db_res ) {
-								$err_num++;
+								++$err_num;
 								$pre_code = $item_code;
 
 								$mes      = 'No.' . $line_num . "\t" . __( 'Error : delete postmeta', 'usces' );
@@ -984,7 +1016,7 @@ function usces_define_functions() {
 							$query  = $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s AND post_id = %d", 'wccs_%', $post_id );
 							$db_res = $wpdb->query( $query );
 							if ( false === $db_res ) {
-								$err_num++;
+								++$err_num;
 								$pre_code = $item_code;
 
 								$mes      = 'No.' . $line_num . "\t" . __( 'Error : delete wcct', 'usces' );
@@ -1000,7 +1032,7 @@ function usces_define_functions() {
 							$query  = $wpdb->prepare( "DELETE FROM {$wpdb->posts} WHERE post_parent = %d AND post_type = %s", $post_id, 'revision' );
 							$db_res = $wpdb->query( $query );
 							if ( false === $db_res ) {
-								$err_num++;
+								++$err_num;
 								$pre_code = $item_code;
 
 								$mes      = 'No.' . $line_num . "\t" . __( 'Error : delete revisions', 'usces' );
@@ -1021,30 +1053,30 @@ function usces_define_functions() {
 							// addMeta.
 							// Add postmeta.
 							if ( 'add' === $mode ) {
-								$WelItem         = new Welcart\ItemData( $post_id, false );
-								$item            = $WelItem->get_item_format();
+								$wel_item        = new Welcart\ItemData( $post_id, false );
+								$item            = $wel_item->get_item_format();
 								$item['post_id'] = $post_id;
 							} elseif ( 'upd' === $mode ) {
 								$item = Wel_get_item( $post_id, false );
 							}
 
-							$itemDeliveryMethod  = explode( ';', $datas[ USCES_COL_ITEM_DELIVERYMETHOD ] );
+							$item_delivery_method = explode( ';', $datas[ USCES_COL_ITEM_DELIVERYMETHOD ] );
 
-							$item['itemCode'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_CODE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_CODE ] );
-							$item['itemName'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_NAME ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_NAME ] );
-							$item['itemRestriction'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_RESTRICTION ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_RESTRICTION ] );
-							$item['itemPointrate'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_POINTRATE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_POINTRATE ] );
-							$item['itemGpNum1'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM1 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM1 ] );
-							$item['itemGpDis1'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS1 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS1 ] );
-							$item['itemGpNum2'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM2 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM2 ] );
-							$item['itemGpDis2'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS2 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS2 ] );
-							$item['itemGpNum3'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM3 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM3 ] );
-							$item['itemGpDis3'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS3 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS3 ] );
-							$item['itemShipping'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_SHIPPING ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_SHIPPING ] );
-							$item['itemDeliveryMethod'] = $itemDeliveryMethod;
-							$item['itemShippingCharge'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_SHIPPINGCHARGE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_SHIPPINGCHARGE ] );
+							$item['itemCode']              = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_CODE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_CODE ] );
+							$item['itemName']              = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_NAME ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_NAME ] );
+							$item['itemRestriction']       = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_RESTRICTION ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_RESTRICTION ] );
+							$item['itemPointrate']         = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_POINTRATE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_POINTRATE ] );
+							$item['itemGpNum1']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM1 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM1 ] );
+							$item['itemGpDis1']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS1 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS1 ] );
+							$item['itemGpNum2']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM2 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM2 ] );
+							$item['itemGpDis2']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS2 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS2 ] );
+							$item['itemGpNum3']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPNUM3 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPNUM3 ] );
+							$item['itemGpDis3']            = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_GPDIS3 ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_GPDIS3 ] );
+							$item['itemShipping']          = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_SHIPPING ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_SHIPPING ] );
+							$item['itemDeliveryMethod']    = $item_delivery_method;
+							$item['itemShippingCharge']    = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_SHIPPINGCHARGE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_SHIPPINGCHARGE ] );
 							$item['itemIndividualSCharge'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_INDIVIDUALSCHARGE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_INDIVIDUALSCHARGE ] );
-							$item['itemOrderAcceptable'] = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ] );
+							$item['itemOrderAcceptable']   = $csv_encode_type_sjis ? trim( mb_convert_encoding( $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ], 'UTF-8', 'SJIS' ) ) : trim( $datas[ USCES_COL_ITEM_ORDER_ACCEPTABLE ] );
 
 							wel_update_item_data( $item, $post_id );
 
@@ -1129,7 +1161,7 @@ function usces_define_functions() {
 								}
 							}
 						} else {
-							$sku_index++;
+							++$sku_index;
 						}
 
 						// addSku.
@@ -1179,21 +1211,23 @@ function usces_define_functions() {
 						if ( $pre_code !== $item_code ) {
 							$pre_post_id = ! empty( wel_get_id_by_item_code( $pre_code, false ) ) ? wel_get_id_by_item_code( $pre_code, false ) : $post_id;
 							$skus        = wel_get_skus( $pre_post_id, 'sort', false );
+						} else {
+							$skus = array();
 						}
 					}
 					$pre_code       = $item_code;
 					$pre_skus_count = count( (array) $skus );
-					$comp_num++;
+					++$comp_num;
 
 					do_action(
 						'usces_after_uploadcsv_line_processed',
-						[
-							'line' => $line,
-							'datas' => $datas,
+						array(
+							'line'       => $line,
+							'datas'      => $datas,
 							'check_mode' => $check_mode,
-							'post_id' => $post_id,
-							'sku' => !empty($sku) ? $sku : null,
-						]
+							'post_id'    => $post_id,
+							'sku'        => ! empty( $sku ) ? $sku : null,
+						)
 					);
 
 					// Status update.
@@ -1218,12 +1252,12 @@ function usces_define_functions() {
 
 			do_action(
 				'usces_after_uploadcsv_lines_processed',
-				[
-					'lines' => $lines,
-					'datas' => $datas,
+				array(
+					'lines'      => $lines,
+					'datas'      => $datas,
 					'check_mode' => $check_mode,
-					'error' => $error,
-				]
+					'error'      => $error,
+				)
 			);
 
 			// Final status.
@@ -1249,8 +1283,10 @@ function usces_define_functions() {
 				);
 				record_item_up_progress( $progress );
 			}
-			if ( file_exists( $upload_folder . $file_name ) ) {
-				unlink( $upload_folder . $file_name );
+			$file_path = $upload_folder . $file_name;
+			$real_path = realpath( $file_path );
+			if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+				unlink( $file_path );
 			}
 			die( wp_json_encode( $progress ) );
 		}
@@ -1290,7 +1326,7 @@ function usces_define_functions() {
 			update_option( 'usces_opt_item', $usces_opt_item );
 
 			// Get data.
-			$tableName  = $wpdb->posts;
+			$table_name = $wpdb->posts;
 			$arr_column = array(
 				__( 'Post ID', 'usces' )        => 'post_id',
 				__( 'item code', 'usces' )      => 'item_code',
@@ -1304,11 +1340,11 @@ function usces_define_functions() {
 			);
 
 			$_REQUEST['searchIn'] = 'searchIn';
-			$DT                   = new dataList( $tableName, $arr_column );
-			$DT->pageLimit        = 'off';
-			$DT->exportMode       = true;
-			$res                  = $DT->MakeTable();
-			$rows                 = $DT->rows;
+			$dt                   = new dataList( $table_name, $arr_column );
+			$dt->pageLimit        = 'off';
+			$dt->exportMode       = true;
+			$res                  = $dt->MakeTable();
+			$rows                 = $dt->rows;
 
 			// Processing branch for each mode.
 			$results = apply_filters( 'usces_filter_item_downloadcsv_mode', array(), $rows, $usces_opt_item );
@@ -1387,15 +1423,28 @@ function usces_define_functions() {
 					$line .= $lf;
 				}
 
-				mb_http_output( 'pass' );
-				set_time_limit( 3600 );
-				header( 'Content-Type: application/octet-stream' );
-				header( 'Content-Disposition: attachment; filename=usces_item_list.' . $ext );
-				@ob_end_flush();
-				flush();
-
 				$category_format_slug = ( isset( $usces->options['system']['csv_category_format'] ) && 1 === (int) $usces->options['system']['csv_category_format'] ) ? true : false;
 				$csv_encode_type_sjis = ( isset( $usces->options['system']['csv_encode_type'] ) && 1 === (int) $usces->options['system']['csv_encode_type'] ) ? false : true;
+
+				while ( @ob_get_level() > 0 ) {
+					ob_end_flush();
+				}
+				flush();
+
+				if ( $csv_encode_type_sjis ) {
+					$charset = 'Shift_JIS';
+				} else {
+					$charset = 'UTF-8';
+				}
+
+				mb_http_output( 'pass' );
+				set_time_limit( 3600 );
+				header( 'Content-Type: application/octet-stream; charset=' . $charset );
+				header( 'Content-Disposition: attachment; filename=usces_item_list.' . $ext );
+
+				if ( ! $csv_encode_type_sjis ) {
+					echo "\xEF\xBB\xBF";
+				}
 
 				// Outupt data.
 				foreach ( (array) $rows as $row ) {
@@ -1416,20 +1465,20 @@ function usces_define_functions() {
 					$line_item .= $td_h . urldecode( $post->post_name ) . $td_f;
 					$line_item .= $td_h . $post->post_date . $td_f;
 
-					//Item Meta.
+					// Item Meta.
 					$line_item .= $td_h . $product['itemCode'] . $td_f;
 					$line_item .= $td_h . usces_entity_decode( $product['itemName'], $ext ) . $td_f;
 					$line_item .= $td_h . $product['itemRestriction'] . $td_f;
 					$line_item .= $td_h . $product['itemPointrate'] . $td_f;
 					$line_item .= $td_h . $product['itemGpNum1'] . $td_f . $td_h . $product['itemGpDis1'] . $td_f;
-					$line_item .= $td_h . $product['itemGpNum2'] . $td_f . $td_h . $product['itemGpDis2']  . $td_f;
-					$line_item .= $td_h . $product['itemGpNum3'] . $td_f . $td_h . $product['itemGpDis3']  . $td_f;
+					$line_item .= $td_h . $product['itemGpNum2'] . $td_f . $td_h . $product['itemGpDis2'] . $td_f;
+					$line_item .= $td_h . $product['itemGpNum3'] . $td_f . $td_h . $product['itemGpDis3'] . $td_f;
 					$line_item .= $td_h . $product['itemOrderAcceptable'] . $td_f;
 					$line_item .= $td_h . $product['itemShipping'] . $td_f;
 
-					$delivery_method    = '';
-					$itemDeliveryMethod = $product['itemDeliveryMethod'];
-					foreach ( (array) $itemDeliveryMethod as $k => $v ) {
+					$delivery_method      = '';
+					$item_delivery_method = $product['itemDeliveryMethod'];
+					foreach ( (array) $item_delivery_method as $k => $v ) {
 						$delivery_method .= $v . $sp;
 					}
 					$delivery_method = rtrim( $delivery_method, $sp );
@@ -1536,8 +1585,11 @@ function usces_define_functions() {
 						$line .= $line_item . $line_sku . $line_options . $lf;
 					}
 					if ( $csv_encode_type_sjis ) {
-						$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), "UTF-8" );
+						$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), 'UTF-8' );
 					}
+
+					// This is a direct binary/CSV download response, so HTML escaping is not applicable.
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					print( $line );
 
 					if ( ob_get_contents() ) {
@@ -1549,9 +1601,10 @@ function usces_define_functions() {
 				}
 			}
 
-			unset( $rows, $DT, $line, $line_item, $line_options, $line_sku );
+			unset( $rows, $dt, $line, $line_item, $line_options, $line_sku );
 			exit();
 		}
+
 	endif;// End of All columns Product CSV download.
 
 	/**
@@ -1565,7 +1618,7 @@ function usces_define_functions() {
 		global $wpdb, $usces;
 
 		$upload_folder = WP_CONTENT_DIR . USCES_UPLOAD_TEMP . '/';
-		$file_name     = $_REQUEST['regfile'];
+		$file_name     = isset( $_REQUEST['regfile'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['regfile'] ) ) : '';
 		$file_name     = wel_esc_upload_file_name( $file_name );
 
 		$comp_num     = isset( $_REQUEST['comp_num'] ) ? (int) $_REQUEST['comp_num'] : 0;
@@ -1577,7 +1630,7 @@ function usces_define_functions() {
 		$check_mode   = isset( $_REQUEST['checkcsv'] ) ? true : false;
 		$check_label  = $check_mode ? __( '[Check mode]', 'usces' ) : '';
 		$work_number  = 0;
-		$error      = false;
+		$error        = false;
 
 		$yn = "\n";
 
@@ -1612,7 +1665,12 @@ function usces_define_functions() {
 				);
 				record_item_up_progress( $progress );
 				$error = true;
-				unlink( $upload_folder . $file_name );
+
+				$file_path = $upload_folder . $file_name;
+				$real_path = realpath( $file_path );
+				if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+					unlink( $file_path );
+				}
 				$results = compact( 'error', 'total_num', 'comp_num', 'err_num', 'line_num', 'file_info' );
 				return $results;
 			}
@@ -1626,7 +1684,7 @@ function usces_define_functions() {
 
 			// Split processing.
 			if ( $start_number > $work_number ) {
-				$work_number++;
+				++$work_number;
 				continue;
 			}
 			if ( 0 === ( $work_number % ( USCES_ITEM_UP_INTERBAL * 10 ) ) && $start_number != $work_number ) {
@@ -1644,7 +1702,7 @@ function usces_define_functions() {
 				record_item_up_progress( $progress );
 				die( wp_json_encode( $progress ) );
 			}
-			$work_number++;
+			++$work_number;
 
 			// Column check loop.
 			foreach ( $datas as $key => $data ) {
@@ -1657,12 +1715,12 @@ function usces_define_functions() {
 					case 0:// Post ID.
 						if ( $post_id ) {
 							if ( false === $product ) {
-								$err_num++;
+								++$err_num;
 								$mes      = 'No.' . $line_num . "\t" . sprintf( __( 'Post-ID %s does not exist in the database.', 'usces' ), $post_id );
 								$logtemp .= $mes . $yn;
 							}
 						} else {
-							$err_num++;
+							++$err_num;
 							$mes      = 'No.' . $line_num . "\t" . __( 'A value of the Post-ID is abnormal.', 'usces' );
 							$logtemp .= $mes . $yn;
 						}
@@ -1679,12 +1737,12 @@ function usces_define_functions() {
 								}
 							}
 							if ( false === $meta_flag ) {
-								$err_num++;
-								$mes      = 'No.' . $line_num . "\t" . sprintf( __( "Meta ID %s does not exist in the database.", 'usces' ), $meta_id );
+								++$err_num;
+								$mes      = 'No.' . $line_num . "\t" . sprintf( __( 'Meta ID %s does not exist in the database.', 'usces' ), $meta_id );
 								$logtemp .= $mes . $yn;
 							}
 						} else {
-							$err_num++;
+							++$err_num;
 							$mes      = 'No.' . $line_num . "\t" . __( 'A value of the Meta ID is abnormal.', 'usces' );
 							$logtemp .= $mes . $yn;
 						}
@@ -1714,12 +1772,12 @@ function usces_define_functions() {
 							$logtemp .= $mes . $yn;
 						}
 						break;
-					}
+				}
 			}
 
 			// End of data check.
 			if ( 0 < strlen( $logtemp ) ) {
-				$err_num++;
+				++$err_num;
 				$progress = array(
 					'log' => $logtemp,
 				);
@@ -1735,7 +1793,7 @@ function usces_define_functions() {
 				$skus    = wel_get_skus( $post_id, 'meta_id', false );
 				$sku     = $skus[ $meta_id ];
 				if ( empty( $skus ) || ! isset( $skus[ $meta_id ] ) ) {
-					$err_num++;
+					++$err_num;
 					$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.', 'usces' );
 					$progress = array(
 						'log' => $mes,
@@ -1753,7 +1811,7 @@ function usces_define_functions() {
 				$db_res = wel_update_sku_data_by_id( $meta_id, $post_id, $sku );
 
 				if ( 0 > $db_res ) {
-					$err_num++;
+					++$err_num;
 					$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.', 'usces' );
 					$progress = array(
 						'log' => $mes,
@@ -1764,7 +1822,7 @@ function usces_define_functions() {
 				}
 				wp_cache_delete( $post_id, 'post_meta' );
 			}
-			$comp_num++;
+			++$comp_num;
 
 			if ( 0 === ( $line_num % 10 ) ) {
 				$progress = array(
@@ -1820,12 +1878,25 @@ function usces_define_functions() {
 			$line .= $lf;
 		}
 
+		while ( @ob_get_level() > 0 ) {
+			ob_end_flush();
+		}
+		flush();
+
+		if ( $csv_encode_type_sjis ) {
+			$charset = 'Shift_JIS';
+		} else {
+			$charset = 'UTF-8';
+		}
+
 		mb_http_output( 'pass' );
 		set_time_limit( 3600 );
-		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Type: application/octet-stream; charset=' . $charset );
 		header( 'Content-Disposition: attachment; filename=usces_item_list.' . $ext );
-		@ob_end_flush();
-		flush();
+
+		if ( ! $csv_encode_type_sjis ) {
+			echo "\xEF\xBB\xBF";
+		}
 
 		foreach ( (array) $rows as $row ) {
 
@@ -1849,6 +1920,9 @@ function usces_define_functions() {
 			if ( $csv_encode_type_sjis ) {
 				$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), 'UTF-8' );
 			}
+
+			// This is a direct binary/CSV download response, so HTML escaping is not applicable.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			print( $line );
 
 			if ( ob_get_contents() ) {
@@ -1880,7 +1954,7 @@ function usces_define_functions() {
 			global $wpdb, $usces;
 
 			$upload_folder = WP_CONTENT_DIR . USCES_UPLOAD_TEMP . '/';
-			$file_name     = $_REQUEST['regfile'];
+			$file_name     = isset( $_REQUEST['regfile'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['regfile'] ) ) : '';
 			$file_name     = wel_esc_upload_file_name( $file_name );
 
 			$comp_num     = isset( $_REQUEST['comp_num'] ) ? (int) $_REQUEST['comp_num'] : 0;
@@ -1928,7 +2002,12 @@ function usces_define_functions() {
 					);
 					record_item_up_progress( $progress );
 					$error = true;
-					unlink( $upload_folder . $file_name );
+
+					$file_path = $upload_folder . $file_name;
+					$real_path = realpath( $file_path );
+					if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+						unlink( $file_path );
+					}
 					$results = compact( 'error', 'total_num', 'comp_num', 'err_num', 'line_num', 'file_info' );
 					return $results;
 				}
@@ -1942,7 +2021,7 @@ function usces_define_functions() {
 
 				// Split processing.
 				if ( $start_number > $work_number ) {
-					$work_number++;
+					++$work_number;
 					continue;
 				}
 				if ( 0 === ( $work_number % ( USCES_ITEM_UP_INTERBAL * 10 ) ) && $start_number !== $work_number ) {
@@ -1960,7 +2039,7 @@ function usces_define_functions() {
 					record_item_up_progress( $progress );
 					die( wp_json_encode( $progress ) );
 				}
-				$work_number++;
+				++$work_number;
 
 				// Column check loop.
 				foreach ( $datas as $key => $data ) {
@@ -1973,12 +2052,12 @@ function usces_define_functions() {
 						case 0:// Post ID.
 							if ( $post_id ) {
 								if ( false === $product ) {
-									$err_num++;
-									$mes      = 'No.' . $line_num . "\t" . sprintf( __( "Post-ID %s does not exist in the database.", 'usces' ), $post_id );
+									++$err_num;
+									$mes      = 'No.' . $line_num . "\t" . sprintf( __( 'Post-ID %s does not exist in the database.', 'usces' ), $post_id );
 									$logtemp .= $mes . $yn;
 								}
 							} else {
-								$err_num++;
+								++$err_num;
 								$mes      = 'No.' . $line_num . "\t" . __( 'A value of the Post-ID is abnormal.', 'usces' );
 								$logtemp .= $mes . $yn;
 							}
@@ -1995,12 +2074,12 @@ function usces_define_functions() {
 									}
 								}
 								if ( false === $meta_flag ) {
-									$err_num++;
-									$mes      = 'No.' . $line_num . "\t" . sprintf( __( "Meta ID %s does not exist in the database.", 'usces' ), $meta_id );
+									++$err_num;
+									$mes      = 'No.' . $line_num . "\t" . sprintf( __( 'Meta ID %s does not exist in the database.', 'usces' ), $meta_id );
 									$logtemp .= $mes . $yn;
 								}
 							} else {
-								$err_num++;
+								++$err_num;
 								$mes      = 'No.' . $line_num . "\t" . __( 'A value of the Meta ID is abnormal.', 'usces' );
 								$logtemp .= $mes . $yn;
 							}
@@ -2066,7 +2145,7 @@ function usces_define_functions() {
 
 				// End of data check.
 				if ( 0 < strlen( $logtemp ) ) {
-					$err_num++;
+					++$err_num;
 					$progress = array(
 						'log' => $logtemp,
 					);
@@ -2082,7 +2161,7 @@ function usces_define_functions() {
 					$skus    = wel_get_skus( $post_id, 'meta_id', false );
 					$sku     = $skus[ $meta_id ];
 					if ( empty( $skus ) || ! isset( $skus[ $meta_id ] ) ) {
-						$err_num++;
+						++$err_num;
 						$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.2', 'usces' );
 						$progress = array(
 							'log' => $mes,
@@ -2107,7 +2186,7 @@ function usces_define_functions() {
 					$db_res = wel_update_sku_data_by_id( $meta_id, $post_id, $sku );
 
 					if ( 0 > $db_res ) {
-						$err_num++;
+						++$err_num;
 						$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.', 'usces' );
 						$progress = array(
 							'log' => $mes,
@@ -2118,7 +2197,7 @@ function usces_define_functions() {
 					}
 					wp_cache_delete( $post_id, 'post_meta' );
 				}
-				$comp_num++;
+				++$comp_num;
 
 				if ( 0 === ( $line_num % 10 ) ) {
 					$progress = array(
@@ -2191,12 +2270,25 @@ function usces_define_functions() {
 				$line .= $tr_f . $lf;
 			}
 
+			while ( @ob_get_level() > 0 ) {
+				ob_end_flush();
+			}
+			flush();
+
+			if ( $csv_encode_type_sjis ) {
+				$charset = 'Shift_JIS';
+			} else {
+				$charset = 'UTF-8';
+			}
+
 			mb_http_output( 'pass' );
 			set_time_limit( 3600 );
-			header( 'Content-Type: application/octet-stream' );
+			header( 'Content-Type: application/octet-stream; charset=' . $charset );
 			header( 'Content-Disposition: attachment; filename=usces_item_list.' . $ext );
-			@ob_end_flush();
-			flush();
+
+			if ( ! $csv_encode_type_sjis ) {
+				echo "\xEF\xBB\xBF";
+			}
 
 			foreach ( (array) $rows as $row ) {
 
@@ -2227,6 +2319,9 @@ function usces_define_functions() {
 				if ( $csv_encode_type_sjis ) {
 					$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), 'UTF-8' );
 				}
+
+				// This is a direct binary/CSV download response, so HTML escaping is not applicable.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				print( $line );
 
 				if ( ob_get_contents() ) {
@@ -2241,6 +2336,7 @@ function usces_define_functions() {
 
 			return $results;
 		}
+
 	endif;// End of SKU columns Product CSV download.
 
 	/**
@@ -2254,7 +2350,7 @@ function usces_define_functions() {
 		global $wpdb, $usces;
 
 		$upload_folder = WP_CONTENT_DIR . USCES_UPLOAD_TEMP . '/';
-		$file_name     = $_REQUEST['regfile'];
+		$file_name     = isset( $_REQUEST['regfile'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['regfile'] ) ) : '';
 		$file_name     = wel_esc_upload_file_name( $file_name );
 
 		$comp_num     = isset( $_REQUEST['comp_num'] ) ? (int) $_REQUEST['comp_num'] : 0;
@@ -2308,7 +2404,12 @@ function usces_define_functions() {
 					);
 					record_item_up_progress( $progress );
 					$error = true;
-					unlink( $upload_folder . $file_name );
+
+					$file_path = $upload_folder . $file_name;
+					$real_path = realpath( $file_path );
+					if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+						unlink( $file_path );
+					}
 					$results = compact( 'error', 'total_num', 'comp_num', 'err_num', 'line_num', 'file_info' );
 					return $results;
 				}
@@ -2321,8 +2422,8 @@ function usces_define_functions() {
 
 			// Split processing.
 			if ( $start_number > $work_number ) {
-				$work_number++;
-				$comp_num++;
+				++$work_number;
+				++$comp_num;
 				continue;
 			}
 			if ( 0 === ( $work_number % ( USCES_ITEM_UP_INTERBAL * 2 ) ) && $start_number !== $work_number ) {
@@ -2340,7 +2441,7 @@ function usces_define_functions() {
 				record_item_up_progress( $progress );
 				die( wp_json_encode( $progress ) );
 			}
-			$work_number++;
+			++$work_number;
 
 			// Column check loop.
 			foreach ( $datas as $key => $data ) {
@@ -2383,7 +2484,7 @@ function usces_define_functions() {
 				}
 			}
 
-			$comp_num++;
+			++$comp_num;
 
 			if ( 0 === ( $line_num % 10 ) ) {
 				$progress = array(
@@ -2475,16 +2576,32 @@ function usces_define_functions() {
 		$line  = trim( $line, ',' );
 		$line .= $lf;
 
+		while ( @ob_get_level() > 0 ) {
+			ob_end_flush();
+		}
+		flush();
+
+		if ( $csv_encode_type_sjis ) {
+			$charset = 'Shift_JIS';
+		} else {
+			$charset = 'UTF-8';
+		}
+
 		mb_http_output( 'pass' );
 		set_time_limit( 3600 );
-		header( 'Content-Type: application/octet-stream' );
+		header( 'Content-Type: application/octet-stream; charset=' . $charset );
 		header( 'Content-Disposition: attachment; filename=usces_item_meta.' . $ext );
-		@ob_end_flush();
-		flush();
+
+		if ( ! $csv_encode_type_sjis ) {
+			echo "\xEF\xBB\xBF";
+		}
 
 		if ( $csv_encode_type_sjis ) {
 			$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), 'UTF-8' );
 		}
+
+		// This is a direct binary/CSV download response, so HTML escaping is not applicable.
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		print( $line );
 
 		foreach ( $data as $d ) {
@@ -2499,6 +2616,9 @@ function usces_define_functions() {
 			if ( $csv_encode_type_sjis ) {
 				$line = mb_convert_encoding( $line, apply_filters( 'usces_filter_output_csv_encode', 'SJIS-win' ), 'UTF-8' );
 			}
+
+			// This is a direct binary/CSV download response, so HTML escaping is not applicable.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			print( $line );
 
 			if ( ob_get_contents() ) {
@@ -2518,6 +2638,10 @@ function usces_define_functions() {
  * @return array
  */
 function usces_make_line_data( $line ) {
+
+	if ( 0 === strpos( $line, "\xEF\xBB\xBF" ) ) {
+		$line = substr( $line, 3 );
+	}
 
 	$datas  = array();
 	$array  = explode( ',', $line );
@@ -2660,7 +2784,7 @@ function usces_item_code_duplication_check() {
 		GROUP BY `itemCode` HAVING COUNT(*) > 1",
 		'post'
 	);
-	$res = $wpdb->get_results( $query, ARRAY_A );
+	$res   = $wpdb->get_results( $query, ARRAY_A );
 	return $res;
 }
 
@@ -2681,14 +2805,15 @@ function record_item_up_progress( $arr_content ) {
 			file_put_contents( $progress_file, wp_json_encode( $arr_content ) );
 		}
 		if ( isset( $arr_content['log'] ) ) {
-			$log_file = $upload_folder . 'log.txt';
+			$file_path = $upload_folder . 'log.txt';
+			$real_path = realpath( $file_path );
 			if ( 'clear' === $arr_content['log'] ) {
-				if ( file_exists( $log_file ) ) {
-					unlink( $log_file );
+				if ( false !== $real_path && $real_path === $file_path && file_exists( $file_path ) ) {
+					unlink( $file_path );
 				}
 			} else {
 				$add_text = $arr_content['log'] . "\n";
-				file_put_contents( $log_file, $add_text, FILE_APPEND | LOCK_EX );
+				file_put_contents( $file_path, $add_text, FILE_APPEND | LOCK_EX );
 			}
 		}
 	}
