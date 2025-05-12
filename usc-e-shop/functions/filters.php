@@ -2595,7 +2595,7 @@ function wel_execute_release_card_update_lock( $member_action ) {
  */
 function usces_auto_update_welcart( $update, $item ) {
 	$targets = array( 'usc-e-shop' );
-	if ( in_array( $item->slug, $targets ) ) {
+	if ( in_array( $item->slug ?? '', $targets ) ) {
 
 		$available_updates = get_site_transient( 'update_plugins' );
 		if ( ! isset( $available_updates->response['usc-e-shop/usc-e-shop.php'] ) ) {
@@ -2665,4 +2665,15 @@ function wel_credit_security_unlock() {
 	wel_all_unlock();
 
 	wp_send_json( $res );
+}
+
+/**
+ * Log member data delete.
+ *
+ * @param array $res Result.
+ * @param int   $mem_id Member ID.
+ * @return void
+ */
+function wel_member_data_delete_log( $res, $mem_id ) {
+	usces_log( 'Res: ' . print_r( $res, true ) . ' $_POST: ' . print_r( $_POST, true ) . ' $_GET: ' . print_r( $_GET, true ), 'db', 'member_delete', $mem_id );
 }

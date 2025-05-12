@@ -270,7 +270,7 @@ class WELCARTPAY_SETTLEMENT extends ESCOTT_MAIN {
 		$available_settlement = get_option( 'usces_available_settlement', array() );
 		if ( ! in_array( 'welcart', $available_settlement, true ) ) {
 			$settlement           = array(
-				'welcart' => __( 'WelcartPay', 'usces' ),
+				'welcart' => $this->acting_name,
 			);
 			$available_settlement = array_merge( $settlement, $available_settlement );
 			update_option( 'usces_available_settlement', $available_settlement );
@@ -6462,7 +6462,7 @@ jQuery.event.add( window, "load", function() {
 		}
 		$today       = date_i18n( 'YmdHi', current_time( 'timestamp' ) );
 		$acting_data = usces_unserialize( $usces->get_order_meta_value( 'acting_welcart_conv', $order_id ) );
-		if ( $today > $acting_data['PayLimit'] ) {
+		if ( ! empty( $acting_data['PayLimit'] ) && $today > $acting_data['PayLimit'] ) {
 			$expiration = true;
 		}
 		return $expiration;

@@ -26,13 +26,13 @@
 		},
 
 		additemopt : function() {
-			if($("#optkeyselect").val() == "#NONE#") return;
+			if( undefined == $("#optkeyselect").val() || $("#optkeyselect").val() == "#NONE#") return;
 
 			var id = $("#post_ID").val();
 			var name = $("#optkeyselect option:selected").html();
 			var value = $("#newoptvalue").val();
 			var means = $("#newoptmeans").val();
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 
@@ -90,7 +90,7 @@
 			var name = $("#newoptname").val();
 			var value = $("#newoptvalue").val();
 			var means = $("#newoptmeans").val();
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 
@@ -149,7 +149,7 @@
 
 		updateitemopt : function(meta_id) {
 			var id = $("#post_ID").val();
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 
@@ -171,6 +171,21 @@
 			var mes = '';
 			if( '' == name ){
 				mes += '<p>'+uscesL10n.message[0]+'</p>';
+			} else {
+				var check = true;
+				$("input[name*='[name]']").each(function() {
+					var thisName = $(this).attr('name');
+					var match = thisName.match(/itemopt\[(\d+)\]/);
+					if (match && match[1]) {
+						var thisId = +match[1];
+						if (thisId != meta_id && $(this).val() == name) {
+							check = false;
+						}
+					}
+				});
+				if( !check ){
+					mes += '<p>'+uscesL10n.message[1]+'</p>';
+				}
 			}
 			if( '' == value && (0 == means || 1 == means || 3 == means || 4 == means) ){
 				mes += '<p>'+uscesL10n.message[2]+'</p>';
@@ -203,7 +218,7 @@
 			$("#itemopt-" + meta_id).css({'background-color': '#F00'});
 			$("#itemopt-" + meta_id).animate({ 'background-color': '#FFFFEE' }, 1000 );
 			var id = $("#post_ID").val();
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 
@@ -224,7 +239,7 @@
 				return;
 			}
 			var id = uscesL10n.cart_number;
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 
@@ -256,7 +271,7 @@
 			var id = $("#post_ID").val();
 			var meta_id_str = str.replace(/itemopt-/g, "");
 			var meta_ids = meta_id_str.split(',');
-	
+
 			var wc_nonce = $("#wc_nonce").val();
 			var _wp_http_referer = $("input[name='_wp_http_referer']").val();
 

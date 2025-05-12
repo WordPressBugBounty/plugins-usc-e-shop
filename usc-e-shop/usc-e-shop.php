@@ -3,7 +3,7 @@
  * Plugin Name: Welcart e-Commerce
  * Plugin URI: https://www.welcart.com/
  * Description: Welcart builds the management system with a net shop on WordPress.
- * Version: 2.11.14
+ * Version: 2.11.15
  * Author: Welcart Inc.
  * Author URI: https://www.welcart.com/
  * License: GPLv2 or later
@@ -16,7 +16,7 @@
  * @package Welcart
  */
 
-define( 'USCES_VERSION', '2.11.14.2504301' );
+define( 'USCES_VERSION', '2.11.15.2505121' );
 define( 'USCES_DB_ACCESS', '1.5' );
 define( 'USCES_DB_MEMBER', '1.1' );
 define( 'USCES_DB_MEMBER_META', '1.1' );
@@ -29,7 +29,7 @@ define( 'USCES_DB_ACTING_LOG', '1.0' );
 define( 'USCES_DB_ITEM', '1.2' );
 define( 'USCES_DB_SKUS', '1.2' );
 define( 'USCES_DB_OPTS', '1.0' );
-define( 'USCES_DB_ADMIN_LOG', '1.0' );
+define( 'USCES_DB_ADMIN_LOG', '1.1' );
 
 define( 'USCES_UP07', 1 );
 define( 'USCES_UP11', 2 );

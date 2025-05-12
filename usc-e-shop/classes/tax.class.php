@@ -125,7 +125,6 @@ class Welcart_Tax {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->reduced_taxrate_mark = apply_filters( 'usces_filter_reduced_taxrate_mark', __( '(*)', 'usces' ) );
 		$this->initialize_data();
 	}
 
@@ -157,6 +156,13 @@ class Welcart_Tax {
 		$this->tax               = 0;
 		$this->cart_standard     = array();
 		$this->cart_reduced      = array();
+	}
+
+	/**
+	 * Load textdomain.
+	 */
+	public function load_textdomain() {
+		$this->reduced_taxrate_mark = apply_filters( 'usces_filter_reduced_taxrate_mark', __( '(*)', 'usces' ) );
 	}
 
 	/**

@@ -30,21 +30,27 @@ class usces_settlement {
 
 		$this->available_settlement = get_option( 'usces_available_settlement', array() );
 		$this->settlement_selected  = get_option( 'usces_settlement_selected', array() );
+		add_action( 'init', array( $this, 'init' ), 1 );
+	}
+
+	/**
+	 * Init.
+	 */
+	public function init() {
 
 		/**
 		 * 初期設定
-		 * (initial.php)
 		 *
 		 * $available_settlement = array(
-		 * 'zeus'         => __( 'ZEUS Japanese Settlement', 'usces' ),
-		 * 'remise'       => __( 'Remise Japanese Settlement', 'usces' ),
-		 * 'jpayment'     => 'ROBOT PAYMENT',
-		 * 'telecom'      => 'テレコムクレジット',
-		 * 'digitalcheck' => 'メタップスペイメント',
-		 * 'mizuho'       => 'みずほファクター',
-		 * 'anotherlane'  => 'アナザーレーン',
-		 * 'veritrans'    => 'ベリトランス Air-Web',
-		 * 'paygent'      => 'ペイジェント',
+		 * 'zeus'         => ゼウス,
+		 * 'remise'       => ルミーズ,
+		 * 'jpayment'     => ROBOT PAYMENT,
+		 * 'telecom'      => テレコムクレジット,
+		 * 'digitalcheck' => メタップスペイメント,
+		 * 'mizuho'       => みずほファクター,
+		 * 'anotherlane'  => アナザーレーン,
+		 * 'veritrans'    => ベリトランス Air-Web,
+		 * 'paygent'      => ペイジェント,
 		 *);
 		 */
 		if ( in_array( 'veritrans', $this->available_settlement, true ) ) {

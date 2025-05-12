@@ -14,7 +14,7 @@ add_action( 'init', array( &$usces, 'main' ), 10 );
 add_action( 'admin_init', 'usces_redirect', 10 );
 add_action( 'admin_init', 'usces_typenow' );
 add_action( 'plugins_loaded', 'usces_responce_wcsite' );
-add_action( 'plugins_loaded', 'usces_instance_settlement' );
+add_action( 'init', 'usces_instance_settlement' );
 add_action( 'plugins_loaded', 'usces_instance_extentions' );
 add_action( 'admin_menu', array( &$usces, 'add_pages' ) );
 add_action( 'admin_head', array( &$usces, 'admin_head' ) );
@@ -264,3 +264,6 @@ add_action( 'wp_ajax_credit_security_unlock', 'wel_credit_security_unlock' );
 // Paidy application.
 add_action( 'wp_dashboard_setup', array( InstantPaidyDashboard::get_instance(), 'register_widget' ) );
 add_action( 'wp_ajax_paidy_application', array( InstantPaidyDashboard::get_instance(), 'handle_ajax' ) );
+
+// Log member data delete.
+add_action( 'usces_action_post_delete_memberdata', 'wel_member_data_delete_log', 10, 2 );

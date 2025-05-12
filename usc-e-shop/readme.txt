@@ -2,9 +2,9 @@
 Contributors: uscnanbu
 Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.11.14
+Stable tag: 2.11.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,16 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+12 May 2025
+ = V2.11.15 =
+-----------
+* Supported WordPress 6.8.
+* Fixed an issue that error messages were not cleared when exporting the item CSV.
+* Fixed a bug that allowed multiple registrations of the same option name (common options and item options).
+* Fixed a bug that allowed registering item options without any common options.
+* Added an index to the operation log.
+* Fixed PHP errors.
 
 30 Apr 2025
  = V2.11.14 =

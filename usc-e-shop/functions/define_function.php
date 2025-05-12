@@ -1427,9 +1427,8 @@ function usces_define_functions() {
 				$csv_encode_type_sjis = ( isset( $usces->options['system']['csv_encode_type'] ) && 1 === (int) $usces->options['system']['csv_encode_type'] ) ? false : true;
 
 				while ( @ob_get_level() > 0 ) {
-					ob_end_flush();
+					ob_end_clean();
 				}
-				flush();
 
 				if ( $csv_encode_type_sjis ) {
 					$charset = 'Shift_JIS';
@@ -1591,11 +1590,8 @@ function usces_define_functions() {
 					// This is a direct binary/CSV download response, so HTML escaping is not applicable.
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					print( $line );
+					flush();
 
-					if ( ob_get_contents() ) {
-						ob_flush();
-						flush();
-					}
 					$line = '';
 					wp_cache_flush();
 				}
@@ -1879,9 +1875,8 @@ function usces_define_functions() {
 		}
 
 		while ( @ob_get_level() > 0 ) {
-			ob_end_flush();
+			ob_end_clean();
 		}
-		flush();
 
 		if ( $csv_encode_type_sjis ) {
 			$charset = 'Shift_JIS';
@@ -1924,11 +1919,8 @@ function usces_define_functions() {
 			// This is a direct binary/CSV download response, so HTML escaping is not applicable.
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			print( $line );
+			flush();
 
-			if ( ob_get_contents() ) {
-				ob_flush();
-				flush();
-			}
 			$line = '';
 			wp_cache_flush();
 		}
@@ -2271,9 +2263,8 @@ function usces_define_functions() {
 			}
 
 			while ( @ob_get_level() > 0 ) {
-				ob_end_flush();
+				ob_end_clean();
 			}
-			flush();
 
 			if ( $csv_encode_type_sjis ) {
 				$charset = 'Shift_JIS';
@@ -2323,11 +2314,8 @@ function usces_define_functions() {
 				// This is a direct binary/CSV download response, so HTML escaping is not applicable.
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				print( $line );
+				flush();
 
-				if ( ob_get_contents() ) {
-					ob_flush();
-					flush();
-				}
 				$line = '';
 				wp_cache_flush();
 			}
@@ -2577,9 +2565,8 @@ function usces_define_functions() {
 		$line .= $lf;
 
 		while ( @ob_get_level() > 0 ) {
-			ob_end_flush();
+			ob_end_clean();
 		}
-		flush();
 
 		if ( $csv_encode_type_sjis ) {
 			$charset = 'Shift_JIS';
@@ -2620,11 +2607,8 @@ function usces_define_functions() {
 			// This is a direct binary/CSV download response, so HTML escaping is not applicable.
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			print( $line );
+			flush();
 
-			if ( ob_get_contents() ) {
-				ob_flush();
-				flush();
-			}
 		}
 		exit();
 	}

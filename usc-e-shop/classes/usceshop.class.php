@@ -96,15 +96,12 @@ class usc_e_shop {
 
 		do_action( 'usces_construct' );
 
-		if ( is_admin() ) {
-			// clean_term_cache( get_option( 'usces_item_cat_parent_id' ), 'category' );
-		}
+		add_action( 'init', array( $this, 'init' ), 1 );
 
 		$locales = usces_locales();
 		foreach ( $locales as $l ) {
 			$usces_settings['language'][ $l ] = $l;
 		}
-		$usces_settings['language']['others'] = __( 'Follow config.php', 'usces' );
 
 		$this->options = get_option( 'usces', array() );
 		if ( ! isset( $this->options['smtp_hostname'] ) || empty( $this->options['smtp_hostname'] ) ) {
@@ -510,15 +507,12 @@ class usc_e_shop {
 			$this->options['pos_item_name']['sku_name']   = 3;
 			$this->options['pos_item_name']['sku_code']   = 4;
 		}
-		if ( ! isset( $this->options['order_acceptable_label'] ) ) {
-			$this->options['order_acceptable_label'] = __( 'Order acceptable', 'usces' );
-		}
 		update_option( 'usces', $this->options );
 
 		$this->check_display_mode();
 		$this->error_message = '';
 		$this->login_mail    = '';
-		$this->get_current_member();
+		// $this->get_current_member();
 		$this->page            = '';
 		$this->payment_results = array();
 		$this->use_js          = $this->options['use_javascript'];
@@ -562,6 +556,22 @@ class usc_e_shop {
 		$this->settlement_notice = get_option( 'usces_settlement_notice' );
 
 		$this->usces_session_start();
+	}
+
+	/**
+	 * Init.
+	 */
+	public function init() {
+		global $usces_settings;
+
+		if ( ! isset( $usces_settings['language']['others'] ) ) {
+			$usces_settings['language']['others'] = __( 'Follow config.php', 'usces' );
+		}
+		if ( ! isset( $this->options['order_acceptable_label'] ) ) {
+			$this->options['order_acceptable_label'] = __( 'Order acceptable', 'usces' );
+			update_option( 'usces', $this->options );
+		}
+		$this->get_current_member();
 	}
 
 	public function get_default_post_to_edit30( $post_type = 'post', $create_in_db = false ) {
@@ -6493,7 +6503,8 @@ class usc_e_shop {
 				`action` varchar(64) NOT NULL,
 				`data` longblob DEFAULT NULL,
 				`datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-				 PRIMARY KEY (`ID`)
+				PRIMARY KEY (`ID`),
+				KEY entity_id ( entity_id )
 				) " . $charset_collate . ';';
 			dbDelta( $sql );
 			add_option( 'usces_db_admin_log', USCES_DB_ADMIN_LOG );
@@ -6853,7 +6864,7 @@ class usc_e_shop {
 				KEY post_id ( post_id ) ,  
 				KEY code ( code ) ,  
 				KEY name ( name ) 
-				) ' . $charset_collate . ';';
+				);';
 			dbDelta( $sql );
 			update_option( 'usces_db_opts', USCES_DB_OPTS );
 		}
@@ -6869,8 +6880,9 @@ class usc_e_shop {
 				`action` varchar(64) NOT NULL,
 				`data` longblob DEFAULT NULL,
 				`datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-				PRIMARY KEY (`ID`)
-				) " . $charset_collate . ';';
+				PRIMARY KEY (`ID`),
+				KEY entity_id ( entity_id )
+				);";
 			dbDelta( $sql );
 			update_option( 'usces_db_admin_log', USCES_DB_ADMIN_LOG );
 		}
