@@ -1343,13 +1343,13 @@ function usces_get_adminmail_textbody( $args ) {
 function usces_ajax_send_mail() {
 	global $wpdb, $usces;
 
-	$nonce       = isset( $_POST['wc_nonce'] ) ? filter_var( wp_unslash( $_POST['wc_nonce'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : '';
-	$message     = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
-	$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-	$mailaddress = isset( $_POST['mailaddress'] ) ? sanitize_email( wp_unslash( $_POST['mailaddress'] ) ) : '';
-	$subject     = isset( $_POST['subject'] ) ? sanitize_text_field( wp_unslash( $_POST['subject'] ) ) : '';
-	$order_id    = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
-	$checked     = isset( $_POST['checked'] ) ? sanitize_text_field( wp_unslash( $_POST['checked'] ) ) : null;
+	$nonce       = isset( $_POST['wc_nonce'] ) ? filter_var( wp_unslash( $_POST['wc_nonce'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) : null;
+	$message     = isset( $_POST['message'] ) ? filter_var( wp_unslash( $_POST['message'] ) ) : null;
+	$name        = isset( $_POST['name'] ) ? filter_var( wp_unslash( $_POST['name'] ) ) : null;
+	$mailaddress = isset( $_POST['mailaddress'] ) ? filter_var( wp_unslash( $_POST['mailaddress'] ), FILTER_SANITIZE_EMAIL ) : null;
+	$subject     = isset( $_POST['subject'] ) ? filter_var( wp_unslash( $_POST['subject'] ) ) : null;
+	$order_id    = isset( $_POST['order_id'] ) ? filter_var( wp_unslash( $_POST['order_id'] ) ) : null;
+	$checked     = isset( $_POST['checked'] ) ? filter_var( wp_unslash( $_POST['checked'] ) ) : null;
 
 	if ( ! wp_verify_nonce( $nonce, 'wc_send_mail_order_nonce' ) ) {
 		$error_msg = array( 'message' => 'Your request is not valid.' );

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.11.15
+Stable tag: 2.11.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+13 May 2025
+ = V2.11.16 =
+-----------
+* Fixed a bug where credit card payment was not working.
+* Fixed a bug where administrative emails could not be sent from the order data editing screen.
 
 12 May 2025
  = V2.11.15 =
