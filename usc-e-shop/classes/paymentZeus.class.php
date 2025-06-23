@@ -7108,7 +7108,7 @@ jQuery.event.add(window,'load',function() {
 			} elseif ( isset( $_POST['token_key'] ) ) {
 				$data['token_key'] = filter_input( INPUT_POST, 'token_key' );
 			}
-			$data['payment']['amount'] = usces_crform( $entry['order']['total_full_price'], false, false, 'return', false );
+			$data['payment']['amount'] = apply_filters( 'zeus_secure_payreq_amount', usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ), $entry );
 			if ( isset( $entry['order']['cbrand'] ) && isset( $entry['order']['howpay'] ) && WCUtils::is_zero( $entry['order']['howpay'] ) ) {
 				$div_name                 = 'div_' . $entry['order']['cbrand'];
 				$data['payment']['count'] = $entry['order'][ $div_name ];
@@ -7402,7 +7402,7 @@ jQuery.event.add(window,'load',function() {
 		} elseif ( isset( $_POST['token_key'] ) ) {
 			$data['token_key'] = filter_input( INPUT_POST, 'token_key' );
 		}
-		$data['payment']['amount'] = filter_input( INPUT_POST, 'money' );
+		$data['payment']['amount'] = apply_filters( 'zeus_secure_payreq_amount', filter_input( INPUT_POST, 'money' ), $entry );
 		if ( isset( $_POST['howpay'] ) && WCUtils::is_zero( filter_input( INPUT_POST, 'howpay' ) ) ) {
 			$data['payment']['count'] = filter_input( INPUT_POST, 'div' );
 		} else {

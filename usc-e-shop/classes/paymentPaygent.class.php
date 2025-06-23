@@ -1577,14 +1577,32 @@ jQuery( document ).ready( function( $ ) {
 		check_admin_referer( 'admin_settlement', 'wc_nonce' );
 		$post_data        = wp_unslash( $_POST );
 		$certificate_path = ( isset( $post_data['path'] ) ) ? rtrim( $post_data['path'], '/' ) : '';
+		$invalid_wrappers = array( 'phar://', 'php://', 'data://', 'zip://', 'rar://' );
+		foreach ( $invalid_wrappers as $wrapper ) {
+			if ( strpos( $certificate_path, $wrapper ) === 0 ) {
+				$data['status'] = '無効なファイルパスです';
+				wp_send_json( $data );
+				return;
+			}
+		}
 		if ( empty( $certificate_path ) ) {
 			$data['status'] = '証明書ファイルパスが指定されていません';
 		} else {
 			if ( ! is_dir( $certificate_path ) ) {
 				wp_mkdir_p( $certificate_path );
 			}
-			if ( ! empty( $post_data['file'] ) && file_exists( $certificate_path . '/' . $post_data['file'] ) ) {
-				$data['file_exists'] = 1;
+			if ( ! empty( $post_data['file'] ) ) {
+				$full_path = $certificate_path . '/' . $post_data['file'];
+				foreach ( $invalid_wrappers as $wrapper ) {
+					if ( strpos( $full_path, $wrapper ) !== false ) {
+						$data['status'] = '無効なファイルパスです';
+						wp_send_json( $data );
+						return;
+					}
+				}
+				if ( file_exists( $full_path ) ) {
+					$data['file_exists'] = 1;
+				}
 			}
 			$data['status'] = ( is_writable( $certificate_path ) ) ? 'OK' : '証明書ファイルパスのディレクトリに書き込み権限がありません';
 		}
@@ -1599,8 +1617,14 @@ jQuery( document ).ready( function( $ ) {
 		$upfile      = $_FILES['upfile'];
 		$acting_opts = $this->get_acting_settings();
 		$data        = array( 'status' => '' );
-		$ext         = substr( $upfile['name'], strrpos( $upfile['name'], '.' ) + 1 );
-		$type        = ( isset( $_POST['upfile_type'] ) ) ? ( $_POST['upfile_type'] ) : '';
+		$filename    = $upfile['name'];
+		if ( strrpos( $filename, '.' ) === false ) {
+			$data['status'] = 'NG';
+			wp_send_json( $data );
+			return;
+		}
+		$ext  = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+		$type = ( isset( $_POST['upfile_type'] ) ) ? ( $_POST['upfile_type'] ) : '';
 		if ( 'client_file' === $type ) {
 			if ( 'pem' !== $ext ) {
 				$data['status'] = 'NG';

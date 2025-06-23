@@ -5918,7 +5918,7 @@ class usc_e_shop {
 			$d_method_index = $this->get_delivery_method_index( (int) $_POST['offer']['delivery_method'] );
 			if ( 0 > $d_method_index ) {
 				$mes .= __( 'chose one from delivery method.', 'usces' ) . '<br />';
-			} else {
+			} elseif ( isset( $_SESSION['usces_entry']['delivery']['country'] ) ) {
 				$country        = $_SESSION['usces_entry']['delivery']['country'];
 				$current_locate = get_locale();
 				$wplang         = get_option( 'WPLANG', $current_locate );
@@ -5957,7 +5957,7 @@ class usc_e_shop {
 				}
 			}
 		}
-		if ( isset( $d_method_index) && isset( $payments ) ) {
+		if ( isset( $d_method_index ) && isset( $payments ) ) {
 			if ( 1 == $this->options['delivery_method'][ $d_method_index ]['nocod'] ) {
 				if ( 'COD' == $payments['settlement'] ) {
 					$mes .= __( 'COD is not available.', 'usces' ) . '<br />';

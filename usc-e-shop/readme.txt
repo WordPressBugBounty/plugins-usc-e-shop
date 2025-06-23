@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.11.16
+Stable tag: 2.11.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,12 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+23 Jun 2025
+ = V2.11.17 =
+-----------
+* Implemented countermeasures against object injection (Credit Card Payment Settings [Paygent]).
+* Implemented countermeasures against XSS (Credit Card Payment Settings [Paygent]).
 
 13 May 2025
  = V2.11.16 =

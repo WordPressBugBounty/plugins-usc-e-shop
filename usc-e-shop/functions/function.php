@@ -3426,6 +3426,8 @@ function usces_get_send_out_date() {
 	global $usces;
 
 	$bus_day_arr = ( isset( $usces->options['business_days'] ) ) ? $usces->options['business_days'] : false;
+	$bus_day_arr = apply_filters( 'usces_filter_business_days_bus_day_arr', $bus_day_arr );
+
 	list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = preg_split( '([^0-9])', current_time( 'mysql' ) );
 	if ( ! is_array( $bus_day_arr ) ) {
 		$today_bus_flag = 1;
