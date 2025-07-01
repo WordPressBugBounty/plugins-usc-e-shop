@@ -256,6 +256,13 @@ class Paygent_Module {
 	protected $testmode;
 
 	/**
+	 * データヘッダー
+	 *
+	 * @var array
+	 */
+	protected $data_header;
+
+	/**
 	 * Construct.
 	 */
 	public function __construct() {
@@ -298,6 +305,7 @@ class Paygent_Module {
 	public function init() {
 		$this->telegram_param  = array();
 		$this->data            = array();
+		$this->data_header     = array();
 		$this->response_data   = null;
 		$this->result_message  = '';
 		$this->result_status   = '';

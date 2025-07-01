@@ -4648,7 +4648,7 @@ jQuery.event.add( window, "load", function() {
 					$shipping = usces_have_shipped( $cart );
 					if ( $shipping ) {
 						$order_data                    = $usces->get_order_data( $order_id, 'direct' );
-						$delivery                      = usces_unserialize( $order_data['order_delivery'] );
+						$delivery                      = unserialize( $order_data['order_delivery'] );
 						$entry['delivery']['name1']    = $delivery['name1'];
 						$entry['delivery']['name2']    = $delivery['name2'];
 						$entry['delivery']['country']  = $delivery['country'];
@@ -5610,7 +5610,7 @@ jQuery.event.add( window, "load", function() {
 			$cart                               = usces_get_ordercartdata( $order_id );
 			$shipping                           = usces_have_shipped( $cart );
 			if ( $shipping ) {
-				$delivery                      = usces_unserialize( $order_data['order_delivery'] );
+				$delivery                      = unserialize( $order_data['order_delivery'] );
 				$entry['delivery']['name1']    = $delivery['name1'];
 				$entry['delivery']['name2']    = $delivery['name2'];
 				$entry['delivery']['country']  = $delivery['country'];

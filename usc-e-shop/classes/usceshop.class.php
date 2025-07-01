@@ -3713,6 +3713,10 @@ class usc_e_shop {
 		if ( WCUtils::is_blank( $this->error_message ) && 0 < $this->cart->num_row() ) {
 			$acting_status = '';
 			$payments      = $this->getPayments( $entry['order']['payment_name'] );
+			if ( null === $payments['id'] ) {
+				header( 'HTTP/1.0 400 Bad request' );
+				die();
+			}
 			if ( substr( $payments['settlement'], 0, 6 ) == 'acting' && $entry['order']['total_full_price'] > 0 ) {
 				$acting_flg = ( 'acting' == $payments['settlement'] ) ? $payments['module'] : $payments['settlement'];
 				unset( $_POST['purchase'] );
