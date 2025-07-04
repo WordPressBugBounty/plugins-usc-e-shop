@@ -3713,7 +3713,7 @@ class usc_e_shop {
 		if ( WCUtils::is_blank( $this->error_message ) && 0 < $this->cart->num_row() ) {
 			$acting_status = '';
 			$payments      = $this->getPayments( $entry['order']['payment_name'] );
-			if ( null === $payments['id'] ) {
+			if ( null === $payments['id'] && 0 < $entry['order']['total_full_price'] ) {
 				header( 'HTTP/1.0 400 Bad request' );
 				die();
 			}
