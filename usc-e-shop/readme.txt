@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.11.19
+Stable tag: 2.11.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,13 +103,19 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
+22 Jul 2025
+ = V2.11.20 =
+-----------
+* Unified the title of the link to return to the previous page from the content confirmation page.
+* Fixed PHP errors.
+
 4 Jul 2025
  = V2.11.19 =
 -----------
 * Fixed a bug that prevented purchases when the total amount was 0.
 * Fixed a bug where order data for multiple shipping addresses was not registered correctly.
 
-1 July 2025
+1 Jul 2025
  = V2.11.18 =
 -----------
 * [Security Enhancement] Enhanced existing specifications to further prevent creation of invalid order data at checkout.

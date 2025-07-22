@@ -95,7 +95,7 @@ class PAYPAL_CP_SETTLEMENT {
 			'acting_paypal_card',
 		);
 		$this->acting_name        = 'PayPal(CP)';
-		$this->acting_formal_name = __( 'PayPal Commerce Platform', 'usces' );
+		$this->acting_formal_name = 'PayPal Commerce Platform';
 
 		$this->initialize_data();
 

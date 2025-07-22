@@ -1951,7 +1951,7 @@ class usc_e_shop {
 							}
 						}
 						foreach ( (array) $acting_payments as $payment ) {
-							if ( ! in_array( $payment, $settlement_selected ) ) {
+							if ( ! in_array( $payment, $settlement_selected ) && isset( $available_settlement[ $payment ] ) ) {
 								$settlement_name = $available_settlement[ $payment ];
 								$mes            .= sprintf( __( '* %s can not be unselected. Please "delete" or "stop" the payment method.', 'usces' ), $settlement_name ) . '<br />';
 							}
@@ -3717,8 +3717,9 @@ class usc_e_shop {
 				header( 'HTTP/1.0 400 Bad request' );
 				die();
 			}
-			if ( substr( $payments['settlement'], 0, 6 ) == 'acting' && $entry['order']['total_full_price'] > 0 ) {
-				$acting_flg = ( 'acting' == $payments['settlement'] ) ? $payments['module'] : $payments['settlement'];
+			$payment_settlement = $payments['settlement'] ?? '';
+			if ( substr( $payment_settlement, 0, 6 ) == 'acting' && $entry['order']['total_full_price'] > 0 ) {
+				$acting_flg = ( 'acting' == $payment_settlement ) ? $payments['module'] : $payment_settlement;
 				unset( $_POST['purchase'] );
 				$post_query    = '&' . http_build_query( $_POST );
 				$acting_status = $this->acting_processing( $acting_flg, $post_query, $acting_status );

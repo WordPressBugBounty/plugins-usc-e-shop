@@ -884,9 +884,12 @@ function usces_the_firstPriceCr( $out = '', $post = null ) {
 	}
 	$post_id = $post->ID;
 	$skus    = wel_get_skus( $post_id );
-	$res     = $usces->get_currency( $skus[0]['price'], true, false );
-
-	$price = apply_filters( 'usces_filter_the_first_price_cr', $res, $skus[0]['price'], $post_id, $skus, $out );
+	if ( isset( $skus[0]['price'] ) ) {
+		$res   = $usces->get_currency( $skus[0]['price'], true, false );
+		$price = apply_filters( 'usces_filter_the_first_price_cr', $res, $skus[0]['price'], $post_id, $skus, $out );
+	} else {
+		$price = apply_filters( 'usces_filter_the_first_price_cr', '', null, $post_id, $skus, $out );
+	}
 
 	if ( 'return' === $out ) {
 		return $price;
@@ -910,9 +913,12 @@ function usces_the_firstCpriceCr( $out = '', $post = null ) {
 	}
 	$post_id = $post->ID;
 	$skus    = wel_get_skus( $post_id );
-	$res     = $usces->get_currency( $skus[0]['cprice'], true, false );
-
-	$cprice = apply_filters( 'usces_filter_the_first_cprice_cr', $res, $skus[0]['cprice'], $post_id, $skus, $out );
+	if ( isset( $skus[0]['cprice'] ) ) {
+		$res    = $usces->get_currency( $skus[0]['cprice'], true, false );
+		$cprice = apply_filters( 'usces_filter_the_first_cprice_cr', $res, $skus[0]['cprice'], $post_id, $skus, $out );
+	} else {
+		$cprice = apply_filters( 'usces_filter_the_first_cprice_cr', '', null, $post_id, $skus, $out );
+	}
 
 	if ( 'return' === $out ) {
 		return $cprice;

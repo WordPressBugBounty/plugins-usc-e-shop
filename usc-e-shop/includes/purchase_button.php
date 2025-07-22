@@ -18,12 +18,13 @@ $cart_count  = ( $cart && is_array( $cart ) ) ? count( $cart ) : 0;
 $purchase_disabled     = '';
 $purchase_html         = '';
 $checkout_button_value = apply_filters( 'usces_filter_confirm_checkout_button_value', __( 'Checkout', 'usces' ) );
+$payment_settlement    = $payments['settlement'] ?? '';
 
-if ( 'acting' != substr( $payments['settlement'], 0, 6 ) || 0 == $usces_entries['order']['total_full_price'] ) {
+if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entries['order']['total_full_price'] ) {
 	$purchase_html = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}">
 		<div class="send">
 		' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flag, $rand ) . '
-		<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . apply_filters( 'usces_filter_confirm_prebutton_value', __( 'Back to payment method page.', 'usces' ) ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
+		<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . apply_filters( 'usces_filter_confirm_prebutton_value', __( 'Back', 'usces' ) ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
 		<input name="purchase" type="submit" id="purchase_button" class="checkout_button" value="' . $checkout_button_value . '"' . apply_filters( 'usces_filter_confirm_nextbutton', null ) . $purchase_disabled . ' /></div>';
 	$html         .= apply_filters( 'usces_filter_confirm_inform', $purchase_html, $payments, $acting_flag, $rand, $purchase_disabled );
 	$html         .= '</form>';
@@ -31,7 +32,7 @@ if ( 'acting' != substr( $payments['settlement'], 0, 6 ) || 0 == $usces_entries[
 	$send_item_code = apply_filters( 'usces_filter_settlement_item_code', $usces->getItemCode( $cart[0]['post_id'] ) );
 	$send_item_name = apply_filters( 'usces_filter_settlement_item_name', $usces->getItemName( $cart[0]['post_id'] ) );
 
-	$acting_flag = ( 'acting' == $payments['settlement'] ) ? $payments['module'] : $payments['settlement'];
+	$acting_flag = ( 'acting' == $payment_settlement ) ? $payments['module'] : $payment_settlement;
 	switch ( $acting_flag ) {
 
 		case 'paypal.php':
