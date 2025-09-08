@@ -209,6 +209,8 @@ jQuery( document ).ready( function( $ ) {
 				$options['acting_settings']['dsk']['token_url_test'] = '';
 				$options['acting_settings']['dsk']['api_url']        = '';
 				$options['acting_settings']['dsk']['api_url_test']   = '';
+				$options['acting_settings']['dsk']['cust_url']       = '';
+				$options['acting_settings']['dsk']['cust_url_test']  = '';
 				$toactive = array();
 				if ( 'on' === $options['acting_settings']['dsk']['card_activate'] ) {
 					$usces->payment_structure[ $this->acting_flg_card ] = 'カード決済（DSK）';

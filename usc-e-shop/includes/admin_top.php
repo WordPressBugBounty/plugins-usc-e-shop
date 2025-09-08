@@ -10,6 +10,7 @@ $display_mode       = ( ! empty( $this->options['display_mode'] ) ) ? $this->opt
 $display_mode_label = ( isset( $this->display_mode[ $display_mode ] ) ) ? $this->display_mode[ $display_mode ] : $display_mode;
 $stocs              = usces_get_stocs();
 $items_num          = $this->get_items_num();
+$zaiko_status_cols  = count( $this->zaiko_status );
 ?>
 <script type="text/javascript">jQuery(function($){uscesInformation.getinfo2();});</script>
 <div class="wrap">
@@ -89,7 +90,7 @@ endif;
 	<td><?php esc_html_e( 'Same date in last year', 'usces' ); ?> : </td><td class="bignum"><?php echo number_format( $this->get_order_num( 'lastyear' ) ); ?></td><td class="bignum"><?php usces_crform( $this->get_order_amount( 'lastyear' ), true, false ); ?></td>
 </tr>
 </table>
-</div>
+</div><!--usces_box-->
 <?php endif; ?>
 <?php do_action( 'usces_action_admintop_box1' ); ?>
 
@@ -97,10 +98,10 @@ endif;
 <div class="usces_box">
 <table class="dashboard">
 <tr>
-	<th><?php esc_html_e( 'number of item', 'usces' ); ?></th><th colspan="5"><?php esc_html_e( 'SKU total number', 'usces' ); ?></th>
+	<th><?php esc_html_e( 'number of item', 'usces' ); ?></th><th colspan="<?php echo esc_attr( $zaiko_status_cols ); ?>"><?php esc_html_e( 'SKU total number', 'usces' ); ?></th>
 </tr>
 <tr>
-	<td rowspan="3" class="bignum"><?php echo number_format( $items_num ); ?></td><td colspan="5" class="bignum"><?php echo number_format( array_sum( $stocs ) ); ?></td>
+	<td rowspan="3" class="bignum"><?php echo number_format( $items_num ); ?></td><td colspan="<?php echo esc_attr( $zaiko_status_cols ); ?>" class="bignum"><?php echo number_format( array_sum( $stocs ) ); ?></td>
 </tr>
 <tr>
 	<?php
@@ -131,22 +132,21 @@ endif;
 	?>
 </tr>
 <tr>
-	<th colspan="6"><?php esc_html_e( 'List of items without stock', 'usces' ); ?></th>
+	<th colspan="<?php echo esc_attr( $zaiko_status_cols + 1 ); ?>"><?php esc_html_e( 'List of items without stock', 'usces' ); ?></th>
 </tr>
 	<?php
 	$zerostoc_items = usces_get_non_zerostoc_items();
 	foreach ( (array) $zerostoc_items as $item ) :
 		?>
 <tr>
-	<td colspan="6"><a href="<?php echo esc_url( site_url() . '/wp-admin/admin.php?page=usces_itemedit&action=edit&post=' . $item['ID'] ); ?>"><?php echo ( esc_html( $item['name'] ) . ' ' . esc_html( $item['code'] ) ); ?></a></td>
+	<td colspan="<?php echo esc_attr( $zaiko_status_cols + 1 ); ?>"><a href="<?php echo esc_url( site_url() . '/wp-admin/admin.php?page=usces_itemedit&action=edit&post=' . $item['ID'] ); ?>"><?php echo ( esc_html( $item['name'] ) . ' ' . esc_html( $item['code'] ) ); ?></a></td>
 </tr>
 		<?php
 	endforeach;
 	unset( $non_stoc_skus );
 	?>
 </table>
-</div>
-
+</div><!--usces_box-->
 <?php do_action( 'usces_action_admintop_box2' ); ?>
 
 <?php if ( 2 < $this->user_level ) : ?>
@@ -182,9 +182,10 @@ endif;
 	</td>
 </tr>
 </table>
-</div>
+</div><!--usces_box-->
 <?php endif; ?>
-</div>
-<!--usces_admin_left-->
+<?php do_action( 'usces_action_admintop_box3' ); ?>
+
+</div><!--usces_admin_left-->
 </div><!--usces_admin-->
 </div><!--wrap-->

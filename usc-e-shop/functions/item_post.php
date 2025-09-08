@@ -2616,14 +2616,14 @@ function get_usces_states( $country ) {
 		if ( $country == $usces->options['system']['base_country'] ) {
 			foreach ( (array) $prefs as $state ) {
 				if ( ! is_array( $state ) ) {
-					array_push( $states, $state );
+					array_push( $states, esc_html( $state ) );
 				}
 			}
 			if ( 0 === count( $states ) ) {
 				if ( ! empty( $usces_states[ $country ] ) ) {
 					$prefs = $usces_states[ $country ];
 					if ( is_array( $prefs ) ) {
-						$states = $prefs;
+						$states = array_map( 'esc_html', $prefs );
 					}
 				}
 			}
@@ -2631,12 +2631,12 @@ function get_usces_states( $country ) {
 			if ( ! empty( $usces_states[ $country ] ) ) {
 				$prefs = $usces_states[ $country ];
 				if ( is_array( $prefs ) ) {
-					$states = $prefs;
+					$states = array_map( 'esc_html', $prefs );
 				}
 			}
 		}
 	} else {
-		$states = $prefs[ $country ];
+		$states = is_array( $prefs[ $country ] ) ? array_map( 'esc_html', $prefs[ $country ] ) : esc_html( $prefs[ $country ] );
 	}
 	return $states;
 }

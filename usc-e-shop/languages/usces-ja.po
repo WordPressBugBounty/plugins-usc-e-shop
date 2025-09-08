@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2025-02-28 05:42+0900\n"
+"PO-Revision-Date: 2025-08-28 15:21+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.7\n"
 
 #. Plugin Name of the plugin
 msgid "Welcart e-Commerce"
@@ -10575,6 +10575,9 @@ msgstr "テスト環境（Sandbox）"
 msgid "Sign up for PayPal"
 msgstr "PayPal アカウントに接続"
 
+msgid "In the \"production environment\", you can \"connect to PayPal account\" to automatically retrieve the \"Client ID\" and \"Secret\". In the \"test environment (Sandbox)\", please manually obtain the Sandbox \"Client ID\" and \"Secret\"."
+msgstr "「本番環境」では「PayPal アカウントに接続」して「Client ID」「Secret」を自動取得できます。「テスト環境（Sandbox）」ではSandbox用の「Client ID」「Secret」を手動で取得してください。"
+
 msgid "Intent"
 msgstr "処理区分"
 
@@ -10582,13 +10585,13 @@ msgid "Automatic recurring billing intent"
 msgstr "自動継続課金処理区分"
 
 msgid "Capture"
-msgstr "売上計上 (CAPTURE)"
+msgstr "売上計上 (CAPTURE）"
 
 msgid "Authorize"
-msgstr "与信 (AUTHORIZE)"
+msgstr "与信 (AUTHORIZE）"
 
-msgid "Select the intent to CAPTURE(capture payment immediately) or AUTHORIZE(authorize a payment for an order after order creation)."
-msgstr "購入時に売上計上 (CAPTURE)するか、与信 (AUTHORIZE)のみ実施するかを選択します。"
+msgid "Select whether to capture sales (CAPTURE) at the time of payment or only perform authorization (AUTHORIZE)."
+msgstr "決済時に売上計上（CAPTURE）するか、与信（AUTHORIZE）のみ実施するかを選択します。"
 
 msgid "Customize the PayPal Buttons"
 msgstr "PayPalボタンのカスタマイズ"

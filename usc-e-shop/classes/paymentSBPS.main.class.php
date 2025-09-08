@@ -451,20 +451,20 @@ class SBPS_MAIN {
 		$connection  = array();
 		$acting_opts = $this->get_acting_settings();
 		if ( 'public' === $acting_opts['ope'] ) {
-			$connection['send_url']  = $acting_opts['send_url'];
-			$connection['token_url'] = $acting_opts['token_url'];
-			$connection['api_url']   = $acting_opts['api_url'];
-			$connection['cust_url']  = $acting_opts['cust_url'];
+			$connection['send_url']  = ( isset( $acting_opts['send_url'] ) ) ? $acting_opts['send_url'] : '';
+			$connection['token_url'] = ( isset( $acting_opts['token_url'] ) ) ? $acting_opts['token_url'] : '';
+			$connection['api_url']   = ( isset( $acting_opts['api_url'] ) ) ? $acting_opts['api_url'] : '';
+			$connection['cust_url']  = ( isset( $acting_opts['cust_url'] ) ) ? $acting_opts['cust_url'] : '';
 		} elseif ( 'test' === $acting_opts['ope'] ) {
-			$connection['send_url']  = $acting_opts['send_url_test'];
-			$connection['token_url'] = $acting_opts['token_url_test'];
-			$connection['api_url']   = $acting_opts['api_url_test'];
-			$connection['cust_url']  = $acting_opts['cust_url_test'];
+			$connection['send_url']  = ( isset( $acting_opts['send_url_test'] ) ) ? $acting_opts['send_url_test'] : '';
+			$connection['token_url'] = ( isset( $acting_opts['token_url_test'] ) ) ? $acting_opts['token_url_test'] : '';
+			$connection['api_url']   = ( isset( $acting_opts['api_url_test'] ) ) ? $acting_opts['api_url_test'] : '';
+			$connection['cust_url']  = ( isset( $acting_opts['cust_url_test'] ) ) ? $acting_opts['cust_url_test'] : '';
 		} else {
-			$connection['send_url']  = $acting_opts['send_url_check'];
-			$connection['token_url'] = $acting_opts['token_url_test'];
-			$connection['api_url']   = $acting_opts['api_url_test'];
-			$connection['cust_url']  = $acting_opts['cust_url_test'];
+			$connection['send_url']  = ( isset( $acting_opts['send_url_check'] ) ) ? $acting_opts['send_url_check'] : '';
+			$connection['token_url'] = ( isset( $acting_opts['token_url_test'] ) ) ? $acting_opts['token_url_test'] : '';
+			$connection['api_url']   = ( isset( $acting_opts['api_url_test'] ) ) ? $acting_opts['api_url_test'] : '';
+			$connection['cust_url']  = ( isset( $acting_opts['cust_url_test'] ) ) ? $acting_opts['cust_url_test'] : '';
 		}
 		return $connection;
 	}

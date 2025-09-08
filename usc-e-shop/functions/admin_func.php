@@ -825,3 +825,18 @@ function usces_paidyapi() {
 		}
 	}
 }
+
+/**
+ * Prefecture name handler.
+ *
+ * This function checks user capability and returns the input as-is.
+ *
+ * @param string $pref Input string.
+ * @return string The original input string (trimmed).
+ */
+function wel_validate_prefecture_name( $pref ) {
+	if ( ! current_user_can( 'wel_manage_setting' ) ) {
+		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+	}
+	return trim( $pref );
+}

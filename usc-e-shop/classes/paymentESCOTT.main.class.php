@@ -1666,9 +1666,9 @@ class ESCOTT_MAIN {
 				);
 				$res       = $usces->order_processing( $response_data );
 				if ( 'ordercompletion' === $res ) {
-					if ( isset( $response_data['MerchantFree1'] ) ) {
-						usces_ordered_acting_data( $response_data['MerchantFree1'] );
-					}
+					// if ( isset( $response_data['MerchantFree1'] ) ) {
+					// 	usces_ordered_acting_data( $response_data['MerchantFree1'] );
+					// }
 					$usces->cart->clear_cart();
 					wp_redirect( $url );
 					exit();

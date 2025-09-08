@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 2.11.20
+Stable tag: 2.11.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,14 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+8 Sep 2025
+ = V2.11.21 =
+-----------
+* [Security Enhancement] Added sanitization processing for input values in the prefecture text area under System Settings > Country, Language, and Currency.
+* [ZEUS] Set the "Company Name" during deferred payment transaction registration when a custom field "company" is present.
+* Added hooks.
+* Fixed PHP errors.
 
 22 Jul 2025
  = V2.11.20 =

@@ -5007,7 +5007,7 @@ jQuery(document).ready(function($) {
 				'kanaName'      => '',
 				'zip'           => trim( $entry['customer']['zipcode'] ),
 				'address'       => trim( $entry['customer']['pref'] ) . trim( $entry['customer']['address1'] ) . trim( $entry['customer']['address2'] ) . trim( $entry['customer']['address3'] ),
-				'companyName'   => '',
+				'companyName'   => ( ! empty( $entry['custom_customer']['company'] ) ) ? trim( $entry['custom_customer']['company'] ) : '',
 				'sectionName'   => '',
 				'tel'           => $post_data['tel_mobile'],
 				'email'         => trim( $entry['customer']['mailaddress1'] ),
@@ -5046,7 +5046,7 @@ jQuery(document).ready(function($) {
 					'shipKananame'    => '',
 					'shipZip'         => trim( $entry['delivery']['zipcode'] ),
 					'shipAddress'     => trim( $entry['delivery']['pref'] ) . trim( $entry['delivery']['address1'] ) . trim( $entry['delivery']['address2'] ) . trim( $entry['delivery']['address3'] ),
-					'shipCompanyName' => '',
+					'shipCompanyName' => ( ! empty( $entry['custom_delivery']['company'] ) ) ? trim( $entry['custom_delivery']['company'] ) : '',
 					'shipSectionName' => '',
 					'shipTel'         => trim( $entry['delivery']['tel'] ),
 				);

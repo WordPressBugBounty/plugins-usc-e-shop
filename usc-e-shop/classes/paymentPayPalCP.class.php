@@ -1246,7 +1246,7 @@ jQuery( document ).ready( function( $ ) {
 					<label><input type="radio" class="cp_environment" name="cp_environment" value="sandbox"<?php checked( $cp_environment, 'sandbox' ); ?>/><span><?php esc_html_e( 'Test environment (Sandbox)', 'usces' ); ?></span></label>
 				</td>
 			</tr>
-			<tr id="ex_environment_paypal_cp" class="explanation paypal_cp_form"><td colspan="2"><?php esc_html_e( 'Choose if to use PayPal Commerce Platform.', 'usces' ); ?></td></tr>
+			<tr id="ex_environment_paypal_cp" class="explanation paypal_cp_form"><td colspan="2"><?php esc_html_e( 'In the "production environment", you can "connect to PayPal account" to automatically retrieve the "Client ID" and "Secret". In the "test environment (Sandbox)", please manually obtain the Sandbox "Client ID" and "Secret".', 'usces' ); ?></td></tr>
 			<tr class="paypal_cp_form">
 				<th><?php esc_html_e( 'Client ID', 'usces' ); ?></th>
 				<td><textarea name="cp_client_id" id="cp_client_id" class="regular-text code"><?php echo esc_attr( $cp_client_id ); ?></textarea></td>
@@ -1261,7 +1261,7 @@ jQuery( document ).ready( function( $ ) {
 					<label><input type="radio" name="cp_intent" value="AUTHORIZE"<?php checked( $cp_intent, 'AUTHORIZE' ); ?>/><span><?php esc_html_e( 'Authorize', 'usces' ); ?></span></label>
 				</td>
 			</tr>
-			<tr id="ex_intent_paypal_cp" class="explanation paypal_cp_form"><td colspan="2"><?php esc_html_e( 'The intent to either capture payment immediately or authorize a payment for an order after order creation.', 'usces' ); ?></td></tr>
+			<tr id="ex_intent_paypal_cp" class="explanation paypal_cp_form"><td colspan="2"><?php esc_html_e( 'Select whether to capture sales (CAPTURE) at the time of payment or only perform authorization (AUTHORIZE).', 'usces' ); ?></td></tr>
 			<?php if ( defined( 'WCEX_DLSELLER' ) ) : ?>
 			<tr class="paypal_cp_form">
 				<th><a class="explanation-label" id="label_ex_autobilling_intent_cp"><?php esc_html_e( 'Automatic recurring billing intent', 'usces' ); ?></a></th>

@@ -1870,7 +1870,10 @@ class usc_e_shop {
 					$province[] = '-- Select --';
 					foreach ( $temp_pref as $pref ) {
 						if ( ! WCUtils::is_blank( $pref ) ) {
-							$province[] = trim( $pref );
+							$validated = wel_validate_prefecture_name( wp_unslash( $pref ) );
+							if ( '' !== $validated ) {
+								$province[] = esc_html( $validated );
+							}
 						}
 					}
 					if ( 1 == count( $province ) ) {
@@ -2004,15 +2007,15 @@ class usc_e_shop {
 
 		if ( defined( 'USCES_KEY' ) ) {
 			if ( is_admin() || preg_match( '/\/wp-login\.php/', $_SERVER['REQUEST_URI'] ) ) {
-				session_name( 'adm' . USCES_KEY );
+				@session_name( 'adm' . USCES_KEY );
 			} else {
-				session_name( USCES_KEY );
+				@session_name( USCES_KEY );
 			}
 		} else {
-			if ( is_admin() || preg_match('/\/wp-login\.php/', $_SERVER['REQUEST_URI'] ) ) {
-				session_name( 'adm' . $options['usces_key'] );
+			if ( is_admin() || preg_match( '/\/wp-login\.php/', $_SERVER['REQUEST_URI'] ) ) {
+				@session_name( 'adm' . $options['usces_key'] );
 			} else {
-				session_name( $options['usces_key'] );
+				@session_name( $options['usces_key'] );
 			}
 		}
 
@@ -10524,4 +10527,5 @@ class usc_e_shop {
 		}
 		return $result;
 	}
+
 }
