@@ -28,7 +28,7 @@ class Welcart_login extends WP_Widget {
 	public function widget( $args, $instance ) {
 		global $usces;
 		extract( $args );
-		$title    = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Log-in', 'usces' ) : $instance['title'];
+		$title    = $instance['title'];
 		$icon     = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];
 		$img_path = file_exists( get_stylesheet_directory() . '/images/login.png' ) ? get_stylesheet_directory_uri() . '/images/login.png' : USCES_FRONT_PLUGIN_URL . '/images/login.png';
 		if ( 1 === $icon ) {
@@ -36,7 +36,9 @@ class Welcart_login extends WP_Widget {
 		}
 
 		wel_esc_script_e( $before_widget );
-		wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		if ( ! empty( $title ) ) {
+			wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		}
 		?>
 
 		<ul class="ucart_login_body ucart_widget_body"><li>
@@ -104,7 +106,7 @@ class Welcart_login extends WP_Widget {
 	 * @param array $instance Current settings.
 	 */
 	public function form( $instance ) {
-		$title = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Log-in', 'usces' ) : esc_attr( $instance['title'] );
+		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$icon  = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];
 		?>
 		<p><label for="<?php wel_esc_script_e( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'usces' ); ?> <input class="widefat" id="<?php wel_esc_script_e( $this->get_field_id( 'title' ) ); ?>" name="<?php wel_esc_script_e( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php wel_esc_script_e( $title ); ?>" /></label></p>

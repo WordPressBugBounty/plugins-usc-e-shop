@@ -30,7 +30,7 @@ class Welcart_post extends WP_Widget {
 	public function widget( $args, $instance ) {
 		extract( $args );
 		$wid      = str_replace( '-', '_', $this->id );
-		$title    = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Post', 'usces' ) : $instance['title'];
+		$title    = $instance['title'];
 		$rows_num = ( ! isset( $instance['rows_num'] ) || WCUtils::is_blank( $instance['rows_num'] ) ) ? 3 : $instance['rows_num'];
 		$category = ( ! isset( $instance['category'] ) || WCUtils::is_blank( $instance['category'] ) ) ? '' : $instance['category'];
 		$icon     = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];
@@ -40,7 +40,9 @@ class Welcart_post extends WP_Widget {
 		}
 
 		wel_esc_script_e( $before_widget );
-		wel_esc_script_e( $before_title . apply_filters( 'usces_filter_post_widget_title', esc_html( $title ), $instance ) . $after_title );
+		if ( ! empty( $title ) ) {
+			wel_esc_script_e( $before_title . apply_filters( 'usces_filter_post_widget_title', esc_html( $title ), $instance ) . $after_title );
+		}
 		?>
 
 		<ul class="ucart_widget_body <?php echo esc_attr( $category ); ?>">
@@ -72,7 +74,7 @@ class Welcart_post extends WP_Widget {
 	 */
 	public function form( $instance ) {
 		$wid      = ( 'welcart_post-__i__' !== $this->id ) ? str_replace( '-', '_', $this->id ) : '';
-		$title    = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Post', 'usces' ) : esc_attr( $instance['title'] );
+		$title    = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$rows_num = ( ! isset( $instance['rows_num'] ) || WCUtils::is_blank( $instance['rows_num'] ) ) ? 3 : esc_attr( $instance['rows_num'] );
 		$category = ( ! isset( $instance['category'] ) || WCUtils::is_blank( $instance['category'] ) ) ? '' : esc_attr( $instance['category'] );
 		$icon     = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];

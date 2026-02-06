@@ -302,7 +302,7 @@ class InstantPaidyDashboard {
 						<tr>
 							<td>
 								<span style="color:#E30E80; font-weight: bold;">ステータス：審査は承認されました</span>
-								<p>審査が完了し、加盟店契約が成立いたしました。<br>ご利用条件は株式会社Paidyから送信されるメールの条件通知書をご確認ください。</p>
+								<p>審査が完了し、加盟店契約が成立いたしました。<br>ご利用条件はPaidy合同会社から送信されるメールの条件通知書をご確認ください。</p>
 								<p>本番モードで公開前にWebhook URLをペイディ加盟店管理画面へ設定することを推奨します。<br>Webhook URLには次の値を設定してください。<br>[テスト・本番共通] <br>
 									<pre><?php echo esc_url( home_url( '/' ) ); ?></pre>
 									ペイディ加盟店管理画面については<a href="https://download.paidy.com/merchant/PaidyMerchantWebUserGuide.pdf"  style="color:#E30E80;" target="_blank">マニュアル</a>をご覧ください。
@@ -522,8 +522,8 @@ class InstantPaidyDashboard {
 							<li><a href="https://terms.paidy.com/docs/agreement-on-handling-of-comprehensive-member-shop-and-member-shop-information.pdf" target="_blank">加盟店情報の取扱いに関する同意条項</a></li>
 							<li>特定商取引法に基づく表記に弊社所定の表記を追加すること。<br><a href="https://merchant-support.paidy.com/hc/ja/articles/16629903258649" target="_blank">特商法に基づく表示サンプル</a></li>
 							<li>プライバシーポリシーページに弊社所定の表記を追加すること。<br><a href="https://merchant-support.paidy.com/hc/ja/articles/16631714849561" target="_blank">プライバシーポリシーの記入例</a></li>
-							<li>株式会社Paidyが、Welcartを介して貴社に代わり、ECサイトへAPIキーの設定を行うこと。</li>
-							<li>当社（コルネ株式会社）は、以下の場合に、個人情報を第三者に提供いたします。
+							<li>Paidy合同会社が、Welcartを介して貴社に代わり、ECサイトへAPIキーの設定を行うこと。</li>
+							<li>当社（株式会社Welcart）は、以下の場合に、個人情報を第三者に提供いたします。
 								<ul style="margin-left: 20px; list-style-type: circle;">
 									<li>決済会社での加盟店審査等のために個人情報を開示する場合。</li>
 								</ul>

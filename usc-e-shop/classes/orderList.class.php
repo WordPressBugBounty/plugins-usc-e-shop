@@ -430,8 +430,14 @@ class dataList {
 	public function GetRows() {
 		global $wpdb;
 		$where = $this->GetWhere();
-		$order = ' ORDER BY `' . esc_sql( $this->sortColumn ) . '` ' . esc_sql( $this->sortSwitchs[ $this->sortColumn ] );
-		$order = apply_filters( 'usces_filter_order_list_get_orderby', $order, $this );
+
+		$init_column = 'ID';
+		$sort_column = in_array( $this->sortColumn, $this->columns, true ) ? $this->sortColumn : $init_column;
+		$init_switch = 'DESC';
+		$sort_switch = $this->sortSwitchs[ $sort_column ] ?? $init_switch;
+		$sort_switch = in_array( strtoupper( $sort_switch ), array( 'ASC', 'DESC' ), true ) ? $sort_switch : $init_switch;
+		$order       = ' ORDER BY ' . esc_sql( $sort_column ) . ' ' . esc_sql( $sort_switch );
+		$order       = apply_filters( 'usces_filter_order_list_get_orderby', $order, $this );
 
 		$select = '';
 		foreach ( $this->selectSql as $value ) {

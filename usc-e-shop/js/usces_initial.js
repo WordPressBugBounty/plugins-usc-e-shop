@@ -9,7 +9,7 @@ jQuery(function($) {
 
 		send : function() {
 			$("#cod-response").html('<img src="' + uscesL10n.USCES_PLUGIN_URL + '/images/loading-publish.gif" />');
-			var query = 'action=setup_cod_ajax';
+			var query = 'action=setup_cod_ajax&wc_nonce=' + $("#wc_nonce").val();
 			var cod_type = $("input[name='cod_type']:checked").val();
 
 			if( 'fix' == cod_type ){

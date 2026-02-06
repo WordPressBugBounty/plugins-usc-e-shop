@@ -77,7 +77,7 @@ class Welcart_bestseller extends WP_Widget {
 			$instance['code10'] = '';
 		}
 
-		$title    = WCUtils::is_blank( $instance['title'] ) ? 'Welcart ' . __( 'best seller', 'usces' ) : $instance['title'];
+		$title    = $instance['title'];
 		$rows_num = WCUtils::is_blank( $instance['rows_num'] ) ? 10 : (int) $instance['rows_num'];
 		$days     = WCUtils::is_blank( $instance['days'] ) ? 30 : (int) $instance['days'];
 		$icon     = WCUtils::is_blank( $instance['icon'] ) ? 1 : (int) $instance['icon'];
@@ -91,7 +91,9 @@ class Welcart_bestseller extends WP_Widget {
 		}
 
 		wel_esc_script_e( $before_widget );
-		wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		if ( ! empty( $title ) ) {
+			wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		}
 		?>
 
 		<ul class="ucart_widget_body">
@@ -190,7 +192,7 @@ class Welcart_bestseller extends WP_Widget {
 			$instance['code10'] = '';
 		}
 
-		$title    = WCUtils::is_blank( $instance['title'] ) ? 'Welcart ' . __( 'best seller', 'usces' ) : esc_attr( $instance['title'] );
+		$title    = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$rows_num = WCUtils::is_blank( $instance['rows_num'] ) ? 10 : (int) $instance['rows_num'];
 		$days     = WCUtils::is_blank( $instance['days'] ) ? 30 : (int) $instance['days'];
 		$icon     = WCUtils::is_blank( $instance['icon'] ) ? 1 : (int) $instance['icon'];

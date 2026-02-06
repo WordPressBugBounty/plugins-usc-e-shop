@@ -56,7 +56,7 @@ class Welcart_Recent_Posts extends WP_Widget {
 
 		ob_start();
 		extract( $args );
-		$title  = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Recent Posts', 'usces' ) : $instance['title'], $instance, $this->id_base );
+		$title  = apply_filters( 'widget_title', $instance['title'], $instance, $this->id_base );
 		$number = ( isset( $instance['number'] ) ) ? (int) $instance['number'] : 10;
 		if ( ! $number ) {
 			$number = 10;
@@ -80,9 +80,8 @@ class Welcart_Recent_Posts extends WP_Widget {
 		if ( $r->have_posts() ) :
 
 			wel_esc_script_e( $before_widget );
-
-			if ( $title ) {
-				wel_esc_script_e( $before_title . $title . $after_title );
+			if ( ! empty( $title ) ) {
+				wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
 			}
 			?>
 		<ul>

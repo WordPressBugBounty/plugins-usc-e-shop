@@ -636,17 +636,17 @@ jQuery(document).ready( function($) {
 					<label><input name="sec3d_activate" type="radio" class="sec3d_activate_escott" id="sec3d_activate_0" value="off"<?php checked( $sec3d_activate, 'off' ); ?> /><span><?php esc_html_e( 'Do not Use', 'usces' ); ?></span></label>
 				</td>
 			</tr>
-			<tr id="ex_sec3d_activate" class="explanation card_escott"><td colspan="2"><?php esc_html_e( '3D secure authentication at the time of payment. If you want to use it, you need to apply to Sony Payment Service Co., Ltd.', 'usces' ); ?></td></tr>
+			<tr id="ex_sec3d_activate" class="explanation card_escott"><td colspan="2"><?php esc_html_e( '3D secure authentication at the time of payment. If you want to use it, you need to apply to SP.LINKS Inc.', 'usces' ); ?></td></tr>
 			<tr class="card_escott card_sec3d_escott">
 				<th><a class="explanation-label" id="label_ex_card_key_aes_escott"><?php esc_html_e( 'Encryption Key', 'usces' ); /* 暗号化キー */ ?></a></th>
 				<td><input name="card_key_aes" type="text" id="card_key_aes_escott" value="<?php echo esc_attr( $acting_opts['card_key_aes'] ); ?>" class="regular-text" /></td>
 			</tr>
-			<tr id="ex_card_key_aes_escott" class="explanation card_escott card_sec3d_escott"><td colspan="2"><?php esc_html_e( 'Encryption key (single-byte alphanumeric characters only) issued by e-SCOTT.', 'usces' ); ?><?php esc_html_e( 'If you want to use 3D Secure Authentication, please apply to Sony Payment Service Co., Ltd.', 'usces' ); ?></td></tr>
+			<tr id="ex_card_key_aes_escott" class="explanation card_escott card_sec3d_escott"><td colspan="2"><?php esc_html_e( 'Encryption key (single-byte alphanumeric characters only) issued by e-SCOTT.', 'usces' ); ?><?php esc_html_e( 'If you want to use 3D Secure Authentication, please apply to SP.LINKS Inc.', 'usces' ); ?></td></tr>
 			<tr class="card_escott card_sec3d_escott">
 				<th><a class="explanation-label" id="label_ex_card_key_iv_escott"><?php esc_html_e( 'Initialization Vector', 'usces' ); /* 初期化ベクトル */ ?></a></th>
 				<td><input name="card_key_iv" type="text" id="card_key_iv_escott" value="<?php echo esc_attr( $acting_opts['card_key_iv'] ); ?>" class="regular-text" /></td>
 			</tr>
-			<tr id="ex_card_key_iv_escott" class="explanation card_escott card_sec3d_escott"><td colspan="2"><?php esc_html_e( 'Initialization vector (single-byte alphanumeric characters only) issued by e-SCOTT.', 'usces' ); ?><?php esc_html_e( 'If you want to use 3D Secure Authentication, please apply to Sony Payment Service Co., Ltd.', 'usces' ); ?></td></tr>
+			<tr id="ex_card_key_iv_escott" class="explanation card_escott card_sec3d_escott"><td colspan="2"><?php esc_html_e( 'Initialization vector (single-byte alphanumeric characters only) issued by e-SCOTT.', 'usces' ); ?><?php esc_html_e( 'If you want to use 3D Secure Authentication, please apply to SP.LINKS Inc.', 'usces' ); ?></td></tr>
 			<tr class="card_escott">
 				<th><a class="explanation-label" id="label_ex_token_code_escott"><?php esc_html_e( 'Token auth code', 'usces' ); /* トークン決済認証コード */ ?></a></th>
 				<td><input name="token_code" type="text" id="token_code_escott" value="<?php echo esc_attr( $acting_opts['token_code'] ); ?>" class="regular-text" maxlength="32" /></td>
@@ -739,7 +739,7 @@ jQuery(document).ready( function($) {
 			<?php esc_html_e( '* If chargebacks occur, there is no compensation or reimbursement by us or the credit card companies. The merchant is responsible for all charges.', 'usces' ); ?><br />
 			<?php esc_html_e( "* Chargebacks will be incurred regardless of whether the merchant's intentional or negligent conduct is involved.", 'usces' ); ?><br />
 			<?php esc_html_e( 'Please be sure to confirm the following before starting to use the service.', 'usces' ); ?><br />
-			<a href="https://www.sonypaymentservices.jp/consider/creditcard/chargeback.html" target="_blank"><?php esc_html_e( 'About chargebacks', 'usces' ); ?></a></p>
+			<a href="https://www.splinks.co.jp/yougo/chargeback.html" target="_blank"><?php esc_html_e( 'About chargebacks', 'usces' ); ?></a></p>
 	</div>
 	</div><!--uscestabs_escott-->
 

@@ -31,7 +31,7 @@ class ESCOTT_MAIN {
 
 	/**
 	 * 決済代行会社正式名称
-	 * ex) 'e-SCOTT Smart ソニーペイメントサービス'
+	 * ex) 'e-SCOTT Smart'
 	 *
 	 * @var string
 	 */
@@ -168,7 +168,7 @@ class ESCOTT_MAIN {
 
 		$this->paymod_id = $mode;
 
-		$this->acting_company_url = 'https://www.sonypaymentservices.jp/intro/';
+		$this->acting_company_url = 'https://www.splinks.co.jp/intro-multipay/';
 
 		if ( is_admin() ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_scripts' ) );
@@ -218,6 +218,7 @@ class ESCOTT_MAIN {
 			add_filter( 'usces_filter_delivery_secure_form', array( $this, 'delivery_secure_form' ), 10, 2 );
 			add_filter( 'usces_filter_delivery_secure_form_loop', array( $this, 'delivery_secure_form_loop' ), 10, 2 );
 			add_filter( 'usces_filter_delete_member_check', array( $this, 'delete_member_check' ), 10, 2 );
+			add_filter( 'usces_filter_delete_member_check_front', array( $this, 'delete_member_check' ), 10, 2 );
 			add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 			add_filter( 'usces_filter_uscesL10n', array( $this, 'set_uscesL10n' ), 12, 2 );

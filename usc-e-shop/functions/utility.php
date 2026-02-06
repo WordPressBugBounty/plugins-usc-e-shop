@@ -1523,8 +1523,8 @@ function wel_esc_script( $str ) {
 	}
 
 	$pattern = array(
-		'<script>',
-		'</script>',
+		'/<script\b[^>]*>/i',
+		'/<\/script>/i',
 	);
 
 	$replacement = array(
@@ -1532,7 +1532,10 @@ function wel_esc_script( $str ) {
 		'&lt;/script&gt;',
 	);
 
-	$str = str_ireplace( $pattern, $replacement, $str );
+	$str = preg_replace( $pattern, $replacement, $str );
+	$str = preg_replace( '/<([^>]+)\s+onerror\s*=\s*[^>]*?>/i', '<$1>', $str );
+	$str = preg_replace( '/=\s*alert\s*\(/i', '=', $str );
+	$str = preg_replace( '/<([^>]+)\s+on\w+\s*=\s*(?!["\'])([^>]*?)>/i', '<$1$2>', $str );
 
 	return $str;
 }
@@ -1549,8 +1552,8 @@ function wel_esc_script_e( $str ) {
 	}
 
 	$pattern = array(
-		'<script>',
-		'</script>',
+		'/<script\b[^>]*>/i',
+		'/<\/script>/i',
 	);
 
 	$replacement = array(
@@ -1558,9 +1561,12 @@ function wel_esc_script_e( $str ) {
 		'&lt;/script&gt;',
 	);
 
-	$str = str_ireplace( $pattern, $replacement, $str );
+	$str = preg_replace( $pattern, $replacement, $str );
+	$str = preg_replace( '/<([^>]+)\s+onerror\s*=\s*[^>]*?>/i', '<$1>', $str );
+	$str = preg_replace( '/=\s*alert\s*\(/i', '=', $str );
+	$str = preg_replace( '/<([^>]+)\s+on\w+\s*=\s*(?!["\'])([^>]*?)>/i', '<$1$2>', $str );
 
-	echo $str;
+	echo $str; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**

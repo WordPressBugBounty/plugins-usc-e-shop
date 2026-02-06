@@ -320,7 +320,13 @@ class dataList {
 		$item_table = $wpdb->prefix . 'usces_item';
 		$sku_table  = $wpdb->prefix . 'usces_skus';
 		$where      = $this->GetWhere();
-		$order      = ' ORDER BY ' . $this->sortColumn . ' ' . $this->sortSwitchs[ $this->sortColumn ];
+
+		$init_column = apply_filters( 'usces_filter_item_class_sortColumn', 'post.ID' );
+		$sort_column = in_array( $this->sortColumn, $this->columns, true ) ? $this->sortColumn : $init_column;
+		$init_switch = apply_filters( 'usces_filter_item_class_sortSwitchs', 'DESC' );
+		$sort_switch = $this->sortSwitchs[ $sort_column ] ?? $init_switch;
+		$sort_switch = in_array( strtoupper( $sort_switch ), array( 'ASC', 'DESC' ), true ) ? $sort_switch : $init_switch;
+		$order       = ' ORDER BY ' . esc_sql( $sort_column ) . ' ' . esc_sql( $sort_switch );
 
 		if ( $this->exportMode ) {
 

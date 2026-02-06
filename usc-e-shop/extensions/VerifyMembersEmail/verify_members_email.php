@@ -281,7 +281,7 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		$mailaddress1      = trim( $user['mailaddress1'] );
 
 		$subject  = apply_filters( 'usces_filter_send_verifymembermail_subject', __( 'Request email confirmation', 'usces' ), $user );
-		$message  = sprintf( __( 'Thank you for registering to %s.', 'usces' ), get_option( 'blogname' ) ) . "\r\n\r\n";
+		$message  = sprintf( __( 'Thank you for registering to %s.', 'usces' ), html_entity_decode( get_option( 'blogname' ) ) ) . "\r\n\r\n";
 		$message .= __( 'By accessing the following URL, you can complete membership registration.', 'usces' ) . "\r\n";
 		$message .= __( 'Please note that the procedure has not been completed until you receive registration complete e-mail.', 'usces' ) . "\r\n\r\n";
 		$message .= sprintf( __( 'The following URL is valid for %d hours. If it expires, please try again from the beginning.', 'usces' ), $remaining_hour ) . "\r\n\r\n";
@@ -290,7 +290,7 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		$message .= '--------------------------------' . "\r\n";
 		$message .= __( 'Please delete this email if you were not aware that you were going to receive it.', 'usces' ) . "\r\n";
 		$message .= '--------------------------------' . "\r\n\r\n";
-		$message .= get_option( 'blogname' ) . "\r\n";
+		$message .= html_entity_decode( get_option( 'blogname' ) ) . "\r\n";
 		if ( 1 === (int) $usces->options['put_customer_name'] ) {
 			$dear_name = sprintf( __( 'Dear %s', 'usces' ), usces_localized_name( trim( $user['name1'] ), trim( $user['name2'] ), 'return' ) );
 			$message   = $dear_name . "\r\n\r\n" . $message;
@@ -759,14 +759,14 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		$subject = apply_filters( 'usces_filter_send_verifyeditmail_subject', __( 'Identity Verification Email', 'usces' ), $member );
 		$totime  = date( __( 'Y-n-j G:i', 'usces' ), $time );
 
-		$message  = sprintf( __( 'This email is a verification email for updating your membership information at "%s".', 'usces' ), get_option( 'blogname' ) ) . "\r\n";
+		$message  = sprintf( __( 'This email is a verification email for updating your membership information at "%s".', 'usces' ), html_entity_decode( get_option( 'blogname' ) ) ) . "\r\n";
 		$message .= __( 'By clicking on the URL below, your identity will be authenticated.', 'usces' ) . "\r\n";
 		$message .= __( 'After authentication, My Page will be displayed, so please click the menu again to proceed.', 'usces' ) . "\r\n";
 		$message .= sprintf( __( 'Please note that this URL is valid until %s.', 'usces' ), $totime ) . "\r\n\r\n";
 		$message .= $this->get_verify_edit_url( $member ) . "\r\n\r\n";
 
 		$message .= __( 'Please delete this email if you were not aware that you were going to receive it.', 'usces' ) . "\r\n\r\n";
-		$message .= get_option( 'blogname' ) . "\r\n";
+		$message .= html_entity_decode( get_option( 'blogname' ) ) . "\r\n";
 		if ( 1 === (int) $usces->options['put_customer_name'] ) {
 			// translators: %s: name of user.
 			$dear_name = sprintf( __( 'Dear %s', 'usces' ), $name );
@@ -1223,7 +1223,7 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		$message .= __( 'Full name', 'usces' ) . ' : ' . sprintf( __( 'Dear %s', 'usces' ), $name ) . "\r\n";
 		$message .= '--------------------------------' . "\r\n\r\n";
 
-		$message .= get_option( 'blogname' ) . "\r\n";
+		$message .= html_entity_decode( get_option( 'blogname' ) ) . "\r\n";
 		if ( 1 === (int) $usces->options['put_customer_name'] ) {
 			// translators: %s: name of user.
 			$dear_name = sprintf( __( 'Dear %s', 'usces' ), $name );

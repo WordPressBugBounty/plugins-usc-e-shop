@@ -311,9 +311,9 @@ class Welcart_Blog_Calendar extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );
-		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '&nbsp;' : $instance['title'], $instance, $this->id_base );
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 		wel_esc_script_e( $before_widget );
-		if ( $title ) {
+		if ( trim( $title ) ) {
 			wel_esc_script_e( $before_title . $title . $after_title );
 		}
 		echo '<div id="calendar_wrap">';

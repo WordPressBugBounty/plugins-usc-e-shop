@@ -202,6 +202,7 @@ class PAYGENT_SETTLEMENT {
 					add_filter( 'usces_filter_delivery_secure_form_loop', array( $this, 'delivery_secure_form_loop' ), 10, 2 );
 					add_filter( 'usces_filter_save_order_acting_data', array( $this, 'save_order_acting_data' ) );
 					add_filter( 'usces_filter_delete_member_check', array( $this, 'delete_member_check' ), 10, 2 );
+					add_filter( 'usces_filter_delete_member_check_front', array( $this, 'delete_member_check' ), 10, 2 );
 					add_action( 'usces_action_pre_delete_memberdata', array( $this, 'delete_member' ) );
 				// }
 				add_filter( 'usces_filter_template_redirect', array( $this, 'member_update_settlement' ), 1 );
@@ -1574,6 +1575,9 @@ jQuery( document ).ready( function( $ ) {
 	 * Certificate file path check.
 	 */
 	public function check_file_path() {
+		if ( ! current_user_can( 'wel_manage_setting' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 		check_admin_referer( 'admin_settlement', 'wc_nonce' );
 		$post_data        = wp_unslash( $_POST );
 		$certificate_path = ( isset( $post_data['path'] ) ) ? rtrim( $post_data['path'], '/' ) : '';
@@ -1613,6 +1617,9 @@ jQuery( document ).ready( function( $ ) {
 	 * Upload paygent certificate file.
 	 */
 	public function upload_certificate_file() {
+		if ( ! current_user_can( 'wel_manage_setting' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
 		check_admin_referer( 'admin_settlement', 'wc_nonce' );
 		$upfile      = $_FILES['upfile'];
 		$acting_opts = $this->get_acting_settings();

@@ -27,7 +27,7 @@ class Welcart_page extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		extract( $args );
-		$title    = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Page', 'usces' ) : $instance['title'];
+		$title    = $instance['title'];
 		$icon     = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];
 		$page     = ( ! isset( $instance['page'] ) || WCUtils::is_blank( $instance['page'] ) ) ? '' : $instance['page'];
 		$img_path = file_exists( get_stylesheet_directory() . '/images/page.png' ) ? get_stylesheet_directory_uri() . '/images/page.png' : USCES_FRONT_PLUGIN_URL . '/images/page.png';
@@ -36,7 +36,9 @@ class Welcart_page extends WP_Widget {
 		}
 
 		wel_esc_script_e( $before_widget );
-		wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		if ( ! empty( $title ) ) {
+			wel_esc_script_e( $before_title . esc_html( $title ) . $after_title );
+		}
 		?>
 
 		<ul class="ucart_widget_body">
@@ -67,7 +69,7 @@ class Welcart_page extends WP_Widget {
 	 * @param array $instance Current settings.
 	 */
 	public function form( $instance ) {
-		$title = ( ! isset( $instance['title'] ) || WCUtils::is_blank( $instance['title'] ) ) ? 'Welcart ' . __( 'Page', 'usces' ) : esc_attr( $instance['title'] );
+		$title = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$icon  = ( ! isset( $instance['icon'] ) || WCUtils::is_blank( $instance['icon'] ) ) ? 1 : (int) $instance['icon'];
 		$page  = ( ! isset( $instance['page'] ) || WCUtils::is_blank( $instance['page'] ) ) ? '' : $instance['page'];
 		?>

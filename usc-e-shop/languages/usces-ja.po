@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2025-08-28 15:21+0900\n"
+"PO-Revision-Date: 2025-12-16 11:34+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Poedit 3.8\n"
 
 #. Plugin Name of the plugin
 msgid "Welcart e-Commerce"
@@ -1004,8 +1004,8 @@ msgid "3D Secure"
 msgstr "3Dセキュア"
 
 #: classes/PaymentESCOTT.class.php:604 classes/paymentWelcart.class.php:1528
-msgid "3D secure authentication at the time of payment. If you want to use it, you need to apply to Sony Payment Service Co., Ltd."
-msgstr "決済時に3Dセキュア認証を行います。利用したい場合は、ソニーペイメントサービス株式会社に申請する必要があります。"
+msgid "3D secure authentication at the time of payment. If you want to use it, you need to apply to SP.LINKS Inc."
+msgstr "決済時に3Dセキュア認証を行います。利用したい場合は、SP.LINKS株式会社に申請する必要があります。"
 
 msgid "Encryption Key"
 msgstr "暗号化キー"
@@ -1019,11 +1019,11 @@ msgstr "初期化ベクトル"
 msgid "Initialization vector (single-byte alphanumeric characters only) issued by e-SCOTT."
 msgstr "e-SCOTT から発行される初期化ベクトル（半角英数字）。"
 
-msgid "If you want to use 3D Secure Authentication, please apply to Sony Payment Service Co., Ltd."
-msgstr "3Dセキュア認証を利用したい場合は、ソニーペイメントサービス株式会社にお申し込みください。"
+msgid "If you want to use 3D Secure Authentication, please apply to SP.LINKS Inc."
+msgstr "3Dセキュア認証を利用したい場合は、SP.LINKS株式会社にお申し込みください。"
 
-msgid "If you want to use 3D Secure Authentication or External Link Type Payment, please apply to Sony Payment Service Co., Ltd."
-msgstr "3Dセキュア認証もしくは外部リンク型決済を利用したい場合は、ソニーペイメントサービス株式会社にお申し込みください。"
+msgid "If you want to use 3D Secure Authentication or External Link Type Payment, please apply to SP.LINKS Inc."
+msgstr "3Dセキュア認証もしくは外部リンク型決済を利用したい場合は、SP.LINKS株式会社にお申し込みください。"
 
 #: classes/PaymentESCOTT.class.php:606 classes/paymentWelcart.class.php:1530
 msgid "Token auth code"
@@ -10306,7 +10306,7 @@ msgid "Post Title"
 msgstr "タイトル"
 
 msgid "e-SCOTT Smart"
-msgstr "e-SCOTT Smart　ソニーペイメントサービス"
+msgstr "e-SCOTT Smart"
 
 msgid "WelcartPay - Foreign exchange settlement"
 msgstr "WelcartPay 外貨決済"

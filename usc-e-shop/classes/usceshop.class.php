@@ -1101,17 +1101,6 @@ class usc_e_shop {
 	}
 
 	/**
-	 * Admin backup page.
-	 */
-	public function admin_backup_page() {
-		if ( empty( $this->action_message ) || WCUtils::is_blank( $this->action_message ) ) {
-			$this->action_status  = 'none';
-			$this->action_message = '';
-		}
-		require_once USCES_PLUGIN_DIR . '/includes/admin_backup.php';
-	}
-
-	/**
 	 * Shop Top Page.
 	 */
 	public function admin_top_page() {
@@ -1144,6 +1133,20 @@ class usc_e_shop {
 
 			$_POST = $this->stripslashes_deep_post( $_POST );
 
+			$order_mail = '';
+			if ( isset( $_POST['order_mail'] ) ) {
+				$order_mails = array_map( 'trim', explode( ',', $_POST['order_mail'] ) );
+				$valid_mails = array();
+				foreach ( $order_mails as $mail ) {
+					if ( is_email( $mail ) ) {
+						$valid_mails[] = $mail;
+					}
+				}
+				$order_mail = implode( ',', $valid_mails );
+			} else {
+				$order_mail = '';
+			}
+
 			$this->options['display_mode']                 = isset( $_POST['display_mode'] ) ? trim( $_POST['display_mode'] ) : '';
 			$this->options['campaign_category']            = empty( $_POST['cat'] ) ? USCES_ITEM_CAT_PARENT_ID : $_POST['cat'];
 			$this->options['campaign_privilege']           = isset( $_POST['cat_privilege'] ) ? trim( $_POST['cat_privilege'] ) : '';
@@ -1155,10 +1158,10 @@ class usc_e_shop {
 			$this->options['address2']                     = isset( $_POST['address2'] ) ? trim( $_POST['address2'] ) : '';
 			$this->options['tel_number']                   = isset( $_POST['tel_number'] ) ? trim( $_POST['tel_number'] ) : '';
 			$this->options['fax_number']                   = isset( $_POST['fax_number'] ) ? trim( $_POST['fax_number'] ) : '';
-			$this->options['order_mail']                   = isset( $_POST['order_mail'] ) ? trim( $_POST['order_mail'] ) : '';
-			$this->options['inquiry_mail']                 = isset( $_POST['inquiry_mail'] ) ? trim( $_POST['inquiry_mail'] ) : '';
-			$this->options['sender_mail']                  = isset( $_POST['sender_mail'] ) ? trim( $_POST['sender_mail'] ) : '';
-			$this->options['error_mail']                   = isset( $_POST['error_mail'] ) ? trim( $_POST['error_mail'] ) : '';
+			$this->options['order_mail']                   = $order_mail;
+			$this->options['inquiry_mail']                 = isset( $_POST['inquiry_mail'] ) && is_email( trim( $_POST['inquiry_mail'] ) ) ? trim( $_POST['inquiry_mail'] ) : '';
+			$this->options['sender_mail']                  = isset( $_POST['sender_mail'] ) && is_email( trim( $_POST['sender_mail'] ) ) ? trim( $_POST['sender_mail'] ) : '';
+			$this->options['error_mail']                   = isset( $_POST['error_mail'] ) && is_email( trim( $_POST['error_mail'] ) ) ? trim( $_POST['error_mail'] ) : '';
 			$this->options['postage_privilege']            = isset( $_POST['postage_privilege'] ) ? trim( $_POST['postage_privilege'] ) : '';
 			$this->options['purchase_limit']               = isset( $_POST['purchase_limit'] ) ? trim( $_POST['purchase_limit'] ) : '';
 			$this->options['point_rate']                   = isset( $_POST['point_rate'] ) ? (int) $_POST['point_rate'] : 1;
@@ -2197,7 +2200,7 @@ class usc_e_shop {
 		if ( ! $value ) {
 			$res = null;
 		} else {
-			$res = unserialize( $value );
+			$res = @unserialize( $value );
 		}
 
 		return $res;
@@ -3302,8 +3305,6 @@ class usc_e_shop {
 		usces_register_action( 'uscesmode_changepassword', 'request', 'uscesmode', 'changepassword', 'uscesmode_changepassword' );
 		usces_register_action( 'changepassword', 'request', 'changepassword', null, 'changepassword_page' );
 		usces_register_action( 'page_newmember', 'get', 'usces_page', 'newmember', 'page_newmember' );
-		usces_register_action( 'usces_export', 'post', 'usces_export', null, 'usces_export' );
-		usces_register_action( 'usces_import', 'post', 'usces_import', null, 'usces_import' );
 		usces_register_action( 'page_search_item', 'get', 'usces_page', 'search_item', 'page_search_item' );
 		usces_register_action( 'front_ajax', 'post', 'usces_ajax_action', null, 'front_ajax' );
 	}
@@ -3319,7 +3320,7 @@ class usc_e_shop {
 				'customerlogin', 'reganddeliveryinfo', 'deliveryinfo', 'backDelivery', 'confirm', 'use_point',
 				'backConfirm', 'purchase', 'acting_return', 'settlement_epsilon', 'inquiry_button', 'member_login',
 				'regmember', 'editmember', 'deletemember', 'page_login', 'page_logout', 'page_lostmemberpassword', 'lostpassword',
-				'uscesmode_changepassword', 'changepassword', 'page_newmember', 'usces_export', 'usces_import',
+				'uscesmode_changepassword', 'changepassword', 'page_newmember',
 				'page_search_item', 'front_ajax',
 			);
 
@@ -3705,6 +3706,16 @@ class usc_e_shop {
 			exit;
 		}
 
+		if ( isset( $_POST['wc_purchase_nonce'] ) ) {
+			if ( ! wp_verify_nonce( $_POST['wc_purchase_nonce'], 'wc_purchase_nonce' ) ) {
+				$this->error_message = __( 'Security check failed. Please try again.', 'usces' );
+				$this->page          = 'confirm';
+				add_action( 'the_post', array( $this, 'action_cartFilter' ) );
+				add_action( 'template_redirect', array( $this, 'template_redirect' ) );
+				return;
+			}
+		}
+
 		if ( ! apply_filters( 'usces_purchase_check', true ) ) {
 			return;
 		}
@@ -4014,14 +4025,6 @@ class usc_e_shop {
 		add_filter( 'yoast-ga-push-after-pageview', 'usces_trackPageview_newmemberform' );
 		add_action( 'the_post', array( $this, 'action_memberFilter' ) );
 		add_action( 'template_redirect', array( $this, 'template_redirect' ) );
-	}
-
-	public function usces_export() {
-		$this->export();
-	}
-
-	public function usces_import() {
-		$this->import();
 	}
 
 	public function page_search_item() {
@@ -4371,27 +4374,6 @@ class usc_e_shop {
 		}
 	}
 
-	public function import() {
-		$res = usces_import_xml();
-		if ( $res === false ) {
-			$this->action_status = 'error';
-		} else {
-			$this->action_status  = 'success';
-			$this->action_message = __( 'Import is cmpleted', 'usces' );
-		}
-	}
-
-	public function export() {
-		$filename = 'usces.' . substr( get_date_from_gmt( gmdate( 'Y-m-d H:i:s', time() ) ), 0, 10 ) . '.xml';
-
-		header( 'Content-Description: File Transfer' );
-		header( "Content-Disposition: attachment; filename=$filename" );
-		header( 'Content-Type: text/xml; charset=' . get_option( 'blog_charset' ), true );
-
-		usces_export_xml();
-		die();
-	}
-
 	public function changepassword() {
 		global $wpdb;
 
@@ -4420,6 +4402,10 @@ class usc_e_shop {
 		$delim = apply_filters( 'usces_filter_delim', $this->delim );
 
 		$lostmail = trim( $_POST['loginmail'] );
+		if ( ! $this->is_member( $lostmail ) ) {
+			return 'lostcompletion';
+		}
+
 		$lost_key = usces_make_lost_key();
 		usces_store_lostmail_key( $lostmail, $lost_key );
 
@@ -5399,7 +5385,7 @@ class usc_e_shop {
 			$rembr = array();
 			foreach ( $mes[ $post_id ] as $skukey => $skuvalue ) {
 				if ( ! empty( $skuvalue ) ) {
-					$rembr[ $post_id ][ $skukey ] = rtrim( $skuvalue, '<br />' );
+					$rembr[ $post_id ][ $skukey ] = preg_replace( '/<br\s*\/?>\s*$/', '', $skuvalue );
 				}
 			}
 			$mes = $rembr;
@@ -6037,8 +6023,6 @@ class usc_e_shop {
 		$mes = '';
 		if ( ! is_email( $_POST['loginmail'] ) || WCUtils::is_blank( $_POST['loginmail'] ) ) {
 			$mes .= __( 'e-mail address is not correct', 'usces' ) . '<br />';
-		} elseif ( ! $this->is_member( $_POST['loginmail'] ) ) {
-			$mes .= __( 'It is the e-mail address that there is not.', 'usces' ) . '<br />';
 		}
 
 		return $mes;
@@ -7824,7 +7808,7 @@ class usc_e_shop {
 			header( 'location: ' . $acting_opts['send_url_edy'] . '?acting=telecom_edy' . $post_query );
 			exit;
 
-		} elseif ( 'acting_digitalcheck_card' == $acting_flg ) { /* メタップスペイメント カード決済（旧デジタルチェック、旧ペイデザイン） */
+		} elseif ( 'acting_digitalcheck_card' == $acting_flg ) { /* ペイメントフォー カード決済（旧メタップスペイメント、旧デジタルチェック、旧ペイデザイン） */
 			$acting_opts = $this->options['acting_settings']['digitalcheck'];
 			$interface   = parse_url( $acting_opts['send_url_user_id'] );
 			$kakutei     = ( empty( $acting_opts['card_kakutei'] ) ) ? '0' : $acting_opts['card_kakutei'];
@@ -7922,7 +7906,7 @@ class usc_e_shop {
 			}
 			exit();
 
-		} elseif ( 'acting_digitalcheck_conv' == $acting_flg ) { /* メタップスペイメント コンビニ決済（旧デジタルチェック、旧ペイデザイン） */
+		} elseif ( 'acting_digitalcheck_conv' == $acting_flg ) { /* ペイメントフォー コンビニ決済（旧メタップスペイメント、旧デジタルチェック、旧ペイデザイン） */
 			if ( isset( $_REQUEST['STORE'] ) && '99' != $_REQUEST['STORE'] ) {
 				$res = $this->order_processing();
 				if ( 'ordercompletion' == $res ) {
@@ -8300,7 +8284,7 @@ class usc_e_shop {
 
 		$entry     = $this->cart->get_entry();
 		$use_point = isset( $entry['order']['usedpoint'] ) ? (int) $entry['order']['usedpoint'] : 0;
-		if ( 0 < $use_point ) {
+		if ( 0 < $use_point && 0 < $total ) {
 			$point = (float) sprintf( '%.3f', $point - ( $point * $use_point / $total ) );
 			$point = ceil( $point );
 			if ( 0 > $point ) {
@@ -8407,9 +8391,9 @@ class usc_e_shop {
 		if ( count( $charges ) > 0 ) {
 			rsort( $charges );
 			$max_charge = $charges[0];
-			$charge     = $max_charge + array_sum( $individual_charges );
+			$charge     = $max_charge + array_sum( array_filter( $individual_charges, 'is_numeric' ) );
 		} else {
-			$charge = array_sum( $individual_charges );
+			$charge = array_sum( array_filter( $individual_charges, 'is_numeric' ) );
 		}
 
 		$charge = apply_filters( 'usces_filter_getShippingCharge', $charge, $cart, $entry );

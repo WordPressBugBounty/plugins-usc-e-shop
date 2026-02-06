@@ -1460,7 +1460,7 @@ msgstr ""
 
 #: classes/PaymentESCOTT.class.php:604
 #: classes/paymentWelcart.class.php:1528
-msgid "3D secure authentication at the time of payment. If you want to use it, you need to apply to Sony Payment Service Co., Ltd."
+msgid "3D secure authentication at the time of payment. If you want to use it, you need to apply to SP.LINKS Inc."
 msgstr ""
 
 #: classes/PaymentESCOTT.class.php:606

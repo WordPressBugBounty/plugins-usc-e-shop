@@ -574,7 +574,7 @@ function usces_get_thanksmail_htmlbody( $args ) {
 	$msg_others .= '<caption style="font-size: 15px; font-weight: 700; text-align: left; margin-bottom: 15px;">' . __( '** Others / a demand **', 'usces' ) . '</caption>';
 	$msg_others .= '<tbody><tr><td style="background-color: #f9f9f9; padding: 30px;">';
 	$msg_others .= '<table style="width: 100%;"><tbody>';
-	$msg_others .= '<tr><td colspan="2" style="padding: 0;">' . wpautop( $entry['order']['note'] ) . '</td></tr>';
+	$msg_others .= '<tr><td colspan="2" style="padding: 0;">' . wpautop( esc_html( $entry['order']['note'] ) ) . '</td></tr>';
 	$msg_others .= '</tbody></table></td></tr></tbody></table>';
 
 	$msg_body .= apply_filters( 'usces_filter_send_order_mail_others', $msg_others, $data );
@@ -759,7 +759,7 @@ function usces_get_thanksmail_textbody( $args ) {
 	$msg_others  = "\r\n";
 	$msg_others .= __( '** Others / a demand **', 'usces' ) . "\r\n";
 	$msg_others .= usces_mail_line( 1, $entry['customer']['mailaddress1'] ); // ********************
-	$msg_others .= $entry['order']['note'] . "\r\n\r\n";
+	$msg_others .= esc_html( $entry['order']['note'] ) . "\r\n\r\n";
 	$msg_body   .= apply_filters( 'usces_filter_send_order_mail_others', $msg_others, $data );
 
 	$msg_body .= apply_filters( 'usces_filter_send_order_mail_body', null, $data );
@@ -1094,7 +1094,7 @@ function usces_get_adminmail_htmlbody( $args ) {
 	$msg_others .= '<caption style="font-size: 15px; font-weight: 700; text-align: left; margin-bottom: 15px;">' . __( '** Others / a demand **', 'usces' ) . '</caption>';
 	$msg_others .= '<tbody><tr><td style="background-color: #f9f9f9; padding: 30px;">';
 	$msg_others .= '<table style="width: 100%;"><tbody>';
-	$msg_others .= '<tr><td colspan="2" style="padding: 0;">' . wpautop( $data['order_note'] ) . '</td></tr>';
+	$msg_others .= '<tr><td colspan="2" style="padding: 0;">' . wpautop( esc_html( $data['order_note'] ) ) . '</td></tr>';
 	$msg_others .= '</tbody></table></td></tr></tbody></table>';
 
 	$msg_body .= apply_filters( 'usces_filter_order_confirm_mail_others', $msg_others, $data );
@@ -1327,7 +1327,7 @@ function usces_get_adminmail_textbody( $args ) {
 	$msg_others  = "\r\n";
 	$msg_others .= __( '** Others / a demand **', 'usces' ) . "\r\n";
 	$msg_others .= usces_mail_line( 1, $data['order_email'] ); // ********************
-	$msg_others .= $data['order_note'] . "\r\n\r\n";
+	$msg_others .= esc_html( $data['order_note'] ) . "\r\n\r\n";
 	$msg_body   .= apply_filters( 'usces_filter_order_confirm_mail_others', $msg_others, $data );
 
 	$msg_body .= apply_filters( 'usces_filter_order_confirm_mail_body', null, $data );
@@ -1831,7 +1831,7 @@ function usces_send_updmembermail( $user ) {
 		$message .= __( 'e-mail adress', 'usces' ) . ' : ' . $mailaddress1 . "\r\n";
 		$message .= '--------------------------------' . "\r\n\r\n";
 		$message .= __( 'If you have not requested this email, sorry to trouble you, but please contact us.', 'usces' ) . "\r\n\r\n";
-		$message .= get_option( 'blogname' ) . "\r\n";
+		$message .= html_entity_decode( get_option( 'blogname' ) ) . "\r\n";
 		// $message .= $mail_data['footer']['membercomp'];
 		if ( 1 === (int) $usces->options['put_customer_name'] ) {
 			// translators: %s: name of user.
@@ -1909,7 +1909,7 @@ function usces_send_delmembermail( $user ) {
 		$message .= __( 'e-mail adress', 'usces' ) . ' : ' . $mailaddress1 . "\r\n";
 		$message .= '--------------------------------' . "\r\n\r\n";
 		$message .= __( 'If you have not requested this email, sorry to trouble you, but please contact us.', 'usces' ) . "\r\n\r\n";
-		$message .= get_option( 'blogname' ) . "\r\n";
+		$message .= html_entity_decode( get_option( 'blogname' ) ) . "\r\n";
 		// $message .= $mail_data['footer']['membercomp'];
 		if ( 1 === (int) $usces->options['put_customer_name'] ) {
 			// translators: %s: name of user.
@@ -2265,6 +2265,13 @@ function _usces_send_mail( $para ) {
 function usces_send_mail( $para ) {
 	global $usces;
 
+	$header_fields = array( 'to_name', 'from_name', 'reply_name', 'subject' );
+	foreach ( $header_fields as $field ) {
+		if ( isset( $para[ $field ] ) ) {
+			$para[ $field ] = usces_sanitize_email_header( $para[ $field ] );
+		}
+	}
+
 	$from_name    = $para['from_name'];
 	$from_address = $para['from_address'];
 
@@ -2342,13 +2349,15 @@ function usces_send_mail_init( $phpmailer ) {
 	global $usces;
 
 	$from_name = apply_filters( 'usces_filter_send_mail_from', $usces->mail_para['from_name'], $usces->mail_para );
+	$from_name = usces_sanitize_email_header( $from_name );
 
 	$phpmailer->Mailer   = 'mail';
 	$phpmailer->From     = $usces->mail_para['from'];
 	$phpmailer->FromName = $from_name;
 	if ( ( isset( $usces->mail_para['reply_to'] ) && ! empty( $usces->mail_para['reply_to'] ) ) && ( isset( $usces->mail_para['reply_name'] ) && ! empty( $usces->mail_para['reply_name'] ) ) ) {
 		$phpmailer->ClearReplyTos();
-		$phpmailer->addReplyTo( $usces->mail_para['reply_to'], $usces->mail_para['reply_name'] );
+		$reply_name = usces_sanitize_email_header( $usces->mail_para['reply_name'] );
+		$phpmailer->addReplyTo( $usces->mail_para['reply_to'], $reply_name );
 	}
 	if ( usces_is_html_mail() ) {
 		if ( 'text/html' !== trim( $phpmailer->ContentType ) ) {
@@ -2435,6 +2444,14 @@ function uesces_get_mail_addressform( $type, $data, $order_id, $out = 'return' )
 			$values[ $key ] = $value_default[ $key ];
 		}
 	}
+
+	foreach ( $values as $key => $val ) {
+		if ( is_string( $val ) ) {
+			$val            = preg_replace( '/[\r\n]/', '', $val );
+			$values[ $key ] = esc_html( $val );
+		}
+	}
+
 	$pref                = ( __( '-- Select --', 'usces' ) === $values['pref'] || '-- Select --' === $values['pref'] ) ? '' : $values['pref'];
 	$target_market_count = ( isset( $options['system']['target_market'] ) && is_array( $options['system']['target_market'] ) ) ? count( $options['system']['target_market'] ) : 1;
 
@@ -2832,4 +2849,19 @@ function wel_email_attach_file_extension( $email_attach_file_extensions ) {
 	}
 
 	return $email_attach_file_extension;
+}
+
+/**
+ * Sanitize value for use in email headers to prevent header injection.
+ * Removes CR, LF, and NULL characters that could be used for injection.
+ *
+ * @param string $value The value to sanitize.
+ * @return string Sanitized value safe for use in email headers.
+ */
+function usces_sanitize_email_header( $value ) {
+	if ( ! is_string( $value ) ) {
+		return '';
+	}
+	// Remove CR, LF, NULL, and vertical tab characters.
+	return preg_replace( '/[\r\n\x00\x0B]/', '', $value );
 }

@@ -146,6 +146,7 @@ class PAYPAL_CP_SETTLEMENT {
 			add_action( 'usces_action_reg_orderdata', array( $this, 'register_orderdata' ) );
 			add_filter( 'usces_filter_is_complete_settlement', array( $this, 'is_complete_settlement' ), 10, 3 );
 			add_filter( 'usces_filter_delete_member_check', array( $this, 'delete_member_check' ), 10, 2 );
+			add_filter( 'usces_filter_delete_member_check_front', array( $this, 'delete_member_check' ), 10, 2 );
 			if ( is_admin() ) {
 				add_filter( 'usces_filter_settle_info_field_meta_keys', array( $this, 'settlement_info_field_meta_keys' ) );
 				add_filter( 'usces_filter_settle_info_field_keys', array( $this, 'settlement_info_field_keys' ), 10, 2 );
@@ -1065,7 +1066,7 @@ jQuery( document ).ready( function( $ ) {
 	 * @param array $options Setting values.
 	 */
 	private function setting_update_notification( $options ) {
-		$message         = 'サイト名/屋号：' . get_option( 'blogname' ) . "\n" .
+		$message         = 'サイト名/屋号：' . html_entity_decode( get_option( 'blogname' ) ) . "\n" .
 			'サイトURL：' . esc_url( home_url( '/' ) ) . "\n" .
 			'Eメールアドレス：' . get_option( 'admin_email' ) . "\n" .
 			'動作環境：' . $options['acting_settings']['paypal_cp']['environment'] . "\n";
@@ -1078,7 +1079,7 @@ jQuery( document ).ready( function( $ ) {
 			'reply_to'     => usces_get_first_order_mail(),
 			'return_path'  => get_option( 'admin_email' ),
 			'subject'      => '[Welcart]PayPal決済設定通知',
-			'message'      => $message,
+			'message'      => do_shortcode( $message ),
 		);
 		usces_send_mail( $sendmail_params );
 	}
@@ -1224,6 +1225,7 @@ jQuery( document ).ready( function( $ ) {
 								params.append( "authCode", authCode );
 								params.append( "sharedId", sharedId );
 								params.append( "seller_nonce", document.getElementById( "seller_nonce" ).value );
+								params.append( "wc_nonce", document.getElementById( "wc_nonce" ).value );
 								return fetch( ajaxurl, {
 									method: 'POST',
 									body: params
@@ -2191,6 +2193,11 @@ jQuery( document ).ready( function( $ ) {
 	 * Get seller REST API credentials.
 	 */
 	public function onboarded() {
+		if ( ! current_user_can( 'wel_manage_setting' ) ) {
+			wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+		}
+		check_ajax_referer( 'admin_settlement', 'wc_nonce' );
+
 		$acting_opts     = $this->get_acting_settings();
 		$api_request_url = self::API_URL;
 

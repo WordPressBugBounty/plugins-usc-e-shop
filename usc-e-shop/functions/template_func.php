@@ -1436,7 +1436,11 @@ function usces_the_itemImage( $number = 0, $width = 60, $height = 60, $post = ''
 			}
 			$name = $product['itemName'];
 
-			$alt = 'alt="' . esc_attr( $code ) . '"';
+			$alt = trim( strip_tags( get_post_meta( $pictid, '_wp_attachment_image_alt', true ) ) );
+			if ( empty( $alt ) ) {
+				$alt = $code;
+			}
+			$alt = 'alt="' . esc_attr( $alt ) . '"';
 			$alt = apply_filters( 'usces_filter_img_alt', $alt, $post_id, $pictid, $width, $height );
 
 			$html = preg_replace( '/alt=\"[^\"]*\"/', $alt, $html );
@@ -1462,7 +1466,11 @@ function usces_the_itemImage( $number = 0, $width = 60, $height = 60, $post = ''
 			$pictid = (int) $usces->get_mainpictid( $code );
 			$html   = wp_get_attachment_image( $pictid, array( $width, $height ), true );/* '<img src="#" height="60" width="60" alt="" />'; */
 			if ( 'item' === $media ) {
-				$alt = 'alt="' . esc_attr( $code ) . '"';
+				$alt = trim( strip_tags( get_post_meta( $pictid, '_wp_attachment_image_alt', true ) ) );
+				if ( empty( $alt ) ) {
+					$alt = $code;
+				}
+				$alt = 'alt="' . esc_attr( $alt ) . '"';
 				$alt = apply_filters( 'usces_filter_img_alt', $alt, $post_id, $pictid, $width, $height );
 
 				$html = preg_replace( '/alt=\"[^\"]*\"/', $alt, $html );
@@ -1481,7 +1489,11 @@ function usces_the_itemImage( $number = 0, $width = 60, $height = 60, $post = ''
 			$pictid  = ( isset( $pictids[ $ind ] ) && (int) $pictids[ $ind ] ) ? $pictids[ $ind ] : 0;
 			$html    = wp_get_attachment_image( $pictid, array( $width, $height ), false );/* '<img src="#" height="60" width="60" alt="" />'; */
 			if ( 'item' === $media ) {
-				$alt = 'alt="' . esc_attr( $code ) . '"';
+				$alt = trim( strip_tags( get_post_meta( $pictid, '_wp_attachment_image_alt', true ) ) );
+				if ( empty( $alt ) ) {
+					$alt = $code;
+				}
+				$alt = 'alt="' . esc_attr( $alt ) . '"';
 				$alt = apply_filters( 'usces_filter_img_alt', $alt, $post_id, $pictid, $width, $height );
 
 				$html = preg_replace( '/alt=\"[^\"]*\"/', $alt, $html );

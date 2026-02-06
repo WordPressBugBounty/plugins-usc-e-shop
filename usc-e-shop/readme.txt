@@ -2,9 +2,9 @@
 Contributors: uscnanbu
 Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.11.21
+Stable tag: 2.11.27
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,7 +25,7 @@ You can sell any type of product (physical, digital, subscriptions).
 There is no limit to the number of products, item photos, and categories.
 You can manage items by SKU (Stock Keeping Unit) code.
 Welcart has many options for pricing and shipping.
-You can apply for up to 16 different payment options (Sony Payment, Paypal, Softbank Payment etc.) on Welcart's official website.
+You can apply for up to 16 different payment options (SP.LINKS, PayPal, Softbank Payment etc.) on Welcart's official website.
 Please refer to the link below (Japanese version).
 
 [Welcart Payment services(Japanese)](https://www.welcart.com/wc-settlement/)
@@ -102,6 +102,48 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+21 Jan 2026
+ = V2.11.27 =
+-----------
+* Made compatible with PHP 8.3.
+* [WelcartPay] Fixed a bug that error messages for credit card updates were not displayed on the My Page when using 3DS.
+* Fixed a bug that members using recurring payments could cancel their membership from the My Page.
+* [Security Enhancement] Improved security.
+
+16 Dec 2025
+ = V2.11.26 =
+-----------
+* Fixed a bug that the quantity could not be updated on the cart page when the SKU code contained specific symbols.
+* Fixed a bug that an error occurred when attempting to use points for shipping payment when purchasing a 0 yen item.
+* Fixed a bug that error messages were not displayed correctly after the "usces_filter_incart_check" filter hook.
+* Changed the payment service provider company name.
+
+12 Nov 2025
+ = V2.11.25 =
+-----------
+* [Security Enhancement] Improved access control for specific admin functions.
+* [Security Enhancement] Addressed unauthorized modification of COD settings.
+* [Welcart Standard Widget] Fixed a bug that default text was output when the title was left blank.
+* Fixed a bug that alternate text (alt) set for product images was not applied on the front-end display.
+* Addressed an implementation that forcibly changes option values on the cart page.
+
+14 Oct 2025
+ = V2.11.24 =
+-----------
+* Fixed a bug that sorting did not work on the order list page.
+
+8 Oct 2025
+ = V2.11.23 =
+-----------
+* Feedback: [Security Enhancement] Sanitized input values in the Basic Settings text fields.
+
+7 Oct 2025
+ = V2.11.22 =
+-----------
+* [Security Enhancement] Sanitized input values in the Basic Settings text fields.
+* [Security Enhancement] Implemented SQL injection countermeasures in the item list page.
+* Fixed a bug that caused the site title to be garbled in the "Email Address Verification Mail".
 
 8 Sep 2025
  = V2.11.21 =
@@ -1105,7 +1147,7 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 * Changed the specification to not limit the scope of application of points when the setting is  "Reduced tax rate" .
 * Changed the specification to check the existence of the product at the time of cart submission.
 * Fixed the bug that an error displays when performing a batch operation on the Order List page.
-* Fixed the bug that the ▼▲ of the "Mail Print Field Display" on the Order Data Edit page is reversed.
+* Fixed the bug that the down/up arrows of the "Mail Print Field Display" on the Order Data Edit page were reversed.
 * Fixed the bug that the member No. is not reflected in the order data purchased without member registration even if the member information is imported or updated later.
 * Fixed the bug that the purge number is all 1 under certain conditions in the delivery note, invoice, and receipt PFDs.
 * Fixed the bug that "#NONE#" is selected when operating the smartphone if the product option is set to multi-select or required selection.

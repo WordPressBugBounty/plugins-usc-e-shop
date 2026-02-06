@@ -220,6 +220,7 @@ class ZEUS_SETTLEMENT {
 			add_action( 'usces_action_member_submenu_list', array( $this, 'e_update_settlement' ) );
 			add_filter( 'usces_filter_member_submenu_list', array( $this, 'update_settlement' ), 10, 2 );
 			add_filter( 'usces_filter_delete_member_check', array( $this, 'delete_member_check' ), 10, 2 );
+			add_filter( 'usces_filter_delete_member_check_front', array( $this, 'delete_member_check' ), 10, 2 );
 
 			/* WCEX DL Seller */
 			if ( defined( 'WCEX_DLSELLER' ) ) {
@@ -7072,6 +7073,8 @@ jQuery.event.add(window,'load',function() {
 	 */
 	public function zeus_3dsecure_enrol() {
 		global $usces;
+
+		check_ajax_referer( 'acting_zeus_card', '_nonce' );
 
 		$entry = $usces->cart->get_entry();
 		if ( empty( $entry ) ) {

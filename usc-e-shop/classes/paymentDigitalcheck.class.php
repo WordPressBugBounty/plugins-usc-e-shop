@@ -1,7 +1,8 @@
 <?php
 /**
  * Settlement Class.
- * メタップスペイメント
+ * ペイメントフォー
+ * ( 旧 メタップスペイメント )
  * ( 旧 ペイデザイン )
  * ( 旧 デジタルチェック )
  *
@@ -12,7 +13,7 @@
  */
 
 /**
- * メタップスペイメント
+ * ペイメントフォー
  */
 class DIGITALCHECK_SETTLEMENT {
 	/**
@@ -74,9 +75,9 @@ class DIGITALCHECK_SETTLEMENT {
 			'acting_digitalcheck_card',
 			'acting_digitalcheck_conv',
 		);
-		$this->acting_name        = 'メタップスペイメント';
-		$this->acting_formal_name = 'メタップスペイメント';
-		$this->acting_company_url = 'https://www.metaps-payment.com/';
+		$this->acting_name        = 'ペイメントフォー';
+		$this->acting_formal_name = 'ペイメントフォー';
+		$this->acting_company_url = 'https://www.paymentfor.com/';
 
 		$this->initialize_data();
 

@@ -656,7 +656,7 @@ function usces_Universal_trackPageview() {
 				$push[]     = "'require', 'ecommerce', 'ecommerce.js'";
 				$push[]     = "'ecommerce:addTransaction', { 
 							id: '" . $order_id . "', 
-							affiliation: '" . get_option( 'blogname' ) . "',
+							affiliation: '" . esc_js( get_option( 'blogname' ) ) . "',
 							revenue: '" . $total_price . "',
 							shipping: '" . $data['order_shipping_charge'] . "',
 							tax: '" . $data['order_tax'] . "' }";

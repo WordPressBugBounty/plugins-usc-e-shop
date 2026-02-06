@@ -69,6 +69,7 @@ class SBPS_SETTLEMENT extends SBPS_MAIN {
 
 		if ( $this->is_validity_acting( 'card' ) ) {
 			add_filter( 'usces_filter_delete_member_check', array( $this, 'delete_member_check' ), 10, 2 );
+			add_filter( 'usces_filter_delete_member_check_front', array( $this, 'delete_member_check' ), 10, 2 );
 			add_filter( 'usces_filter_delivery_secure_form_howpay', array( $this, 'delivery_secure_form_howpay' ) );
 			add_filter( 'usces_filter_template_redirect', array( $this, 'member_update_settlement' ), 1 );
 			add_action( 'usces_action_member_submenu_list', array( $this, 'e_update_settlement' ) );

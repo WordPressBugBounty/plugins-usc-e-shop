@@ -237,8 +237,14 @@ class dataList
 		}
 
 		$where = $this->GetWhere();
-		$switch = ( 'ASC' == $this->sortSwitchs[$this->sortColumn] ) ? 'ASC' : 'DESC';
-		$order = ' ORDER BY `' . esc_sql($this->sortColumn) . '` ' . $switch;
+
+		$init_column = 'ID';
+		$sort_column = in_array( $this->sortColumn, $this->columns, true ) ? $this->sortColumn : $init_column;
+		$init_switch = 'DESC';
+		$sort_switch = $this->sortSwitchs[ $sort_column ] ?? $init_switch;
+		$sort_switch = in_array( strtoupper( $sort_switch ), array( 'ASC', 'DESC' ), true ) ? $sort_switch : $init_switch;
+		$order       = ' ORDER BY ' . esc_sql( $sort_column ) . ' ' . esc_sql( $sort_switch );
+
 		if($this->pageLimit == 'on') {
 			$limit = $wpdb->prepare(' LIMIT %d, %d', $this->startRow, $this->maxRow);
 		}else{

@@ -46,7 +46,7 @@ class usces_settlement {
 		 * 'remise'       => ルミーズ,
 		 * 'jpayment'     => ROBOT PAYMENT,
 		 * 'telecom'      => テレコムクレジット,
-		 * 'digitalcheck' => メタップスペイメント,
+		 * 'digitalcheck' => ペイメントフォー,
 		 * 'mizuho'       => みずほファクター,
 		 * 'anotherlane'  => アナザーレーン,
 		 * 'veritrans'    => ベリトランス Air-Web,

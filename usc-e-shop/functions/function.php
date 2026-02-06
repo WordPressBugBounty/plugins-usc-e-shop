@@ -519,7 +519,7 @@ function usces_new_memberdata() {
 		$res[ $i ] = $usces->set_member_meta_value( 'mem_salt', $salt, $member_id );
 		$i++;
 	}
-	$result = ( 0 < array_sum( $res ) ) ? 1 : 0;
+	$result = ( 0 < array_sum( array_filter( $res, 'is_numeric' ) ) ) ? 1 : 0;
 
 	do_action( 'usces_action_post_new_memberdata', $member_id, $res[0] );
 
@@ -642,7 +642,7 @@ function usces_update_memberdata() {
 
 	do_action( 'usces_action_post_update_after_memberdata', $ID, $res );
 
-	$result = ( 0 < array_sum( $res ) ) ? 1 : 0;
+	$result = ( 0 < array_sum( array_filter( $res, 'is_numeric' ) ) ) ? 1 : 0;
 	return $result;
 }
 
@@ -972,8 +972,8 @@ function usces_update_ordercheck() {
 	$query = $wpdb->prepare( "SELECT `order_check` FROM $tableName WHERE ID = %d", $order_id );
 	$res   = $wpdb->get_var( $query );
 
-	$checkfield = unserialize( $res ?? '' );
-	if ( false === $checkfield ) {
+	$checkfield = ! empty( $res ) ? unserialize( $res ) : array();
+	if ( ! is_array( $checkfield ) ) {
 		$checkfield = array();
 	}
 	if ( ! isset( $checkfield[ $checked ] ) ) {
@@ -1289,7 +1289,7 @@ function usces_update_orderdata() {
 		}
 	}
 
-	$result = ( 0 < array_sum( $res ) ) ? 1 : 0;
+	$result = ( 0 < array_sum( array_filter( $res, 'is_numeric' ) ) ) ? 1 : 0;
 
 	$query         = $wpdb->prepare( "SELECT * FROM $order_table_name WHERE ID = %d", $ID );
 	$new_orderdata = $wpdb->get_row( $query );
@@ -1297,21 +1297,6 @@ function usces_update_orderdata() {
 	$usces->cart->crear_cart();
 
 	return $result;
-}
-
-function usces_export_xml() {
-	$options = get_option( 'usces', array() );
-	echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?' . ">\n";
-?>
-	<usces><?php echo serialize( $options ); ?></usces>
-	<usces_management_status><?php echo serialize( get_option( 'usces_management_status' ) ); ?></usces_management_status>
-	<usces_zaiko_status><?php echo serialize( get_option( 'usces_zaiko_status' ) ); ?></usces_zaiko_status>
-	<usces_customer_status><?php echo serialize( get_option( 'usces_customer_status' ) ); ?></usces_customer_status>
-	<usces_payment_structure><?php echo serialize( get_option( 'usces_payment_structure' ) ); ?></usces_payment_structure>
-	<usces_display_mode><?php echo serialize( get_option( 'usces_display_mode' ) ); ?></usces_display_mode>
-<!--	<usces_pref><?php //echo serialize( get_option( 'usces_pref' ) ); ?></usces_pref>-->
-	<usces_shipping_rule><?php echo serialize( get_option( 'usces_shipping_rule' ) ); ?></usces_shipping_rule>
-<?php
 }
 
 function usces_all_change_zaiko( &$obj ) {
@@ -2165,6 +2150,14 @@ function usces_update_check_admin( $result ) {
 function usces_setup_cod_ajax() {
 	global $usces;
 
+	// Verify nonce for security.
+	check_ajax_referer( 'admin_setup', 'wc_nonce' );
+
+	// Check user capability.
+	if ( ! current_user_can( 'wel_manage_setting' ) ) {
+		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'usces' ), 403 );
+	}
+
 	$usces->options = get_option( 'usces' );
 	$message        = '';
 	$_POST          = $usces->stripslashes_deep_post( $_POST );
@@ -2179,7 +2172,7 @@ function usces_setup_cod_ajax() {
 			if ( ! WCUtils::is_blank( $_POST['cod_limit_amount'] ) && 0 === (int) $_POST['cod_limit_amount'] ) {
 				$message = __( 'There is the item where a value is dirty.', 'usces' );
 			}
-		}
+		} // phpcs:ignore Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen
 
 	} elseif ( 'change' == $usces->options['cod_type'] ) {
 		if ( isset( $_POST['cod_first_amount'] ) ) {
@@ -2496,7 +2489,7 @@ function usces_trackPageview_ordercompletion( $push ) {
 		if ( $total_price < 0 ) {
 			$total_price = 0;
 		}
-		$push[]     = "'_addTrans', '" . $order_id . "', '" . get_option( 'blogname' ) . "', '" . $total_price . "', '" . $data['order_tax'] . "', '" . $data['order_shipping_charge'] . "', '" . $data['order_address1'].$data['order_address2'] . "', '" . $data['order_pref'] . "', '" . get_locale() . "'";
+		$push[]     = "'_addTrans', '" . $order_id . "', '" . html_entity_decode( get_option( 'blogname' ) ) . "', '" . $total_price . "', '" . $data['order_tax'] . "', '" . $data['order_shipping_charge'] . "', '" . $data['order_address1'].$data['order_address2'] . "', '" . $data['order_pref'] . "', '" . get_locale() . "'";
 		$cart_count = ( $cart && is_array( $cart ) ) ? count( $cart ) : 0;
 		for ( $i = 0; $i < $cart_count; $i++ ) {
 			$cart_row = $cart[ $i ];
@@ -4672,15 +4665,18 @@ function usces_change_order_receipt( $order_id, $flag ) {
 	return $res;
 }
 
-function usces_localized_name( $Familly_name, $Given_name, $out = '' ) {
+function usces_localized_name( $familly_name, $given_name, $out = '' ) {
 	global $usces_settings, $usces;
+
+	$familly_name = preg_replace( '/[\r\n]/', '', $familly_name );
+	$given_name   = preg_replace( '/[\r\n]/', '', $given_name );
 
 	$options = get_option( 'usces', array() );
 	$form    = $options['system']['addressform'];
 	if ( $usces_settings['nameform'][ $form ] ) {
-		$res = $Given_name . ' ' . $Familly_name;
+		$res = $given_name . ' ' . $familly_name;
 	} else {
-		$res = $Familly_name . ' ' . $Given_name;
+		$res = $familly_name . ' ' . $given_name;
 	}
 
 	if ( 'return' === $out ) {
@@ -4824,7 +4820,7 @@ function usces_get_link_key( $results ) {
 	} elseif ( isset( $_REQUEST['txn_type'] ) && 'pro_hosted' === $_REQUEST['txn_type'] && isset( $_REQUEST['custom'] ) ) {
 		$linkkey = $_REQUEST['custom']; //PayPal Webpayment Plus.
 	} elseif ( isset( $_REQUEST['SID'] ) && isset( $_REQUEST['FUKA'] ) ) {
-		$linkkey = $_REQUEST['SID']; //MetapsPayment (paydesign,digitalcheck).
+		$linkkey = $_REQUEST['SID']; //Payment for (MetapsPayment,paydesign,digitalcheck).
 	} elseif ( isset( $_REQUEST['acting'] ) && ( 'mizuho_card' === $_REQUEST['acting'] || 'mizuho_conv' === $_REQUEST['acting'] ) && isset( $_REQUEST['stran'] ) ) {
 		$linkkey = $_REQUEST['stran']; //mizuho.
 	} elseif ( isset( $_REQUEST['SiteId'] ) && $usces->options['acting_settings']['anotherlane']['siteid'] === $_REQUEST['SiteId'] && isset( $_REQUEST['TransactionId'] ) ) {

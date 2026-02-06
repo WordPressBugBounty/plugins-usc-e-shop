@@ -22,6 +22,7 @@ $payment_settlement    = $payments['settlement'] ?? '';
 
 if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entries['order']['total_full_price'] ) {
 	$purchase_html = '<form id="purchase_form" action="' . USCES_CART_URL . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}">
+		' . wp_nonce_field( 'wc_purchase_nonce', 'wc_purchase_nonce', true, false ) . '
 		<div class="send">
 		' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flag, $rand ) . '
 		<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . apply_filters( 'usces_filter_confirm_prebutton_value', __( 'Back', 'usces' ) ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />
@@ -414,7 +415,7 @@ if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entri
 			$html .= '</form>';
 			break;
 
-		case 'acting_digitalcheck_card': /* メタップスペイメント カード決済（旧デジタルチェック、旧ペイデザイン） */
+		case 'acting_digitalcheck_card': /* ペイメントフォー カード決済（旧メタップスペイメント、旧デジタルチェック、旧ペイデザイン） */
 			$acting_opts = $usces->options['acting_settings']['digitalcheck'];
 			$sid         = uniqid();
 			$usces->save_order_acting_data( $sid );
@@ -482,7 +483,7 @@ if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entri
 			$html .= '</form>';
 			break;
 
-		case 'acting_digitalcheck_conv': /* メタップスペイメント コンビニ決済（旧デジタルチェック、旧ペイデザイン） */
+		case 'acting_digitalcheck_conv': /* ペイメントフォー コンビニ決済（旧メタップスペイメント、旧デジタルチェック、旧ペイデザイン） */
 			$acting_opts = $usces->options['acting_settings']['digitalcheck'];
 			$sid         = uniqid();
 			$usces->save_order_acting_data( $sid );
@@ -662,6 +663,7 @@ if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entri
 
 		default:
 			$purchase_html .= '<form id="purchase_form" action="' . apply_filters( 'usces_filter_acting_url', USCES_CART_URL ) . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}">
+				' . wp_nonce_field( 'wc_purchase_nonce', 'wc_purchase_nonce', true, false ) . '
 				<div class="send">
 				' . apply_filters( 'usces_filter_confirm_before_backbutton', null, $payments, $acting_flag, $rand ) . '
 				<input name="backDelivery" type="submit" id="back_button" class="back_to_delivery_button" value="' . __( 'Back', 'usces' ) . '"' . apply_filters( 'usces_filter_confirm_prebutton', null ) . ' />

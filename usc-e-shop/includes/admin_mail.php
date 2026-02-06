@@ -348,7 +348,7 @@ jQuery( function($) {
 				</tr>
 			</table>
 			<hr size="1" color="#CCCCCC" />
-			<div id="ex_order_mail" class="explanation"><?php echo sprintf(__('This is an email transmitting a message for owner of shop(%s).', 'usces'), $this->options['order_mail']); ?></div>
+			<div id="ex_order_mail" class="explanation"><?php echo sprintf(__('This is an email transmitting a message for owner of shop(%s).', 'usces'), esc_html( $this->options['order_mail'] ) ); ?></div>
 			</div>
 			</div><!--postbox-->
 			<!-- Inquiry receipt mail -->

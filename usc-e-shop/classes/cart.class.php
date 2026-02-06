@@ -106,13 +106,21 @@ class usces_cart {
 
 		global $usces;
 		$_POST = $usces->stripslashes_deep_post( $_POST );
+		$keys  = array_keys( $_SESSION['usces_cart'] );
 
-		foreach ( $_POST['quant'] as $index => $vs ) {
+		$serial_option = apply_filters( 'usces_filter_upcart_serial_option', false );
+
+		$index = 0;
+		foreach ( $_POST['quant'] as $vs ) {
 
 			if ( ! is_array( $vs ) ) {
 				break;
 			}
-			
+
+			if ( ! isset( $_POST['quant'][ $index ] ) ) {
+				continue;
+			}
+
 			$res = apply_filters( 'usces_filter_upCart_check', '', $index, $vs );
 			if ( '' !== $res ) {
 				return $res;
@@ -124,12 +132,25 @@ class usces_cart {
 			$skus = array_keys( $vs[ $post_id ] );
 			$sku  = $skus[0];
 
-			$this->up_serialize( $index, $post_id, $sku );
+			$sku_decode  = urldecode( $sku );
+
+			$skus = $usces->get_skus( $post_id, 'code' );
+
+			if ( ! $skus || ! isset( $skus[ $sku_decode ] ) ) {
+				continue;
+			}
+
+			if ( $serial_option ) {
+				$this->up_serialize( $index, $post_id, $sku );
+			} else {
+				$this->serial = $keys[ $index ];
+			}
 
 			if ( ! WCUtils::is_blank( $_POST['quant'][ $index ][ $post_id ][ $sku ] ) ) {
 
 				$_SESSION['usces_cart'][ $this->serial ]['quant']   = (int) $_POST['quant'][ $index ][ $post_id ][ $sku ];
 				$_SESSION['usces_cart'][ $this->serial ]['advance'] = isset( $_POST['advance'][ $index ][ $post_id ][ $sku ] ) ? $_POST['advance'][ $index ][ $post_id ][ $sku ] : array();
+
 				if ( isset( $_POST['order_action'] ) ) {
 					$price = (int) $_POST['skuPrice'][ $index ][ $post_id ][ $sku ];
 				} else {
@@ -139,6 +160,8 @@ class usces_cart {
 				$_SESSION['usces_cart'][ $this->serial ]['price'] = $price;
 
 			}
+
+			$index++;
 		}
 
 		unset( $_SESSION['usces_entry']['order']['usedpoint'] );
@@ -363,7 +386,7 @@ class usces_cart {
 	 * @return array
 	 */
 	public function key_unserialize( $serial ) {
-		$array = unserialize( $serial );
+		$array = @unserialize( $serial );
 		$ids   = array_keys( $array );
 		$skus  = array_keys( $array[ $ids[0] ] );
 
