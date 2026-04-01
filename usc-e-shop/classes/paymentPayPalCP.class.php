@@ -101,6 +101,9 @@ class PAYPAL_CP_SETTLEMENT {
 
 		add_action( 'init', array( $this, 'init' ), 20 );
 		add_filter( 'http_headers_useragent', array( $this, 'http_headers_useragent' ), 10, 2 );
+		if ( $this->is_validity_acting() ) {
+			add_action( 'template_redirect', array( $this, 'respond_to_ipn' ), 1 );
+		}
 
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_onboarded', array( $this, 'onboarded' ) );
@@ -343,6 +346,26 @@ class PAYPAL_CP_SETTLEMENT {
 				usces_update_system_option( 'usces_payment_method', $payment['id'], $payment );
 			}
 		}
+	}
+
+	/**
+	 * Respond to PayPal IPN with HTTP 200.
+	 *
+	 * Billing Agreements created before the notify_url removal
+	 * still trigger IPN on each recurring payment. Since PayPal CP
+	 * does not use IPN, simply return HTTP 200 to stop failure alerts.
+	 *
+	 * @return void
+	 */
+	public function respond_to_ipn() {
+		if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+			return;
+		}
+		if ( ! isset( $_POST['ipn_track_id'] ) || ! isset( $_POST['txn_type'] ) ) {
+			return;
+		}
+		status_header( 200 );
+		exit;
 	}
 
 	/**
@@ -2277,7 +2300,6 @@ jQuery( document ).ready( function( $ ) {
 		$body['plan']['type']            = 'MERCHANT_INITIATED_BILLING';
 		$body['plan']['merchant_preferences']['return_url']         = USCES_CART_URL;
 		$body['plan']['merchant_preferences']['cancel_url']         = USCES_CART_URL;
-		$body['plan']['merchant_preferences']['notify_url']         = USCES_CART_URL;
 		$body['plan']['merchant_preferences']['accepted_pymt_type'] = 'INSTANT';
 		if ( $shipping ) {
 			$name                                       = usces_localized_name( trim( $entry['delivery']['name1'] ), trim( $entry['delivery']['name2'] ), 'return' );
@@ -4388,7 +4410,7 @@ jQuery.event.add( window, "load", function() {
 						}
 					}
 				} else {
-					$this->save_acting_log( $response_data, $acting, $acting_status, $status, 0, $order_id, $tracking_id );
+					$this->save_acting_log( $response_data, $acting, 'ERROR', $status, 0, $order_id, $tracking_id );
 					$acting_status = 'AUTHORIZE';
 				}
 				$class   = ' paypal-' . strtolower( $acting_status );
@@ -4487,7 +4509,7 @@ jQuery.event.add( window, "load", function() {
 					} else {
 						$status = 'VOID ERROR';
 					}
-					$this->save_acting_log( $response_data, $acting, $acting_status, $status, 0, $order_id, $tracking_id );
+					$this->save_acting_log( $response_data, $acting, 'ERROR', $status, 0, $order_id, $tracking_id );
 					$acting_status = 'AUTHORIZE';
 					$class         = ' paypal-' . strtolower( $acting_status );
 					$result       .= '<div class="paypal-settlement-admin' . $class . '">' . __( $acting_status, 'usces' ) . '</div>';
@@ -4574,7 +4596,7 @@ jQuery.event.add( window, "load", function() {
 				if ( 'COMPLETED' === $status ) {
 					$this->save_acting_log( $response_data, $acting, $acting_status, $status, $refund_amount * -1, $order_id, $tracking_id );
 				} else {
-					$this->save_acting_log( $response_data, $acting, $acting_status, $status, 0, $order_id, $tracking_id );
+					$this->save_acting_log( $response_data, $acting, 'ERROR', $status, 0, $order_id, $tracking_id );
 				}
 				$amount = $this->get_latest_amount( $order_id, $tracking_id );
 				if ( 0 < $amount ) {

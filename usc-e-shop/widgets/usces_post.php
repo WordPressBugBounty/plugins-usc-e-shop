@@ -16,7 +16,11 @@ class Welcart_post extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Post', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_post',
+			'description' => __( 'Display recent posts.', 'usces' ),
+		);
+		parent::__construct( 'welcart_post', 'Welcart ' . __( 'Post', 'usces' ), $widget_ops );
 	}
 
 	/**

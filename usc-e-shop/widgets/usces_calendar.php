@@ -16,7 +16,11 @@ class Welcart_calendar extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Calendar', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_calendar',
+			'description' => __( 'Display business day calendar.', 'usces' ),
+		);
+		parent::__construct( 'welcart_calendar', 'Welcart ' . __( 'Calendar', 'usces' ), $widget_ops );
 	}
 
 	/**

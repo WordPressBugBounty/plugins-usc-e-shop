@@ -16,7 +16,11 @@ class Welcart_bestseller extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'best seller', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_bestseller',
+			'description' => __( 'Display best-selling items.', 'usces' ),
+		);
+		parent::__construct( 'welcart_bestseller', 'Welcart ' . __( 'best seller', 'usces' ), $widget_ops );
 	}
 
 	/**

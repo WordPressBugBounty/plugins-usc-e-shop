@@ -14,7 +14,11 @@ class Welcart_page extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Page', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_page',
+			'description' => __( 'Display page content.', 'usces' ),
+		);
+		parent::__construct( 'welcart_page', 'Welcart ' . __( 'Page', 'usces' ), $widget_ops );
 	}
 
 	/**

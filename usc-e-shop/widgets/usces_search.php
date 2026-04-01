@@ -16,7 +16,11 @@ class Welcart_search extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'keyword search', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_search',
+			'description' => __( 'Display item search form.', 'usces' ),
+		);
+		parent::__construct( 'welcart_search', 'Welcart ' . __( 'keyword search', 'usces' ), $widget_ops );
 	}
 
 	/**

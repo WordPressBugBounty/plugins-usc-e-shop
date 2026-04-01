@@ -14,7 +14,11 @@ class Welcart_login extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Log-in', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_login',
+			'description' => __( 'Display member login form.', 'usces' ),
+		);
+		parent::__construct( 'welcart_login', 'Welcart ' . __( 'Log-in', 'usces' ), $widget_ops );
 	}
 
 	/**

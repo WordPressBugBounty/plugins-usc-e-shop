@@ -6281,6 +6281,7 @@ class usc_e_shop {
 				KEY order_pref ( order_pref ) ,  
 				KEY order_address1 ( order_address1 ) ,  
 				KEY order_tel ( order_tel ) ,  
+				KEY mem_id ( mem_id ) ,  
 				KEY order_date ( order_date )  
 				) AUTO_INCREMENT=1000 $charset_collate;";
 			dbDelta( $sql );
@@ -6649,6 +6650,7 @@ class usc_e_shop {
 				KEY order_pref (order_pref),
 				KEY order_address1 (order_address1),
 				KEY order_tel (order_tel),
+				KEY mem_id ( mem_id ) ,  
 				KEY order_date (order_date)
 				);";
 			dbDelta( $sql );

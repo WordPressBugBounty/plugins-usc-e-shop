@@ -16,7 +16,11 @@ class Welcart_featured extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Items recommended', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_featured',
+			'description' => __( 'Display recommended items.', 'usces' ),
+		);
+		parent::__construct( 'welcart_featured', 'Welcart ' . __( 'Items recommended', 'usces' ), $widget_ops );
 	}
 
 	/**

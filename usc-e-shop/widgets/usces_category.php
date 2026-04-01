@@ -16,7 +16,11 @@ class Welcart_category extends WP_Widget {
 	 * Constructor.
 	 */
 	public function __construct() {
-		parent::__construct( false, $name = 'Welcart ' . __( 'Categories', 'usces' ) );
+		$widget_ops = array(
+			'classname'   => 'widget_welcart_category',
+			'description' => __( 'Display item categories.', 'usces' ),
+		);
+		parent::__construct( 'welcart_category', 'Welcart ' . __( 'Categories', 'usces' ), $widget_ops );
 	}
 
 	/**

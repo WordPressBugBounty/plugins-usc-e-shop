@@ -430,11 +430,15 @@ jQuery(function($){
 		resizable: true,
 		modal: true,
 		appendTo: "#dialog_parent",
-		buttons: {
-			'<?php esc_html_e( 'close', 'usces' ); ?>': function() {
-				$(this).dialog('close');
+		buttons: [
+			{
+				text: "<?php esc_html_e( 'close', 'usces' ); ?>",
+				"class": "button",
+				click: function() {
+					$(this).dialog('close');
+				}
 			}
-		},
+		],
 		close: function() {
 			$("#newitemcategory").val( "-1" );
 			$("#newitemform").html( "" );
@@ -480,6 +484,7 @@ jQuery(function($){
 			},
 			{
 				text: "<?php esc_html_e( 'close', 'usces' ); ?>",
+				"class": 'button',
 				click: function() {
 					$(this).dialog('close');
 				}
@@ -506,6 +511,7 @@ jQuery(function($){
 		buttons: [
 			{
 				text: "<?php esc_html_e( 'close', 'usces' ); ?>",
+				"class": 'button',
 				click: function() {
 					$(this).dialog('close');
 				}
@@ -1098,12 +1104,16 @@ jQuery(function($){
 					}
 					<?php echo apply_filters( 'usces_filter_order_check_mail_js', '' ); ?>
 
-					$('#mailSendAlert').dialog('option', 'buttons', {
-						'OK': function() {
-							$(this).dialog('close');
-							$('#mailSendDialog').dialog('close');
+					$('#mailSendAlert').dialog('option', 'buttons', [
+						{
+							text: 'OK',
+							"class": 'button',
+							click: function() {
+								$(this).dialog('close');
+								$('#mailSendDialog').dialog('close');
+							}
 						}
-					});
+					]);
 					$('#mailSendAlert').dialog('option', 'title', 'SUCCESS');
 					$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'E-mail has been sent.', 'usces' ); ?></p>');
 					$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1114,11 +1124,15 @@ jQuery(function($){
 					$('#mailSendAlert').dialog('open');
 
 				}else if(data == 'error'){
-					$('#mailSendAlert').dialog('option', 'buttons', {
-						'OK': function() {
-							$(this).dialog('close');
+					$('#mailSendAlert').dialog('option', 'buttons', [
+						{
+							text: 'OK',
+							"class": 'button',
+							click: function() {
+								$(this).dialog('close');
+							}
 						}
-					});
+					]);
 					$('#mailSendAlert').dialog('option', 'title', 'ERROR');
 					$('#mailSendAlert fieldset').html('<p><?php _e( 'Failure in sending e-mails.', 'usces' ); ?></p>');
 					$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1128,11 +1142,15 @@ jQuery(function($){
 					$('#mailSendAlert').dialog('open');
 
 				}else if(data == 'attachFileError'){
-					$('#mailSendAlert').dialog('option', 'buttons', {
-						'OK': function() {
-							$(this).dialog('close');
+					$('#mailSendAlert').dialog('option', 'buttons', [
+						{
+							text: 'OK',
+							"class": 'button',
+							click: function() {
+								$(this).dialog('close');
+							}
 						}
-					});
+					]);
 					$('#mailSendAlert').dialog('option', 'title', 'ERROR');
 					$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'Failure in attach file e-mails.', 'usces' ); ?></p>');
 					$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1144,11 +1162,15 @@ jQuery(function($){
 			}).fail(function( data ){
 				$("#wrap_icon_loading").remove();
 				$("#usces_email_bnt_send").removeAttr('disabled');
-				$('#mailSendAlert').dialog('option', 'buttons', {
-					'OK': function() {
-						$(this).dialog('close');
+				$('#mailSendAlert').dialog('option', 'buttons', [
+					{
+						text: 'OK',
+						"class": 'button',
+						click: function() {
+							$(this).dialog('close');
+						}
 					}
-				});
+				]);
 				$('#mailSendAlert').dialog('option', 'title', 'ERROR');
 				$('#mailSendAlert fieldset').html('<p><?php esc_html_e( 'Failure in sending e-mails.', 'usces' ); ?></p>');
 				$('#mailSendAlert').dialog('option', 'close', function() {
@@ -1219,11 +1241,15 @@ jQuery(function($){
 				var msgSize = '';
 				var msgExtension = '';
 				attachFile.value = "";
-				$('#mailSendAlert').dialog('option', 'buttons', {
-					'OK': function() {
-						$(this).dialog('close');
+				$('#mailSendAlert').dialog('option', 'buttons', [
+					{
+						text: 'OK',
+						"class": 'button',
+						click: function() {
+							$(this).dialog('close');
+						}
 					}
-				});
+				]);
 				if (!checkValidSize) {
 					msgSize = "<p><?php esc_html_e( 'The maximum file size that can be attached has been exceeded.', 'usces' ); ?></p>";
 				}

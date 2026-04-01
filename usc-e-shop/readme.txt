@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.11.27
+Stable tag: 2.11.28
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,16 @@ Please see [Welcart Forum(Japanese)](https://www.welcart.com/community/forums).
 
 
 == Changelog ==
+
+1 Apr 2026
+ = V2.11.28 =
+-----------
+* [PayPal] Removed unnecessary IPN settings.
+* [PayPal] Fixed a bug that an error status was not displayed on the order list when a capture error occurred.
+* Fixed the style of the "Close" button on the mail sending dialog.
+* Added an index to the usces_order table.
+* Fixed the deprecated widget class declaration.
+* Fixed PHP errors.
 
 21 Jan 2026
  = V2.11.27 =

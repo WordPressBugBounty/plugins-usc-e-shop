@@ -425,7 +425,7 @@ class ItemData {
 				$reserved_key = ltrim( $key, '_' );
 
 				foreach ( $arr as $ind => $v ) {
-					$value_arr[] = maybe_unserialize( $v );
+					$value_arr[] = @maybe_unserialize( $v );
 				}
 
 				if ( '_iopt_' === $key || '_isku_' === $key ) {
