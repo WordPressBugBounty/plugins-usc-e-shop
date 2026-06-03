@@ -151,12 +151,12 @@ class usces_cart {
 				$_SESSION['usces_cart'][ $this->serial ]['quant']   = (int) $_POST['quant'][ $index ][ $post_id ][ $sku ];
 				$_SESSION['usces_cart'][ $this->serial ]['advance'] = isset( $_POST['advance'][ $index ][ $post_id ][ $sku ] ) ? $_POST['advance'][ $index ][ $post_id ][ $sku ] : array();
 
-				if ( isset( $_POST['order_action'] ) ) {
-					$price = (int) $_POST['skuPrice'][ $index ][ $post_id ][ $sku ];
-				} else {
+				// if ( isset( $_POST['order_action'] ) ) {
+				// 	$price = (int) $_POST['skuPrice'][ $index ][ $post_id ][ $sku ];
+				// } else {
 					$price = $this->get_realprice( $post_id, $sku, $_SESSION['usces_cart'][ $this->serial ]['quant'] );
 					$price = apply_filters( 'usces_filter_upCart_price', $price, $this->serial, $index );
-				}
+				// }
 				$_SESSION['usces_cart'][ $this->serial ]['price'] = $price;
 
 			}

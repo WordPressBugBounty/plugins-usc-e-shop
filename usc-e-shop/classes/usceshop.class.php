@@ -5115,7 +5115,7 @@ class usc_e_shop {
 				if ( is_array( $_SESSION['usces_member'][ $key ] ) ) {
 					$res[ $key ] = stripslashes_deep( $value );
 				} else {
-					$res[ $key ] = stripslashes( $value );
+					$res[ $key ] = null !== $value ? stripslashes( $value ) : '';
 				}
 			}
 		}

@@ -1830,10 +1830,15 @@ function usces_check_acting_return() {
 
 		case 'paypal':
 			usces_log( 'paypal in ', 'acting_transaction.log' );
-			require_once( $usces->options['settlement_path'] . 'paypal.php' );
-			$results = paypal_check( $usces_paypal_url );
-			remove_action( 'shutdown', array( &$usces, 'lastprocessing' ) );
-			$results['reg_order'] = true;
+			$paypal_file = $usces->options['settlement_path'] . 'paypal.php';
+			if ( file_exists( $paypal_file ) ) {
+				require_once( $paypal_file );
+				$results = paypal_check( $usces_paypal_url );
+				remove_action( 'shutdown', array( &$usces, 'lastprocessing' ) );
+				$results['reg_order'] = true;
+			} else {
+				$results['reg_order'] = true;
+			}
 			break;
 
 		case 'remise_card':
@@ -3864,6 +3869,35 @@ function usces_get_itemopt_filed( $post_id, $sku, $opt ) {
 			break;
 		case 2: //Text.
 			$html .= "\n<input name='itemOption[{$post_id}][{$sku}][{$optcode}]' type='text' id='itemOption[{$post_id}][{$sku}][{$optcode}]' class='iopt_text' onKeyDown=\"if (event.keyCode == 13) {return false;}\" value=\"" . esc_attr( $session_value ) . "\" />\n";
+			break;
+		case 3: //Radio-button.
+			$selects = explode( "\n", $opt['value'] );
+			$i       = 0;
+			foreach ( (array) $selects as $v ) {
+				$v = trim( $v );
+				if ( $v === $session_value ) {
+					$checked = ' checked="checked"';
+				} else {
+					$checked = '';
+				}
+				$html .= "\t<label for='itemOption[{$post_id}][{$sku}][{$optcode}]{$i}' class='iopt_radio_label'><input name='itemOption[{$post_id}][{$sku}][{$optcode}]' id='itemOption[{$post_id}][{$sku}][{$optcode}]{$i}' class='iopt_radio' type='radio' value='" . urlencode( $v ) . "'{$checked} onKeyDown=\"if (event.keyCode == 13) {return false;}\">" . esc_html( $v ) . "</label>\n";
+				$i++;
+			}
+			break;
+		case 4: //Check-box.
+			$selects     = explode( "\n", $opt['value'] );
+			$session_arr = is_array( $session_value ) ? $session_value : array();
+			$i           = 0;
+			foreach ( (array) $selects as $v ) {
+				$v = trim( $v );
+				if ( in_array( $v, $session_arr, true ) ) {
+					$checked = ' checked="checked"';
+				} else {
+					$checked = '';
+				}
+				$html .= "\t<label for='itemOption[{$post_id}][{$sku}][{$optcode}]{$i}' class='iopt_checkbox_label'><input name='itemOption[{$post_id}][{$sku}][{$optcode}][]' id='itemOption[{$post_id}][{$sku}][{$optcode}]{$i}' class='iopt_checkbox' type='checkbox' value='" . urlencode( $v ) . "'{$checked} onKeyDown=\"if (event.keyCode == 13) {return false;}\">" . esc_html( $v ) . "</label>\n";
+				$i++;
+			}
 			break;
 		case 5: //Text-area.
 			$html .= "\n<textarea name='itemOption[{$post_id}][{$sku}][{$optcode}]' id='itemOption[{$post_id}][{$sku}][{$optcode}]' class='iopt_textarea'>" . esc_attr( $session_value ) . "</textarea>\n";

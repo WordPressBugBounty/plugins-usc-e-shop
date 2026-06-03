@@ -4231,6 +4231,43 @@ jQuery.event.add( window, "load", function() {
 					} else {
 						$pending = false;
 						$amount  = $this->get_latest_amount( $order_id, $tracking_id );
+
+						$latest_log = $this->get_acting_latest_log( $order_id, $tracking_id, 'ALL' );
+						if ( isset( $latest_log['result'] ) && 'COMPLETED' !== $latest_log['result'] && 'PENDING' !== $latest_log['result'] ) {
+							$acting_status = $this->get_acting_status( $order_id, $tracking_id );
+							$class         = ' paypal-' . strtolower( $acting_status );
+							$result       .= '<div class="paypal-settlement-admin' . $class . '">' . __( $acting_status, 'usces' ) . '</div>';
+							$log           = $this->get_entry_log( $tracking_id );
+							if ( isset( $log['entry'] ) && isset( $log['cart'] ) ) {
+								$result .= '<table class="paypal-settlement-admin-table">
+									<tr><th>' . __( 'Transaction amount', 'usces' ) . '</th>
+										<td><input type="tel" class="settlement-amount" value="' . usces_crform( $amount, false, false, 'return', true ) . '" readonly />' . __( usces_crcode( 'return' ), 'usces' ) . '</td>
+									</tr>';
+								if ( empty( $amount ) ) {
+									if ( defined( 'WCEX_DLSELLER' ) && ! empty( $con_id ) ) {
+										$amount = $this->get_continuation_amount( $con_id );
+									} elseif ( defined( 'WCEX_AUTO_DELIVERY' ) && ! empty( $reg_id ) ) {
+										$amount = $this->get_order_amount( $order_id );
+									}
+								}
+								$result .= '
+									<tr><th>' . __( 'Settlement amount', 'usces' ) . '</th>
+										<td><input type="tel" class="settlement-amount amount" id="amount_resettlement" value="' . usces_crform( $amount, false, false, 'return', false ) . '" />' . __( usces_crcode( 'return' ), 'usces' ) . '</td>
+									</tr>
+									</table>';
+								if ( 'paypal_cp' === $acting ) {
+									$result .= '<div class="paypal-settlement-admin-button">
+										<input id="re-authorize-settlement" type="button" class="button" value="' . __( 'AUTHORIZE', 'usces' ) . '" />
+										<input id="re-capture-settlement" type="button" class="button" value="' . __( 'CAPTURE', 'usces' ) . '" />
+									</div>';
+								}
+							}
+							$result        .= $this->settlement_history( $order_id, $tracking_id );
+							$data['result'] = $result;
+							wp_send_json( $data );
+							break;
+						}
+
 						if ( isset( $response_data['intent'] ) && isset( $response_data['purchase_units'] ) ) {
 							$acting_status  = $response_data['intent'];
 							$purchase_units = $response_data['purchase_units'][0];
@@ -6996,15 +7033,19 @@ jQuery.event.add( window, "load", function() {
 				</thead>
 				<tbody class="settlement-history-body">';
 			foreach ( (array) $log_data as $data ) {
+				$log   = usces_unserialize( $data['log'] );
+				$id    = ( isset( $log['id'] ) ) ? $log['id'] : '';
+				$issue = '';
 				if ( 'COMPLETED' !== $data['result'] ) {
 					$class  = ' error';
 					$amount = '';
+					if ( isset( $log['details'][0]['issue'] ) && '' !== $log['details'][0]['issue'] ) {
+						$issue = ' (' . $log['details'][0]['issue'] . ')';
+					}
 				} else {
 					$class  = '';
 					$amount = ( isset( $data['amount'] ) ) ? usces_crform( $data['amount'], false, true, 'return', true ) : '';
 				}
-				$log = usces_unserialize( $data['log'] );
-				$id  = ( isset( $log['id'] ) ) ? $log['id'] : '';
 				if ( isset( $log['purchase_units'] ) ) {
 					$purchase_units = $log['purchase_units'][0];
 					if ( isset( $purchase_units['payments'] ) ) {
@@ -7026,7 +7067,7 @@ jQuery.event.add( window, "load", function() {
 					<td class="transactionid">' . $id . '</td>
 					<td class="status">' . $data['status'] . '</td>
 					<td class="amount">' . $amount . '</td>
-					<td class="result' . $class . '">' . $data['result'] . '</td>
+					<td class="result' . $class . '">' . $data['result'] . $issue . '</td>
 				</tr>';
 				$num--;
 			}
