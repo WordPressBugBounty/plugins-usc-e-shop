@@ -2154,7 +2154,7 @@ function usces_define_functions() {
 					$sku     = $skus[ $meta_id ];
 					if ( empty( $skus ) || ! isset( $skus[ $meta_id ] ) ) {
 						++$err_num;
-						$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.2', 'usces' );
+						$mes      = 'No.' . $line_num . "\t" . __( 'This data was not registered in the database.', 'usces' );
 						$progress = array(
 							'log' => $mes,
 						);

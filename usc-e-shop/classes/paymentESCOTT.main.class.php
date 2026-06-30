@@ -3939,67 +3939,67 @@ jQuery(document).ready( function($) {
 				$message = __( 'Connection request refused acceptance of company', 'usces' );
 				break;
 			case 'P51': /* カード情報登録応答（SSNP010 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザがカード情報登録画面（SSNP010）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the card information registration screen (SSNP010).', 'usces' );
 				break;
 			case 'P52': /* カード情報登録応答（SSNP020 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザがカード情報登録確認画面（SSNP020）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the card information registration confirmation screen (SSNP020).', 'usces' );
 				break;
 			case 'P53': /* カード情報登録応答（エラー）を返した場合を示します。（本システムへの送信・応答ボディ無、応答処理フラグ異常） */
-				$message = __( 'カード情報登録処理でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during card information registration processing.', 'usces' );
 				break;
 			case 'P54': /* 認証アシスト項目の規定回数以上アンマッチが発生したケースなどを示します。 */
-				$message = __( 'カード情報登録処理でリトライ回数オーバエラーが発生しました。', 'usces' );
+				$message = __( 'A retry-limit-exceeded error occurred during card information registration processing.', 'usces' );
 				break;
 			case 'P55': /* カード情報変更応答（SSNP030 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザがカード情報変更画面（SSNP030）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the card information change screen (SSNP030).', 'usces' );
 				break;
 			case 'P56': /* カード情報変更応答（SSNP040 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザがカード情報変更確認画面（SSNP040）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the card information change confirmation screen (SSNP040).', 'usces' );
 				break;
 			case 'P57': /* カード情報変更応答（エラー）を返した場合を示します。（本システムへの送信・応答ボディ無、応答処理フラグ異常） */
-				$message = __( 'カード情報変更処理でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during card information change processing.', 'usces' );
 				break;
 			case 'P58': /* 認証アシスト項目の規定回数以上アンマッチが発生したケースなどを示します。 */
-				$message = __( 'カード情報変更処理でリトライ回数オーバエラーが発生しました。', 'usces' );
+				$message = __( 'A retry-limit-exceeded error occurred during card information change processing.', 'usces' );
 				break;
 			case 'P60': /* 会員情報参照応答（エラー）を返した場合を示します。（本システムへの送信・応答ボディ無、応答処理フラグ異常） */
-				$message = __( '会員情報参照処理でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during member information reference processing.', 'usces' );
 				break;
 			case 'P62': /* 与信応答（会員制）（SSNP080 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが会員購入認証アシスト画面（SSNP080）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the member purchase authentication assist screen (SSNP080).', 'usces' );
 				break;
 			case 'P63': /* 与信応答（会員制）（SSNP090 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが会員購入カード情報確認画面（SSNP090）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the member purchase card information confirmation screen (SSNP090).', 'usces' );
 				break;
 			case 'P64': /* 与信応答（会員制）（SSNP100 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが会員購入カード情報入力画面（SSNP100）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the member purchase card information input screen (SSNP100).', 'usces' );
 				break;
 			case 'P65': /* 与信応答（会員制）（SSNP110 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが会員購入カード情報確認画面（SSNP110）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the member purchase card information confirmation screen (SSNP110).', 'usces' );
 				break;
 			case 'P66': /* 与信応答（会員購入）にてエラーが発生したこと示します。 */
-				$message = __( '与信処理（会員購入）でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during authorization processing (member purchase).', 'usces' );
 				break;
 			case 'P67': /* 与信応答（会員購入にて「他のカードで購入」を使用）でエラーが発生したことを示します。 */
-				$message = __( '与信処理（会員購入にて「他のカードで購入」を使用）でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during authorization processing (member purchase using "Purchase with another card").', 'usces' );
 				break;
 			case 'P68': /* 認証アシスト項目の規定回数以上アンマッチが発生したケースなどを示します。 */
-				$message = __( '与信処理（会員）でリトライ回数オーバエラーが発生しました。', 'usces' );
+				$message = __( 'A retry-limit-exceeded error occurred during authorization processing (member).', 'usces' );
 				break;
 			case 'P69': /* 与信応答（非会員制）（SSNP120 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが非会員購入カード情報入力画面（SSNP120）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the non-member purchase card information input screen (SSNP120).', 'usces' );
 				break;
 			case 'P70': /* 与信応答（非会員制）（SSNP130 キャンセル）を返した場合を示します。 */
-				$message = __( 'エンドユーザが非会員購入カード情報確認画面（SSNP130）でキャンセルしました。', 'usces' );
+				$message = __( 'The end user canceled on the non-member purchase card information confirmation screen (SSNP130).', 'usces' );
 				break;
 			case 'P71': /* 与信応答（非会員）（エラー）を返した場合を示します。（本システムへの送信・応答ボディ無、応答サービス区分異常） */
-				$message = __( '与信処理（非会員）でエラーが発生しました。', 'usces' );
+				$message = __( 'An error occurred during authorization processing (non-member).', 'usces' );
 				break;
 			case 'P72': /* 認証アシスト項目の規定回数以上アンマッチが発生したケースなどを示します。 */
-				$message = __( '与信処理（非会員）でリトライ回数オーバエラーが発生しました。', 'usces' );
+				$message = __( 'A retry-limit-exceeded error occurred during authorization processing (non-member).', 'usces' );
 				break;
 			case 'P74': /* セッションのタイムアウトエラーの発生を示します。 */
-				$message = __( 'セッションタイムアウトが発生しました。 ', 'usces' );
+				$message = __( 'A session timeout occurred.', 'usces' );
 				break;
 			case 'R01': /* 再処理を行ってください。（システムが起動していないか、または一時的にダウンしています。しばらくしてからもう一度試してください。） */
 				$message = __( 'The system is not booting or is temporarily down. Please try again later.', 'usces' );

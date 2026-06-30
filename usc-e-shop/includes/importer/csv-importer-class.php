@@ -426,7 +426,7 @@ class Welcart_CSV_Importer {
 								<option value="SJIS" <?php selected( $encoding, 'SJIS' ); ?>>Shift-JIS</option>
 							</select>
 						</p>
-						<p class="field-exp"><?php echo esc_html__( '※ If characters are garbled, please select the appropriate encoding.', 'usces' ); ?></p>
+						<p class="field-exp"><?php echo esc_html__( '* If characters are garbled, please select the appropriate encoding.', 'usces' ); ?></p>
 					</div>
 					<div class="field-area">
 						<p><span><?php echo esc_html__( 'Header Row', 'usces' ); ?></span>
@@ -434,7 +434,7 @@ class Welcart_CSV_Importer {
 							<label><input type="radio" name="has_header" value="1" checked><?php echo esc_html__( 'Field Names', 'usces' ); ?></label>
 							<label><input type="radio" name="has_header" value="0"><?php echo esc_html__( 'Data', 'usces' ); ?></label>
 						</p>
-						<p class="field-exp"><?php echo esc_html__( '※ If the first row contains field names, it will not be processed.', 'usces' ); ?></p>
+						<p class="field-exp"><?php echo esc_html__( '* If the first row contains field names, it will not be processed.', 'usces' ); ?></p>
 					</div>
 
 					<?php do_action( 'welcart_csv_preview_option' ); ?>

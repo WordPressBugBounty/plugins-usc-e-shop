@@ -39,7 +39,7 @@ class ANOTHERLANE_SETTLEMENT {
 		);
 		$this->acting_name        = 'アナザーレーン';
 		$this->acting_formal_name = 'アナザーレーン';
-		$this->acting_company_url = 'http://www.alij.ne.jp/';
+		$this->acting_company_url = 'https://www.alij.ne.jp/';
 
 		$this->initialize_data();
 

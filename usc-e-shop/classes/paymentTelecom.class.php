@@ -40,7 +40,7 @@ class TELECOM_SETTLEMENT {
 		);
 		$this->acting_name        = 'テレコムクレジット';
 		$this->acting_formal_name = 'テレコムクレジット';
-		$this->acting_company_url = 'http://www.telecomcredit.co.jp/';
+		$this->acting_company_url = 'https://www.telecomcredit.co.jp/';
 		$this->initialize_data();
 
 		if ( is_admin() ) {

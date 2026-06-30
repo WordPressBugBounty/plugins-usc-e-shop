@@ -102,6 +102,13 @@ function usces_download_member_list() {
 	$res = $DT->MakeTable();
 	$rows = $DT->rows;
 
+	if ( ! empty( $_REQUEST['listcheck'] ) ) {
+		$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+		$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+			return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+		} );
+	}
+
 	//==========================================================================
 
 	$line = $table_h;
@@ -389,6 +396,13 @@ function usces_download_product_list() {
 	$res = $DT->MakeTable();
 	$rows = $DT->rows;
 
+	if ( ! empty( $_REQUEST['listcheck'] ) ) {
+		$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+		$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+			return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+		} );
+	}
+
 	//==========================================================================
 
 	$line = $table_h;
@@ -665,6 +679,13 @@ function usces_download_order_list() {
 	$DT->pageLimit = 'off';
 	$res = $DT->MakeTable();
 	$rows = $DT->rows;
+
+	if ( ! empty( $_REQUEST['listcheck'] ) ) {
+		$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+		$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+			return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+		} );
+	}
 
 	//==========================================================================
 

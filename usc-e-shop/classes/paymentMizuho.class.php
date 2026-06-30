@@ -44,7 +44,7 @@ class MIZUHO_SETTLEMENT {
 		);
 		$this->acting_name        = 'みずほファクター';
 		$this->acting_formal_name = 'みずほファクター';
-		$this->acting_company_url = 'http://www.mizuho-factor.co.jp/';
+		$this->acting_company_url = 'https://www.mizuho-factor.co.jp/';
 
 		$this->initialize_data();
 

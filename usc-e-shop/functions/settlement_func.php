@@ -1038,7 +1038,7 @@ function usces_download_settlement_error_log() {
 				continue;
 			}
 			if ( is_array( $value ) ) {
-				$line .= $key . ' = ' . esc_html( implode( ' ', $value ) ) . "\r\n";
+				$line .= $key . ' = ' . esc_html( print_r( $value, true ) ) . "\r\n"; // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 			} else {
 				$line .= $key . ' = ' . esc_html( $value ) . "\r\n";
 			}

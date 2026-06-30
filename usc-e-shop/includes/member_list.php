@@ -102,17 +102,41 @@ jQuery(document).ready(function($){
 		close: function() {
 		}
 	});
+
+	$("input[name='allcheck']").click(function () {
+		if ($(this).prop("checked")) {
+			$("input[name*='listcheck']").prop("checked", true);
+		} else {
+			$("input[name*='listcheck']").prop("checked", false);
+		}
+	});
 	$('#dl_mem').click(function() {
-		var args = "&search[column]="+$(':input[name="search[column]"]').val()
-			+"&search[word]="+$(':input[name="search[word]"]').val()
-			+"&searchSwitchStatus="+$(':input[name="searchSwitchStatus"]').val()
-			+"&ftype=csv";
-		$('*[class=check_member]').each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo USCES_ADMIN_URL; ?>?page=usces_memberlist&member_action=dlmemberlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'searchSwitchStatus', value: $(':input[name="searchSwitchStatus"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: '<?php echo wp_create_nonce( "post_member" ); ?>' }));
+
+		$('*[class=check_member]').each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		location.href = "<?php echo USCES_ADMIN_URL; ?>?page=usces_memberlist&member_action=dlmemberlist&noheader=true"+args+"&wc_nonce=<?php echo wp_create_nonce( 'post_member' ); ?>";
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_memberlist').click(function() {
 		$('#dlMemberListDialog').dialog('open');
@@ -181,6 +205,7 @@ jQuery(document).ready(function($){
 
 <table id="mainDataTable" cellspacing="1">
 	<tr>
+		<th scope="col"><input name="allcheck" type="checkbox" value="" /></th>
 <?php foreach ( (array)$arr_header as $value ) : ?>
 		<th scope="col"><?php wel_esc_script_e( $value ); ?></th>
 <?php endforeach; ?>
@@ -193,6 +218,7 @@ jQuery(document).ready(function($){
 	</tr>
 <?php foreach ( (array)$rows as $array ) : ?>
 	<tr>
+		<td align="center"><input name="listcheck[]" type="checkbox" value="<?php echo esc_attr( $array['ID'] ); ?>" /></td>
 	<?php foreach ( (array)$array as $key => $value ) : ?>
 		<?php if( WCUtils::is_blank($value) ) $value = '&nbsp;'; ?>
 		<?php if( $key == 'ID' ): ?>

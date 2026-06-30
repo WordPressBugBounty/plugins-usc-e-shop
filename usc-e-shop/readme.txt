@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.11.29
+Stable tag: 2.11.30
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,16 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 3. Top page (Free official theme 'Welcart Basic')
 
 == Changelog ==
+
+30 Jun 2026
+= V2.11.30 =
+-----------
+* [Zeus] Updated the mobile phone number validation for Buy Now Pay Later payment.
+* [Paidy] Fixed parameters.
+* Updated the Japan Post tracking URL.
+* Changed the order list and member list downloads in the admin screen to allow selective export.
+* Fixed translation file issues.
+* Fixed PHP errors.
 
 3 Jun 2026
 = V2.11.29 =

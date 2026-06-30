@@ -1652,6 +1652,8 @@ jQuery(document).ready( function($) {
 							$billing_address .= "\t\t\t\t" . '"zip": "' . $customer_zip . '"' . "\n";
 							$billing_address .= "\t\t\t" . '}' . "\n";
 						}
+					} elseif ( ! isset( $entry['delivery']['delivery_flag'] ) || 0 === (int) $entry['delivery']['delivery_flag'] ) {
+						$billing_address .= ',"delivery_locn_type": "home",' . "\n";
 					}
 				}
 				$items = '';

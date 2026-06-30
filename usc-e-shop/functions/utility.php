@@ -1250,24 +1250,24 @@ function usces_get_delivery_company_url( $delivery_company, $tracking_number ) {
 		case 'レターパック':
 			if ( ! empty( $tracking_number ) ) {
 				if ( false !== strpos( $tracking_number, ',' ) ) {
-					$number = explode( ',', $tracking_number );
+					$number = array_slice( explode( ',', $tracking_number ), 0, 10 );
 					$no     = '';
-					$i      = 1;
-					foreach ( $number as $n ) {
-						$no .= 'reqCodeNo' . $i . '=' . $n . '&';
-						$i++;
+					for ( $i = 1; $i <= 10; $i++ ) {
+						$n   = isset( $number[ $i - 1 ] ) ? trim( $number[ $i - 1 ] ) : '';
+						$no .= 'requestNo' . $i . '=' . $n . '&';
 					}
-					$url = 'http://tracking.post.japanpost.jp/service/singleSearch.do?searchKind=S003&locale=ja&SVID=023&' . rtrim( $no, '&' );
+					$url = 'https://trackings.post.japanpost.jp/services/srv/search?' . $no;
 				} else {
-					$url = 'http://tracking.post.japanpost.jp/service/singleSearch.do?searchKind=S003&locale=ja&SVID=023&reqCodeNo1=' . $tracking_number;
+					$url = 'https://trackings.post.japanpost.jp/services/srv/search?requestNo1=' . $tracking_number . '&';
 				}
+				$url .= 'search.x=66&search.y=25&startingUrlPatten=&locale=ja';
 			} else {
 				$url = 'https://trackings.post.japanpost.jp/services/srv/search/';
 			}
 			break;
 
 		case '日本通運':
-			$url = 'https://www.nittsu.co.jp/support/search/';
+			$url = 'https://www.nipponexpress.com/jp/ja/tracking/';
 			break;
 
 		case '西濃運輸':
@@ -1311,7 +1311,7 @@ function usces_get_delivery_company_url( $delivery_company, $tracking_number ) {
 			break;
 
 		case '新潟運輸':
-			$url = 'http://www2.nuis.co.jp/kzz80011.htm';
+			$url = 'https://www2.nuis.co.jp/kzz80011.htm';
 			break;
 
 		case 'トナミ運輸':
@@ -1319,12 +1319,12 @@ function usces_get_delivery_company_url( $delivery_company, $tracking_number ) {
 			break;
 
 		case '第一貨物':
-			$url = 'http://www.daiichi-kamotsu.co.jp/';
+			$url = 'https://www.daiichi-kamotsu.co.jp/chase/contact_num/';
 			break;
 
 		case '飛騨倉庫運輸':
 		case '濃飛倉庫運輸':
-			$url = 'http://www.nohhi.co.jp/support/';
+			$url = 'https://www.nohhi.co.jp/support/';
 			break;
 
 		default:

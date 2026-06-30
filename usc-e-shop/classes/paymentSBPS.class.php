@@ -3148,31 +3148,31 @@ jQuery( document ).ready( function( $ ) {
 		$status_name = '';
 		switch ( $status ) {
 			case 'manual':/* 指定売上時 */
-				$status_name = __( '与信済', 'usces' );
+				$status_name = _x( 'Authorized', 'SBPS payment status', 'usces' );
 				break;
 			case 'auto':/* 自動売上時 */
-				$status_name = __( '自動売上', 'usces' );
+				$status_name = _x( 'Auto-captured', 'SBPS payment status', 'usces' );
 				break;
 			case 'sales':/* 管理画面からの売上要求実行時 */
-				$status_name = __( '売上確定', 'usces' );
+				$status_name = _x( 'Captured', 'SBPS payment status', 'usces' );
 				break;
 			case 'refund':/* 管理画面からの部分返金処理実行時 */
-				$status_name = __( '部分返金', 'usces' );
+				$status_name = _x( 'Partial refund', 'SBPS payment status', 'usces' );
 				break;
 			case 'increase':/* 増額売上確定通知受信時 */
-				$status_name = __( '増額売上確定', 'usces' );
+				$status_name = _x( 'Increased capture finalized', 'SBPS payment status', 'usces' );
 				break;
 			case 'pending':/* 管理画面からの増額売上実行後 */
-				$status_name = __( '増額売上処理中', 'usces' );
+				$status_name = _x( 'Increased capture processing', 'SBPS payment status', 'usces' );
 				break;
 			case 'expired':/* 増額売上期限切れ */
-				$status_name = __( '増額売上期限切れ', 'usces' );
+				$status_name = _x( 'Increased capture expired', 'SBPS payment status', 'usces' );
 				break;
 			case 'cancel':/* 取消 */
-				$status_name = __( '取消', 'usces' );
+				$status_name = _x( 'Canceled', 'SBPS payment status', 'usces' );
 				break;
 			case 'error':
-				$status_name = __( '決済処理不可', 'usces' );
+				$status_name = _x( 'Payment processing unavailable', 'SBPS payment status', 'usces' );
 				break;
 			default:
 				$status_name = $status;

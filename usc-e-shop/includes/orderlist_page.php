@@ -1619,14 +1619,30 @@ $data_cookie['arr_search']         = $DT->arr_search;
 		}
 	});
 	$('#dl_pro').click(function() {
-		var args = "&ftype=csv&returnList=1";
-		$(".check_pro").each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlproductnewlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'returnList', value: '1' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
+
+		$(".check_pro").each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		args += '&wc_nonce=' + $("#wc_nonce").val();
-		location.href = "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlproductnewlist&noheader=true"+args;
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_productlist').click(function() {
 		$('#dlProductListDialog').dialog('open');
@@ -1648,14 +1664,30 @@ $data_cookie['arr_search']         = $DT->arr_search;
 		}
 	});
 	$('#dl_ord').click(function() {
-		var args = "&ftype=csv&returnList=1";
-		$(".check_order").each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlordernewlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'returnList', value: '1' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
+
+		$(".check_order").each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		args += '&wc_nonce=' + $("#wc_nonce").val();
-		location.href = "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlordernewlist&noheader=true"+args;
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_orderlist').click(function() {
 		$('#dlOrderListDialog').dialog('open');

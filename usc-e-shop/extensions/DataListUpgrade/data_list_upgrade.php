@@ -196,6 +196,13 @@ class USCES_DATALIST_UPGRADE {
 		$arr_search            = $memberlist->GetSearchs();
 		$rows                  = $memberlist->rows;
 
+		if ( ! empty( $_REQUEST['listcheck'] ) ) {
+			$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+			$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+				return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+			} );
+		}
+
 		$ext = wp_unslash( $_REQUEST['ftype'] );
 		if ( 'csv' === $ext ) {
 			$table_h = '';
@@ -310,6 +317,13 @@ class USCES_DATALIST_UPGRADE {
 		$res                  = $orderlist->MakeTable();
 		$arr_search           = $orderlist->GetSearchs();
 		$rows                 = $orderlist->rows;
+
+		if ( ! empty( $_REQUEST['listcheck'] ) ) {
+			$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+			$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+				return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+			} );
+		}
 
 		$ext = wp_unslash( $_REQUEST['ftype'] );
 		if ( 'csv' === $ext ) {
@@ -1476,6 +1490,13 @@ class USCES_DATALIST_UPGRADE {
 		$res                  = $orderlist->MakeTable();
 		$arr_search           = $orderlist->GetSearchs();
 		$rows                 = $orderlist->rows;
+
+		if ( ! empty( $_REQUEST['listcheck'] ) ) {
+			$listcheck = ( is_array( $_REQUEST['listcheck'] ) ) ? $_REQUEST['listcheck'] : explode( ',', $_REQUEST['listcheck'] );
+			$rows = array_filter( $rows, function( $row ) use ( $listcheck ) {
+				return in_array( (int)$row['ID'], array_map( 'intval', $listcheck ), true );
+			} );
+		}
 
 		$ext = wp_unslash( $_REQUEST['ftype'] );
 		if ( 'csv' === $ext ) {

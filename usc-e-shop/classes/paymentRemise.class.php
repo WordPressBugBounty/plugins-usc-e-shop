@@ -182,7 +182,7 @@ class REMISE_SETTLEMENT {
 		);
 		$this->acting_name        = 'ルミーズ';
 		$this->acting_formal_name = 'ルミーズ';
-		$this->acting_company_url = 'http://www.remise.jp/';
+		$this->acting_company_url = 'https://www.remise.co.jp/';
 
 		$this->initialize_data();
 

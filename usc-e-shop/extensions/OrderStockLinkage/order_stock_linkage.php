@@ -143,11 +143,12 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $ocart['post_id'], $ocart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $ocart['post_id'] );
 				foreach ( $new_carts as $ncart ) {
 					if ( ( $ocart['post_id'] == $ncart['post_id'] ) && ( $ocart['sku_code'] == $ncart['sku_code'] ) ) {
-						$fluctuation = $ncart['quantity'] - $ocart['quantity'];
+						$fluctuation = (int) $ncart['quantity'] - (int) $ocart['quantity'];
 						$value       = $zaikonum - $fluctuation;
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( 0 >= $value ) {
@@ -156,7 +157,7 @@ class USCES_STOCK_LINKAGE {
 									usces_update_sku( $ocart['post_id'], $ocart['sku_code'], 'stock', 2 );
 								}
 							} else {
-								if ( 0 === (int) $zaikonum && 2 <= $stock_id ) {
+								if ( 0 === $zaikonum && 2 <= $stock_id ) {
 									usces_update_sku( $ocart['post_id'], $ocart['sku_code'], 'stock', 0 );
 								}
 							}
@@ -183,9 +184,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $ocart['post_id'], $ocart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $ocart['post_id'] );
-				$value                 = $zaikonum + $ocart['quantity'];
+				$value                 = $zaikonum + (int) $ocart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $ocart['post_id'], $ocart['sku_code'], 'stock', 0 );
@@ -211,9 +213,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $ncart['post_id'], $ncart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $ncart['post_id'] );
-				$value                 = $zaikonum - $ncart['quantity'];
+				$value                 = $zaikonum - (int) $ncart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( 0 >= $value ) {
 						if ( 1 >= $stock_id ) {
@@ -235,9 +238,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $ncart['post_id'], $ncart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $ncart['post_id'] );
-				$value                 = $zaikonum - $ncart['quantity'];
+				$value                 = $zaikonum - (int) $ncart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( 0 >= $value ) {
 						if ( 1 >= $stock_id ) {
@@ -259,9 +263,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $ncart['post_id'], $ncart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $ncart['post_id'] );
-				$value                 = $zaikonum + $ncart['quantity'];
+				$value                 = $zaikonum + (int) $ncart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $ocart['post_id'], $ocart['sku_code'], 'stock', 0 );
@@ -298,7 +303,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum - $cart['quantity'];
+						$value                 = $zaikonum - (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( 0 >= $value ) {
 								if ( 1 >= $stock_id ) {
@@ -325,7 +330,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum + $cart['quantity'];
+						$value                 = $zaikonum + (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 								usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -348,7 +353,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum + $cart['quantity'];
+						$value                 = $zaikonum + (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 								usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -372,7 +377,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum + $cart['quantity'];
+						$value                 = $zaikonum + (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 								usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -394,7 +399,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum + $cart['quantity'];
+						$value                 = $zaikonum + (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 								usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -421,7 +426,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum - $cart['quantity'];
+						$value                 = $zaikonum - (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( 0 >= $value ) {
 								if ( 1 >= $stock_id ) {
@@ -446,7 +451,7 @@ class USCES_STOCK_LINKAGE {
 						}
 						$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 						$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-						$value                 = $zaikonum - $cart['quantity'];
+						$value                 = $zaikonum - (int) $cart['quantity'];
 						if ( 1 !== (int) $item_order_acceptable ) {
 							if ( 0 >= $value ) {
 								if ( 1 >= $stock_id ) {
@@ -488,9 +493,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-				$value                 = $zaikonum + $cart['quantity'];
+				$value                 = $zaikonum + (int) $cart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -510,9 +516,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-				$value                 = $zaikonum + $cart['quantity'];
+				$value                 = $zaikonum + (int) $cart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -544,9 +551,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-				$value                 = $zaikonum + $cart['quantity'];
+				$value                 = $zaikonum + (int) $cart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -566,9 +574,10 @@ class USCES_STOCK_LINKAGE {
 				if ( WCUtils::is_blank( $zaikonum ) ) {
 					continue;
 				}
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-				$value                 = $zaikonum + $cart['quantity'];
+				$value                 = $zaikonum + (int) $cart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );
@@ -601,9 +610,10 @@ class USCES_STOCK_LINKAGE {
 			if ( WCUtils::is_blank( $zaikonum ) ) {
 				return $res;
 			}
+			$zaikonum              = (int) $zaikonum;
 			$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 			$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-			$value                 = $zaikonum - $cart['quantity'];
+			$value                 = $zaikonum - (int) $cart['quantity'];
 			if ( 1 !== (int) $item_order_acceptable ) {
 				if ( 0 >= $value ) {
 					if ( 1 >= $stock_id ) {
@@ -635,9 +645,10 @@ class USCES_STOCK_LINKAGE {
 		) {
 			$zaikonum = $usces->getItemZaikoNum( $cart['post_id'], $cart['sku_code'] );
 			if ( ! WCUtils::is_blank( $zaikonum ) ) {
+				$zaikonum              = (int) $zaikonum;
 				$stock_id              = $usces->getItemZaikoStatusId( $cart['post_id'], $cart['sku_code'] );
 				$item_order_acceptable = $usces->getItemOrderAcceptable( $cart['post_id'] );
-				$value                 = $zaikonum + $cart['quantity'];
+				$value                 = $zaikonum + (int) $cart['quantity'];
 				if ( 1 !== (int) $item_order_acceptable ) {
 					if ( WCUtils::is_zero( $zaikonum ) && 2 <= $stock_id ) {
 						usces_update_sku( $cart['post_id'], $cart['sku_code'], 'stock', 0 );

@@ -395,20 +395,32 @@ $data_cookie['enddate']            = $DT->enddate;
 		}
 	});
 	$('#dl_pro').click(function() {
-		var args = "&search[column]="+$(':input[name="search[column]"]').val()
-			+"&search[sku]="+$(':input[name="search[sku]"]').val()
-			+"&search[word]["+$("#searchselect").val()+"]="+$(':input[name="search[word]['+$("#searchselect").val()+']"]').val()
-			+"&search[skuword]["+$("#searchselectsku").val()+"]="+$(':input[name="search[skuword]['+$("#searchselectsku").val()+']"]').val()
-			+"&search[period]="+$(':input[name="search[period]"]').val()
-			+"&searchSwitchStatus="+$(':input[name="searchSwitchStatus"]').val()
-			+"&ftype=csv";
-		$(".check_product").each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlproductlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'searchSwitchStatus', value: $(':input[name="searchSwitchStatus"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
+
+		$(".check_product").each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		args += '&wc_nonce=' + $("#wc_nonce").val() + '&aaa=1';
-		location.href = "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlproductlist&noheader=true"+args;
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_productlist').click(function() {
 		$('#dlProductListDialog').dialog('open');
@@ -430,20 +442,32 @@ $data_cookie['enddate']            = $DT->enddate;
 		}
 	});
 	$('#dl_ord').click(function() {
-		var args = "&search[column]="+$(':input[name="search[column]"]').val()
-			+"&search[sku]="+$(':input[name="search[sku]"]').val()
-			+"&search[word]["+$("#searchselect").val()+"]="+$(':input[name="search[word]['+$("#searchselect").val()+']"]').val()
-			+"&search[skuword]["+$("#searchselectsku").val()+"]="+$(':input[name="search[skuword]['+$("#searchselectsku").val()+']"]').val()
-			+"&search[period]="+$(':input[name="search[period]"]').val()
-			+"&searchSwitchStatus="+$(':input[name="searchSwitchStatus"]').val()
-			+"&ftype=csv";
-		$(".check_order").each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlorderlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'searchSwitchStatus', value: $(':input[name="searchSwitchStatus"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
+
+		$(".check_order").each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		args += '&wc_nonce=' + $("#wc_nonce").val();
-		location.href = "<?php echo esc_url( USCES_ADMIN_URL ); ?>?page=usces_orderlist&order_action=dlorderlist&noheader=true"+args;
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_orderlist').click(function() {
 		$('#dlOrderListDialog').dialog('open');

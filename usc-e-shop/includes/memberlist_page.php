@@ -435,14 +435,31 @@ jQuery(document).ready(function($){
 		}
 	});
 	$('#dl_mem').click(function() {
-		var args = "&ftype=csv&returnList=1";
-		$('*[class=check_member]').each(function(i) {
+		var listcheck = [];
+		$("input[name='listcheck[]']:checked").each(function() {
+			listcheck.push($(this).val());
+		});
+
+		var form = $('<form>', {
+			action: "<?php echo USCES_ADMIN_URL; ?>?page=usces_memberlist&member_action=dlmembernewlist&noheader=true",
+			method: 'post'
+		});
+		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
+		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
+
+		$('*[class=check_member]').each(function() {
 			if($(this).prop('checked')) {
-				args += '&check['+$(this).val()+']=on';
+				form.append($('<input>', { type: 'hidden', name: 'check['+$(this).val()+']', value: 'on' }));
 			}
 		});
-		args += '&wc_nonce=' + $("#wc_nonce").val();
-		location.href = "<?php echo USCES_ADMIN_URL; ?>?page=usces_memberlist&member_action=dlmembernewlist&noheader=true"+args;
+
+		if (listcheck.length > 0) {
+			form.append($('<input>', { type: 'hidden', name: 'listcheck', value: listcheck.join(',') }));
+		}
+
+		form.appendTo('body').submit().remove();
 	});
 	$('#dl_memberlist').click(function() {
 		$('#dlMemberListDialog').dialog('open');

@@ -4130,14 +4130,11 @@ jQuery(document).ready(function($) {
 					if ( ! preg_match( '/^[0-9-]+$/', $tel_mobile ) ) {
 						$mes .= '携帯電話番号は半角数値で入力してください。<br />';
 					} else {
-						$first_three = substr( $tel_mobile, 0, 3 );
-						if ( '070' === $first_three || '080' === $first_three || '090' === $first_three ) {
-							$cleannumber = preg_replace( '/[-\s]/', '', $tel_mobile );
-							if ( 11 !== strlen( $cleannumber ) ) {
-								$mes .= '携帯電話番号が不正です！<br />';
-							}
-						} else {
+						$cleannumber = preg_replace( '/[-\s]/', '', $tel_mobile );
+						if ( '0' !== substr( $cleannumber, 0, 1 ) ) {
 							$mes .= '携帯電話番号を入力してください。<br />';
+						} elseif ( strlen( $cleannumber ) < 8 || 15 < strlen( $cleannumber ) ) {
+							$mes .= '携帯電話番号が不正です！<br />';
 						}
 					}
 				}

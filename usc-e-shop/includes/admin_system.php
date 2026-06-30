@@ -462,7 +462,7 @@ jQuery(document).ready(function($) {
 	<tr height="30">
 		<th class="system_th" rowspan="2"><a style="cursor:pointer;" onclick="toggleVisibility('ex_pdf_delivery');"><?php esc_html_e( 'Described method of invoice', 'usces' ); ?></a></th>
 		<td width="10"><input name="pdf_delivery" id="pdf_delivery0" type="radio" value="0"<?php checked( $pdf_delivery, 0 ); ?> /></td><td width="300"><label for="pdf_delivery0"><?php esc_html_e( 'To address the purchaser information', 'usces' ); ?></label></td>
-		<td rowspan="2"><div id="ex_pdf_delivery" class="explanation"><?php _e( "If you select the 'to address the purchaser information', delivery will be described below address of (purchaser information) when the shipping address is different from the information of the purchaser.<br />Only the information of the destination as you want it to appear on your address if you choose to 'address and the destination.'", 'usces' ); ?></div></td>
+		<td rowspan="2"><div id="ex_pdf_delivery" class="explanation"><?php _e( "If you select the 'to address the purchaser information', delivery will be described below address of (purchaser information) when the shipping address is different from the information of the purchaser.<br />Only the information of the destination as you want it to appear on your address if you choose to 'address and the destination'.", 'usces' ); ?></div></td>
 	</tr>
 	<tr height="30">
 		<td width="10"><input name="pdf_delivery" id="pdf_delivery1" type="radio" value="1"<?php checked( $pdf_delivery, 1 ); ?> /></td><td width="300"><label for="pdf_delivery1"><?php esc_html_e( 'To address the shipping information', 'usces' ); ?></label></td>
