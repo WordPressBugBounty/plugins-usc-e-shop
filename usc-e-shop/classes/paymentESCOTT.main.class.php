@@ -1619,7 +1619,7 @@ class ESCOTT_MAIN {
 			$param_list = array();
 			$params     = array();
 
-			$item_name = mb_convert_kana( $usces->getItemName( $cart[0]['post_id'] ), 'ASK', 'UTF-8' );
+			$item_name = $usces->getItemName( $cart[0]['post_id'] );
 			if ( 1 < count( $cart ) ) {
 				if ( 16 < mb_strlen( $item_name . __( ' etc.', 'usces' ), 'UTF-8' ) ) {
 					$item_name = mb_substr( $item_name, 0, 12, 'UTF-8' ) . __( ' etc.', 'usces' );
@@ -1629,7 +1629,9 @@ class ESCOTT_MAIN {
 					$item_name = mb_substr( $item_name, 0, 13, 'UTF-8' ) . __( '...', 'usces' );
 				}
 			}
-			$paylimit = date_i18n( 'Ymd', current_time( 'timestamp' ) + ( 86400 * $acting_opts['conv_limit'] ) ) . '2359';
+			// ShouhinName は全角文字のみ許容されるため、半角英数・半角カナ・半角スペースを全角へ統一する.
+			$item_name = mb_convert_kana( $item_name, 'ASK', 'UTF-8' );
+			$paylimit  = date_i18n( 'Ymd', current_time( 'timestamp' ) + ( 86400 * $acting_opts['conv_limit'] ) ) . '2359';
 
 			/* 共通部 */
 			$param_list['MerchantId']      = $acting_opts['merchant_id'];

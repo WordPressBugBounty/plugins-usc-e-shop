@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Welcart e-Commerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/usc-e-shop\n"
 "POT-Creation-Date: 2020-10-19T15:20:12+09:00\n"
-"PO-Revision-Date: 2026-06-29 06:17+0900\n"
+"PO-Revision-Date: 2026-07-02 18:00+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 
 #. Plugin Name of the plugin
 msgid "Welcart e-Commerce"
@@ -24,11 +24,11 @@ msgstr "https://www.welcart.com/"
 
 #. Description of the plugin
 msgid "Welcart builds the management system with a net shop on WordPress."
-msgstr "Welcart（ウェルカート）は WordPress に ECサイトを構築する、日本で生まれたプラグインです。"
+msgstr "Welcart (ウェルカート) は WordPress に EC サイトを構築する、日本で生まれたプラグインです。"
 
 #. Author of the plugin
 msgid "Welcart Inc."
-msgstr "株式会社Welcart"
+msgstr "株式会社 Welcart"
 
 #: classes/dataList.class.php:43 classes/itemList.class.php:47
 #: classes/memberList.class.php:55 classes/orderList.class.php:53
@@ -370,7 +370,7 @@ msgstr "ランク"
 #: functions/datalist.php:161 includes/member_edit_form.php:169
 #: includes/member_list.php:13 includes/member_list.php:266
 msgid "current point"
-msgstr "保有PT"
+msgstr "保有ポイント"
 
 #: classes/orderList.class.php:53
 msgid "Period specified"
@@ -930,7 +930,7 @@ msgstr "上限金額の値が不正です。"
 
 #: classes/PaymentESCOTT.class.php:424 classes/paymentWelcart.class.php:1279
 msgid "* Please enter the Merchant ID."
-msgstr "※マーチャントIDを入力してください"
+msgstr "※マーチャントID を入力してください"
 
 #: classes/PaymentESCOTT.class.php:427 classes/paymentWelcart.class.php:1282
 msgid "* Please enter the Merchant Password."
@@ -954,11 +954,11 @@ msgstr "※トークン決済認証コードを入力してください"
 
 #: classes/PaymentESCOTT.class.php:476
 msgid "Credit card transaction (e-SCOTT)"
-msgstr "カード決済（e-SCOTT）"
+msgstr "カード決済 (e-SCOTT)"
 
 #: classes/PaymentESCOTT.class.php:486
 msgid "Online storage agency (e-SCOTT)"
-msgstr "オンライン収納代行（e-SCOTT）"
+msgstr "オンライン収納代行 (e-SCOTT)"
 
 #: classes/PaymentESCOTT.class.php:569 classes/paymentWelcart.class.php:1479
 msgid "Merchant ID"
@@ -966,7 +966,7 @@ msgstr "マーチャントID"
 
 #: classes/PaymentESCOTT.class.php:572 classes/paymentWelcart.class.php:1482
 msgid "Merchant ID (single-byte numbers only) issued from e-SCOTT."
-msgstr "契約時に e-SCOTT から発行されるマーチャントID（半角数字）"
+msgstr "契約時に e-SCOTT から発行されるマーチャントID (半角数字)"
 
 #: classes/PaymentESCOTT.class.php:574 classes/paymentWelcart.class.php:1484
 msgid "Merchant Password"
@@ -974,7 +974,7 @@ msgstr "マーチャントパスワード"
 
 #: classes/PaymentESCOTT.class.php:577 classes/paymentWelcart.class.php:1487
 msgid "Merchant Password (single-byte alphanumeric characters only) issued from e-SCOTT."
-msgstr "契約時に e-SCOTT から発行されるサービスパスワード（半角英数字）"
+msgstr "契約時に e-SCOTT から発行されるマーチャントパスワード (半角英数字)"
 
 #: classes/PaymentESCOTT.class.php:579 classes/paymentWelcart.class.php:1489
 msgid "Tenant ID"
@@ -998,29 +998,29 @@ msgstr "クレジットカード決済"
 
 #: classes/PaymentESCOTT.class.php:599 classes/paymentWelcart.class.php:1523
 msgid "3D Secure"
-msgstr "3Dセキュア"
+msgstr "3D セキュア"
 
 #: classes/PaymentESCOTT.class.php:604 classes/paymentWelcart.class.php:1528
 msgid "3D secure authentication at the time of payment. If you want to use it, you need to apply to SP.LINKS Inc."
-msgstr "決済時に3Dセキュア認証を行います。利用したい場合は、SP.LINKS株式会社に申請する必要があります。"
+msgstr "決済時に 3D セキュア認証を行います。利用したい場合は、SP.LINKS 株式会社に申請する必要があります。"
 
 msgid "Encryption Key"
 msgstr "暗号化キー"
 
 msgid "Encryption key (single-byte alphanumeric characters only) issued by e-SCOTT."
-msgstr "e-SCOTT から発行される暗号化キー（半角英数字）。"
+msgstr "e-SCOTT から発行される暗号化キー (半角英数字)。"
 
 msgid "Initialization Vector"
 msgstr "初期化ベクトル"
 
 msgid "Initialization vector (single-byte alphanumeric characters only) issued by e-SCOTT."
-msgstr "e-SCOTT から発行される初期化ベクトル（半角英数字）。"
+msgstr "e-SCOTT から発行される初期化ベクトル (半角英数字)。"
 
 msgid "If you want to use 3D Secure Authentication, please apply to SP.LINKS Inc."
-msgstr "3Dセキュア認証を利用したい場合は、SP.LINKS株式会社にお申し込みください。"
+msgstr "3D セキュア認証を利用したい場合は、SP.LINKS 株式会社にお申し込みください。"
 
 msgid "If you want to use 3D Secure Authentication or External Link Type Payment, please apply to SP.LINKS Inc."
-msgstr "3Dセキュア認証もしくは外部リンク型決済を利用したい場合は、SP.LINKS株式会社にお申し込みください。"
+msgstr "3D セキュア認証もしくは外部リンク型決済を利用したい場合は、SP.LINKS 株式会社にお申し込みください。"
 
 #: classes/PaymentESCOTT.class.php:606 classes/paymentWelcart.class.php:1530
 msgid "Token auth code"
@@ -1028,11 +1028,11 @@ msgstr "トークン決済認証コード"
 
 #: classes/PaymentESCOTT.class.php:609 classes/paymentWelcart.class.php:1533
 msgid "Token auth code (single-byte alphanumeric characters only) issued from e-SCOTT."
-msgstr "契約時に e-SCOTT から発行されるトークン決済認証コード（半角英数字）"
+msgstr "契約時に e-SCOTT から発行されるトークン決済認証コード (半角英数字)"
 
 #: classes/PaymentESCOTT.class.php:611 classes/paymentWelcart.class.php:1535
 msgid "Security code <br /> (authentication assist)"
-msgstr "セキュリティコード<br />（認証アシスト）"
+msgstr "セキュリティコード<br />(認証アシスト)"
 
 #: classes/PaymentESCOTT.class.php:616 classes/paymentWelcart.class.php:1540
 msgid "Use 'Security code' of authentication assist matching. If you decide not to use, please also set 'Do not verify matching' on the e-SCOTT management screen."
@@ -1146,7 +1146,7 @@ msgstr "「非通過型」とは、決済会社のページへは遷移せず、
 
 #: classes/PaymentESCOTT.class.php:682 classes/paymentWelcart.class.php:1689
 msgid "Stylish with unified design is possible. However, because we will handle the card number, dedicated SSL is required."
-msgstr "デザインの統一されたスタイリッシュな決済が可能です。但し、カード番号を扱いますので専用SSLが必須となります。"
+msgstr "デザインの統一されたスタイリッシュな決済が可能です。ただし、カード番号を扱いますので専用 SSL が必須となります。"
 
 #: classes/PaymentESCOTT.class.php:683 classes/paymentWelcart.class.php:1691
 msgid "In both types, the entered card number will be sent to the e-SCOTT Smart system, so it will not be saved in Welcart."
@@ -1154,7 +1154,7 @@ msgstr "いずれも、入力されたカード番号は e-SCOTT Smart のシス
 
 #: classes/PaymentESCOTT.class.php:684 classes/paymentWelcart.class.php:1694
 msgid "In addition, in the production environment, it is SSL communication with only an authorized SSL certificate, so it is necessary to be careful."
-msgstr "尚、本番環境では、正規SSL証明書のみでのSSL通信となりますのでご注意ください。"
+msgstr "尚、本番環境では、正規 SSL 証明書のみでの SSL 通信となりますのでご注意ください。"
 
 #: classes/PaymentESCOTT.class.php:685 classes/paymentWelcart.class.php:1695
 msgid "The Welcart member account used in the test environment may not be available in the production environment."
@@ -1297,7 +1297,7 @@ msgstr "お支払いの有効期限は%s日間となっております。"
 #: classes/paymentESCOTT.main.class.php:399
 #: classes/paymentESCOTT.main.class.php:1512
 msgid "If payment has not yet been completed, please payment procedure from the following URL."
-msgstr "まだお支払いが完了していない場合は、下記のURLからお支払いのお手続きをお願いいたします。"
+msgstr "まだお支払いが完了していない場合は、下記の URL からお支払いのお手続きをお願いいたします。"
 
 #: classes/paymentESCOTT.main.class.php:400
 #: classes/paymentESCOTT.main.class.php:1513
@@ -1342,7 +1342,7 @@ msgstr "　その他"
 
 #: classes/paymentESCOTT.main.class.php:1270
 msgid "..."
-msgstr "..."
+msgstr "…"
 
 #: classes/paymentESCOTT.main.class.php:1290
 msgid "Thank you for using."
@@ -1394,14 +1394,14 @@ msgstr "カード情報の変更はこちら"
 #: classes/paymentESCOTT.main.class.php:2065
 #: classes/paymentWelcart.class.php:4176 classes/paymentWelcart.class.php:4183
 msgid "(Single-byte numbers only)"
-msgstr "（半角数字のみ）"
+msgstr "(半角数字のみ)"
 
 #: classes/paymentESCOTT.main.class.php:1762
 #: classes/paymentESCOTT.main.class.php:2045
 #: classes/paymentSBPS.main.class.php:1524
 #: classes/paymentWelcart.class.php:4176
 msgid "* Please do not enter symbols or letters other than numbers such as space (blank), hyphen (-) between numbers."
-msgstr "※番号の間に、スペース（空白）、ハイフン（-）などの、数字以外の記号や文字は入力しないでください。"
+msgstr "※番号の間に、スペース (空白)、ハイフン (-) などの、数字以外の記号や文字は入力しないでください。"
 
 #: classes/paymentESCOTT.main.class.php:1771
 #: classes/paymentESCOTT.main.class.php:2054
@@ -1470,7 +1470,7 @@ msgstr "複数配送先をご指定の場合は、「%s」のお支払い方法�
 
 #: classes/paymentESCOTT.main.class.php:2367
 msgid "It exceeds the maximum amount of \"%1$s\" (total amount %2$s)."
-msgstr "「%1$s」の上限額（総合計金額 %2$s）を超えています。"
+msgstr "「%1$s」の上限額 (総合計金額 %2$s) を超えています。"
 
 #: classes/paymentESCOTT.main.class.php:2831
 msgid "Card check"
@@ -1631,7 +1631,7 @@ msgstr "OperateId のステータス遷移不整合"
 # K15
 #: classes/paymentESCOTT.main.class.php:3046
 msgid "Error of the numbers of members subject to return on membership reference (same card number return)"
-msgstr "会員参照（同一カード番号返戻）時の返戻対象会員数エラー"
+msgstr "会員参照 (同一カード番号返戻) 時の返戻対象会員数エラー"
 
 # K20
 #: classes/paymentESCOTT.main.class.php:3049
@@ -1807,13 +1807,13 @@ msgstr "会員は有効ではありません。"
 # K79
 #: classes/paymentESCOTT.main.class.php:3151
 msgid "Member determination error (Login invalid or Member invalid)"
-msgstr "会員判定エラー（Login 無効または会員無効）"
+msgstr "会員判定エラー (Login 無効または会員無効)"
 
 # K80 K81
 #: classes/paymentESCOTT.main.class.php:3154
 #: classes/paymentESCOTT.main.class.php:3157
 msgid "Mismatch of Member ID setting (required the setting)"
-msgstr "会員ID 設定不一致（設定が必要）"
+msgstr "会員ID 設定不一致 (設定が必要)"
 
 # K82
 #: classes/paymentESCOTT.main.class.php:3160
@@ -1838,12 +1838,12 @@ msgstr "会員パスワードの入力内容不正"
 # K86
 #: classes/paymentESCOTT.main.class.php:3172
 msgid "'Processing number: ProcNo' scrutiny error"
-msgstr "項目「処理番号：ProcNo」精査エラー"
+msgstr "項目「処理番号: ProcNo」精査エラー"
 
 # K87
 #: classes/paymentESCOTT.main.class.php:3175
 msgid "'POST URL: PostUrl' scrutiny error"
-msgstr "項目「POST用URL：PostUrl」精査エラー"
+msgstr "項目「POST 用 URL: PostUrl」精査エラー"
 
 # K88
 #: classes/paymentESCOTT.main.class.php:3178
@@ -1858,7 +1858,7 @@ msgstr "処理番号の重複エラー"
 # K96
 #: classes/paymentESCOTT.main.class.php:3184
 msgid "Communication failure occurred in the system (timeout)"
-msgstr "本システム通信障害発生（タイムアウト）"
+msgstr "本システム通信障害発生 (タイムアウト)"
 
 # K98
 #: classes/paymentESCOTT.main.class.php:3187
@@ -1876,7 +1876,7 @@ msgstr "その他例外エラー"
 # KA1
 #: classes/paymentESCOTT.main.class.php:3193
 msgid "'Currency code: CurrencyId' scrutiny error"
-msgstr "項目「通貨コード：CurrencyId」精査エラー"
+msgstr "項目「通貨コード: CurrencyId」精査エラー"
 
 # KBX
 #: classes/paymentESCOTT.main.class.php:3196
@@ -1947,7 +1947,7 @@ msgstr "利用可能トークンなしエラー"
 # KI0
 #: classes/paymentESCOTT.main.class.php:3235
 msgid "Credit sales canceled (details unknown)"
-msgstr "与信売上計上中止（詳細不明）"
+msgstr "与信売上計上中止 (詳細不明)"
 
 # KI1
 #: classes/paymentESCOTT.main.class.php:3238
@@ -2002,7 +2002,7 @@ msgstr "signature エラー、署名時間が許容時間を超えています�
 # KIJ
 #: classes/paymentESCOTT.main.class.php:3268
 msgid "Token payment, ApplePay transaction authorization error"
-msgstr "トークン決済、ApplePay 取引許可エラー"
+msgstr "トークン決済、Apple Pay 取引許可エラー"
 
 # KIK
 #: classes/paymentESCOTT.main.class.php:3271
@@ -2305,7 +2305,7 @@ msgstr "入力した PIN、有効期限または CVN2 のエラー、取引不�
 # R20
 #: classes/paymentESCOTT.main.class.php:3469
 msgid "The entered cardholder ID information or mobile phone number is incorrect, verification failed."
-msgstr "入力したカード保有者ID情報または携帯電話番号が正しくない、検証不成立。"
+msgstr "入力したカード保有者ID 情報または携帯電話番号が正しくない、検証不成立。"
 
 # R21
 #: classes/paymentESCOTT.main.class.php:3472
@@ -2360,7 +2360,7 @@ msgstr "発行会社の取引権が制限されています。発行会社にお
 # R31
 #: classes/paymentESCOTT.main.class.php:3502
 msgid "The bank card is valid, but the issuing company does not support SMS authentication."
-msgstr "銀行カードは有効ですが、発行会社が SMS認証に対応していません。"
+msgstr "銀行カードは有効ですが、発行会社が SMS 認証に対応していません。"
 
 # R32
 #: classes/paymentESCOTT.main.class.php:3505
@@ -2391,12 +2391,12 @@ msgstr "取引不成立。詳細は発行会社に問い合わせてください
 # U01
 #: classes/paymentESCOTT.main.class.php:3523
 msgid "The end user's 3D secure password is not set."
-msgstr "エンドユーザーの3Dセキュアパスワードが未設定です。"
+msgstr "エンドユーザーの 3D セキュアパスワードが未設定です。"
 
 # U02
 #: classes/paymentESCOTT.main.class.php:3526
 msgid "This card company doesn't conpliant with 3D Secure."
-msgstr "3Dセキュア未対応カード発行会社です。"
+msgstr "3D セキュア未対応カード発行会社です。"
 
 # U03
 #: classes/paymentESCOTT.main.class.php:3529
@@ -2406,17 +2406,17 @@ msgstr "ブランドサーバー、または、イシュアサーバーに障害
 # U04
 #: classes/paymentESCOTT.main.class.php:3532
 msgid "3D secure authentication couldn't be executed. Depending on the standards of card companies, it may be NG without displaying the 3D secure authentication screen."
-msgstr "3Dセキュア認証ができませんでした。各カード会社の基準により3Dセキュア認証画面を表示せずにNGとなる場合がございます。"
+msgstr "3D セキュア認証ができませんでした。各カード会社の基準により 3D セキュア認証画面を表示せずに NG となる場合がございます。"
 
 # U05
 #: classes/paymentESCOTT.main.class.php:3535
 msgid "The authentication system checked for tampering and 3D secure authentication failed."
-msgstr "認証システムで改ざんをチェックし3Dセキュア認証ができませんでした。"
+msgstr "認証システムで改ざんをチェックし 3D セキュア認証ができませんでした。"
 
 # U06
 #: classes/paymentESCOTT.main.class.php:3538
 msgid "A timeout (over 40 minutes) occurred by end-user operation."
-msgstr "エンドユーザーの操作でタイムアウト（40分以上経過）が発生しました。"
+msgstr "エンドユーザーの操作でタイムアウト (40分以上経過) が発生しました。"
 
 # U07
 #: classes/paymentESCOTT.main.class.php:3541
@@ -2431,12 +2431,12 @@ msgstr "セッション情報が削除された後に重複した電文を受信
 # U09
 #: classes/paymentESCOTT.main.class.php:3547
 msgid "This brand doesn't conpliant with 3D Secure."
-msgstr "3Dセキュア未対応ブランドです。"
+msgstr "3D セキュア未対応ブランドです。"
 
 # U10
 #: classes/paymentESCOTT.main.class.php:3550
 msgid "The 3D secure authentication couldn't be executed because the branded server stopped or failed connection."
-msgstr "ブランドのサーバーが停止、または接続不可により3Dセキュア認証ができませんでした。"
+msgstr "ブランドのサーバーが停止、または接続不可により 3D セキュア認証ができませんでした。"
 
 # U11
 #: classes/paymentESCOTT.main.class.php:3553
@@ -2486,7 +2486,7 @@ msgstr "設定値エラー"
 # W03
 #: classes/paymentESCOTT.main.class.php:3580
 msgid "Online Payment Collection Agency Service internal error (Web type)"
-msgstr "オンライン収納代行サービス内部エラー（Web系）"
+msgstr "オンライン収納代行サービス内部エラー (Web 系)"
 
 # W04
 #: classes/paymentESCOTT.main.class.php:3583
@@ -2501,7 +2501,7 @@ msgstr "項目設定エラー"
 # W06
 #: classes/paymentESCOTT.main.class.php:3589
 msgid "Online Payment Collection Agency Service internal error (DB type)"
-msgstr "オンライン収納代行サービス内部エラー（DB系）"
+msgstr "オンライン収納代行サービス内部エラー (DB 系)"
 
 #: classes/paymentESCOTT.main.class.php:3743
 #: classes/paymentESCOTT.main.class.php:3836
@@ -2562,11 +2562,11 @@ msgstr "3D セキュア認証ができませんでした。"
 
 #: classes/paymentESCOTT.main.class.php:4024
 msgid "TLS 1.2 connection failed."
-msgstr "TLS1.2接続に失敗しました"
+msgstr "TLS 1.2 接続に失敗しました"
 
 #: classes/paymentESCOTT.main.class.php:4027
 msgid "SSL connection failed."
-msgstr "SSL接続に失敗しました"
+msgstr "SSL 接続に失敗しました"
 
 #: classes/paymentESCOTT.main.class.php:4054
 msgid "Timeout occurred during communication."
@@ -2574,7 +2574,7 @@ msgstr "通信中にタイムアウトが発生しました"
 
 #: classes/paymentESCOTT.main.class.php:4058
 msgid "Failed to disconnect from SLN."
-msgstr "SLNとの切断に失敗しました"
+msgstr "SLN との切断に失敗しました"
 
 #: classes/paymentESCOTT.main.class.php:4062
 msgid "Timeout setting failed."
@@ -2594,7 +2594,7 @@ msgstr "円"
 #: classes/paymentPayPalEC.class.php:33 classes/paymentPayPalEC.class.php:416
 #: classes/paymentPayPalEC.class.php:528 includes/initial.php:1106
 msgid "PayPal Express Checkout"
-msgstr "PayPalエクスプレスチェックアウト"
+msgstr "PayPal エクスプレスチェックアウト"
 
 #: classes/paymentPayPalEC.class.php:427
 msgid "PayPal<br />Express Checkout"
@@ -2606,7 +2606,7 @@ msgstr "PayPalエクスプレスチェックアウトを利用するかどうか
 
 #: classes/paymentPayPalEC.class.php:435 classes/paymentPayPalWPP.class.php:331
 msgid "Test (Sandbox)"
-msgstr "テスト（Sandbox）"
+msgstr "テスト (Sandbox)"
 
 #: classes/paymentPayPalEC.class.php:436 classes/paymentPayPalWPP.class.php:332
 msgid "Formal Installment"
@@ -2614,7 +2614,7 @@ msgstr "本稼動"
 
 #: classes/paymentPayPalEC.class.php:439 classes/paymentPayPalWPP.class.php:335
 msgid "Choose 'Test (Sandbox)' when testing payment settlement by Sandbox."
-msgstr "Sandbox を利用した決済テストの場合は「テスト（Sandbox）」を選択します。"
+msgstr "Sandbox を利用した決済テストの場合は「テスト (Sandbox)」を選択します。"
 
 #: classes/paymentPayPalEC.class.php:441
 msgid "API User Name"
@@ -2622,15 +2622,15 @@ msgstr "APIユーザー名"
 
 #: classes/paymentPayPalEC.class.php:444
 msgid "Type in the API user name from API credential. User name will be different in the formal installment of Sandbox."
-msgstr "API信用証明書のAPIユーザー名を入力します。Sandbox と本稼動では別のユーザー名となります。"
+msgstr "API 信用証明書の API ユーザー名を入力します。Sandbox と本稼動では別のユーザー名となります。"
 
 #: classes/paymentPayPalEC.class.php:446
 msgid "API Password"
-msgstr "APIパスワード"
+msgstr "API パスワード"
 
 #: classes/paymentPayPalEC.class.php:449
 msgid "Type in the API password from API credential. Password will be different in formal installment of Sandbox."
-msgstr "API信用証明書のAPIパスワードを入力します。Sandbox と本稼動では別のパスワードとなります。"
+msgstr "API 信用証明書の API パスワードを入力します。Sandbox と本稼動では別のパスワードとなります。"
 
 #: classes/paymentPayPalEC.class.php:451
 msgid "Signature"
@@ -2638,11 +2638,11 @@ msgstr "署名"
 
 #: classes/paymentPayPalEC.class.php:454
 msgid "Type in the signature from API credential. Signature will be different in the formal installment of Sandbox."
-msgstr "PayPalから発行されるAPI信用証明書の署名を入力します。Sandbox と本稼動では別の署名となります。"
+msgstr "PayPal から発行される API 信用証明書の署名を入力します。Sandbox と本稼動では別の署名となります。"
 
 #: classes/paymentPayPalEC.class.php:456 classes/paymentPayPalWPP.class.php:337
 msgid "PayPal Acount Email address"
-msgstr "PayPalアカウント（メールアドレス）"
+msgstr "PayPal アカウント (メールアドレス)"
 
 #: classes/paymentPayPalEC.class.php:462
 msgid "Recurring Payment"
@@ -2658,11 +2658,11 @@ msgstr "支払いページの画像"
 
 #: classes/paymentPayPalEC.class.php:475
 msgid "a URL to an image of your logo. The image has a maximum size of 190 pixels wide by 60 pixels high. The available file format is jpg, png, gif. PayPal recommends that you provide an image that is stored on a secure (https) server. If you do not specify an image, the business name displays."
-msgstr "お客様のロゴ画像のURL。画像の最大サイズは、幅 190 ピクセル×高さ 60 ピクセル。利用可能なファイル形式は jpg、png、gif。PayPal は、セキュア (https) サーバーに格納されている画像を使用することをお勧めします。画像を指定しない場合は事業名が表示されます。"
+msgstr "お客様のロゴ画像の URL。画像の最大サイズは、幅190ピクセル✕高さ60ピクセル。利用可能なファイル形式は jpg、png、gif。PayPal は、セキュア (https) サーバーに格納されている画像を使用することをお勧めします。画像を指定しない場合は事業名が表示されます。"
 
 #: classes/paymentPayPalEC.class.php:475
 msgid "127 single-byte alphanumeric characters"
-msgstr "半角英数字 127 文字"
+msgstr "半角英数字 127文字"
 
 #: classes/paymentPayPalEC.class.php:477 classes/paymentPayPalEC.class.php:484
 msgid "The background color for the payment page"
@@ -2682,11 +2682,11 @@ msgstr "基準となるお客様のテーマカラー。ショッピングカー
 
 #: classes/paymentPayPalEC.class.php:482
 msgid "6-character HTML hexadecimal ASCII color code"
-msgstr "ASCII 文字 6 文字の HTML 16 進色コード"
+msgstr "ASCII 文字 6文字の HTML 16進色コード"
 
 #: classes/paymentPayPalEC.class.php:490
 msgid "Log In with PayPal"
-msgstr "PayPalアカウントでログイン"
+msgstr "PayPal アカウントでログイン"
 
 #: classes/paymentPayPalEC.class.php:497
 msgid "Live Client ID"
@@ -2706,11 +2706,11 @@ msgstr ""
 
 #: classes/paymentPayPalEC.class.php:522
 msgid "Update PayPal Express Checkout settings"
-msgstr "PayPalエクスプレスチェックアウトの設定を更新する"
+msgstr "PayPal エクスプレスチェックアウトの設定を更新する"
 
 #: classes/paymentPayPalEC.class.php:529
 msgid "For the details on PayPal Express Checkout, click here >>"
-msgstr "PayPalエクスプレスチェックアウトの詳細はこちら 》"
+msgstr "PayPal エクスプレスチェックアウトの詳細はこちら 》"
 
 #: classes/paymentPayPalEC.class.php:534
 msgid "If the 'OpenSSL' module is not installed in the server you're using, you cannot settle payments by 'ExpressCheckout'."
@@ -2760,7 +2760,7 @@ msgstr "お支払い金額"
 
 #: classes/paymentPayPalEC.class.php:637
 msgid "<p>The settlement is not completed.<br />Please remit the price from the PayPal Maia count page.After receipt of money confirmation, I will prepare for the article shipment.</p>"
-msgstr "<p>お取引は完了しておりません。<br />PayPalマイアカウントページから代金をご送金ください。ご入金確認後、商品発送の準備をさせていただきます。</p>"
+msgstr "<p>お取引は完了しておりません。<br />PayPal マイアカウントページから代金をご送金ください。ご入金確認後、商品発送の準備をさせていただきます。</p>"
 
 #: classes/paymentPayPalEC.class.php:1031
 #: classes/paymentPayPalEC.class.php:1339 functions/function.php:173
@@ -2850,12 +2850,12 @@ msgstr "IPN接続エラー"
 
 #: classes/paymentPayPalWPP.class.php:32 classes/paymentPayPalWPP.class.php:226
 msgid "PayPal(WPP)"
-msgstr "PayPal決済（WPP）"
+msgstr "PayPal決済 (WPP)"
 
 #: classes/paymentPayPalWPP.class.php:33 classes/paymentPayPalWPP.class.php:312
 #: classes/paymentPayPalWPP.class.php:349 includes/initial.php:1107
 msgid "PayPal Web Payment Plus"
-msgstr "PayPalウェブペイメントプラス"
+msgstr "PayPal ウェブペイメントプラス"
 
 #: classes/paymentPayPalWPP.class.php:201
 msgid "* Operating environment is invalid."
@@ -2863,11 +2863,11 @@ msgstr "※動作環境が不正です"
 
 #: classes/paymentPayPalWPP.class.php:204
 msgid "* Enter your PayPal account (email address)."
-msgstr "※PayPalアカウント（メールアドレス）を入力してください"
+msgstr "※PayPal アカウント (メールアドレス) を入力してください"
 
 #: classes/paymentPayPalWPP.class.php:206
 msgid "* Enter your PayPal account (email address) correctly."
-msgstr "※PayPalアカウント（メールアドレス）を正しく入力してください"
+msgstr "※PayPal アカウント (メールアドレス) を正しく入力してください"
 
 #: classes/paymentPayPalWPP.class.php:209
 msgid "* You haven't agreed to the Terms of Use."
@@ -2879,15 +2879,15 @@ msgstr "PayPal<br />ウェブペイメントプラス"
 
 #: classes/paymentPayPalWPP.class.php:328
 msgid "Choose if to use PayPal Web Payment Plus."
-msgstr "PayPalウェブペイメントプラスを利用するかどうかを選択します。"
+msgstr "PayPal ウェブペイメントプラスを利用するかどうかを選択します。"
 
 #: classes/paymentPayPalWPP.class.php:340
 msgid "Email address associated with your PayPal account."
-msgstr "PayPalアカウントに関連付けられているメールアドレス。"
+msgstr "PayPal アカウントに関連付けられているメールアドレス。"
 
 #: classes/paymentPayPalWPP.class.php:343
 msgid "Update PayPal Web Payment Plus settings"
-msgstr "PayPalウェブペイメントプラスの設定を更新する"
+msgstr "PayPal ウェブペイメントプラスの設定を更新する"
 
 #: classes/paymentPayPalWPP.class.php:344
 msgid "I agree to the following Terms of Use."
@@ -2895,15 +2895,15 @@ msgstr "下記ご利用条件に同意する"
 
 #: classes/paymentPayPalWPP.class.php:345
 msgid "You agree that the customer information submitted at the time of application will be provided to partner company PayPal Pte. Ltd. and it's used for its service evaluation, improvement, progress and marketing purpose, and may be offered guidance on marketing and campaign purposes (including sending emails etc.) from PayPal Pte. Ltd.."
-msgstr "お申込みの際に送信いただいたお客様の情報は、提携会社である PayPal Pte. Ltd. に提供され、同社のサービス評価、改善、向上およびマーケティング目的のため使用されること、また、同社からお客様に対してマーケティング及びキャンペーンの目的のご案内（Ｅメール等の送信を含みます）が行われる場合があることにご同意頂きます。"
+msgstr "お申込みの際に送信いただいたお客様の情報は、提携会社である PayPal Pte. Ltd. に提供され、同社のサービス評価、改善、向上およびマーケティング目的のため使用されること、また、同社からお客様に対してマーケティング及びキャンペーンの目的のご案内 (Eメール等の送信を含みます) が行われる場合があることにご同意頂きます。"
 
 #: classes/paymentPayPalWPP.class.php:350
 msgid "For the details on PayPal Web Payment Plus, click here >>"
-msgstr "PayPalウェブペイメントプラスの詳細はこちら 》"
+msgstr "PayPal ウェブペイメントプラスの詳細はこちら 》"
 
 #: classes/paymentPayPalWPP.class.php:351
 msgid "A PayPal Business Account is required to use the PayPal Web Payment Plus Payment Service. You can open a business account from <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr "PayPalウェブペイメントプラス決済サービスのご利用には、ペイパルビジネスアカウントが必要です。ビジネスアカウントの開設は<a href=\"%s\" target=\"_blank\">こちら</a>から行えます。"
+msgstr "PayPal ウェブペイメントプラス決済サービスのご利用には、ペイパルビジネスアカウントが必要です。ビジネスアカウントの開設は<a href=\"%s\" target=\"_blank\">こちら</a>から行えます。"
 
 #: classes/paymentPayPalWPP.class.php:352
 msgid "Click <a href=\"%s\" target=\"_blank\">here</a> for the procedure for opening a business account."
@@ -2927,23 +2927,23 @@ msgstr "問い合わせ先"
 
 #: classes/paymentPayPalWPP.class.php:357
 msgid "Inquiry about new application / introduction (sales counter)"
-msgstr "新規お申込み・導入に関するお問い合わせ（営業窓口）"
+msgstr "新規お申込み・導入に関するお問い合わせ (営業窓口)"
 
 #: classes/paymentPayPalWPP.class.php:358
 msgid "Tel: 03-6739-7135 Weekdays 9:30-18:00 (except Saturdays, Sundays and public holidays Note:Calls will be charged.)"
-msgstr "Tel：03-6739-7135 平日 9:30 - 18:00（土・日・祝祭日は除く）※通話料がかかります"
+msgstr "Tel：03-6739-7135 平日 9:30 - 18:00 (土・日・祝祭日は除く) ※通話料がかかります"
 
 #: classes/paymentPayPalWPP.class.php:360
 msgid "If you already have a PayPal account (Customer Service)"
-msgstr "すでにペイパルアカウントをお持ちの方（カスタマーサービス）"
+msgstr "すでにペイパルアカウントをお持ちの方 (カスタマーサービス)"
 
 #: classes/paymentPayPalWPP.class.php:361
 msgid "Tel: 0120-271-888 or 03-6739-7360 (These for from mobile phones or from overseas Note:Calls will be charged.)"
-msgstr "Tel：0120-271-888 または 03-6739-7360（携帯電話と海外からはこちら ※通話料がかかります）"
+msgstr "Tel：0120-271-888 または 03-6739-7360 (携帯電話と海外からはこちら ※通話料がかかります)"
 
 #: classes/paymentPayPalWPP.class.php:362
 msgid "9:00-20:00 (open all year round)"
-msgstr "9:00～20:00（年中無休）"
+msgstr "9:00～20:00 (年中無休)"
 
 #: classes/paymentRemise.class.php:30 classes/paymentRemise.class.php:537
 #: includes/initial.php:1104
@@ -3117,7 +3117,7 @@ msgstr "決済処理不可"
 
 #: classes/paymentSBPS.main.class.php:1374
 msgid "Information on payment will be mailed to %s."
-msgstr "「お支払いのご案内」は、%s　宛にメールさせていただいております。"
+msgstr "「お支払いのご案内」は、%s 宛にメールさせていただいております。"
 
 #: classes/paymentSBPS.main.class.php:1421
 msgid "The card number is not a valid credit card number."
@@ -3146,19 +3146,19 @@ msgstr "利用金額の形式が不正です。数値で入力してください
 
 #: classes/paymentWelcart.class.php:1018
 msgid "Are you sure you want to change the spending amount?"
-msgstr "利用金額の変更処理を実行します。よろしいですか？"
+msgstr "利用金額の変更処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1030
 msgid "Are you sure you want to execute credit processing?"
-msgstr "与信処理を実行します。よろしいですか？"
+msgstr "与信処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1042
 msgid "Are you sure you want to execute credit sales processing?"
-msgstr "与信売上計上処理を実行します。よろしいですか？"
+msgstr "与信売上計上処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1054
 msgid "Are you sure you want to re-authorization?"
-msgstr "再オーソリ処理を実行します。よろしいですか？"
+msgstr "再オーソリ処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1077 classes/paymentWelcart.class.php:1099
 msgid "The payment due format is incorrect. Please enter with 8 digit number."
@@ -3174,11 +3174,11 @@ msgstr "支払額の形式が不正です。数値で入力してください。
 
 #: classes/paymentWelcart.class.php:1088
 msgid "Are you sure you want to change payment due and payment amount?"
-msgstr "支払期限・支払額の変更処理を実行します。よろしいですか？"
+msgstr "支払期限・支払額の変更処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1110
 msgid "Are you sure you want to execute the registration processing?"
-msgstr "登録処理を実行します。よろしいですか？"
+msgstr "登録処理を実行します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1150
 msgid "The update was completed."
@@ -3201,7 +3201,7 @@ msgstr "%sを入力してください。"
 
 #: classes/paymentWelcart.class.php:1184
 msgid "Are you sure you want to update the settings?"
-msgstr "更新します。よろしいですか？"
+msgstr "更新します。よろしいですか ?"
 
 #: classes/paymentWelcart.class.php:1288
 msgid "* Please enter the Settlement auth key."
@@ -3221,19 +3221,19 @@ msgstr "※銀聯三者間初期化ベクトルを入力してください"
 
 #: classes/paymentWelcart.class.php:1360
 msgid "Credit card transaction (WelcartPay)"
-msgstr "カード決済（WelcartPay）"
+msgstr "カード決済 (WelcartPay)"
 
 #: classes/paymentWelcart.class.php:1370
 msgid "Online storage agency (WelcartPay)"
-msgstr "オンライン収納代行（WelcartPay）"
+msgstr "オンライン収納代行 (WelcartPay)"
 
 #: classes/paymentWelcart.class.php:1380
 msgid "Postpay settlement (WelcartPay/ATODENE)"
-msgstr "後払い決済（WelcartPay/ATODENE）"
+msgstr "後払い決済 (WelcartPay/ATODENE)"
 
 #: classes/paymentWelcart.class.php:1390
 msgid "UnionPay (WelcartPay)"
-msgstr "銀聯決済（WelcartPay）"
+msgstr "銀聯決済 (WelcartPay)"
 
 #: classes/paymentWelcart.class.php:1494
 msgid "Settlement auth key"
@@ -3241,7 +3241,7 @@ msgstr "決済認証キー"
 
 #: classes/paymentWelcart.class.php:1497
 msgid "Settlement auth key (single-byte numbers only) issued from e-SCOTT."
-msgstr "契約時に e-SCOTT から発行される決済認証キー（半角数字）"
+msgstr "契約時に e-SCOTT から発行される決済認証キー (半角数字)"
 
 #: classes/paymentWelcart.class.php:1509
 msgid "Use with non-passage type"
@@ -3261,11 +3261,11 @@ msgstr "外貨決済"
 
 #: classes/paymentWelcart.class.php:1521
 msgid "Foreign exchange settlement, only two VISA and MasterCard card companies are available.<br />If switching to Yen card is done during operation, the member information registered in e-SCOTT will be invalid."
-msgstr "外貨決済では、利用可能なカード会社（ブランド）は、VISA および MasterCard の 2社のみとなります。<br />運用の途中で通常（円貨カード）との切り替えをされますと、e-SCOTT に登録した会員情報が無効になります。"
+msgstr "外貨決済では、利用可能なカード会社 (ブランド) は、VISA および MasterCard の2社のみとなります。<br />運用の途中で通常 (円貨カード) との切り替えをされますと、e-SCOTT に登録した会員情報が無効になります。"
 
 #: classes/paymentWelcart.class.php:1547
 msgid "When using automatic continuing charging (required WCEX DLSeller) or subscription (required WCEX Auto Delivery), please make 'Quick payment' of 'Use'."
-msgstr "自動継続課金（要 WCEX DLSeller）もしくは定期購入（要 WCEX Auto Delivery）を利用する場合、クイック決済を「利用する」にしてください。"
+msgstr "自動継続課金 (要 WCEX DLSeller) もしくは定期購入 (要 WCEX Auto Delivery) を利用する場合、クイック決済を「利用する」にしてください。"
 
 #: classes/paymentWelcart.class.php:1564
 msgid "Automatic Continuing Charging Processing Classification"
@@ -3273,7 +3273,7 @@ msgstr "自動継続課金処理区分"
 
 #: classes/paymentWelcart.class.php:1569
 msgid "Processing classification when automatic continuing charging (required WCEX DLSeller)."
-msgstr "自動継続課金（要 WCEX DLSeller）時の処理区分。"
+msgstr "自動継続課金 (要 WCEX DLSeller) 時の処理区分。"
 
 #: classes/paymentWelcart.class.php:1571
 msgid "Automatic Continuing Charging Completion Mail"
@@ -3293,7 +3293,7 @@ msgstr "送信しない"
 
 #: classes/paymentWelcart.class.php:1576
 msgid "Send billing completion mail to the member on which automatic continuing charging processing (required WCEX DLSeller) is executed."
-msgstr "自動継続課金処理（要 WCEX DLSeller）が実行された会員に、課金完了メールを送信します。"
+msgstr "自動継続課金処理 (要 WCEX DLSeller) が実行された会員に、課金完了メールを送信します。"
 
 #: classes/paymentWelcart.class.php:1585
 msgid "It can be selected when using in non-passage type."
@@ -3301,7 +3301,7 @@ msgstr "非通過型で利用するときに選択できます。"
 
 #: classes/paymentWelcart.class.php:1606
 msgid "Postpay settlement (ATODENE)"
-msgstr "後払い決済（ATODENE）"
+msgstr "後払い決済 (ATODENE)"
 
 #: classes/paymentWelcart.class.php:1612
 msgid "Possibility of each items"
@@ -3317,7 +3317,7 @@ msgstr "無効"
 
 #: classes/paymentWelcart.class.php:1617
 msgid "It is effective when setting possibility of each items. Invalid when not distinguished in particular.<br />If enabled, a selection field will be added to determine whether postpay settlement is possible on the product registration screen. If there is a product in the cart that can not be postpaid settlement, we exclude postpaid settlement from the payment method options.<br />In addition, availability data is added to the product CSV as a custom field (welcartpay_atodene)."
-msgstr "商品ごとに後払い決済の可否を設定する場合は有効。特に区別しない場合は無効。<br />有効にした場合は、商品登録画面に後払い決済ができるかどうかの選択フィールドが追加されます。後払い決済ができない商品がカートにあった場合、支払方法の選択肢から後払い決済を除外します。<br />また、商品CSVにはカスタムフィールド（welcartpay_atodene）として可否データが追加されます。"
+msgstr "商品ごとに後払い決済の可否を設定する場合は有効。特に区別しない場合は無効。<br />有効にした場合は、商品登録画面に後払い決済ができるかどうかの選択フィールドが追加されます。後払い決済ができない商品がカートにあった場合、支払方法の選択肢から後払い決済を除外します。<br />また、商品CSVにはカスタムフィールド (welcartpay_atodene) として可否データが追加されます。"
 
 #: classes/paymentWelcart.class.php:1619
 msgid "Invoice delivery method"
@@ -3345,11 +3345,11 @@ msgstr "銀聯"
 
 #: classes/paymentWelcart.class.php:1642
 msgid "UnionPay encryption key (single-byte alphanumeric characters only) issued by e-SCOTT."
-msgstr "e-SCOTT から発行される銀聯決済用の暗号化キー（半角英数字）。"
+msgstr "e-SCOTT から発行される銀聯決済用の暗号化キー (半角英数字)。"
 
 #: classes/paymentWelcart.class.php:1647
 msgid "UnionPay initialization vector (single-byte alphanumeric characters only) issued by e-SCOTT."
-msgstr "e-SCOTT から発行される銀聯決済用の初期化ベクトル（半角英数字）。"
+msgstr "e-SCOTT から発行される銀聯決済用の初期化ベクトル (半角英数字)。"
 
 #: classes/paymentWelcart.class.php:1649
 msgid "Page Language"
@@ -3357,11 +3357,11 @@ msgstr "三者間ページ言語"
 
 #: classes/paymentWelcart.class.php:1652
 msgid "Chinese (Simplified)"
-msgstr "中国語（簡体字）"
+msgstr "中国語 (簡体字)"
 
 #: classes/paymentWelcart.class.php:1653
 msgid "Chinese (Traditional)"
-msgstr "中国語（繁体字）"
+msgstr "中国語 (繁体字)"
 
 #: classes/paymentWelcart.class.php:1654
 msgid "English"
@@ -3486,7 +3486,7 @@ msgstr "店舗コード"
 
 #: classes/paymentWelcart.class.php:3101
 msgid "(Expired)"
-msgstr "（期限切れ）"
+msgstr "(期限切れ)"
 
 #: classes/paymentWelcart.class.php:3202
 msgid "Transaction status"
@@ -3705,7 +3705,7 @@ msgstr "参照処理済"
 
 #: classes/paymentWelcart.class.php:5756
 msgid "NG (details unknown)"
-msgstr "NG（詳細不明）"
+msgstr "NG (詳細不明)"
 
 #: classes/paymentWelcart.class.php:5962 functions/define_function.php:43
 msgid "The file was not uploaded."
@@ -3721,7 +3721,7 @@ msgstr "ファイルを保存できませんでした。"
 
 #: classes/paymentWelcart.class.php:6022
 msgid "ATODENE transaction registration CSV output"
-msgstr "後払い決済取引登録CSV出力"
+msgstr "後払い決済取引登録 CSV 出力"
 
 #: classes/paymentWelcart.class.php:6023
 msgid "ATODENE transaction batch change and cancel CSV output"
@@ -3729,15 +3729,15 @@ msgstr "後払い決済取引一括変更・取消CSV出力"
 
 #: classes/paymentWelcart.class.php:6024
 msgid "ATODENE credit review result CSV upload"
-msgstr "後払い決済与信審査結果CSV取込"
+msgstr "後払い決済与信審査結果 CSV 取込"
 
 #: classes/paymentWelcart.class.php:6025
 msgid "ATODENE shipping report registration CSV output"
-msgstr "後払い決済出荷報告登録CSV出力"
+msgstr "後払い決済出荷報告登録 CSV 出力"
 
 #: classes/paymentWelcart.class.php:6039
 msgid "Upload the prescribed CSV file and import credit screening results.<br />Please choose a file, and press 'Start of capture'."
-msgstr "規定のCSVファイルをアップロードして与信審査結果の取込を行います。<br />ファイルを選択して取込開始を押してください。"
+msgstr "規定の CSV ファイルをアップロードして与信審査結果の取込を行います。<br />ファイルを選択して取込開始を押してください。"
 
 #: classes/paymentWelcart.class.php:6044
 msgid "Start of capture"
@@ -3752,7 +3752,7 @@ msgstr "データが選択されていません。"
 
 #: classes/paymentWelcart.class.php:6111
 msgid "Credit Review Result CSV Capture"
-msgstr "与信審査結果CSV取込"
+msgstr "与信審査結果 CSV 取込"
 
 #: classes/paymentWelcart.class.php:6183 functions/filters.php:1204
 msgid "Atobarai Propriety"
@@ -3782,7 +3782,7 @@ msgstr "出荷報告登録"
 
 #: classes/paymentWelcart.class.php:6447 functions/define_function.php:83
 msgid "CSV file does not exist."
-msgstr "CSVファイルが存在しません。"
+msgstr "CSV ファイルが存在しません。"
 
 #: classes/paymentWelcart.class.php:6464 functions/define_function.php:178
 msgid "A file does not open."
@@ -3790,7 +3790,7 @@ msgstr "ファイルが開けません。"
 
 #: classes/paymentWelcart.class.php:6474 functions/define_function.php:187
 msgid "This file is not in the CSV file."
-msgstr "このファイルはCSVファイルではありません。"
+msgstr "このファイルは CSV ファイルではありません。"
 
 #: classes/paymentZeus.class.php:33 classes/paymentZeus.class.php:699
 #: includes/initial.php:1103
@@ -3843,7 +3843,7 @@ msgstr "＊"
 
 #: classes/paymentZeus.class.php:1558
 msgid "(full-width Kana)"
-msgstr "（全角カナ）"
+msgstr "(全角カナ)"
 
 #: classes/paymentZeus.class.php:2641 templates/member/member.php:85
 #: theme/welcart_default/wc_templates/member/wc_member_page.php:87
@@ -4044,7 +4044,7 @@ msgstr "インポートが完了しました。"
 
 #: classes/usceshop.class.php:3340
 msgid "Error: failure in updating password"
-msgstr "エラー：パスワードを更新できませんでした。"
+msgstr "エラー: パスワードを更新できませんでした。"
 
 #: classes/usceshop.class.php:3390 classes/usceshop.class.php:3467
 #: classes/usceshop.class.php:3548 classes/usceshop.class.php:3637
@@ -4055,28 +4055,28 @@ msgstr "このメールアドレスは登録できません。"
 #: classes/usceshop.class.php:3457 classes/usceshop.class.php:3536
 #: classes/usceshop.class.php:3622 classes/usceshop.class.php:3694
 msgid "Error:failure in update"
-msgstr "エラー：更新できませんでした。"
+msgstr "エラー: 更新できませんでした。"
 
 #: classes/usceshop.class.php:3775 classes/usceshop.class.php:3855
 #: classes/usceshop.class.php:3955
 msgid "<b>Error:</b> Password is not correct."
-msgstr "<b>エラー：</b>パスワードが違います。"
+msgstr "<b>エラー:</b> パスワードが違います。"
 
 #: classes/usceshop.class.php:3810
 msgid "<b>Error:</b> Enter the password."
-msgstr "<b>エラー：</b>パスワードを入力してください。"
+msgstr "<b>エラー:</b> パスワードを入力してください。"
 
 #: classes/usceshop.class.php:3837
 msgid "<b>Error:</b> E-mail address is not correct."
-msgstr "<b>エラー：</b>メールアドレスが違います。"
+msgstr "<b>エラー:</b> メールアドレスが違います。"
 
 #: classes/usceshop.class.php:3849
 msgid "<b>Error:</b> Membership registration is not complete."
-msgstr "<b>エラー：</b>会員登録が完了していません。"
+msgstr "<b>エラー:</b> 会員登録が完了していません。"
 
 #: classes/usceshop.class.php:3770 classes/usceshop.class.php:3842
 msgid "<b>Error:</b> Your E-mail or password is incorrect."
-msgstr "<b>エラー：</b>メールアドレスまたはパスワードが違います。"
+msgstr "<b>エラー:</b> メールアドレスまたはパスワードが違います。"
 
 #: classes/usceshop.class.php:4008 theme/welcart_default/header.php:40
 msgid "guest"
@@ -4084,7 +4084,7 @@ msgstr "ゲスト"
 
 #: classes/usceshop.class.php:4251
 msgid "This article is limited by %d at a time."
-msgstr "この商品は一度に %d までの数量制限があります。"
+msgstr "この商品は一度に %dまでの数量制限があります。"
 
 #: classes/usceshop.class.php:4253
 msgid "Sorry, stock is insufficient."
@@ -4108,11 +4108,11 @@ msgstr "恐れ入りますが、%d番の商品は売り切れました。"
 
 #: classes/usceshop.class.php:4348
 msgid "This article is limited by %1$d at a time for the No.%2$d item."
-msgstr "%2$d番の商品は一度に %1$d までの数量制限があります。"
+msgstr "%2$d番の商品は一度に %1$dまでの数量制限があります。"
 
 #: classes/usceshop.class.php:4350
 msgid "Stock of No.%1$d item is remainder %2$d."
-msgstr "%1$d番の商品の在庫は残り %2$d です。"
+msgstr "%1$d番の商品の在庫は残り %2$dです。"
 
 #: classes/usceshop.class.php:4374 classes/usceshop.class.php:4486
 #: classes/usceshop.class.php:4667 classes/usceshop.class.php:4869
@@ -4143,7 +4143,7 @@ msgstr "メールアドレスが不正です。"
 #: functions/function.php:2562 functions/function.php:2592
 #: functions/function.php:2622 functions/function.php:2653
 msgid "ERROR: I was not able to complete collective operation"
-msgstr "エラー：処理を正常に完了できませんでした。"
+msgstr "エラー: 処理を正常に完了できませんでした。"
 
 #: classes/usceshop.class.php:4412 classes/usceshop.class.php:4499
 #: classes/usceshop.class.php:4573 classes/usceshop.class.php:4591
@@ -4231,7 +4231,7 @@ msgstr "支払方法を選択してください。"
 
 #: classes/usceshop.class.php:4779
 msgid "A total products amount of money surpasses the upper limit(%s) that I can purchase in C.O.D."
-msgstr "商品合計金額が、代引きでご購入いただける上限額（%s）を超えています。"
+msgstr "商品合計金額が、代引きでご購入いただける上限額 (%s) を超えています。"
 
 #: classes/usceshop.class.php:4785
 msgid "COD is not available."
@@ -4276,11 +4276,11 @@ msgstr "商品ジャンル"
 
 #: classes/usceshop.class.php:5703 classes/usceshop.class.php:5708
 msgid "(Excl. Tax)"
-msgstr "（税別）"
+msgstr "(税別)"
 
 #: classes/usceshop.class.php:5705 classes/usceshop.class.php:5710
 msgid "(Incl. Tax)"
-msgstr "（税込）"
+msgstr "(税込)"
 
 #: classes/usceshop.class.php:6432
 msgid "Failure"
@@ -4764,7 +4764,7 @@ msgstr "有効化"
 
 #: extensions/GanbareTencho/GanbareTencho.class.php:74
 msgid "Activation the Ganbare-Tencho function.<br>It also can be used as data for the Tempo-Up."
-msgstr "頑張れ♪店長！用CSV出力機能を有効化します。<br>このデータは、店舗アップ！用のデータとしても利用できます。"
+msgstr "頑張れ♪店長！用 CSV 出力機能を有効化します。<br>このデータは、店舗アップ！用のデータとしても利用できます。"
 
 #: extensions/GanbareTencho/GanbareTencho.class.php:98
 msgid "Ganbare Tencho data output"
@@ -4804,7 +4804,7 @@ msgstr "%s へのご入会手続ありがとうございます。"
 
 #: extensions/VerifyMembersEmail/verify_members_email.php:175
 msgid "By accessing the following URL, you can complete membership registration."
-msgstr "下記URLにアクセスしていただくことで、お客さまの会員へのご入会が完了いたします。"
+msgstr "下記 URL にアクセスしていただくことで、お客さまの会員へのご入会が完了いたします。"
 
 #: extensions/VerifyMembersEmail/verify_members_email.php:176
 msgid "Please note that the procedure has not been completed until you receive registration complete e-mail."
@@ -4812,7 +4812,7 @@ msgstr "入会完了のメールを受信するまでは、手続が終わって
 
 #: extensions/VerifyMembersEmail/verify_members_email.php:177
 msgid "The following URL is valid for %d hours. If it expires, please try again from the beginning."
-msgstr "また、下記URLの有効期限は %d 時間です。失効した場合は初めからやり直してください。"
+msgstr "また、下記 URL の有効期限は%d時間です。失効した場合は初めからやり直してください。"
 
 #: extensions/VerifyMembersEmail/verify_members_email.php:181
 msgid "Please delete this email if you were not aware that you were going to receive it."
@@ -4876,7 +4876,7 @@ msgstr "在庫数は数値で入力してください。"
 
 #: functions/admin_func.php:295
 msgid "The same SKU code exists."
-msgstr "同じSKUコードが存在します。"
+msgstr "同じ SKUコードが存在します。"
 
 #: functions/admin_func.php:296
 msgid "Please enter the payment method name value."
@@ -4910,7 +4910,7 @@ msgstr "削除"
 
 #: functions/admin_func.php:306
 msgid "Enter the field key in single-byte alphanumeric characters (including-_)."
-msgstr "フィールドキーは半角英数（-_を含む）で入力してください。"
+msgstr "フィールドキーは半角英数 (-_を含む) で入力してください。"
 
 #: functions/admin_func.php:307
 msgid "Please enter the field name."
@@ -4938,7 +4938,7 @@ msgstr "商品名が入力されていません。"
 
 #: functions/admin_page.php:44
 msgid "SKU is not registered."
-msgstr "SKUが登録されていません。"
+msgstr "SKU が登録されていません。"
 
 #: functions/admin_page.php:386 functions/admin_page.php:389
 msgid "Data does not exist."
@@ -4993,7 +4993,7 @@ msgstr "ログファイルを準備できませんでした。"
 #: functions/define_function.php:1590 functions/define_function.php:1923
 #: functions/define_function.php:2181
 msgid "Processing..."
-msgstr "処理中..."
+msgstr "処理中…"
 
 #: functions/define_function.php:313 functions/define_function.php:1470
 #: functions/define_function.php:1760
@@ -5144,15 +5144,15 @@ msgstr "データベースに登録できませんでした"
 
 #: functions/define_function.php:838
 msgid "Error : delete postmeta"
-msgstr "エラー：postmeta の削除"
+msgstr "エラー: postmeta の削除"
 
 #: functions/define_function.php:849
 msgid "Error : delete wcct"
-msgstr "エラー：wcct の削除"
+msgstr "エラー: wcct の削除"
 
 #: functions/define_function.php:860
 msgid "Error : delete revisions"
-msgstr "エラー：リビジョンの削除"
+msgstr "エラー: リビジョンの削除"
 
 #: functions/define_function.php:1041 functions/define_function.php:1586
 #: functions/define_function.php:1919 functions/define_function.php:2177
@@ -5171,7 +5171,7 @@ msgstr "秒"
 #: functions/define_function.php:1045 functions/define_function.php:1590
 #: functions/define_function.php:1923 functions/define_function.php:2181
 msgid "Remaining time:"
-msgstr "残り時間："
+msgstr "残り時間: "
 
 #: functions/define_function.php:1061
 msgid "%2$s of %1$s lines registration completion, error on %3$s lines."
@@ -5378,7 +5378,7 @@ msgstr "適用税率の値が異常です"
 
 #: functions/define_function.php:2106
 msgid "This CSV file is not for custom fields"
-msgstr "このファイルは、「カスタムフィールド項目」用の商品CSVでない可能性があります。"
+msgstr "このファイルは、「カスタムフィールド項目」用の商品 CSV でない可能性があります。"
 
 #: functions/filters.php:294
 msgid "Order Complete"
@@ -5420,17 +5420,17 @@ msgstr "配送会社名"
 #: functions/filters.php:1047 functions/filters.php:1065
 #: functions/filters.php:1083
 msgid "Login with PayPal"
-msgstr "PayPalアカウントでログイン"
+msgstr "PayPal アカウントでログイン"
 
 #: functions/filters.php:1012 functions/filters.php:1030
 #: functions/filters.php:1048 functions/filters.php:1066
 #: functions/filters.php:1084
 msgid "You can log in with your PayPal account."
-msgstr "PayPalアカウントでログインできます"
+msgstr "PayPal アカウントでログインできます"
 
 #: functions/filters.php:1357
 msgid "Purchase information has been updated. Please repeat the procedure.\\n\\nPlease do not open and work more than one tab (window).\\n"
-msgstr "購入情報が更新されています。手続きをやり直してください。\\n\\n※複数のタブ（ウィンドウ）を開いて操作しないでください。\\n"
+msgstr "購入情報が更新されています。手続きをやり直してください。\\n\\n※複数のタブ (ウィンドウ) を開いて操作しないでください。\\n"
 
 #: functions/filters.php:1381
 msgid "Please enter the zip code correctly."
@@ -5558,7 +5558,7 @@ msgstr "退会処理が完了しました"
 
 #: functions/function.php:787
 msgid "Please, click the following URL, and please change a password."
-msgstr "下記のURLをクリックしてパスワードの変更を行ってください。"
+msgstr "下記の URL をクリックしてパスワードの変更を行ってください。"
 
 #: functions/function.php:790
 msgid "If you have not requested this email please kindly ignore and delete it."
@@ -5566,7 +5566,7 @@ msgstr "このメールにお心当たりがない場合は破棄していただ
 
 #: functions/function.php:810
 msgid "Error: I was not able to transmit an email."
-msgstr "エラー：メールを送信できませんでした。"
+msgstr "エラー: メールを送信できませんでした。"
 
 #: functions/function.php:3006 functions/function.php:3013
 #: functions/function.php:3018 functions/function.php:3023
@@ -5652,11 +5652,11 @@ msgstr "オプションを適用する"
 
 #: functions/item_post.php:507
 msgid "Add new SKU"
-msgstr "新しいSKUの追加"
+msgstr "新しい SKU の追加"
 
 #: functions/item_post.php:564
 msgid "Add SKU"
-msgstr "SKUを追加する"
+msgstr "SKU を追加する"
 
 #: functions/item_post.php:941
 msgid "Please select an item"
@@ -5684,7 +5684,7 @@ msgstr "SKUコードの値が不正です。"
 
 #: functions/item_post.php:1496
 msgid "SKU of invalid selling price exists."
-msgstr "売価の値が不正なSKUが存在します。"
+msgstr "売価の値が不正な SKU が存在します。"
 
 #: functions/item_post.php:1543
 msgid "Commodity option option name duplicates exist."
@@ -5726,11 +5726,11 @@ msgstr "ログ削除"
 
 #: functions/settlement_func.php:253 functions/settlement_func.php:359
 msgid "Are you sure you want to delete selected log ?"
-msgstr "選択したログを削除します。よろしいですか？"
+msgstr "選択したログを削除します。よろしいですか ?"
 
 #: functions/settlement_func.php:258 functions/settlement_func.php:364
 msgid "Are you sure you want to delete all log ?"
-msgstr "全てのログを削除します。よろしいですか？"
+msgstr "全てのログを削除します。よろしいですか ?"
 
 #: functions/settlement_func.php:290
 msgid "Create order data"
@@ -5738,7 +5738,7 @@ msgstr "受注データ登録"
 
 #: functions/settlement_func.php:291
 msgid "Are you sure you want to create the order data ?"
-msgstr "受注データを作成します。よろしいですか？"
+msgstr "受注データを作成します。よろしいですか ?"
 
 #: functions/settlement_func.php:339 functions/settlement_func.php:397
 msgid "Output log"
@@ -5798,7 +5798,7 @@ msgstr "受注日時に現在の時刻を設定"
 
 #: functions/settlement_func.php:902
 msgid "Settlement error has occurred. Please check <a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">the settlement error log</a>. The date of occurrence:[ %s ]"
-msgstr "決済エラーが発生しました。<a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">決済エラーログ</a>を確認してください。発生日時：[ %s ]"
+msgstr "決済エラーが発生しました。<a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">決済エラーログ</a>を確認してください。発生日時: [ %s ]"
 
 #: functions/system_post.php:149 functions/system_post.php:166
 #: functions/system_post.php:257
@@ -6069,7 +6069,7 @@ msgstr "カスタム・デリバリーフィールド"
 #: includes/admin_member.php:323 includes/admin_member.php:343
 #: includes/admin_member.php:378
 msgid "(Explain)"
-msgstr "（説明）"
+msgstr "(説明)"
 
 #: includes/admin_cart.php:538
 msgid "Indication of item name"
@@ -6257,7 +6257,7 @@ msgstr "更新"
 
 #: includes/admin_delivery.php:361
 msgid "'Are you sure of deleting the delivery method ' + delname + ' ?'"
-msgstr "'配送方法「'+delname+'」を削除します。よろしいですか？'"
+msgstr "'配送方法「'+delname+'」を削除します。よろしいですか ?'"
 
 #: includes/admin_delivery.php:392 includes/admin_delivery.php:394
 msgid "Not fixing shipping."
@@ -6276,20 +6276,20 @@ msgstr "データに不備があります。"
 # JavaScript
 #: includes/admin_delivery.php:687
 msgid "'Are you sure of deleting shipping [' + delname + ']?'"
-msgstr "'送料「'+delname+'」を削除します。よろしいですか？'"
+msgstr "'送料「'+delname+'」を削除します。よろしいですか ?'"
 
 # JavaScript
 #: includes/admin_delivery.php:718
 msgid "'Are you sure of setting shiping to %s' + charge + ' for all the prefecture?'"
-msgstr "'各都道府県の送料を%s' + charge + 'に一括設定します。よろしいですか？'"
+msgstr "'各都道府県の送料を%s' + charge + 'に一括設定します。よろしいですか ?'"
 
 #: includes/admin_delivery.php:906
 msgid "'Okay to Delete Delivery Days Setting ' + delname + '?'"
-msgstr "'配達日数設定「' + delname + '」を削除してもよろしいですか?'"
+msgstr "'配達日数設定「' + delname + '」を削除してもよろしいですか ?'"
 
 #: includes/admin_delivery.php:937
 msgid "'Okay to Change All Delivery Days to ' + days + '?'"
-msgstr "'配達日数を全て ' + days + ' 日に変更してもよろしいですか?'"
+msgstr "'配達日数を全て ' + days + ' 日に変更してもよろしいですか ?'"
 
 #: includes/admin_delivery.php:1008
 msgid "* It is necessary to perform the delivery setting before than the item registration."
@@ -6366,7 +6366,7 @@ msgstr "指定時間帯"
 
 #: includes/admin_delivery.php:1122
 msgid "Input possible delivery hours. Leave it blank when the customer cannot choose delivery time. <br />example)<br />morning<br />12:00-14:00<br />14:00-16:00<br />16:00-18:00"
-msgstr "配送可能な時間帯を入力します。お客様に時間帯を選択させない場合は空白にします。<br />例）<br />午前中<br />12：00～14：00<br />14：00～16：00<br />16：00～18：00"
+msgstr "配送可能な時間帯を入力します。お客様に時間帯を選択させない場合は空白にします。<br />例)<br />午前中<br />12:00～14:00<br />14:00～16:00<br />16:00～18:00"
 
 #: includes/admin_delivery.php:1125
 msgid "Postage fixation"
@@ -6391,11 +6391,11 @@ msgstr "代引き不可"
 
 #: includes/admin_delivery.php:1137
 msgid "Check for no COD."
-msgstr "代引き支払いができない場合はチェックを入れます。"
+msgstr "代引き支払いを不可とする場合にチェックします。"
 
 #: includes/admin_delivery.php:1142
 msgid "Please make entry of appointment time to a party by one."
-msgstr "配送業者の指定時間帯を一行に一つずつ記入。"
+msgstr "配送業者の指定時間帯を1行に一つずつ記入。"
 
 #: includes/admin_delivery.php:1165
 msgid "Shipping charge name"
@@ -6427,7 +6427,7 @@ msgstr "商品ごとに配達日数を選ぶことができます。"
 
 #: includes/admin_mail.php:20
 msgid "SMTP server host"
-msgstr "SMTPサーバーホスト"
+msgstr "SMTP サーバーホスト"
 
 #: includes/admin_mail.php:24
 msgid "Host name"
@@ -6435,7 +6435,7 @@ msgstr "ホスト名"
 
 #: includes/admin_mail.php:30
 msgid "This is a field setting the host name of a server for email transmission of a message. When the transmission of a message is not possible in localhost, a SMTP server is necessary."
-msgstr "メール送信用サーバーのホスト名を設定します。localhost で送信ができない場合はSMTPサーバーが必要になります。"
+msgstr "メール送信用サーバーのホスト名を設定します。localhost で送信ができない場合は SMTP サーバーが必要になります。"
 
 #: includes/admin_mail.php:35
 msgid "Mail Options"
@@ -6511,7 +6511,7 @@ msgstr "通知メールの送信設定、その他。"
 
 #: includes/admin_mail.php:93
 msgid "Thanks email(automatic transmission)"
-msgstr "サンキューメール（自動送信）"
+msgstr "サンキューメール (自動送信)"
 
 #: includes/admin_mail.php:113
 msgid "This is an email transmitting a message for a visitor at the time of an order."
@@ -6519,7 +6519,7 @@ msgstr "受注時にお客様に対して自動送信するメールです。"
 
 #: includes/admin_mail.php:118
 msgid "Order email(automatic transmission)"
-msgstr "受注メール（自動送信）"
+msgstr "受注メール (自動送信)"
 
 #: includes/admin_mail.php:138
 msgid "This is an email transmitting a message for owner of shop(%s)."
@@ -6527,7 +6527,7 @@ msgstr "受注時に受注用メールアドレス（%s）に対して送信す�
 
 #: includes/admin_mail.php:143
 msgid "Inquiry receptionist email(automatic transmission)"
-msgstr "問い合わせ受付メール（自動送信）"
+msgstr "問い合わせ受付メール (自動送信)"
 
 #: includes/admin_mail.php:163
 msgid "This is an e-mail which will be sent aytomatically to your customers at the contact from customer."
@@ -6535,7 +6535,7 @@ msgstr "問い合わせ時に、お客様宛てに自動送信するメールで
 
 #: includes/admin_mail.php:168
 msgid "Conformation e-mail of membership registeration."
-msgstr "入会完了のご連絡メール（自動送信）"
+msgstr "入会完了のご連絡メール (自動送信)"
 
 #: includes/admin_mail.php:188
 msgid "This is an e-mail which will be snnt automatically to your customers when their membership registration is completed."
@@ -6543,7 +6543,7 @@ msgstr "会員登録が完了した際に自動送信されるメールです。
 
 #: includes/admin_mail.php:194
 msgid "Shipping complete email (sent from the admin)"
-msgstr "発送完了メール（管理画面より送信）"
+msgstr "発送完了メール (管理画面より送信)"
 
 #: includes/admin_mail.php:214
 msgid "This is an email transmitted manual operation to than a management screen, when the shipment of the article was completed."
@@ -6551,7 +6551,7 @@ msgstr "管理画面より発送完了登録した際に手動送信するメー
 
 #: includes/admin_mail.php:219
 msgid "Order confirmation email (sent from the admin)"
-msgstr "ご注文確認メール（管理画面より送信）"
+msgstr "ご注文確認メール (管理画面より送信)"
 
 #: includes/admin_mail.php:239
 msgid "This is an email transmitted manual operation to than a management screen, when you registered a new order."
@@ -6559,7 +6559,7 @@ msgstr "管理画面より新規受注を登録した際に手動送信するメ
 
 #: includes/admin_mail.php:244
 msgid "Confirmation mail for change of orders. (sent by admin.)"
-msgstr "ご注文内容変更の確認メール（管理画面より送信）"
+msgstr "ご注文内容変更の確認メール (管理画面より送信)"
 
 #: includes/admin_mail.php:264
 msgid "This is an e-mail which will be sent manually from admin screen, when there is changes of order."
@@ -6567,7 +6567,7 @@ msgstr "管理画面より受注内容を変更した際に手動送信するメ
 
 #: includes/admin_mail.php:269
 msgid "Mail for Confirmation of payment. ( sent from admin)"
-msgstr "ご入金確認のご連絡メール（管理画面より送信）"
+msgstr "ご入金確認のご連絡メール (管理画面より送信)"
 
 #: includes/admin_mail.php:289
 msgid "This is an e-mail which will be sent to customers when their transfer payment is confirmed."
@@ -6575,7 +6575,7 @@ msgstr "振込み入金を確認した際に手動送信するメール。"
 
 #: includes/admin_mail.php:294
 msgid "Estimate email (sent from the admin)"
-msgstr "お見積りメール（管理画面より送信）"
+msgstr "お見積りメール (管理画面より送信)"
 
 #: includes/admin_mail.php:314
 msgid "This is an email transmitted manual operation to than a management screen, when you  registered an estimate."
@@ -6583,7 +6583,7 @@ msgstr "管理画面より見積り登録した際に手動送信するメール
 
 #: includes/admin_mail.php:319
 msgid "E-mail for confirmation of cancellation. (sent from admin)"
-msgstr "ご注文キャンセルの確認メール（管理画面より送信）"
+msgstr "ご注文キャンセルの確認メール (管理画面より送信)"
 
 #: includes/admin_mail.php:339
 msgid "This is an e-mail which will be sent when order has been canselled."
@@ -6591,7 +6591,7 @@ msgstr "受注をキャンセルした際に手動送信するメール。"
 
 #: includes/admin_mail.php:344
 msgid "Other e-mails(sent from admin)"
-msgstr "その他のメール（管理画面より送信）"
+msgstr "その他のメール (管理画面より送信)"
 
 #: includes/admin_mail.php:364
 msgid "e-mail which will be sent on temporaly basis"
@@ -6944,7 +6944,7 @@ msgstr "消費税表示"
 
 #: includes/admin_setup.php:165
 msgid "When you select the 'Non-indication', does not Calculation and display the amount of tax."
-msgstr "「表示しない」を選択すると、フロント、メール、PDF等全ての税額表示と税額計算を行いません。"
+msgstr "「表示しない」を選択すると、フロント、メール、PDF 等全ての税額表示と税額計算を行いません。"
 
 #: includes/admin_setup.php:168
 msgid "Tax treatment"
@@ -7044,7 +7044,7 @@ msgstr "利用しない"
 
 #: includes/admin_setup.php:228
 msgid "Would you like to use membership system or not?"
-msgstr "会員（メンバー）システムを利用するか否か。"
+msgstr "会員 (メンバー) システムを利用するか否か。"
 
 #: includes/admin_setup.php:231
 msgid "membership points"
@@ -7204,7 +7204,7 @@ msgstr "復元に失敗しました。"
 
 #: includes/admin_system.php:271
 msgid "I will restore the option value. Would you like?"
-msgstr "オプション値を復元します。よろしいですか？"
+msgstr "オプション値を復元します。よろしいですか ?"
 
 #: includes/admin_system.php:285 includes/admin_system.php:514
 msgid "Language Currency Country"
@@ -7224,11 +7224,11 @@ msgstr "ショップにて、複数の投稿が表示されるループ表示の
 
 #: includes/admin_system.php:311
 msgid "rel attribute"
-msgstr "rel属性"
+msgstr "rel 属性"
 
 #: includes/admin_system.php:315
 msgid "In item details page, you can appoint a rel attribute for anchor tag to display an image, sach as Lightbox plugin."
-msgstr "商品詳細ページにて、Lightboxなどプラグインを利用してイメージを表示させるためのアンカータグ用rel属性を指定します。"
+msgstr "商品詳細ページにて、Lightbox などプラグインを利用してイメージを表示させるためのアンカータグ用 rel 属性を指定します。"
 
 #: includes/admin_system.php:321
 msgid "compound category sort item"
@@ -7280,15 +7280,15 @@ msgstr "ログファイルの保存先パスを指定します。ブラウザか
 
 #: includes/admin_system.php:353
 msgid "Switching SSL"
-msgstr "SSLの切り替えを行う"
+msgstr "SSL の切り替えを行う"
 
 #: includes/admin_system.php:357
 msgid "Check in case of switching SSL and Non-SSL between cart page and member page."
-msgstr "カートページとメンバーページで、SSLと非SSLの切り替えを行う場合のみ、チェックを付けてください。"
+msgstr "カートページとメンバーページで、SSL と非 SSL の切り替えを行う場合のみ、チェックしてください。"
 
 #: includes/admin_system.php:357
 msgid "Uncheck in case of the site is AOSSL."
-msgstr "サイト全体を SSL 化（常時SSL）する場合は、チェックを外してください。"
+msgstr "サイト全体を SSL 化 (常時 SSL) する場合は、チェックを外してください。"
 
 #: includes/admin_system.php:362
 msgid "WordPress address (SSL)"
@@ -7312,7 +7312,7 @@ msgstr "お問合せフォームのページID"
 
 #: includes/admin_system.php:379
 msgid "When you want to use the inquiry-form through SSL, please input the page_id.<br />When you use a permanent link, you have need to set the permanent link of this page in usces-inquiry."
-msgstr "SSL を通したWelcart お問合せフォームを利用したい場合、そのpage_id を指定します。上記SSL の設定が必要です。<br />SSL を通す必要がない場合は空白にしておきます。<br />パーマリンクを使用している場合、このページのパーマリンクは　usces-inquiry　でなくてはいけません。"
+msgstr "SSL を通したWelcart お問合せフォームを利用したい場合、その page_id を指定します。上記SSL の設定が必要です。<br />SSL を通す必要がない場合は空白にしておきます。<br />パーマリンクを使用している場合、このページのパーマリンクは usces-inquiry でなくてはいけません。"
 
 #: includes/admin_system.php:385
 msgid "To disable usces_cart.css"
@@ -7320,7 +7320,7 @@ msgstr "usces_cart.css の無効化"
 
 #: includes/admin_system.php:389
 msgid "When checked, Welcart will not output the usces_cart.css. If you want to make own usces_cart.css file, please copy and paste it in your theme folder currently in use."
-msgstr "Welcart が適用するusces_cart.css を無効化したい場合はこれをチェックしてください。ご利用中のテーマのフォルダにusces_cart.css を作成することでオリジナルのスタイルを組むことができます。"
+msgstr "Welcart が適用する usces_cart.css を無効化したい場合はこれをチェックしてください。ご利用中のテーマのフォルダに usces_cart.css を作成することでオリジナルのスタイルを組むことができます。"
 
 #: includes/admin_system.php:395
 msgid "Rules of order-ID numbering"
@@ -7328,11 +7328,11 @@ msgstr "注文番号ルール"
 
 #: includes/admin_system.php:396
 msgid "Sequential number"
-msgstr "連番（数値）"
+msgstr "連番 (数値)"
 
 #: includes/admin_system.php:397
 msgid "Random string"
-msgstr "ランダムな文字列（英字）"
+msgstr "ランダムな文字列 (英字)"
 
 #: includes/admin_system.php:398
 msgid "The initial value is a sequential number starting from 1000."
@@ -7352,7 +7352,7 @@ msgstr "注文番号の桁数"
 
 #: includes/admin_system.php:412
 msgid "This value must be at least six digits. The prefix is not included."
-msgstr "【数値（6以上）】10桁前後が望ましい。プレフィックスの桁数は含まれません。"
+msgstr "【数値 (6以上)】10桁前後が望ましい。プレフィックスの桁数は含まれません。"
 
 #: includes/admin_system.php:418
 msgid "Product sub-image rule"
@@ -7360,27 +7360,27 @@ msgstr "商品サブ画像適用ルール"
 
 #: includes/admin_system.php:419
 msgid "not apply the new rule<br />(Truncation Product Code)"
-msgstr "新しいルールを適用しない<br />（商品コード前方一致）"
+msgstr "新しいルールを適用しない<br />(商品コード前方一致)"
 
 msgid "Product Code Forward Matching"
 msgstr "商品コード前方一致"
 
 #: includes/admin_system.php:420
 msgid "If the sub-images are not applied correctly, please apply the new rules.<br />And insert Tow underscores between the Product Code and serial number."
-msgstr "サブ画像が正常に適用されない場合は新しいルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間に_（アンダースコア）を2つ置きます。（例：a001__01.jpg）"
+msgstr "サブ画像が正常に適用されない場合は新しいルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間に _ (アンダースコア) を2つ置きます。(例: a001__01.jpg)"
 
 msgid "If the sub-images are not applied correctly, please apply the underscore rule.<br />The file name of the sub-image should have two _ (underscores) between the product code and the sequential number."
-msgstr "サブ画像が正常に適用されない場合はアンダースコアのルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間に_（アンダースコア）を2つ置きます。（例：a001__01.jpg）"
+msgstr "サブ画像が正常に適用されない場合はアンダースコアのルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間に _ (アンダースコア) を2つ置きます。(例: a001__01.jpg)"
 
 msgid "Applies only when the extension \"New product image registration\" is disabled."
 msgstr "拡張機能の「新しい商品画像登録」が無効のときのみ適用されます。"
 
 #: includes/admin_system.php:423
 msgid "apply the new rule<br />(Tow underscores between the Product Code and serial number)"
-msgstr "新しいルールを適用する<br />（商品コードと連番の間に_（アンダースコア）を2つ置く【例：a001__01】）"
+msgstr "新しいルールを適用する<br />(商品コードと連番の間に _ (アンダースコア) を2つ置く【例: a001__01】)"
 
 msgid "Put two _ (underscores) between the product code and the sequential number"
-msgstr "商品コードと連番の間に_（アンダースコア）を2つ置く【例：a001__01】"
+msgstr "商品コードと連番の間に _ (アンダースコア) を2つ置く【例: a001__01】"
 
 #: includes/admin_system.php:430
 msgid "Described method of invoice"
@@ -7392,7 +7392,7 @@ msgstr "購入者情報を宛名とする"
 
 #: includes/admin_system.php:432
 msgid "If you select the 'to address the purchaser information', delivery will be described below address of (purchaser information) when the shipping address is different from the information of the purchaser.<br />Only the information of the destination as you want it to appear on your address if you choose to 'address and the destination'."
-msgstr "「購入者情報を宛名とする」を選択した場合、配送先が購入者の情報と異なるときは配送先が宛名（購入者情報）の下に記載されます。<br />「配送先を宛名とする」を選択した場合は配送先の情報のみが宛名として記載されます。"
+msgstr "「購入者情報を宛名とする」を選択した場合、配送先が購入者の情報と異なるときは配送先が宛名 (購入者情報) の下に記載されます。<br />「配送先を宛名とする」を選択した場合は配送先の情報のみが宛名として記載されます。"
 
 #: includes/admin_system.php:435
 msgid "To address the shipping information"
@@ -7412,7 +7412,7 @@ msgstr "文字以下"
 
 #: includes/admin_system.php:444
 msgid "[Numeric(one or more)] The password can be set to a length of between 1 and 30 characters.<br />The lower limit must not exceed the upper limit. (10 to 8, etc.)"
-msgstr "【数値】パスワードは1文字以上30文字以下の長さに設定できます。<br />下限値は上限値を超えてはいけません。（10以上8以下など）"
+msgstr "【数値】パスワードは1文字以上30文字以下の長さに設定できます。<br />下限値は上限値を超えてはいけません。(10以上8以下など)"
 
 msgid "Membership password rules"
 msgstr "会員パスワードのルール"
@@ -7434,7 +7434,7 @@ msgstr "会員パスワードはこれらのルールに従うものとします
 
 #: includes/admin_system.php:450
 msgid "Character code in the CSV file"
-msgstr "CSVファイルの文字コード"
+msgstr "CSV ファイルの文字コード"
 
 #: includes/admin_system.php:451
 msgid "Sift-JIS"
@@ -7442,7 +7442,7 @@ msgstr ""
 
 #: includes/admin_system.php:452
 msgid "If you want to perform product registration by uploading a CSV file, please upload a CSV file of character code selected here."
-msgstr "CSVファイルをアップロードして商品登録を行う場合は、ここで選択した文字コードのCSVファイルをアップロードしてください。"
+msgstr "CSV ファイルをアップロードして商品登録を行う場合は、ここで選択した文字コードの CSV ファイルをアップロードしてください。"
 
 #: includes/admin_system.php:455
 msgid "UTF-8"
@@ -7450,7 +7450,7 @@ msgstr ""
 
 #: includes/admin_system.php:461
 msgid "'Category' of CSV product data file"
-msgstr "商品データCSVのカテゴリー"
+msgstr "商品データ CSV のカテゴリー"
 
 #: includes/admin_system.php:462
 msgid "ID (tag_ID)"
@@ -7458,7 +7458,7 @@ msgstr "カテゴリーID"
 
 #: includes/admin_system.php:463
 msgid "You can select 'Category' registration and output format."
-msgstr "商品データCSVフォーマットの「カテゴリー」の登録と出力の形式を選択できます。"
+msgstr "商品データ CSV フォーマットの「カテゴリー」の登録と出力の形式を選択できます。"
 
 #: includes/admin_system.php:466
 msgid "slug (slug)"
@@ -7478,7 +7478,7 @@ msgstr "設定データの復元"
 
 #: includes/admin_system.php:476
 msgid "You can take the backup of the Welcart setup data."
-msgstr "Welcartの設定データのバックアップを取ることができます。"
+msgstr "Welcart の設定データのバックアップを取ることができます。"
 
 #: includes/admin_system.php:482
 msgid "Order data re-created from the settlement log"
@@ -7514,7 +7514,7 @@ msgstr "フロントエンドの言語"
 
 #: includes/admin_system.php:524
 msgid "You can select the Front-end language. The Back-end language follows setting config.php."
-msgstr "フロントエンド（ショップ側）の言語を選択できます。バックエンド（管理パネル）の言語はconfig.php の設定に従います。"
+msgstr "フロントエンド (ショップ側) の言語を選択できます。バックエンド (管理画面) の言語はconfig.php の設定に従います。"
 
 #: includes/admin_system.php:529
 msgid "Currencies"
@@ -7526,7 +7526,7 @@ msgstr "手動"
 
 #: includes/admin_system.php:536
 msgid "Displays the currency symbol for each country, the amount separator, the decimal digits. This is a common item in both front end and back end."
-msgstr "選択した国に合わせた通貨記号や金額の区切り文字や少数桁を表示します。フロントエンド（ショップ側）、バックエンド（管理パネル）共通です。"
+msgstr "選択した国に合わせた通貨記号や金額の区切り文字や少数桁を表示します。フロントエンド (ショップ側)、バックエンド (管理画面) 共通です。"
 
 #: includes/admin_system.php:541
 msgid "The name and address form"
@@ -7611,7 +7611,7 @@ msgstr "商品数"
 
 #: includes/admin_top.php:83
 msgid "SKU total number"
-msgstr "SKU総数"
+msgstr "SKU 総数"
 
 #: includes/admin_top.php:92
 msgid "OK"
@@ -7619,7 +7619,7 @@ msgstr "有り"
 
 #: includes/admin_top.php:107
 msgid "List of items without stock"
-msgstr "在庫数 0 の商品一覧"
+msgstr "在庫数0の商品一覧"
 
 #: includes/admin_top.php:125
 msgid "Your environment"
@@ -7714,7 +7714,7 @@ msgstr "％引き"
 #: includes/edit-form-advanced.php:693 includes/edit-form-advanced30.php:326
 #: includes/edit-form-advanced34.php:267
 msgid "* Please register an item, after you finished delivery setting!"
-msgstr "※ 配送設定を行ってから商品登録を行ってください！"
+msgstr "※配送設定を行ってから商品登録を行ってください !"
 
 #: includes/edit-form-advanced.php:732 includes/edit-form-advanced30.php:366
 #: includes/edit-form-advanced34.php:306 includes/order_print.php:771
@@ -7724,7 +7724,7 @@ msgstr "価格"
 
 #: includes/edit-form-advanced.php:759
 msgid "Options for EX-plugin"
-msgstr "EXプラグイン・オプション"
+msgstr "EX プラグイン・オプション"
 
 #: includes/edit-form-advanced.php:773
 msgid "Title of detail page"
@@ -7748,7 +7748,7 @@ msgstr "売切れ制限"
 
 #: includes/edit-form-advanced34.php:239
 msgid "Purchase is not restricted (not checked the stock) even when sold out."
-msgstr "売り切れ時に購入制限（在庫チェック）しない"
+msgstr "売り切れ時に購入制限 (在庫チェック) しない"
 
 #: includes/initial.php:21
 msgid "notmal member"
@@ -7760,7 +7760,7 @@ msgstr "優良会員"
 
 #: includes/initial.php:23
 msgid "VIP member"
-msgstr "VIP会員"
+msgstr "VIP 会員"
 
 #: includes/initial.php:24
 msgid "bad member"
@@ -7773,12 +7773,12 @@ msgstr "代行業者決済"
 #: includes/initial.php:29 includes/order_edit_form.php:12
 #: includes/order_edit_form.php:13 includes/order_edit_form.php:287
 msgid "Transfer (prepayment)"
-msgstr "振込み（前払い）"
+msgstr "振込み (前払い)"
 
 #: includes/initial.php:30 includes/order_edit_form.php:19
 #: includes/order_edit_form.php:20 includes/order_edit_form.php:288
 msgid "Transfer (postpay)"
-msgstr "振込み（後払い）"
+msgstr "振込み (後払い)"
 
 #: includes/initial.php:31 includes/order_edit_form.php:26
 #: includes/order_edit_form.php:27 includes/order_edit_form.php:289
@@ -8638,7 +8638,7 @@ msgstr "ダウンロード"
 
 #: includes/memberlist_page.php:360 includes/member_list.php:32
 msgid "'Are you sure of deleting your membership number ' + member_id + ' ?'"
-msgstr "'会員No ' + member_id + 'を削除します。よろしいですか？'"
+msgstr "'会員No ' + member_id + 'を削除します。よろしいですか ?'"
 
 #: includes/memberlist_page.php:395 includes/member_list.php:66
 #: includes/orderlist_page.php:1360 includes/orderlist_page.php:1388
@@ -8650,16 +8650,16 @@ msgstr "閉じる"
 
 #: includes/memberlist_page.php:602
 msgid "%s + ' which you have checked will be changed in to ' + %s + '. %sDo you agree?'"
-msgstr "'チェックした項目の' + %s + 'を「' + %s + '」に変更します。%sよろしいですか？'"
+msgstr "'チェックされた項目の' + %s + 'を「' + %s + '」に変更します。%sよろしいですか ?'"
 
 #: includes/memberlist_page.php:607
 msgid "%s + ' which you have cheked will be changed in to ' + %s + '. %sDo you agree?'"
-msgstr "'チェックした項目の' + %s + 'を「' + %s + '」に変更します。%sよろしいですか？'"
+msgstr "'チェックされた項目の' + %s + 'を「' + %s + '」に変更します。%sよろしいですか ?'"
 
 #: includes/memberlist_page.php:612 includes/orderlist_page.php:1246
 #: includes/order_list.php:116
 msgid "Are you sure of deleting all the checked data in bulk?"
-msgstr "チェックされたデータを一括削除します。よろしいですか？"
+msgstr "チェックされたデータを一括削除します。よろしいですか ?"
 
 #: includes/member_edit_form.php:79 includes/order_edit_form.php:208
 msgid "to prev page"
@@ -8746,7 +8746,7 @@ msgstr "よく使うもの"
 
 #: includes/meta-boxes.php:392
 msgid "Excerpts are optional hand-crafted summaries of your content that can be used in your theme. <a href=\"%s\">Learn more about manual excerpts</a>."
-msgstr "抜粋は投稿内容から自分で作成する要約で、テーマの中で使用できます（オプション）。<a href=\"%s\">詳しくは解説ページをご覧ください</a>。"
+msgstr "抜粋は投稿内容から自分で作成する要約で、テーマの中で使用できます (オプション)。<a href=\"%s\">詳しくは解説ページをご覧ください</a>。"
 
 #: includes/meta-boxes.php:419
 msgid "Trackbacks are a way to notify legacy blog systems that you&#8217;ve linked to them. If you link other WordPress sites, they&#8217;ll be notified automatically using <a href=\"%s\">pingbacks</a>, no other action necessary."
@@ -8844,16 +8844,16 @@ msgstr ""
 
 #: includes/orderlist_page.php:1234 includes/order_list.php:108
 msgid "'Transfer status of the items which you have checked will be changed in to ' + %s + '. %sDo you agree?'"
-msgstr "'チェックされたデータの入金状況を「' + %s + '」に変更します。%sよろしいですか？'"
+msgstr "'チェックされたデータの入金状況を「' + %s + '」に変更します。%sよろしいですか ?'"
 
 #: includes/orderlist_page.php:1238 includes/orderlist_page.php:1242
 #: includes/order_list.php:112
 msgid "'Data status which you have cheked will be changed in to ' + %s + '. %sDo you agree?'"
-msgstr "'チェックされたデータの処理状態を、すべて「' + %s + '」に変更します。%sよろしいですか？'"
+msgstr "'チェックされたデータの処理状態を、すべて「' + %s + '」に変更します。%sよろしいですか ?'"
 
 #: includes/orderlist_page.php:1420 includes/order_list.php:280
 msgid "'Are you sure of deleting an order number ' + order_id + ' ?'"
-msgstr "'注文No ' + order_id + ' を削除します。よろしいですか？'"
+msgstr "'注文番号 ' + order_id + ' を削除します。よろしいですか ?'"
 
 #: includes/order_edit_form.php:210 includes/order_edit_form.php:215
 msgid "to order list"
@@ -8865,7 +8865,7 @@ msgstr "変更後の税率を適用する"
 
 #: includes/order_edit_form.php:360
 msgid "Push 'change decision' button, to be settled with an order number."
-msgstr "「設定を更新」ボタンを押して注文Noを確定してください。"
+msgstr "「設定を更新」ボタンを押して注文番号を確定してください。"
 
 #: includes/order_edit_form.php:393 includes/order_edit_form.php:1200
 msgid "Mail for Shipping"
@@ -8911,11 +8911,11 @@ msgstr "メールの送信が完了しました。"
 
 #: includes/order_edit_form.php:874 includes/order_edit_form.php:885
 msgid "Failure in sending e-mails."
-msgstr "メールは送信できませんでした。"
+msgstr "メールの送信ができませんでした。"
 
 #: includes/order_edit_form.php:977 includes/order_edit_form.php:1045
 msgid "Are you sure of deleting items?"
-msgstr "商品を削除します。よろしいですか？"
+msgstr "商品を削除します。よろしいですか ?"
 
 #: includes/order_edit_form.php:1057 includes/order_edit_form.php:1187
 msgid "Show the mail/print field"
@@ -8927,7 +8927,7 @@ msgstr "メール・印刷フィールド非表示"
 
 #: includes/order_edit_form.php:1112
 msgid "Are you sure you want to change to today's date Date of renovation?"
-msgstr "更新日を今日の日付に変更しますか？"
+msgstr "更新日を今日の日付に変更しますか ?"
 
 #: includes/order_edit_form.php:1112
 msgid "Please press the cancel If you want to update without changing the modified date."
@@ -8935,11 +8935,11 @@ msgstr "更新日を変更せずに更新する場合はキャンセルを押し
 
 #: includes/order_edit_form.php:1124
 msgid "Enter the e-mail."
-msgstr "e-mail を入力してください。"
+msgstr "メールアドレスを入力してください。"
 
 #: includes/order_edit_form.php:1128 includes/order_edit_form.php:1146
 msgid "I will overwrite the ship-to address the customer's address. Would you like?"
-msgstr "顧客住所を配送先住所に上書きします。よろしいですか？"
+msgstr "顧客住所を配送先住所に上書きします。よろしいですか ?"
 
 #: includes/order_edit_form.php:1181
 msgid "Edit order data"
@@ -9014,7 +9014,7 @@ msgstr "%s％対象値引き"
 #: includes/order_edit_form.php:1483 includes/order_edit_form.php:1488
 #: includes/order_edit_form.php:1499
 msgid "Discounted amount should be shown by -(Minus)"
-msgstr "※値引きは-（マイナス）で入力します。"
+msgstr "※値引きは - (マイナス) で入力します。"
 
 #: includes/order_edit_form.php:1512 includes/order_edit_form.php:1517
 #: includes/order_edit_form.php:1530 includes/order_edit_form.php:1537
@@ -9083,7 +9083,7 @@ msgstr "この度は %s をご利用いただきありがとうございます�
 
 #: includes/order_print.php:224 includes/order_print_ex.php:293
 msgid "Valid:7days"
-msgstr "有効期間：7日間"
+msgstr "有効期間: 7日間"
 
 #: includes/order_print.php:227 includes/order_print.php:234
 #: includes/order_print.php:239 includes/order_print.php:242
@@ -9175,15 +9175,15 @@ msgstr "商品が選択されていません。"
 
 #: includes/usces_item_master_list.php:69
 msgid "'Stock status of items which you have checked will be changed into ' + %s + ' Stock status of each SKU will be all shown as ' + %s + ' Do you agree with this oparation?'"
-msgstr "'チェックされた商品の在庫状況を「' + %s + '」に変更します。ＳＫＵごとの在庫状態がすべて「' + %s + '」となります。よろしいですか？'"
+msgstr "'チェックされた商品の在庫状況を「' + %s + '」に変更します。SKU ごとの在庫状態がすべて「' + %s + '」となります。よろしいですか ?'"
 
 #: includes/usces_item_master_list.php:73
 msgid "'Are you sure of changing all the items you have checked in to ' + %s + ' ?'"
-msgstr "'チェックされた商品の表示状況を、すべて「' + %s + '」に変更します。よろしいですか？'"
+msgstr "'チェックされた商品の表示状況を、すべて「' + %s + '」に変更します。よろしいですか ?'"
 
 #: includes/usces_item_master_list.php:76
 msgid "'Are you sure of deleting all the items you have checked in bulk?'"
-msgstr "'チェックされた商品を一括削除します。よろしいですか？'"
+msgstr "'チェックされた商品を一括削除します。よろしいですか ?'"
 
 #: includes/usces_item_master_list.php:205
 #: includes/usces_item_master_list.php:328
@@ -9193,11 +9193,11 @@ msgstr "商品一括登録"
 
 #: includes/usces_item_master_list.php:206
 msgid "Upload prescribed CSV file and perform the collective registration of the article.<br />Please choose a file, and push the registration start."
-msgstr "規定のCSVファイルをアップロードして商品の一括登録を行います。<br />ファイルを選択して登録開始を押してください。"
+msgstr "規定の CSV ファイルをアップロードして商品の一括登録を行います。<br />ファイルを選択して登録開始を押してください。"
 
 #: includes/usces_item_master_list.php:241
 msgid "'Are you sure of deleting the item, item code ' + item_id + ' ?'"
-msgstr "'商品コード ' + item_id + 'の商品を削除します。よろしいですか？'"
+msgstr "'商品コード ' + item_id + 'の商品を削除します。よろしいですか ?'"
 
 #: includes/usces_item_master_list.php:278
 #: includes/usces_item_master_upload_register.php:41
@@ -9256,7 +9256,7 @@ msgstr "アップロード完了後に表示が更新されます。"
 
 #: includes/usces_item_master_list.php:528
 msgid "Look at log to know the registration situation.(usc-e-shop/logs/itemcsv_log.txt)<br />The log is updated, overwrite, every upload."
-msgstr "登録状況はログ（usc-e-shop/logs/itemcsv_log.txt）をご覧ください。<br />ログはアップロードごとに上書き更新されます。"
+msgstr "登録状況はログ (usc-e-shop/logs/itemcsv_log.txt) をご覧ください。<br />ログはアップロードごとに上書き更新されます。"
 
 #: includes/usces_item_master_list.php:531
 msgid "Choose the file format, and push the download."
@@ -9272,7 +9272,7 @@ msgstr "件を処理完了。"
 
 #: includes/usces_item_master_upload_register.php:65
 msgid "Now preparing..."
-msgstr "準備中..."
+msgstr "準備中…"
 
 #: templates/cart/cart.php:8 templates/cart/confirm.php:10
 #: templates/cart/customer_info.php:10 templates/cart/delivery_info.php:12
@@ -9368,7 +9368,7 @@ msgstr "新規会員登録する場合にご記入ください。"
 #: theme/welcart_default/wc_templates/member/wc_member_page.php:79
 #: theme/welcart_default/wc_templates/member/wc_new_member_page.php:50
 msgid "Password (confirm)"
-msgstr "パスワード（確認用）"
+msgstr "パスワード (確認用)"
 
 #: templates/cart/delivery_info.php:35
 #: theme/welcart_default/wc_templates/cart/wc_delivery_page.php:41
@@ -9414,7 +9414,7 @@ msgstr "認証メールを送信しました。メール内の承認用のURLを
 #: templates/cart/verifying.php:17 templates/member/member_verifying.php:17
 #: templates/member/verifying.php:17
 msgid "This registration will be invalidated if authentication is not completed within %d hours."
-msgstr "%d 時間以内に認証を完了しない場合は、この登録は無効となります。"
+msgstr "%d時間以内に認証を完了しない場合は、この登録は無効となります。"
 
 #: templates/cart/verifying.php:25 templates/member/completion.php:31
 #: templates/member/member_verifying.php:25 templates/member/verifying.php:25
@@ -9463,7 +9463,7 @@ msgstr "ログイン情報を記憶"
 #: theme/welcart_default/sidebar.php:71
 #: theme/welcart_default/wc_templates/member/wc_login_page.php:48
 msgid "Did you forget your password?"
-msgstr "パスワードをお忘れですか？"
+msgstr "パスワードをお忘れですか ?"
 
 #: templates/member/login.php:41 theme/welcart_default/sidebar-home.php:75
 #: theme/welcart_default/sidebar.php:72
@@ -9506,7 +9506,7 @@ msgstr "退会する"
 #: templates/member/member.php:86
 #: theme/welcart_default/wc_templates/member/wc_member_page.php:88
 msgid "All information about the member is deleted. Are you all right?"
-msgstr "会員に関する全ての情報が削除されます。よろしいですか？"
+msgstr "会員に関する全ての情報が削除されます。よろしいですか ?"
 
 #: templates/member/member_form.php:11
 #: theme/welcart_default/wc_templates/member/wc_new_member_page.php:26
@@ -9531,7 +9531,7 @@ msgstr "英数字は半角での記入をお願いいたします。"
 #: templates/member/member_form.php:28
 #: theme/welcart_default/wc_templates/member/wc_new_member_page.php:42
 msgid "E-mail address (for verification)"
-msgstr "メールアドレス（確認用）"
+msgstr "メールアドレス (確認用)"
 
 #: templates/search_item.php:28
 #: theme/welcart_default/wc_templates/wc_search_page.php:45
@@ -9560,7 +9560,7 @@ msgstr "該当する商品は見つかりませんでした。"
 #: templates/search_item.php:78
 #: theme/welcart_default/wc_templates/wc_search_page.php:98
 msgid "Categories: AND Search"
-msgstr "カテゴリー : AND検索"
+msgstr "カテゴリー: AND 検索"
 
 #: templates/single_item.php:45 templates/single_item.php:102
 #: theme/welcart_default/wc_templates/wc_item_single.php:51
@@ -9672,7 +9672,7 @@ msgstr "※このページを表示したまま、別ウィンドウで商品追
 #: widgets/usces_page.php:45 widgets/usces_post.php:49
 #: widgets/usces_recent_posts.php:82 widgets/usces_search.php:50
 msgid "Title:"
-msgstr "タイトル："
+msgstr "タイトル: "
 
 #: widgets/usces_bestseller.php:140 widgets/usces_calendar.php:44
 #: widgets/usces_category.php:48 widgets/usces_featured.php:61
@@ -9688,7 +9688,7 @@ msgstr "表示数"
 
 #: widgets/usces_bestseller.php:142
 msgid "Aggregation period (days)"
-msgstr "集計期間（日数）"
+msgstr "集計期間 (日数)"
 
 #: widgets/usces_bestseller.php:143
 msgid "automatic count"
@@ -9720,7 +9720,7 @@ msgstr "投稿のカレンダー"
 
 #: widgets/usces_blog_calendar.php:202 widgets/usces_recent_posts.php:6
 msgid "Non-item"
-msgstr "（商品以外）"
+msgstr "(商品以外)"
 
 #: widgets/usces_blog_calendar.php:203
 msgid "Blog Calendar"
@@ -9728,11 +9728,11 @@ msgstr "ブログカレンダー"
 
 #: widgets/usces_calendar.php:45
 msgid "The setting of the business day, In a 'business day setting' page of the admin screen."
-msgstr "営業日の設定はWelcartショップの「営業日設定」で行います"
+msgstr "営業日の設定は Welcart ショップの「営業日設定」で行います"
 
 #: widgets/usces_category.php:49
 msgid "parent category(slug)"
-msgstr "親カテゴリー（スラッグ）"
+msgstr "親カテゴリー (スラッグ)"
 
 #: widgets/usces_login.php:39
 msgid "Remember Me"
@@ -9740,7 +9740,7 @@ msgstr "ログイン情報を記憶"
 
 #: widgets/usces_login.php:49
 msgid "Lost your password?"
-msgstr "パスワードをお忘れですか？"
+msgstr "パスワードをお忘れですか ?"
 
 #: widgets/usces_page.php:9 widgets/usces_page.php:15 widgets/usces_page.php:41
 msgid "Page"
@@ -9748,7 +9748,7 @@ msgstr "ページ"
 
 #: widgets/usces_page.php:47
 msgid "Page ID(comma separate)"
-msgstr "ページID（複数はカンマ区切り）"
+msgstr "ページID (複数はカンマ区切り)"
 
 #: widgets/usces_post.php:9 widgets/usces_post.php:16 widgets/usces_post.php:43
 msgid "Post"
@@ -9756,7 +9756,7 @@ msgstr "ポスト"
 
 #: widgets/usces_post.php:51
 msgid "category slug"
-msgstr "カテゴリー（スラッグ）"
+msgstr "カテゴリー (スラッグ)"
 
 #: widgets/usces_recent_posts.php:6
 msgid "Your site&#8217;s most recent posts."
@@ -9768,7 +9768,7 @@ msgstr "最近の投稿"
 
 #: widgets/usces_recent_posts.php:85
 msgid "Number of posts to show:"
-msgstr "表示する投稿数："
+msgstr "表示する投稿数: "
 
 msgid "Pattern List"
 msgstr "リストパターン"
@@ -9780,7 +9780,7 @@ msgid "Hide Search"
 msgstr "サーチ非表示"
 
 msgid "CSV format is invalid!"
-msgstr "CSVの形式が不正です！"
+msgstr "CSV の形式が不正です !"
 
 msgid "Welcart shop"
 msgstr "Welcart ショップ"
@@ -9792,7 +9792,7 @@ msgid "enter in between 1 to num"
 msgstr "1からnumの範囲で入力してください。"
 
 msgid "Import was not completed."
-msgstr "エラー：インポートが完了しませんでした。"
+msgstr "エラー: インポートが完了しませんでした。"
 
 msgid "Failed in update due to time-out"
 msgstr "タイムアウトのためパスワードを更新できませんでした。"
@@ -9801,7 +9801,7 @@ msgid "Invalid CANNAT pretend."
 msgstr "フリカナが不正です。"
 
 msgid "Dummy page for fotter nabigation"
-msgstr "フッタナビ用ダミーページ"
+msgstr "フッターナビ用ダミーページ"
 
 msgid "Dummy page for maine nabigation"
 msgstr "メインナビ用ダミーページ"
@@ -9828,10 +9828,10 @@ msgid "Add method for shipping"
 msgstr "支払方法を追加"
 
 msgid "**par 1unit for more than ~"
-msgstr "～以上で1unit あたり○○"
+msgstr "～以上で 1unit あたり◯◯"
 
 msgid "**par 1unit for ~"
-msgstr "～で1unit あたり○○"
+msgstr "～で 1unit あたり◯◯"
 
 msgid "size"
 msgstr "サイズ"
@@ -9846,7 +9846,7 @@ msgid "Update"
 msgstr "更新"
 
 msgid "Are you sure of deleting the shipping option 'Delname'?"
-msgstr "配送方法「delname」を削除します。よろしいですか？"
+msgstr "配送方法「delname」を削除します。よろしいですか ?"
 
 msgid "New item"
 msgstr "新規追加"
@@ -9993,13 +9993,13 @@ msgid "<span class=%7$s>%6$s%1$s</span>%2$s par 1%3$s for %4$s-%5$s%3$s"
 msgstr "%4$s～%5$s%3$sで1%3$sあたり<span class=%7$s>%6$s%1$s</span>%2$s"
 
 msgid "A SKU cord repeats."
-msgstr "SKUが重複しています"
+msgstr "SKU が重複しています"
 
 msgid "%2$s of %1$s lines registration completion, %3$s lines error."
 msgstr "%1$s行中 %2$s行登録完了、%3$s行未登録。"
 
 msgid "Upload prescribed CSV or an Excel file and perform the collective registration of the article.<br />Please choose a file, and push the registration start."
-msgstr "規定のCSVまたはエクセルファイルをアップロードして商品の一括登録を行います。<br />ファイルを選択して登録開始を押してください。"
+msgstr "規定の CSV またはエクセルファイルをアップロードして商品の一括登録を行います。<br />ファイルを選択して登録開始を押してください。"
 
 msgid "IPN Start"
 msgstr "IPN開始"
@@ -10023,7 +10023,7 @@ msgid "https://*Blog address*<br />You can use common use SSL."
 msgstr "WordPress の一般設定の「ブログアドレス (URL)」を https:// から始まるようにして設定します。共用ドメインも利用できます。"
 
 msgid "Please decide whether you use SSL."
-msgstr "SSLを利用する場合はチェックを付けてください。"
+msgstr "SSL を利用する場合はチェックしてください。"
 
 msgid "However, if you want to SSL the entire site, please uncheck."
 msgstr "ただし、サイト全体を SSL 化する場合は、チェックを外してください。"
@@ -10035,13 +10035,13 @@ msgid "Sidebar Navigation"
 msgstr "サイドバー・ナビゲーション"
 
 msgid "Tags:"
-msgstr "タグ："
+msgstr "タグ: "
 
 msgid "Comments Closed"
 msgstr "コメントは受付けておりません"
 
 msgid "Posted in %s"
-msgstr "カテゴリー：%s"
+msgstr "カテゴリー: %s"
 
 msgid "No Comments &#187;"
 msgstr "コメントはありません &#187;"
@@ -10074,16 +10074,16 @@ msgid "Order Information"
 msgstr "受注情報"
 
 msgid "You can choose the language of the front-end.The language of the admin panel obeys config.php."
-msgstr "フロントエンドの言語を選択できます。管理パネルの方はconfig.php の設定に従います。"
+msgstr "フロントエンドの言語を選択できます。管理画面の方は config.php の設定に従います。"
 
 msgid "Order of Item SKU"
-msgstr "商品SKUの並び順"
+msgstr "商品SKU の並び順"
 
 msgid "Order of Item Option"
 msgstr "商品オプションの並び順"
 
 msgid "You can appoint equal thing order of SKU. When I want to make it registered order, choose 'Registration Order'. The initial state becomes 'SKU cord Order'."
-msgstr "商品SKUの並び順を指定します。登録されている順にしたい場合は「登録順」を選択します。初期状態は「SKUコード順」となっています。"
+msgstr "商品SKU の並び順を指定します。登録されている順にしたい場合は「登録順」を選択します。初期状態は「SKUコード順」となっています。"
 
 msgid "You can appoint a common option and the equal thing order of the item option. When You want to make it registered order, choose 'Registration Order'. The initial state becomes 'Optional excellent Order'."
 msgstr "共通オプション及び商品オプションの並び順を指定します。登録されている順にしたい場合は「登録順」を選択します。初期状態は「オプション名順」となっています。"
@@ -10131,10 +10131,10 @@ msgid "Calculate the shipping fee based on the total weight of the merchandises.
 msgstr "商品の合計重量を元に送料に料金を加算します。"
 
 msgid "PayPal Settlement"
-msgstr "PayPal決済"
+msgstr "PayPal 決済"
 
 msgid "PayPal(EC)"
-msgstr "PayPal決済（EC）"
+msgstr "PayPal 決済 (EC)"
 
 msgid "This settlement uses 'Express Checkout'."
 msgstr "この決済は、「エクスプレスチェックアウト」を使用しています。"
@@ -10146,16 +10146,16 @@ msgid "The safer, easier way to pay."
 msgstr "安全・簡単にお支払い"
 
 msgid "You can get API user name, API password and signature information for the testing environment (Sandbox) from <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr "テスト環境（Sandbox）用APIユーザ名、APIパスワード、署名の情報は<a href=\"%s\" target=\"_blank\">こちら</a>から取得可能です。"
+msgstr "テスト環境 (Sandbox) 用 API ユーザ名、API パスワード、署名の情報は<a href=\"%s\" target=\"_blank\">こちら</a>から取得可能です。"
 
 msgid "You can get API user name, API password and signature information for the production environment from <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr "本番環境用APIユーザ名、APIパスワード、署名の情報は<a href=\"%s\" target=\"_blank\">こちら</a>から取得可能です。"
+msgstr "本番環境用 API ユーザ名、API パスワード、署名の情報は<a href=\"%s\" target=\"_blank\">こちら</a>から取得可能です。"
 
 msgid "A PayPal Business Account is required to use the PayPal Express Checkout Payment Service. You can open a business account from <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr "PayPalエクスプレスチェックアウト決済サービスのご利用には、ペイパルビジネスアカウントが必要です。ビジネスアカウントの開設は<a href=\"%s\" target=\"_blank\">こちら</a>から行えます。"
+msgstr "PayPal エクスプレスチェックアウト決済サービスのご利用には、ペイパルビジネスアカウントが必要です。ビジネスアカウントの開設は<a href=\"%s\" target=\"_blank\">こちら</a>から行えます。"
 
 msgid "Synchronize Paypal login with Welcart login."
-msgstr "Paypal のログインと Welcart のログインを連携させます。"
+msgstr "PayPal のログインと Welcart のログインを連携させます。"
 
 msgid "Client ID for REST API apps"
 msgstr "REST API apps の Client ID"
@@ -10164,19 +10164,19 @@ msgid "Secret of REST API apps"
 msgstr "REST API apps の Secret"
 
 msgid "Client ID for SandBox of REST API apps"
-msgstr "REST API apps の SandBox用 Client ID"
+msgstr "REST API apps の SandBox 用 Client ID"
 
 msgid "Secret for SandBox of REST API apps"
-msgstr "REST API apps の SandBox用 Secret"
+msgstr "REST API apps の SandBox 用 Secret"
 
 msgid "You can register the REST API apps from <a href=\"%s\" target=\"_blank\">here</a>."
 msgstr "REST API apps の登録は<a href=\"%s\" target=\"_blank\">こちら</a>から行えます。"
 
 msgid "* Enter your API user name."
-msgstr "※APIユーザー名を入力してください"
+msgstr "※API ユーザー名を入力してください"
 
 msgid "* Enter your API user password."
-msgstr "※APIパスワードを入力してください"
+msgstr "※API パスワードを入力してください"
 
 msgid "* Enter your API signature."
 msgstr "※署名を入力してください"
@@ -10197,10 +10197,10 @@ msgid "J-Payment Japanese Settlement"
 msgstr "J-Payment"
 
 msgid "apply the new rule<br />(Tow hyphens between the Product Code and serial number)"
-msgstr "新しいルールを適用する<br />（商品コードと連番の間にハイフンを2つ置く【例：a001--01】）"
+msgstr "新しいルールを適用する<br />（商品コードと連番の間にハイフンを2つ置く【例: a001--01】）"
 
 msgid "If the sub-images are not applied correctly, please apply the new rules.<br />And insert Tow hyphens between the Product Code and serial number."
-msgstr "サブ画像が正常に適用されない場合は新しいルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間にハイフンを2つ置きます。（例：a001--01.jpg）"
+msgstr "サブ画像が正常に適用されない場合は新しいルールを適用してください。<br />サブ画像のファイル名は商品コードと連番の間にハイフンを2つ置きます。(例: a001--01.jpg)"
 
 msgid "Use SSL"
 msgstr "SSLを使用する"
@@ -10218,10 +10218,10 @@ msgid "In tax"
 msgstr "内税額"
 
 msgid "* Settlement error has occurred!"
-msgstr "※決済エラーが発生しています！"
+msgstr "※決済エラーが発生しています !"
 
 msgid "I will overwrite customer information, and shipping information. Would you like?"
-msgstr "顧客情報、配送先情報を上書きします。よろしいですか？"
+msgstr "顧客情報、配送先情報を上書きします。よろしいですか ?"
 
 msgid "Same product code is registered here."
 msgstr "に同じ商品コードが登録されています。"
@@ -10260,7 +10260,7 @@ msgid "Card name"
 msgstr "カード名義"
 
 msgid "(Alphabetic characters only)"
-msgstr "（半角英字のみ）"
+msgstr "(半角英字のみ)"
 
 msgid "Thank you for your use."
 msgstr "ご利用ありがとうございました。"
@@ -10269,7 +10269,7 @@ msgid "Card number after the change"
 msgstr "変更後のカード番号"
 
 msgid "(If you do not want to change, Please in the blank)"
-msgstr "（変更しない場合は空白にしてください）"
+msgstr "(変更しない場合は空白にしてください)"
 
 msgid "Change of number of payments, click here"
 msgstr "支払回数の変更はこちら"
@@ -10284,10 +10284,10 @@ msgid "WelcartPay - Foreign exchange settlement"
 msgstr "WelcartPay 外貨決済"
 
 msgid "Foreign exchange settlement (WelcartPay)"
-msgstr "外貨決済（WelcartPay）"
+msgstr "外貨決済 (WelcartPay)"
 
 msgid "Apple Pay (WelcartPay)"
-msgstr "Apple Pay（WelcartPay）"
+msgstr "Apple Pay (WelcartPay)"
 
 msgid "Settlement information"
 msgstr "決済情報"
@@ -10311,16 +10311,16 @@ msgid "Decryption Key"
 msgstr "復号化キー"
 
 msgid "* Please enter the 3D Secure Encryption Key."
-msgstr "※3Dセキュア暗号化キーを入力してください"
+msgstr "※3D セキュア暗号化キーを入力してください"
 
 msgid "* Please enter the 3D Secure Initialization Vector."
-msgstr "※3Dセキュア初期化ベクトルを入力してください"
+msgstr "※3D セキュア初期化ベクトルを入力してください"
 
 msgid "Please enter the Apple Pay decryption key."
-msgstr "※Apple Pay決済復号化キーを入力してください"
+msgstr "※Apple Pay 決済復号化キーを入力してください"
 
 msgid "* Please enter the Apple Pay initialization vector."
-msgstr "※Apple Pay決済初期化ベクトルを入力してください"
+msgstr "※Apple Pay 決済初期化ベクトルを入力してください"
 
 msgid "Credit card registration deleted."
 msgstr "クレジットカードの登録を削除しました。"
@@ -10542,13 +10542,13 @@ msgid "Live environment"
 msgstr "本番環境"
 
 msgid "Test environment (Sandbox)"
-msgstr "テスト環境（Sandbox）"
+msgstr "テスト環境 (Sandbox)"
 
 msgid "Sign up for PayPal"
 msgstr "PayPal アカウントに接続"
 
 msgid "In the \"production environment\", you can \"connect to PayPal account\" to automatically retrieve the \"Client ID\" and \"Secret\". In the \"test environment (Sandbox)\", please manually obtain the Sandbox \"Client ID\" and \"Secret\"."
-msgstr "「本番環境」では「PayPal アカウントに接続」して「Client ID」「Secret」を自動取得できます。「テスト環境（Sandbox）」ではSandbox用の「Client ID」「Secret」を手動で取得してください。"
+msgstr "「本番環境」では「PayPal アカウントに接続」して「Client ID」「Secret」を自動取得できます。「テスト環境 (Sandbox)」では Sandbox 用の「Client ID」「Secret」を手動で取得してください。"
 
 msgid "Intent"
 msgstr "処理区分"
@@ -10557,13 +10557,13 @@ msgid "Automatic recurring billing intent"
 msgstr "自動継続課金処理区分"
 
 msgid "Capture"
-msgstr "売上計上（CAPTURE）"
+msgstr "売上計上 (CAPTURE)"
 
 msgid "Authorize"
-msgstr "与信（AUTHORIZE）"
+msgstr "与信 (AUTHORIZE)"
 
 msgid "Select whether to capture sales (CAPTURE) at the time of payment or only perform authorization (AUTHORIZE)."
-msgstr "決済時に売上計上（CAPTURE）するか、与信（AUTHORIZE）のみ実施するかを選択します。"
+msgstr "決済時に売上計上 (CAPTURE) するか、与信 (AUTHORIZE) のみ実施するかを選択します。"
 
 msgid "Customize the PayPal Buttons"
 msgstr "PayPalボタンのカスタマイズ"
@@ -10611,7 +10611,7 @@ msgid "I agree to the following terms and conditions of use."
 msgstr "下記ご利用条件に同意する"
 
 msgid "You agree that the information you submit during the application process will be provided to our partner company PayPal Pte. Ltd. and will be used by PayPal to evaluate, improve and enhance its services and for marketing purposes and PayPal Pte. Ltd. may send you information for marketing and promotional purposes (including sending e-mails, etc.)."
-msgstr "お申込みの際に送信いただいたお客様の情報は、提携会社である PayPal Pte. Ltd. に提供され、同社のサービス評価、改善、向上およびマーケティング目的のため使用されること、また、同社からお客様に対してマーケティング及びキャンペーンの目的のご案内（Eメール等の送信を含みます）が行われる場合があることにご同意頂きます。"
+msgstr "お申込みの際に送信いただいたお客様の情報は、提携会社である PayPal Pte. Ltd. に提供され、同社のサービス評価、改善、向上およびマーケティング目的のため使用されること、また、同社からお客様に対してマーケティング及びキャンペーンの目的のご案内 (Eメール等の送信を含みます) が行われる場合があることにご同意頂きます。"
 
 msgid "* Enter Client ID."
 msgstr "※Client ID を入力してください。"
@@ -10674,7 +10674,7 @@ msgid "Extensions of attachments"
 msgstr "添付ファイルの拡張子"
 
 msgid "Enter the file extension of the email attachment (jpg, png, pdf, etc.) separated by commas."
-msgstr "メール添付ファイルの拡張子（jpg,png,pdf など）を半角カンマ（,）で区切って入力してください。"
+msgstr "メール添付ファイルの拡張子 (jpg, png, pdf など) を半角カンマ (,) で区切って入力してください。"
 
 msgid "If not entered, the extension will not be checked."
 msgstr "未入力のとき拡張子のチェックは行いません。"
@@ -10683,7 +10683,7 @@ msgid "Maximum size of email attachment"
 msgstr "添付ファイルの最大サイズ"
 
 msgid "Enter the maximum file size (MB) of the email attached file."
-msgstr "メール添付ファイルの最大ファイルサイズ（MB）を入力してください。"
+msgstr "メール添付ファイルの最大ファイルサイズ (MB) を入力してください。"
 
 msgid "If not entered, the file size is not checked."
 msgstr "未入力のときファイルサイズのチェックは行いません。"
@@ -10695,7 +10695,7 @@ msgid "File extension support"
 msgstr "添付可能ファイル拡張子"
 
 msgid "Are you sure you want to send it without attachments?"
-msgstr "添付ファイルなしで送信してよろしいですか？"
+msgstr "添付ファイルなしで送信してよろしいですか ?"
 
 msgid "The maximum file size that can be attached has been exceeded."
 msgstr "添付可能な最大ファイルサイズを超えています。"
@@ -10737,13 +10737,13 @@ msgid "Score"
 msgstr "スコア"
 
 msgid "Set the threshold for scores returned by Google to determine whether to treat them as human. The closer the score is to 0.0, the more likely it is to be a bot, while a score closer to 1.0 indicates a higher likelihood of being human. The default value is set to 0.5."
-msgstr "Googleから返却されるスコアを、いくつ以上を人間として扱うかを設定します。0.0に近いほどbotの可能性が高く、1.0に近いほど人間の可能性が高いと判定します。初期値は0.5です。"
+msgstr "Google から返却されるスコアを、いくつ以上を人間として扱うかを設定します。0.0に近いほどbotの可能性が高く、1.0に近いほど人間の可能性が高いと判定します。初期値は0.5です。"
 
 msgid "Brute-force attack countermeasures"
 msgstr "ブルートフォース攻撃対策"
 
 msgid "Enable brute-force attack countermeasures. Detects \"brute-force attack\" on Welcart member login and prevents login."
-msgstr "ブルートフォース攻撃対策を有効化します。Welcart の会員ログイン時の「ブルートフォース攻撃（パスワードの総当り攻撃）」を検出してログインを防ぎます。"
+msgstr "ブルートフォース攻撃対策を有効化します。Welcart の会員ログイン時の「ブルートフォース攻撃 (パスワードの総当り攻撃)」を検出してログインを防ぎます。"
 
 msgid "You can't write to the wp-content/uploads/ folder. Please check the permissions."
 msgstr "wp-content/uploads/フォルダに書き込みができません。パーミッションを確認してください。"
@@ -10752,7 +10752,7 @@ msgid "Monitoring span"
 msgstr "監視スパン"
 
 msgid "%s minutes"
-msgstr "%s 分"
+msgstr "%s分"
 
 msgid "If it fails \"number of errors\" times during the specified time, it is considered a \"brute-force attack\"."
 msgstr "指定時間の間に「エラー回数」回失敗したとき、「ブルートフォース攻撃」とみなします。"
@@ -10761,7 +10761,7 @@ msgid "Number of errors"
 msgstr "エラー回数"
 
 msgid "%s times"
-msgstr "%s 回"
+msgstr "%s回"
 
 msgid "If it fails a specified number of times during the \"monitoring span\", it is considered a \"brute-force attack\"."
 msgstr "「監視スパン」の間に指定回数失敗したとき、「ブルートフォース攻撃」とみなします。"
@@ -10770,13 +10770,13 @@ msgid "Rejection time"
 msgstr "拒否時間"
 
 msgid "If it is considered a \"brute-force attack\", the login page will not be displayed for a specified period of time. (This will result in a 403 error.)"
-msgstr "「ブルートフォース攻撃」とみなされた場合、指定時間ログインページが表示されません。（403エラーとなります。）"
+msgstr "「ブルートフォース攻撃」とみなされた場合、指定時間ログインページが表示されません。(403 エラーとなります。)"
 
 msgid "Excluded IP Address"
-msgstr "除外IPアドレス"
+msgstr "除外 IP アドレス"
 
 msgid "Set IP addresses to exclude from attack monitoring. When specifying multiple IP addresses, enter them in a new line. Illegal IP addresses cannot be registered."
-msgstr "攻撃の監視を除外するIPアドレスを設定します。複数指定する場合は改行して入力してください。不正なIPアドレスは登録できません。"
+msgstr "攻撃の監視を除外する IP アドレスを設定します。複数指定する場合は改行して入力してください。不正な IP アドレスは登録できません。"
 
 msgid "Please enter a password."
 msgstr "パスワードを入力してください。"
@@ -10830,7 +10830,7 @@ msgid ","
 msgstr "、"
 
 msgid "Settlement error has occurred in the regular purchase. Please check your PayPal account for any problems."
-msgstr "定期購入で決済エラーが発生しました。お手数ですが、PayPalアカウントに問題がないかご確認ください。"
+msgstr "定期購入で決済エラーが発生しました。お手数ですが、PayPal アカウントに問題がないかご確認ください。"
 
 msgid "%d&#37; OFF"
 msgstr "表示価格より%d&#37; OFF"
@@ -10848,7 +10848,7 @@ msgid "Other emails"
 msgstr "その他のメール"
 
 msgid "HTML mail format"
-msgstr "HTMLメール形式"
+msgstr "HTML メール形式"
 
 msgid "Send e-mails in HTML format."
 msgstr "各種メールを HTML 形式で送信します。"
@@ -10881,19 +10881,19 @@ msgid "An unexpected error has occurred."
 msgstr "予期しないエラーが発生しました。"
 
 msgid "Update Right is invalid. The corresponding plug-in does not exist."
-msgstr "Update Rightは無効です。該当するプラグインが見当たりません。"
+msgstr "Update Right は無効です。該当するプラグインが見当たりません。"
 
 msgid "Update Right is invalid. The corresponding theme does not exist."
-msgstr "Update Rightは無効です。該当するテーマが見当たりません。"
+msgstr "Update Right は無効です。該当するテーマが見当たりません。"
 
 msgid "Update Right is invalid. The domain of your site does not match."
-msgstr "Update Rightは無効です。ご利用のサイトのドメインが一致しません。"
+msgstr "Update Right は無効です。ご利用のサイトのドメインが一致しません。"
 
 msgid "Update Right is invalid. There is no valid license purchase information."
-msgstr "Update Rightは無効です。有効なライセンスの購入情報がありません。"
+msgstr "Update Right は無効です。有効なライセンスの購入情報がありません。"
 
 msgid "Update Right is valid. You can update it."
-msgstr "Update Rightは有効です。更新することができます。"
+msgstr "Update Right は有効です。更新することができます。"
 
 msgid "Check for updates"
 msgstr "更新チェック"
@@ -10908,28 +10908,28 @@ msgid "Default price"
 msgstr "標準設定"
 
 msgid "Which SKU do you want to use?"
-msgstr "どのSKUを使用しますか？"
+msgstr "どの SKU を使用しますか ?"
 
 msgid "Lowest SKU selling price"
-msgstr "最安値のSKU売価"
+msgstr "最安値の SKU売価"
 
 msgid "First SKU selling price"
-msgstr "最初のSKU売価"
+msgstr "最初の SKU売価"
 
 msgid "Highest SKU selling price"
-msgstr "最高値のSKU売価"
+msgstr "最高値の SKU売価"
 
 msgid "SKUs Code used for structured data"
-msgstr "構造化で使用するSKUコード"
+msgstr "構造化で使用する SKUコード"
 
 msgid "Please enter the date in the format yyyy-mm-dd."
 msgstr "日付は yyyy-mm-dd の形式で入力してください。"
 
 msgid "( A new version %1$s of WordPress is available. )"
-msgstr "（新しいバージョン %1$s の WordPress が利用可能です。）"
+msgstr "(新しいバージョン %1$s の WordPress が利用可能です。)"
 
 msgid "( Update to version %1$s is available. )"
-msgstr "（バージョン %1$s への更新が可能です。）"
+msgstr "(バージョン %1$s への更新が可能です。)"
 
 #: includes/admin_member.php:354 includes/admin_member.php:596
 msgid "Admin custom field"
@@ -11068,10 +11068,10 @@ msgid "Make an update"
 msgstr "更新を行う"
 
 msgid "There is %s update."
-msgstr "%s 件の更新があります"
+msgstr "%s件の更新があります"
 
 msgid "There are %s updates."
-msgstr "%s 件の更新があります"
+msgstr "%s件の更新があります"
 
 msgid "Version %s update started"
 msgstr "バージョン %s 更新開始"
@@ -11101,20 +11101,20 @@ msgid "Go home"
 msgstr "ホームへ戻る"
 
 msgid "The process will start. Is it OK?"
-msgstr "更新処理を開始します。よろしいですか？"
+msgstr "更新処理を開始します。よろしいですか ?"
 
 #: includes/product/wel-item-images.php:36
 msgid "Please choose at least one item image."
 msgstr "操作するファイルを選択してください。"
 
 msgid "The link you followed has expired. Please refresh your site."
-msgstr "たどったリンクの有効期限が切れています。サイトを更新してください。"
+msgstr "辿ったリンクの有効期限が切れています。サイトを更新してください。"
 
 msgid "File size error."
 msgstr "ファイルサイズエラー。"
 
 msgid "Maximum upload file size: %s"
-msgstr "最大アップロードサイズ：%s"
+msgstr "最大アップロードサイズ: %s"
 
 msgid "Upload item image fail"
 msgstr "商品画像アップロード失敗"
@@ -11126,7 +11126,7 @@ msgid "Exclude item images fail"
 msgstr "商品画像適用除外失敗"
 
 msgid "This image also applies to other products. Are you sure you want to delete?"
-msgstr "この画像は他の商品にも適用されています。削除してもよろしいですか？"
+msgstr "この画像は他の商品にも適用されています。削除してもよろしいですか ?"
 
 msgid "Delete item images fail"
 msgstr "商品画像削除失敗"
@@ -11177,7 +11177,7 @@ msgid "Select Media"
 msgstr "メディアを選択"
 
 msgid "Delete SKU (********). Are you sure?"
-msgstr "SKU（********）を削除します。よろしいですか？"
+msgstr "SKU (********) を削除します。よろしいですか？"
 
 #: classes/paymentWelcart.class.php:4175 classes/paymentWelcart.class.php:4206
 msgid "Update has been locked. Please contact the store administrator."
@@ -11185,7 +11185,7 @@ msgstr "更新ロックがかかりました。ショップの管理者にお問
 
 #: functions/admin_page.php:534
 msgid "Unlock the card information update (Lock date and time: %s)"
-msgstr "カード情報更新のロックを解除する（ロック日時：%s）"
+msgstr "カード情報更新のロックを解除する (ロック日時: %s)"
 
 msgid "Description to be displayed on the confirmation page"
 msgstr "内容確認ページに表示する説明書き"
@@ -11200,7 +11200,7 @@ msgid "Days to deposit deadline"
 msgstr "振込期限日数"
 
 msgid "When the number of days is set, the content confirmation page will display the payment period for \"Transfer (prepayment)\" or \"Transfer (postpay)\"."
-msgstr "日数を設定したとき、内容確認ページで「振込み（前払い）」「振込み（後払い）」の支払時期を表示します。"
+msgstr "日数を設定したとき、内容確認ページで「振込み (前払い)」「振込み (後払い)」の支払時期を表示します。"
 
 msgid "Payment is valid for %s days from the date of order."
 msgstr "お支払いの有効期限はご注文日から%s日間となっております。"
@@ -11244,11 +11244,11 @@ msgstr "項目数"
 
 #: functions/define_function.php:379
 msgid "This file may not be the item CSV for \"All columns\"."
-msgstr "このファイルは、「全項目」用の商品CSVでない可能性があります。"
+msgstr "このファイルは、「全項目」用の商品 CSV でない可能性があります。"
 
 #: functions/define_function.php:1147
 msgid "End (with error)"
-msgstr "終了（エラーあり）"
+msgstr "終了 (エラーあり)"
 
 #: functions/define_function.php:1159
 msgid "No abnormality"
@@ -11256,11 +11256,11 @@ msgstr "異常なし"
 
 #: functions/define_function.php:1531
 msgid "This file may not be the item CSV for \"Stock columns\"."
-msgstr "このファイルは、「在庫項目」用の商品CSVでない可能性があります。"
+msgstr "このファイルは、「在庫項目」用の商品 CSV でない可能性があります。"
 
 #: functions/define_function.php:1846
 msgid "This file may not be the item CSV for \"SKU columns\"."
-msgstr "このファイルは、「SKU項目」用の商品CSVでない可能性があります。"
+msgstr "このファイルは、「SKU項目」用の商品 CSV でない可能性があります。"
 
 #: includes/usces_item_master_list.php:9 includes/usces_item_master_list.php:20
 msgid "Post ID"
@@ -11272,19 +11272,19 @@ msgstr "ファイル情報"
 
 #: includes/usces_item_master_upload_register.php:74
 msgid "Filename: "
-msgstr "ファイル名："
+msgstr "ファイル名: "
 
 #: includes/usces_item_master_upload_register.php:75
 msgid "Type: "
-msgstr "タイプ："
+msgstr "タイプ: "
 
 #: includes/usces_item_master_upload_register.php:76
 msgid "Number of data: "
-msgstr "データ数："
+msgstr "データ数: "
 
 #: includes/usces_item_master_upload_register.php:77
 msgid "Line 1: "
-msgstr "1行目："
+msgstr "1行目: "
 
 #: includes/usces_item_master_upload_register.php:95
 msgid "Log"
@@ -11292,7 +11292,7 @@ msgstr "ログ"
 
 #: includes/usces_item_master_upload_register.php:194
 msgid "( Download )"
-msgstr "（ダウンロード）"
+msgstr "(ダウンロード)"
 
 #: functions/template_func.php:3937
 msgid "Previous month"
@@ -11315,10 +11315,10 @@ msgid "* Cautions on Use of Credit Cards"
 msgstr "■利用上の注意"
 
 msgid "In order to prevent unauthorized use of your credit card through theft of information such as your credit card number, we use \"EMV 3D Secure,\" an identity authentication service recommended by international brands."
-msgstr "クレジットカード番号などの情報の盗用による不正利用を防ぎ、安全にクレジットカードをご利用いただくため、国際ブランドの推奨する本人認証サービス「EMV3Dセキュア」を用いています。"
+msgstr "クレジットカード番号などの情報の盗用による不正利用を防ぎ、安全にクレジットカードをご利用いただくため、国際ブランドの推奨する本人認証サービス「EMV 3D セキュア」を用いています。"
 
 msgid "In order to use EMV 3D Secure, it is necessary to send information about you to the card issuer."
-msgstr "EMV3Dセキュアを利用するためには、カード発行会社に、お客様に関する情報などを送信する必要がございます。"
+msgstr "EMV 3D セキュアを利用するためには、カード発行会社に、お客様に関する情報などを送信する必要がございます。"
 
 msgid "Please read \"* Provision of Personal Information to Third Parties\" below and enter your card information only if you agree to the terms of the agreement."
 msgstr "以下の「■個人情報の第三者提供」をご確認いただき、同意の上カード情報をご入力ください。"
@@ -11330,7 +11330,7 @@ msgid "The following personal information, etc. collected from customers will be
 msgstr "お客様から収集した以下の個人情報等は、カード発行会社が行う不正利用検知・防止のために、お客様が利用されているカードの発行会社へ提供させていただきます。"
 
 msgid "\"Full name\", \"e-mail address\", \"Membership information held by the business\", \"IP address\", \"device information\", \"Information on the Internet usage environment\", and \"Billing address\"."
-msgstr "「氏名」、「email アドレス」、「事業者が保有する会員情報」、「IPアドレス」、「デバイス情報」、「インターネット利用環境に関する情報」、「請求書送付先住所」"
+msgstr "「氏名」、「email アドレス」、「事業者が保有する会員情報」、「IP アドレス」、「デバイス情報」、「インターネット利用環境に関する情報」、「請求書送付先住所」"
 
 msgid "If the issuer of the card you are using is located in a foreign country, these information may be transferred to the country to which such issuer belongs."
 msgstr "お客様が利用されているカードの発行会社が外国にある場合、これらの情報は当該発行会社が所属する国に移転される場合があります。"
@@ -11357,25 +11357,25 @@ msgid "For an overview of the legal system regarding the protection of personal 
 msgstr "なお、当該国の個人情報保護に関する法制度の概要はこちらからご確認ください。"
 
 msgid "[About 3D Secure]"
-msgstr "【3Dセキュアについて】"
+msgstr "【3D セキュアについて】"
 
 msgid "If you do not use 3D Secure (do not check the \"Use\" box), the merchant is responsible for payment due to fraudulent use of the credit card."
-msgstr "3Dセキュアをご利用されない場合（「利用する」にチェックを入れない場合）は、クレジットカードの不正利用等による支払いは加盟店様の責任となります。"
+msgstr "3D セキュアをご利用されない場合 (「利用する」にチェックを入れない場合) は、クレジットカードの不正利用等による支払いは加盟店様の責任となります。"
 
 msgid "Even if we have already paid the merchant an amount equivalent to the sales proceeds, the merchant must return the amount to us upon request for a chargeback (return of sales proceeds) from the credit card company."
-msgstr "当社から加盟店様に売上代金相当額をお支払い済みであっても、カード会社からのチャージバック（売上代金の返還）請求により当社に返金いただくことになります。"
+msgstr "当社から加盟店様に売上代金相当額をお支払い済みであっても、カード会社からのチャージバック (売上代金の返還) 請求により当社に返金いただくことになります。"
 
 msgid "Please note that chargebacks may occur even if you select \"Use\". Please understand this in advance."
 msgstr "「利用する」を選択された場合であっても、チャージバックは発生する場合があります。あらかじめご了承ください。"
 
 msgid "If you have applied for the EMV 3D Secure service, please be sure to select \"Use\"."
-msgstr "EMV3Dセキュアサービスをお申込みいただいた場合は、必ず「利用する」を選択してください。"
+msgstr "EMV 3D セキュアサービスをお申込みいただいた場合は、必ず「利用する」を選択してください。"
 
 msgid "[Note on chargebacks]"
 msgstr "【チャージバックに関する留意事項】"
 
 msgid "* Even if sales approval has been obtained (when the authorization result is OK), chargebacks will still be incurred."
-msgstr "・売上承認を得ている場合（オーソリ結果がOKの場合）であっても、チャージバックは発生します。"
+msgstr "・売上承認を得ている場合 (オーソリ結果が OK の場合) であっても、チャージバックは発生します。"
 
 msgid "* If chargebacks occur, there is no compensation or reimbursement by us or the credit card companies. The merchant is responsible for all charges."
 msgstr "・チャージバックが発生した場合、当社やカード会社による補償、補填はありません。全て加盟店様の負担となります。"
@@ -11466,7 +11466,7 @@ msgid "Enter a datetime"
 msgstr "日時を入力"
 
 msgid "Enter an entity id"
-msgstr "IDを入力"
+msgstr "ID を入力"
 
 msgid "Payment transaction log"
 msgstr "決済情報操作ログ"
@@ -11528,7 +11528,7 @@ msgid "Operation log retention period"
 msgstr "操作ログの保存期間"
 
 msgid "6 months"
-msgstr "6か月"
+msgstr "6ヶ月"
 
 msgid "1 year"
 msgstr "1年"
@@ -11543,10 +11543,10 @@ msgid "The period when the admin logs will be deleted."
 msgstr "指定した期間を過ぎた操作ログは削除されます。"
 
 msgid "Editor (no management authority)"
-msgstr "編集者（マネジメント権限無し）"
+msgstr "編集者 (マネジメント権限無し)"
 
 msgid "Editor (no setting authority)"
-msgstr "編集者（設定権限無し）"
+msgstr "編集者 (設定権限無し)"
 
 msgid "Your membership information could not be verified."
 msgstr "会員情報が見当たりません"
@@ -11573,13 +11573,13 @@ msgid "Credit Master Measure"
 msgstr "クレジットマスター対策"
 
 msgid "If the card information input fails (Update Count) times in (Counting time) minutes, the update lock will be applied for (Lock time) hours and the card information input will be disabled."
-msgstr "（カウント時間）分間で（更新回数）回、カード情報入力失敗した場合、（ロック時間）時間、更新ロックがかかりカード情報入力ができなくなります。"
+msgstr "(カウント時間) 分間で (更新回数) 回、カード情報入力失敗した場合、(ロック時間) 時間、更新ロックがかかりカード情報入力ができなくなります。"
 
 msgid "Counting time"
 msgstr "カウント時間"
 
 msgid "Time to count updates (minutes)"
-msgstr "更新をカウントする時間（分）"
+msgstr "更新をカウントする時間 (分)"
 
 msgid "Update Count"
 msgstr "更新回数"
@@ -11597,7 +11597,7 @@ msgid "hours"
 msgstr "時間"
 
 msgid "Time to update lock (hours)"
-msgstr "更新ロックする時間（時間）"
+msgstr "更新ロックする時間 (時間)"
 
 msgid "Unlock"
 msgstr "更新ロック解除"
@@ -11693,13 +11693,13 @@ msgid "Login date and time"
 msgstr "ログイン日時"
 
 msgid "Identity verification is required to edit your membership information. Are you sure you want to send an authentication email to your registered email address?"
-msgstr "会員情報を編集するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか？"
+msgstr "会員情報を編集するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか ?"
 
 msgid "Identity verification is required to register credit card information. Are you sure you want to send an authentication email to your registered email address?"
-msgstr "クレジットカード情報を登録するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか？"
+msgstr "クレジットカード情報を登録するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか ?"
 
 msgid "Identity verification is required to change credit card information. Are you sure you want to send an authentication email to your registered email address?"
-msgstr "クレジットカード情報を変更するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか？"
+msgstr "クレジットカード情報を変更するには本人認証が必要です。ご登録のメールアドレスに認証メールを送信してもよろしいですか ?"
 
 msgid "Authentication email sent."
 msgstr "認証メールを送信しました"
@@ -11708,10 +11708,10 @@ msgid "When updating important information, you will need to authenticate your i
 msgstr "重要な情報を更新する場合は、メールによる本人認証が必要となります。"
 
 msgid "You will receive an authentication email to your registered email address. Please click the URL in the body of the email to approve it."
-msgstr "登録されているメール宛に認証メールが届きますので、メール本文のURLをクリックして承認してください。"
+msgstr "登録されているメール宛に認証メールが届きますので、メール本文の URL をクリックして承認してください。"
 
 msgid "The URL for authentication expires in 15 minutes from now."
-msgstr "認証用のURLの有効期限は只今より15分です。"
+msgstr "認証 URL の有効期限は只今より15分です。"
 
 msgid "If the expiration date has passed, please click the menu again to send the authentication email."
 msgstr "有効期限が過ぎてしまった場合は、再度メニューをクリックして認証メールの送信を行ってください。"
@@ -11723,13 +11723,13 @@ msgid "This email is a verification email for updating your membership informati
 msgstr "このメールは、「%s」での会員情報更新に伴う本人確認メールです。"
 
 msgid "By clicking on the URL below, your identity will be authenticated."
-msgstr "下記のURLをクリックすることで、本人であることが認証されます。"
+msgstr "下記の URL をクリックすることで、本人であることが認証されます。"
 
 msgid "After authentication, My Page will be displayed, so please click the menu again to proceed."
 msgstr "認証後マイページが表示されますので、再度メニューをクリックして処理に進んでください。"
 
 msgid "Please note that this URL is valid until %s."
-msgstr "なお、このURLの有効期限は%sまでとなります。"
+msgstr "なお、この URL の有効期限は%sまでとなります。"
 
 msgid "Y-n-j G:i"
 msgstr "Y年n月j日G:i"
@@ -11741,7 +11741,7 @@ msgid "Authentication by email has failed."
 msgstr "メールによる本人認証に失敗しました。"
 
 msgid "Authentication URL has expired or invalid access."
-msgstr "認証URLの有効期限が切れているか無効なアクセスです。"
+msgstr "認証 URL の有効期限が切れているか無効なアクセスです。"
 
 msgid "File is not selected."
 msgstr "ファイルが選択されていません。"
@@ -11762,7 +11762,7 @@ msgid "Welcart CSV Importer"
 msgstr "Welcart CSV インポーター"
 
 msgid "CSV or ZIP File"
-msgstr "CSVまたはZIPファイル"
+msgstr "CSV または ZIP ファイル"
 
 msgid "Permission error."
 msgstr "権限エラー。"
@@ -11777,7 +11777,7 @@ msgid "Failed to get file name."
 msgstr "ファイル名が取得できません。"
 
 msgid "Please specify a CSV or ZIP file."
-msgstr "CSVまたはZIPファイルを指定してください。"
+msgstr "CSV または ZIP ファイルを指定してください。"
 
 msgid "Failed to save file."
 msgstr "ファイルの保存に失敗しました。"
@@ -11786,13 +11786,13 @@ msgid "Too many files in ZIP."
 msgstr "ZIP 内のファイルが多すぎます。"
 
 msgid "Failed to extract CSV file from ZIP."
-msgstr "ZIP内CSVファイルの抽出に失敗しました。"
+msgstr "ZIP 内 CSV ファイルの抽出に失敗しました。"
 
 msgid "CSV file not found in ZIP."
-msgstr "ZIPファイル内にCSVが見つかりません。"
+msgstr "ZIP ファイル内に CSV が見つかりません。"
 
 msgid "Unable to open ZIP file."
-msgstr "ZIPファイルを開けませんでした。"
+msgstr "ZIP ファイルを開けませんでした。"
 
 msgid "Import session not found."
 msgstr "インポートセッションがありません。"
@@ -11804,13 +11804,13 @@ msgid "Failed to read file. Please start over from the beginning."
 msgstr "ファイルの読み込みに失敗しました。もう一度最初からやり直してください。"
 
 msgid "CSV Preview & Mapping"
-msgstr "CSVプレビュー＆マッピング"
+msgstr "CSV プレビュー＆マッピング"
 
 msgid "Preview the CSV file and perform data mapping."
-msgstr "CSVファイルのプレビューとデータマッピングを行います。"
+msgstr "CSV ファイルのプレビューとデータマッピングを行います。"
 
 msgid "If you wish to re-upload the CSV file, you can do so using the \"Re-upload\" option."
-msgstr "CSVファイルをアップロードしなおす場合は「再アップロード」オプションから実施できます。"
+msgstr "CSV ファイルをアップロードしなおす場合は「再アップロード」オプションから実施できます。"
 
 msgid "Re-upload"
 msgstr "再アップロード"
@@ -11831,22 +11831,22 @@ msgid "Data"
 msgstr "データ"
 
 msgid "* If the first row contains field names, it will not be processed."
-msgstr "※先頭行がフィールド名の場合、１行目は処理されません。"
+msgstr "※先頭行がフィールド名の場合、1行目は処理されません。"
 
 msgid "CSV Preview"
-msgstr "CSVプレビュー"
+msgstr "CSV プレビュー"
 
 msgid "File Name"
 msgstr "ファイル名"
 
 msgid "Valid Data Count: "
-msgstr "有効データ件数："
+msgstr "有効データ件数: "
 
 msgid "Data Mapping"
 msgstr "データ・マッピング"
 
 msgid "The first column is required. At least one additional column must be selected."
-msgstr "先頭の項目は必須です。それ以外の項目は最低一つは選択する必要があります。"
+msgstr "先頭の項目は必須です。それ以外の項目は最低1つは選択する必要があります。"
 
 msgid "Start Update"
 msgstr "更新開始"
@@ -11888,13 +11888,13 @@ msgid "Import Completed"
 msgstr "インポート終了"
 
 msgid "File Name: "
-msgstr "CSVファイル名："
+msgstr "CSV ファイル名: "
 
 msgid "No Error"
 msgstr "エラー無し"
 
 msgid "More..."
-msgstr "その他..."
+msgstr "その他…"
 
 msgid "Download Error Log"
 msgstr "エラーログをダウンロード"
@@ -11936,7 +11936,7 @@ msgid "An unknown error occurred."
 msgstr "不明なエラーが発生しました。"
 
 msgid "CSV file is empty. Please check the content."
-msgstr "CSVファイルが空です。内容を確認してください。"
+msgstr "CSV ファイルが空です。内容を確認してください。"
 
 msgid "Security check failed. Please reload the page."
 msgstr "セキュリティチェックに失敗しました。ページをリロードしてください。"
@@ -11945,7 +11945,7 @@ msgid "Type is invalid."
 msgstr "タイプが適正ではありません。"
 
 msgid "Invalid import ID. "
-msgstr "インポート ID が無効です。"
+msgstr "インポートID が無効です。"
 
 msgid "Please re-upload the CSV."
 msgstr "再度 CSV をアップロードしてください。"
@@ -11954,10 +11954,10 @@ msgid "Import session has expired."
 msgstr "インポートのセッションが期限切れになりました。"
 
 msgid "CSV file not found."
-msgstr "CSVファイルが見つかりません。"
+msgstr "CSV ファイルが見つかりません。"
 
 msgid "Unable to open CSV file."
-msgstr "CSVファイルを開けませんでした。"
+msgstr "CSV ファイルを開けませんでした。"
 
 msgid "Error log file not found."
 msgstr "エラーログファイルがありません。"
@@ -12040,7 +12040,7 @@ msgstr "保有ポイント"
 
 #: wel_member_csv_preview_top_guide
 msgid "If the CSV member number already exists in the database, it will update the record. Please be careful not to overwrite other data."
-msgstr "CSVの会員Noが既にデータベースにある場合は更新となります。他のデータに上書きしてしまわないよう注意してください。"
+msgstr "CSV の会員No が既にデータベースにある場合は更新となります。他のデータに上書きしてしまわないよう注意してください。"
 
 #: wel_member_csv_preview_top_guide
 msgid "Make sure to backup your database before proceeding with the import."
@@ -12072,19 +12072,19 @@ msgstr "Welcart暗号化"
 
 #: wel_member_csv_mapping_option
 msgid "ECCUBE Encryption"
-msgstr "ECCUBE暗号化"
+msgstr "EC-CUBE 暗号化"
 
 #: wel_member_csv_mapping_option
 msgid "* Normally, please select \"Welcart Encryption\". Plain text will be encrypted upon registration."
-msgstr "※通常は「Welcart暗号化」を選択してください。平文字を暗号化して登録します。"
+msgstr "※通常は「Welcart 暗号化」を選択してください。平文字を暗号化して登録します。"
 
 #: wel_member_csv_importer_chunk_process
 msgid "ID is empty"
-msgstr "IDが空白"
+msgstr "ID が空白"
 
 #: wel_member_csv_importer_chunk_process
 msgid "ID is not a number"
-msgstr "IDが数値でない"
+msgstr "ID が数値でない"
 
 #: wel_member_csv_data_validation
 msgid " Error: Email address is not set"
@@ -12124,28 +12124,28 @@ msgstr " Error: 名前が空白"
 
 #: wel_member_csv_after_mapping_table
 msgid "EC CUBE Meta Fields"
-msgstr "EC CUBE メタフィールド"
+msgstr "EC-CUBE メタフィールド"
 
 #: wel_member_csv_after_mapping_table
 msgid "Salt Key"
 msgstr "ソルトキー"
 
 msgid "(Not Set)"
-msgstr "（未設定）"
+msgstr "(未設定)"
 
 msgid "CSV File Name"
-msgstr "CSVファイル名"
+msgstr "CSV ファイル名"
 
 msgid "Error Log"
 msgstr "エラーログ"
 
 #: classes/paymentESCOTT.main.class.php:3942
 msgid "The end user canceled on the card information registration screen (SSNP010)."
-msgstr "エンドユーザがカード情報登録画面（SSNP010）でキャンセルしました。"
+msgstr "エンドユーザがカード情報登録画面 (SSNP010) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3945
 msgid "The end user canceled on the card information registration confirmation screen (SSNP020)."
-msgstr "エンドユーザがカード情報登録確認画面（SSNP020）でキャンセルしました。"
+msgstr "エンドユーザがカード情報登録確認画面 (SSNP020) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3948
 msgid "An error occurred during card information registration processing."
@@ -12157,11 +12157,11 @@ msgstr "カード情報登録処理でリトライ回数オーバエラーが発
 
 #: classes/paymentESCOTT.main.class.php:3954
 msgid "The end user canceled on the card information change screen (SSNP030)."
-msgstr "エンドユーザがカード情報変更画面（SSNP030）でキャンセルしました。"
+msgstr "エンドユーザがカード情報変更画面 (SSNP030) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3957
 msgid "The end user canceled on the card information change confirmation screen (SSNP040)."
-msgstr "エンドユーザがカード情報変更確認画面（SSNP040）でキャンセルしました。"
+msgstr "エンドユーザがカード情報変更確認画面 (SSNP040) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3960
 msgid "An error occurred during card information change processing."
@@ -12177,47 +12177,47 @@ msgstr "会員情報参照処理でエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:3969
 msgid "The end user canceled on the member purchase authentication assist screen (SSNP080)."
-msgstr "エンドユーザが会員購入認証アシスト画面（SSNP080）でキャンセルしました。"
+msgstr "エンドユーザが会員購入認証アシスト画面 (SSNP080) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3972
 msgid "The end user canceled on the member purchase card information confirmation screen (SSNP090)."
-msgstr "エンドユーザが会員購入カード情報確認画面（SSNP090）でキャンセルしました。"
+msgstr "エンドユーザが会員購入カード情報確認画面 (SSNP090) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3975
 msgid "The end user canceled on the member purchase card information input screen (SSNP100)."
-msgstr "エンドユーザが会員購入カード情報入力画面（SSNP100）でキャンセルしました。"
+msgstr "エンドユーザが会員購入カード情報入力画面 (SSNP100) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3978
 msgid "The end user canceled on the member purchase card information confirmation screen (SSNP110)."
-msgstr "エンドユーザが会員購入カード情報確認画面（SSNP110）でキャンセルしました。"
+msgstr "エンドユーザが会員購入カード情報確認画面 (SSNP110) で CANCEL しました。"
 
 #: classes/paymentESCOTT.main.class.php:3981
 msgid "An error occurred during authorization processing (member purchase)."
-msgstr "与信処理（会員購入）でエラーが発生しました。"
+msgstr "与信処理 (会員購入) でエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:3984
 msgid "An error occurred during authorization processing (member purchase using \"Purchase with another card\")."
-msgstr "与信処理（会員購入にて「他のカードで購入」を使用）でエラーが発生しました。"
+msgstr "与信処理 (会員購入にて「他のカードで購入」を使用) でエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:3987
 msgid "A retry-limit-exceeded error occurred during authorization processing (member)."
-msgstr "与信処理（会員）でリトライ回数オーバエラーが発生しました。"
+msgstr "与信処理 (会員) でリトライ回数オーバエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:3990
 msgid "The end user canceled on the non-member purchase card information input screen (SSNP120)."
-msgstr "エンドユーザが非会員購入カード情報入力画面（SSNP120）でキャンセルしました。"
+msgstr "エンドユーザが非会員購入カード情報入力画面 (SSNP120) で CANCELしました。"
 
 #: classes/paymentESCOTT.main.class.php:3993
 msgid "The end user canceled on the non-member purchase card information confirmation screen (SSNP130)."
-msgstr "エンドユーザが非会員購入カード情報確認画面（SSNP130）でキャンセルしました。"
+msgstr "エンドユーザが非会員購入カード情報確認画面 (SSNP130) で CANCELしました。"
 
 #: classes/paymentESCOTT.main.class.php:3996
 msgid "An error occurred during authorization processing (non-member)."
-msgstr "与信処理（非会員）でエラーが発生しました。"
+msgstr "与信処理 (非会員) でエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:3999
 msgid "A retry-limit-exceeded error occurred during authorization processing (non-member)."
-msgstr "与信処理（非会員）でリトライ回数オーバエラーが発生しました。"
+msgstr "与信処理 (非会員) でリトライ回数オーバエラーが発生しました。"
 
 #: classes/paymentESCOTT.main.class.php:4002
 msgid "A session timeout occurred."

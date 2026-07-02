@@ -97,12 +97,24 @@ class dataList
         $this->searchSql = (isset($this->data_cookie['searchSql'])) ? $this->data_cookie['searchSql'] :'';
         $this->searchSwitchStatus = (isset($this->data_cookie['searchSwitchStatus'])) ? $this->data_cookie['searchSwitchStatus'] :'OFF';
         if (isset($this->data_cookie['arr_search'])) {
-            $this->arr_search = $this->data_cookie['arr_search'];
+			$this->arr_search = wp_parse_args(
+				$this->data_cookie['arr_search'],
+				array(
+					'period' => '3',
+					'column' => '',
+					'word'   => '',
+				)
+			);
         } else {
             $this->arr_search = array('period'=>'3', 'column'=>'', 'word'=>'');
         }
         if (isset($this->data_cookie['sortSwitchs'])) {
             $this->sortSwitchs = $this->data_cookie['sortSwitchs'];
+			foreach ( $this->columns as $key => $value ) {
+				if ( ! isset( $this->sortSwitchs[ $value ] ) ) {
+					$this->sortSwitchs[ $value ] = 'DESC';
+				}
+			}
         } else {
             foreach($this->columns as $key => $value ){
                 $this->sortSwitchs[$value] = 'DESC';

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.11.30
+Stable tag: 2.11.31
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,14 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 3. Top page (Free official theme 'Welcart Basic')
 
 == Changelog ==
+
+2 Jul 2026
+= V2.11.31 =
+-----------
+* [e-SCOTT / WelcartPay] Fixed a bug that caused an error with the product name in online payment collection transactions.
+* Fixed a bug in the filtering of the "Order List CSV" and "Order Details List CSV" exported from the legacy order list.
+* Fixed translation file issues.
+* Fixed PHP errors.
 
 30 Jun 2026
 = V2.11.30 =

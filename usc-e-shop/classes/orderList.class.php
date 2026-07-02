@@ -263,6 +263,11 @@ class dataList {
 		}
 		if ( isset( $this->data_cookie['sortSwitchs'] ) ) {
 			$this->sortSwitchs = $this->data_cookie['sortSwitchs'];
+			foreach ( $this->columns as $key => $value ) {
+				if ( ! isset( $this->sortSwitchs[ $value ] ) ) {
+					$this->sortSwitchs[ $value ] = 'DESC';
+				}
+			}
 		} else {
 			foreach ( $this->columns as $key => $value ) {
 				$this->sortSwitchs[ $value ] = 'DESC';
@@ -406,15 +411,15 @@ class dataList {
 	 */
 	public function validationSearchParameters() {
 		$default_sku_columns = [ 'item_code', 'item_name' ];
-		if ( 'none' != $this->arr_search['column'] && ! in_array( $this->arr_search['column'], $this->columns ) ) {
-			if ( is_array( $this->arr_search['word'] ) && count( $this->arr_search['word'] ) && in_array( $key = key( $this->arr_search['word'] ), $this->columns ) ) {
+		if ( ! empty( $this->arr_search['column'] ) && 'none' != $this->arr_search['column'] && ! in_array( $this->arr_search['column'], $this->columns ) ) {
+			if ( ! empty( $this->arr_search['word'] ) && is_array( $this->arr_search['word'] ) && count( $this->arr_search['word'] ) && in_array( $key = key( $this->arr_search['word'] ), $this->columns ) ) {
 				$this->arr_search['column'] = $key;
 			} else {
 				$this->arr_search['column'] = 'none';
 			}
 		}
-		if ( 'none' != $this->arr_search['sku'] && ! in_array( $this->arr_search['sku'], $default_sku_columns ) ) {
-			if ( is_array( $this->arr_search['skuword'] ) && count( $this->arr_search['skuword'] ) && in_array( $key = key( $this->arr_search['skuword'] ), $default_sku_columns ) ) {
+		if ( ! empty( $this->arr_search['sku'] ) && 'none' != $this->arr_search['sku'] && ! in_array( $this->arr_search['sku'], $default_sku_columns ) ) {
+			if ( ! empty( $this->arr_search['skuword'] ) && is_array( $this->arr_search['skuword'] ) && count( $this->arr_search['skuword'] ) && in_array( $key = key( $this->arr_search['skuword'] ), $default_sku_columns ) ) {
 				$this->arr_search['sku'] = $key;
 			} else {
 				$this->arr_search['sku'] = 'none';

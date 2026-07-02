@@ -405,7 +405,10 @@ $data_cookie['enddate']            = $DT->enddate;
 			method: 'post'
 		});
 		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
-		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[sku]', value: $(':input[name="search[sku]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]['+$("#searchselect").val()+']', value: $(':input[name="search[word]['+$("#searchselect").val()+']"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[skuword]['+$("#searchselectsku").val()+']', value: $(':input[name="search[skuword]['+$("#searchselectsku").val()+']"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[period]', value: $(':input[name="search[period]"]').val() }));
 		form.append($('<input>', { type: 'hidden', name: 'searchSwitchStatus', value: $(':input[name="searchSwitchStatus"]').val() }));
 		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
 		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));
@@ -452,7 +455,10 @@ $data_cookie['enddate']            = $DT->enddate;
 			method: 'post'
 		});
 		form.append($('<input>', { type: 'hidden', name: 'search[column]', value: $(':input[name="search[column]"]').val() }));
-		form.append($('<input>', { type: 'hidden', name: 'search[word]', value: $(':input[name="search[word]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[sku]', value: $(':input[name="search[sku]"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[word]['+$("#searchselect").val()+']', value: $(':input[name="search[word]['+$("#searchselect").val()+']"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[skuword]['+$("#searchselectsku").val()+']', value: $(':input[name="search[skuword]['+$("#searchselectsku").val()+']"]').val() }));
+		form.append($('<input>', { type: 'hidden', name: 'search[period]', value: $(':input[name="search[period]"]').val() }));
 		form.append($('<input>', { type: 'hidden', name: 'searchSwitchStatus', value: $(':input[name="searchSwitchStatus"]').val() }));
 		form.append($('<input>', { type: 'hidden', name: 'ftype', value: 'csv' }));
 		form.append($('<input>', { type: 'hidden', name: 'wc_nonce', value: $("#wc_nonce").val() }));

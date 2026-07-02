@@ -155,14 +155,14 @@ class WlcOrderList {
 		}
 
 		$arr_column['receipt_status']   = __( 'transfer statement', 'usces' );
-		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['getpoint']         = __( 'granted points', 'usces' );
 		$arr_column['usedpoint']        = __( 'Used points', 'usces' );
-		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['discount']         = __( 'Discount', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['tax']              = __( 'Tax', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['deli_method']      = __( 'shipping option', 'usces' );
 		$arr_column['deli_name']        = __( 'Destination name', 'usces' );
 		$arr_column['deli_time']        = __( 'delivery time', 'usces' );
@@ -240,14 +240,14 @@ class WlcOrderList {
 		$arr_column['payment_name']     = __( 'payment method', 'usces' );
 		$arr_column['wc_trans_id']      = __( 'Transaction ID', 'usces' );
 		$arr_column['receipt_status']   = __( 'transfer statement', 'usces' );
-		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['item_total_price'] = __( 'total items', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['getpoint']         = __( 'granted points', 'usces' );
 		$arr_column['usedpoint']        = __( 'Used points', 'usces' );
-		$arr_column['discount']         = __( 'Discount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['tax']              = __( 'Tax', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
-		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '( ' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['discount']         = __( 'Discount', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['shipping_charge']  = __( 'Shipping', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['cod_fee']          = __( 'Fee', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['tax']              = __( 'Tax', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
+		$arr_column['total_price']      = __( 'Total Amount', 'usces' ) . '(' . __( usces_crcode( 'return' ), 'usces' ) . ')';
 		$arr_column['deli_method']      = __( 'shipping option', 'usces' );
 		$arr_column['deli_name']        = __( 'Destination name', 'usces' );
 		$arr_column['deli_time']        = __( 'delivery time', 'usces' );
