@@ -151,13 +151,13 @@ class REMISE_SETTLEMENT {
 			'label' => 'd払い',
 		),
 		'M611' => array(
-			'label' => 'auかんたん決済',
+			'label' => 'au PAY',
 		),
 		'M612' => array(
-			'label' => 'auかんたん決済',
+			'label' => 'au PAY',
 		),
 		'M613' => array(
-			'label' => 'auかんたん決済',
+			'label' => 'au PAY',
 		),
 		'M621' => array(
 			'label' => 'ソフトバンクまとめて支払い',

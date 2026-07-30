@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.11.31
+Stable tag: 2.11.32
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,15 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
+30 Jul 2026
+= V2.11.32 =
+-----------
+* Security enhancement (Cross-Site Scripting).
+* Security enhancement (SQL Injection).
+* Added an action hook that fires when a member login attempt fails.
+* Fixed the width of the quantity field on the order data editing page.
+* Fixed PHP errors.
+
 2 Jul 2026
 = V2.11.31 =
 -----------
@@ -86,40 +95,5 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 * Changed the order list and member list downloads in the admin screen to allow selective export.
 * Fixed translation file issues.
 * Fixed PHP errors.
-
-3 Jun 2026
-= V2.11.29 =
------------
-* Security enhancement (Broken Access Control).
-* [PayPal] Fixed subsequent processing after payment error in automatic recurring billing.
-* Fixed a bug where radio buttons and checkboxes were not displayed in button_to_cart.
-* Readme file optimization.
-* Fixed PHP errors.
-
-1 Apr 2026
-= V2.11.28 =
------------
-* [PayPal] Removed unnecessary IPN settings.
-* [PayPal] Fixed a bug that an error status was not displayed on the order list when a capture error occurred.
-* Fixed the style of the "Close" button on the mail sending dialog.
-* Added an index to the usces_order table.
-* Fixed the deprecated widget class declaration.
-* Fixed PHP errors.
-
-21 Jan 2026
-= V2.11.27 =
------------
-* Made compatible with PHP 8.3.
-* [WelcartPay] Fixed a bug that error messages for credit card updates were not displayed on the My Page when using 3DS.
-* Fixed a bug that members using recurring payments could cancel their membership from the My Page.
-* [Security Enhancement] Improved security.
-
-16 Dec 2025
-= V2.11.26 =
------------
-* Fixed a bug that the quantity could not be updated on the cart page when the SKU code contained specific symbols.
-* Fixed a bug that an error occurred when attempting to use points for shipping payment when purchasing a 0 yen item.
-* Fixed a bug that error messages were not displayed correctly after the "usces_filter_incart_check" filter hook.
-* Changed the payment service provider company name.
 
 For older versions, please see the [Changelog Archive (Japanese)](https://www.welcart.com/about/changelog/).

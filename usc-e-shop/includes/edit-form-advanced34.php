@@ -102,7 +102,10 @@ global $screen_layout_columns;
 
 <form name="post" action="" method="post" id="post">
 <?php
+$wel_item        = new Welcart\ItemData();
+$item_format     = $wel_item->get_item_format();
 $product         = wel_get_product( $post_ID, false );
+$product         = array_merge( $item_format, is_array( $product ) ? $product : array() );
 $itemCode        = $product['itemCode'];
 $itemName        = $product['itemName'];
 $itemRestriction = $product['itemRestriction'];
@@ -277,7 +280,7 @@ echo $second_section; // no escape due to filter.
 	<div id="postskucustomstuff" class="skustuff">
 	<?php
 	//$skus = $usces->get_skus($post_ID);
-	$skus = $product['_sku'];
+	$skus = isset( $product['_sku'] ) ? $product['_sku'] : array();
 	list_item_sku_meta( $skus );
 	item_sku_meta_form();
 	?>
@@ -291,7 +294,7 @@ echo $second_section; // no escape due to filter.
 <div id="postoptcustomstuff"><div id="optajax-response"></div>
 <?php
 //$opts = usces_get_opts($post_ID);
-$opts = $product['_opt'];
+$opts = isset( $product['_opt'] ) ? $product['_opt'] : array();
 list_item_option_meta( $opts );
 item_option_meta_form();
 ?>

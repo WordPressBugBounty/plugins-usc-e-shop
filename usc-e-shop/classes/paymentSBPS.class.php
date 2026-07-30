@@ -1428,7 +1428,7 @@ jQuery( document ).ready( function( $ ) {
 				</td>
 			</tr>
 			<tr>
-				<th>au かんたん決済</th>
+				<th>au PAY</th>
 				<td><label><input name="mobile_auone" type="radio" id="mobile_auone_sbps_1" value="on"<?php checked( $acting_opts['mobile_auone'], 'on' ); ?> /><span><?php esc_html_e( 'Use', 'usces' ); ?></span></label><br />
 					<label><input name="mobile_auone" type="radio" id="mobile_auone_sbps_2" value="off"<?php checked( $acting_opts['mobile_auone'], 'off' ); ?> /><span><?php esc_html_e( 'Do not Use', 'usces' ); ?></span></label>
 				</td>

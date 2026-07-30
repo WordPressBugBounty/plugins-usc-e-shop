@@ -996,8 +996,11 @@ function usces_define_functions() {
 								}
 							}
 							$meta_key_table = apply_filters( 'usces_filter_uploadcsv_delete_postmeta', $meta_key_table );
-							$query          = $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key IN ( %s ) AND post_id = %d", implode( "','", $meta_key_table ), $post_id );
-							$query          = stripslashes( $query );
+							$meta_key_table = array_values( $meta_key_table );
+							$placeholders   = implode( ', ', array_fill( 0, count( $meta_key_table ), '%s' ) );
+							$prepare_args   = $meta_key_table;
+							$prepare_args[] = $post_id;
+							$query          = $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key IN ( {$placeholders} ) AND post_id = %d", $prepare_args );
 							$db_res         = $wpdb->query( $query );
 							if ( false === $db_res ) {
 								++$err_num;

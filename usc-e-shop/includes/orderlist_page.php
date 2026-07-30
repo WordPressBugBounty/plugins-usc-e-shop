@@ -491,7 +491,7 @@ foreach ( (array) $rows as $data ) :
 				$deliname       = $deliinfo['name1'] . $deliinfo['name2'];
 				$deliname_class = apply_filters( 'usces_filter_orderlist_deliname_class', '', $deliinfo, $deliname );
 				if ( $deliname ) {
-					$detail = '<td' . $deliname_class . '>' . esc_html( $deliinfo['name1'] . $deliinfo['name2'] ) . '( ' . $deliinfo['pref'] . ')</td>';
+					$detail = '<td' . $deliname_class . '>' . esc_html( $deliinfo['name1'] . $deliinfo['name2'] ) . '( ' . esc_html( $deliinfo['pref'] ) . ')</td>';
 				} elseif ( isset( $deliinfo['delivery_flag'] ) && 2 == $deliinfo['delivery_flag'] ) {
 					$detail = '<td' . $deliname_class . '>' . esc_html( __( 'Multiple destinations', 'usces' ) ) . '</td>';
 				} else {

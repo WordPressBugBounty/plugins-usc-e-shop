@@ -1029,7 +1029,11 @@ function usces_the_lastZaiko( $out = '', $post = null ) {
  */
 function usces_have_zaiko() {
 	global $post, $usces;
-	return $usces->is_item_zaiko( $post->ID, $usces->itemsku['code'] );
+
+	$post_id  = isset( $post->ID ) ? $post->ID : 0;
+	$sku_code = isset( $usces->itemsku['code'] ) ? $usces->itemsku['code'] : '';
+
+	return $usces->is_item_zaiko( $post_id, $sku_code );
 }
 
 /**

@@ -154,7 +154,7 @@ function usces_action_ogp_meta() {
 	$ogs = apply_filters( 'usces_filter_ogp_meta', $ogs, $post->ID );
 
 	foreach ( $ogs as $key => $value ) {
-		echo "\n" . '<meta property="og:' . $key . '" content="' . $value . '">';
+		echo "\n" . '<meta property="og:' . esc_attr( $key ) . '" content="' . ( ( 'url' === $key || 'image' === $key ) ? esc_url( $value ) : esc_attr( $value ) ) . '">';
 	}
 }
 

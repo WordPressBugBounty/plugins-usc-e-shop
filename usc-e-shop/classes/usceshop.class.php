@@ -4841,12 +4841,14 @@ class usc_e_shop {
 				$cookie['rme']  = '';
 				$this->set_cookie( $cookie );
 				$rateLimiter->saveLoginFailed();
+				do_action( 'usces_action_member_login_failed', '', 'auto_login' );
 				return 'login';
 			} else {
 				$query  = $wpdb->prepare( "SELECT * FROM $member_table WHERE ID = %s", $id );
 				$member = $wpdb->get_row( $query, ARRAY_A );
 				if ( empty( $member ) ) {
 					$rateLimiter->saveLoginFailed();
+					do_action( 'usces_action_member_login_failed', '', 'auto_login' );
 					$this->error_message = __( '<b>Error:</b> Your E-mail or password is incorrect.', 'usces' );
 					return 'login';
 				} else {
@@ -4881,14 +4883,17 @@ class usc_e_shop {
 			}
 		} elseif ( isset( $_POST['loginmail'] ) && WCUtils::is_blank( $_POST['loginmail'] ) && isset( $_POST['loginpass'] ) && WCUtils::is_blank( $_POST['loginpass'] ) && isset( $cookie['rme'] ) && 'forever' != $cookie['rme'] ) {
 			$rateLimiter->saveLoginFailed();
+			do_action( 'usces_action_member_login_failed', '', 'empty_credentials' );
 			return 'login';
 		} elseif ( isset( $_POST['loginmail'] ) && WCUtils::is_blank( $_POST['loginpass'] ) && isset( $cookie['rme'] ) && 'forever' != $cookie['rme'] ) {
 			$rateLimiter->saveLoginFailed();
+			do_action( 'usces_action_member_login_failed', trim( $_POST['loginmail'] ), 'empty_password' );
 			$this->error_message = __( '<b>Error:</b> Enter the password.', 'usces' );
 			return 'login';
 		} elseif ( ! isset( $_POST['loginmail'] ) ) {
 			if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 				$rateLimiter->saveLoginFailed();
+				do_action( 'usces_action_member_login_failed', '', 'no_login_id' );
 			}
 			return 'login';
 		} else {
@@ -4901,6 +4906,7 @@ class usc_e_shop {
 				$noncekey = 'post_member' . $this->get_uscesid( false );
 				if ( ! wp_verify_nonce( $nonce, $noncekey ) && ! $this->is_member_logged_in() ) {
 					$rateLimiter->saveLoginFailed();
+					do_action( 'usces_action_member_login_failed', trim( $_POST['loginmail'] ), 'invalid_nonce' );
 					die( 'Security check4' );
 				}
 			}
@@ -4917,6 +4923,7 @@ class usc_e_shop {
 
 			if ( empty( $member ) ) {
 				$rateLimiter->saveLoginFailed();
+				do_action( 'usces_action_member_login_failed', $email, 'invalid_credentials' );
 				$this->current_member['email'] = htmlspecialchars( $email, ENT_COMPAT );
 				$this->error_message           = __( '<b>Error:</b> Your E-mail or password is incorrect.', 'usces' );
 				return 'login';
@@ -4929,6 +4936,7 @@ class usc_e_shop {
 				}
 				if ( ! empty( $verify_flag ) ) {
 					$rateLimiter->saveLoginFailed();
+					do_action( 'usces_action_member_login_failed', $email, 'unverified_email' );
 					$this->error_message = __( '<b>Error:</b> Membership registration is not complete.', 'usces' );
 					return 'login';
 				}
@@ -5330,7 +5338,7 @@ class usc_e_shop {
 		$stock               = $this->getItemZaikoNum( $post_id, $sku );
 		$zaiko_id            = (int) $this->getItemZaikoStatusId( $post_id, $sku );
 		$product             = wel_get_product( $post_id );
-		$itemRestriction     = $product['itemRestriction'];
+		$itemRestriction     = isset( $product['itemRestriction'] ) ? $product['itemRestriction'] : '';
 		$itemOrderAcceptable = $this->getItemOrderAcceptable( $post_id );
 
 		if ( 1 > $quant ) {
@@ -5447,7 +5455,7 @@ class usc_e_shop {
 			$checkstock                 = $stocks[ $post_id ][ $sku ];
 			$stocks[ $post_id ][ $sku ] = $stocks[ $post_id ][ $sku ] - $quant;
 			$product                    = wel_get_product( $post_id );
-			$itemRestriction            = $product['itemRestriction'];
+			$itemRestriction            = isset( $product['itemRestriction'] ) ? $product['itemRestriction'] : '';
 			$itemOrderAcceptable        = $this->getItemOrderAcceptable( $post_id );
 			$post_status                = get_post_status( $post_id );
 
