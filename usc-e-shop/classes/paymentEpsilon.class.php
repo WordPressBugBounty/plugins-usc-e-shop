@@ -13,6 +13,20 @@
 class EPSILON_SETTLEMENT {
 
 	/**
+	 * 決済結果通知の送信元IP許可リスト（本番環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_PUBLIC = array( '210.254.37.215' );
+
+	/**
+	 * 決済結果通知の送信元IP許可リスト（テスト環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_TEST = array( '210.254.37.214' );
+
+	/**
 	 * Instance of this class.
 	 *
 	 * @var object
@@ -584,6 +598,34 @@ class EPSILON_SETTLEMENT {
 	}
 
 	/**
+	 * 決済結果通知の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 * ブラウザ戻りを伴う結果戻りでは呼び出さない
+	 *
+	 * @param  array $data Notification data.
+	 * @return void
+	 */
+	private function acting_notice_ip_guard( $data ) {
+		$acting_opts = $this->get_acting_settings();
+		$allowed_ips = ( isset( $acting_opts['ope'] ) && 'public' === $acting_opts['ope'] ) ? self::ACTING_NOTICE_IPADDRS_PUBLIC : self::ACTING_NOTICE_IPADDRS_TEST;
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, $allowed_ips ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => 'epsilon_conv',
+			'key'    => ( isset( $data['order_number'] ) ) ? $data['order_number'] : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => $data,
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( 'epsilon notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		exit( '0 999 ERROR0' );
+	}
+
+	/**
 	 * 結果通知処理
 	 * usces_after_cart_instant
 	 */
@@ -611,6 +653,7 @@ class EPSILON_SETTLEMENT {
 			foreach ( $_POST as $key => $value ) {
 				$post_data[ $key ] = mb_convert_encoding( wp_unslash( $value ), 'UTF-8', 'SJIS' );
 			}
+			$this->acting_notice_ip_guard( $post_data );
 
 			if ( '1' === $post_data['paid'] ) {
 				$order_id = $this->get_order_id( $post_data['order_number'] );

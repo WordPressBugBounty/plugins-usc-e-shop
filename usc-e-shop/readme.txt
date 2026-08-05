@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.11.32
+Stable tag: 2.11.33
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,12 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 3. Top page (Free official theme 'Welcart Basic')
 
 == Changelog ==
+
+5 Aug 2026
+= V2.11.33 =
+-----------
+* Security enhancement (Cross-Site Scripting). Follow-up to V2.11.32.
+* Security enhancement (Payment Notification Spoofing).
 
 30 Jul 2026
 = V2.11.32 =

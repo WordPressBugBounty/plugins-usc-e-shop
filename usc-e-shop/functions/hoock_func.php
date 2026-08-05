@@ -91,6 +91,44 @@ function usces_action_acting_construct() {
 }
 
 /**
+ * 決済結果通知の送信元IPが許可リストに含まれるか判定する。
+ *
+ * @param  string       $remote_addr Source IP address of the notification.
+ * @param  array|string $allowed     Allowed IP addresses / CIDR ranges.
+ * @return bool True when the source IP is allowed.
+ */
+function usces_acting_notice_ip_allowed( $remote_addr, $allowed ) {
+	if ( empty( $remote_addr ) || empty( $allowed ) ) {
+		return false;
+	}
+	$remote_long = ip2long( $remote_addr );
+	if ( false === $remote_long ) {
+		return false;
+	}
+	foreach ( (array) $allowed as $entry ) {
+		$entry = trim( (string) $entry );
+		if ( '' === $entry ) {
+			continue;
+		}
+		if ( false !== strpos( $entry, '/' ) ) {
+			list( $subnet, $bits ) = explode( '/', $entry, 2 );
+			$subnet_long           = ip2long( $subnet );
+			$bits                  = (int) $bits;
+			if ( false === $subnet_long || $bits < 1 || 32 < $bits ) {
+				continue;
+			}
+			$mask = ( 0xFFFFFFFF << ( 32 - $bits ) ) & 0xFFFFFFFF;
+			if ( ( $remote_long & $mask ) === ( $subnet_long & $mask ) ) {
+				return true;
+			}
+		} elseif ( ip2long( $entry ) === $remote_long ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
  * Settlement Result Notification Processing.
  * usces_after_cart_instant
  */
@@ -190,6 +228,7 @@ function usces_action_acting_transaction() {
 		foreach ( $_POST as $key => $value ) {
 			$data[ $key ] = mb_convert_encoding( $value, 'UTF-8', 'SJIS' );
 		}
+		REMISE_SETTLEMENT::get_instance()->acting_notice_ip_guard( $data );
 
 		$table_name      = $wpdb->prefix . 'usces_order';
 		$table_meta_name = $wpdb->prefix . 'usces_order_meta';
@@ -251,6 +290,7 @@ function usces_action_acting_transaction() {
 				break;
 
 			case 'CPL': /* 入金確定 */
+				JPAYMENT_SETTLEMENT::get_instance()->acting_notice_ip_guard();
 				$acting = wp_unslash( $_REQUEST['acting'] );
 				$data   = array();
 				foreach ( $_GET as $key => $value ) {
@@ -271,7 +311,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error1' );
 				}
 
@@ -284,7 +324,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error2' );
 				}
 
@@ -297,7 +337,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error3' );
 				}
 
@@ -308,6 +348,7 @@ function usces_action_acting_transaction() {
 				break;
 
 			case 'CVS_CAN': /* 入金取消 */
+				JPAYMENT_SETTLEMENT::get_instance()->acting_notice_ip_guard();
 				$acting = wp_unslash( $_REQUEST['acting'] );
 				$data   = array();
 				foreach ( $_GET as $key => $value ) {
@@ -328,7 +369,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error1' );
 				}
 
@@ -341,7 +382,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error2' );
 				}
 
@@ -354,7 +395,7 @@ function usces_action_acting_transaction() {
 						'data'   => $data,
 					);
 					usces_save_order_acting_error( $log );
-					usces_log( 'jpayment conv error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
+					usces_log( 'ROBOT PAYMENT conv error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
 					die( 'error3' );
 				}
 
@@ -372,6 +413,7 @@ function usces_action_acting_transaction() {
 				break;
 
 			case 'BAN_SAL': /* 入金完了 */
+				JPAYMENT_SETTLEMENT::get_instance()->acting_notice_ip_guard();
 				if ( isset( $_GET['mf'] ) && '1' == wp_unslash( $_GET['mf'] ) ) { /* 入金マッチングの場合 */
 					$acting = wp_unslash( $_REQUEST['acting'] );
 					$data   = array();
@@ -393,7 +435,7 @@ function usces_action_acting_transaction() {
 							'data'   => $data,
 						);
 						usces_save_order_acting_error( $log );
-						usces_log( 'jpayment bank error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						usces_log( 'ROBOT PAYMENT bank error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'error1' );
 					}
 
@@ -406,7 +448,7 @@ function usces_action_acting_transaction() {
 							'data'   => $data,
 						);
 						usces_save_order_acting_error( $log );
-						usces_log( 'jpayment bank error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						usces_log( 'ROBOT PAYMENT bank error2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'error2' );
 					}
 
@@ -419,7 +461,7 @@ function usces_action_acting_transaction() {
 							'data'   => $data,
 						);
 						usces_save_order_acting_error( $log );
-						usces_log( 'jpayment bank error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
+						usces_log( 'ROBOT PAYMENT bank error3 : ' . print_r( $data, true ), 'acting_transaction.log' );
 						die( 'error3' );
 					}
 
@@ -454,70 +496,6 @@ function usces_action_acting_transaction() {
 			usces_log( 'PayPal IPN transaction : ' . wp_unslash( $_REQUEST['txn_id'] ), 'acting_transaction.log' );
 		}
 		die( 'PayPal' );
-
-		/* PayPal ipn (WPP) */
-	} elseif ( isset( $_REQUEST['ipn_track_id'] ) ) {
-		$data = array();
-		foreach ( $_REQUEST as $key => $value ) {
-			$data[ $key ] = $value;
-		}
-		usces_log( 'paypal ipn : ' . print_r( $data, true ), 'acting_transaction.log' );
-
-		/* PayPal Webpayment Plus */
-		if ( isset( $_POST['txn_type'] ) && 'pro_hosted' == wp_unslash( $_POST['txn_type'] ) ) {
-			$acting_opts = $usces->options['acting_settings']['paypal_wpp'];
-			$key         = isset( $_POST['custom'] ) ? wp_unslash( $_POST['custom'] ) : '';
-			usces_log( serialize( $data ), 'db', 'paypal_ipn', $key );
-			$ipn_res = usces_paypal_ipn_check( $acting_opts['host_url'] );
-			if ( true === $ipn_res[0] ) {
-				$order_id = $ipn_res['order_id'];
-				usces_restore_order_acting_data( $order_id );
-				$res = $usces->order_processing();
-				if ( 'ordercompletion' == $res ) {
-					usces_log( 'PayPal Webpayment Plus : Payment confirmation', 'acting_transaction.log' );
-					$usces->cart->crear_cart();
-				} else {
-					$log = array(
-						'acting' => 'paypal_wpp',
-						'key'    => $key,
-						'result' => 'ORDER DATA REGISTERED ERROR',
-						'data'   => wp_unslash( $_POST ),
-					);
-					usces_save_order_acting_error( $log );
-					usces_log( 'PayPal Webpayment Plus : Error', 'acting_transaction.log' );
-				}
-			} else {
-				$log = array(
-					'acting' => 'paypal_wpp',
-					'key'    => $key,
-					'result' => 'PAYPAL IPN CHECK ERROR',
-					'data'   => $ipn_res,
-				);
-				usces_save_order_acting_error( $log );
-			}
-			exit;
-
-		} else {
-			$table_name      = $wpdb->prefix . 'usces_order';
-			$table_meta_name = $wpdb->prefix . 'usces_order_meta';
-			if ( isset( $_REQUEST['txn_id'] ) || isset( $_REQUEST['recurring_payment_id'] ) ) {
-				if ( ( isset( $_REQUEST['payment_status'] ) && 'Completed' == wp_unslash( $_REQUEST['payment_status'] ) ) ||
-					( isset( $_REQUEST['profile_status'] ) && 'Active' == wp_unslash( $_REQUEST['profile_status'] ) ) ) {
-					$settlement_id = ( isset( $_REQUEST['recurring_payment_id'] ) ) ? wp_unslash( $_REQUEST['recurring_payment_id'] ) : wp_unslash( $_REQUEST['txn_id'] );
-					$query         = $wpdb->prepare( "SELECT ID, order_status FROM $table_name INNER JOIN $table_meta_name ON ID = order_id WHERE meta_key = %s AND meta_value = %s", 'settlement_id', $settlement_id );
-					$order_data    = $wpdb->get_row( $query, ARRAY_A );
-					if ( $order_data ) {
-						if ( $usces->is_status( 'pending', $order_data['order_status'] ) ) {
-							$order_status = str_replace( 'pending', 'receipted', $order_data['order_status'] );
-							$query        = $wpdb->prepare( "UPDATE $table_name SET order_status = %s WHERE ID = %d", $order_status, $order_data['ID'] );
-							$res          = $wpdb->query( $query );
-						}
-						do_action( 'usces_action_paypal_ipn_status_completed', $order_data );
-					}
-				}
-			}
-			die( 'PayPal' );
-		}
 
 		/* telecom edy */
 	} elseif ( isset( $_REQUEST['clientip'] ) && isset( $_REQUEST['sendid'] ) && ( isset( $_REQUEST['acting'] ) && 'telecom_edy' == $_REQUEST['acting'] ) ) {
@@ -658,6 +636,7 @@ function usces_action_acting_transaction() {
 		$sid = ( isset( $data['SID'] ) ) ? $data['SID'] : '';
 
 		if ( isset( $data['SEQ'] ) ) {
+			DIGITALCHECK_SETTLEMENT::get_instance()->acting_notice_ip_guard( $data );
 			$table_name      = $wpdb->prefix . 'usces_order';
 			$table_meta_name = $wpdb->prefix . 'usces_order_meta';
 			$query           = $wpdb->prepare( "SELECT `order_id` FROM $table_meta_name WHERE `meta_key` = %s AND `meta_value` = %s", 'SID', $sid );
@@ -782,7 +761,7 @@ function usces_action_acting_transaction() {
 		}
 		die();
 
-		/* mizuho conv */
+		/* mizuho conv 提供対象外のため無効化。
 	} elseif ( ( isset( $_GET['p_ver'] ) && '0200' == wp_unslash( $_GET['p_ver'] ) ) && ( isset( $_GET['bkcode'] ) && ( 'cv01' == wp_unslash( $_GET['bkcode'] ) || 'cv02' == wp_unslash( $_GET['bkcode'] ) ) ) ) {
 		usces_log( 'mizuho conv : ' . print_r( $_GET, true ), 'acting_transaction.log' );
 		$stran               = ( array_key_exists( 'stran', $_REQUEST ) ) ? wp_unslash( $_REQUEST['stran'] ) : '';
@@ -793,7 +772,7 @@ function usces_action_acting_transaction() {
 		$rsltcd              = ( array_key_exists( 'rsltcd', $_REQUEST ) ) ? wp_unslash( $_REQUEST['rsltcd'] ) : '';
 		$permalink_structure = get_option( 'permalink_structure' );
 		$delim               = ( ! $usces->use_ssl && $permalink_structure ) ? '?' : '&';
-		if ( '' != $tdate ) { /* 入金通知 */
+		if ( '' != $tdate ) { // 入金通知
 			$data = array();
 			foreach ( $_REQUEST as $key => $value ) {
 				$data[ $key ] = $value;
@@ -837,9 +816,9 @@ function usces_action_acting_transaction() {
 			} else {
 				usces_log( 'mizuho conv : ' . print_r( wp_unslash( $_GET ), true ), 'acting_transaction.log' );
 			}
-		} elseif ( '108' == substr( $rsltcd, 0, 3 ) || '208' == substr( $rsltcd, 0, 3 ) || '308' == substr( $rsltcd, 0, 3 ) ) { /* キャンセル */
+		} elseif ( '108' == substr( $rsltcd, 0, 3 ) || '208' == substr( $rsltcd, 0, 3 ) || '308' == substr( $rsltcd, 0, 3 ) ) { // キャンセル
 			header( 'location: ' . USCES_CART_URL . $delim . 'confirm=1' );
-		} elseif ( '109' == substr( $rsltcd, 0, 3 ) || '209' == substr( $rsltcd, 0, 3 ) || '309' == substr( $rsltcd, 0, 3 ) ) { /* エラー */
+		} elseif ( '109' == substr( $rsltcd, 0, 3 ) || '209' == substr( $rsltcd, 0, 3 ) || '309' == substr( $rsltcd, 0, 3 ) ) { // エラー
 			$log = array(
 				'acting' => 'mizuho_conv',
 				'key'    => $stran,
@@ -853,6 +832,7 @@ function usces_action_acting_transaction() {
 			header( 'location: ' . USCES_CART_URL . $delim . 'acting=mizuho_conv&acting_return=1&stran=' . $stran . '&mbtran=' . $mbtran . '&bktrans=' . wp_unslash( $_GET['bktrans'] ) . '&tranid=' . $tranid . '&rsltcd=' . $rsltcd );
 		}
 		die();
+		*/
 
 		/* AnotherLane credit */
 	} elseif ( isset( $_REQUEST['SiteId'] ) && isset( $_REQUEST['TransactionId'] ) && isset( $_REQUEST['Result'] ) ) {

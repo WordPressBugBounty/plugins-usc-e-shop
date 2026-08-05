@@ -13,6 +13,37 @@
  * e-SCOTT Smart Main Class.
  */
 class ESCOTT_MAIN {
+
+	/**
+	 * 入金通知の送信元IP許可リスト（本番環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_PUBLIC = array(
+		'54.238.10.224',
+		'3.114.145.91',
+		'54.248.234.19',
+		/* DR */
+		'13.208.56.91',
+		'13.208.108.172',
+		'15.152.0.135',
+	);
+
+	/**
+	 * 入金通知の送信元IP許可リスト（試験環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_TEST = array(
+		'35.72.54.3',
+		'54.248.208.159',
+		'35.72.47.156',
+		/* DR */
+		'13.208.56.91',
+		'13.208.108.172',
+		'15.152.0.135',
+	);
+
 	/**
 	 * 決済代行会社ID
 	 * ex) 'escott'
@@ -2830,6 +2861,35 @@ jQuery(document).ready( function($) {
 		}
 
 		return $mes;
+	}
+
+	/**
+	 * 入金通知の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 * ブラウザ戻りを伴う結果戻り（acting_return）では呼び出さない
+	 *
+	 * @param  array $data Notification data.
+	 * @return void
+	 */
+	protected function acting_notice_ip_guard( $data ) {
+		$acting_opts = $this->get_acting_settings();
+		$allowed_ips = ( isset( $acting_opts['ope'] ) && 'public' === $acting_opts['ope'] ) ? self::ACTING_NOTICE_IPADDRS_PUBLIC : self::ACTING_NOTICE_IPADDRS_TEST;
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, $allowed_ips ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => $this->acting_conv,
+			'key'    => ( isset( $data['MerchantFree1'] ) ) ? $data['MerchantFree1'] : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => $data,
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( '[' . $this->acting_name . '] conv notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		header( 'HTTP/1.0 200 OK' );
+		die();
 	}
 
 	/**

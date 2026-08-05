@@ -15,6 +15,13 @@
  */
 class JPAYMENT_SETTLEMENT {
 	/**
+	 * 決済結果通知（キックバック）の送信元IP許可リスト
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS = array( '54.95.223.30', '54.168.57.171' );
+
+	/**
 	 * Instance of this class.
 	 *
 	 * @var object
@@ -690,6 +697,31 @@ class JPAYMENT_SETTLEMENT {
 			$form .= '</div>';
 		}
 		return $form;
+	}
+
+	/**
+	 * 決済結果通知（キックバック）の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更する通知（CPL / CVS_CAN / BAN_SAL）でのみ呼び出すこと
+	 * ブラウザ戻り（CPL_PRE / BANK）では呼び出さない
+	 *
+	 * @return void
+	 */
+	public function acting_notice_ip_guard() {
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, self::ACTING_NOTICE_IPADDRS ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => ( isset( $_REQUEST['acting'] ) ) ? wp_unslash( $_REQUEST['acting'] ) : 'jpayment',
+			'key'    => ( isset( $_GET['cod'] ) ) ? wp_unslash( $_GET['cod'] ) : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => wp_unslash( $_REQUEST ),
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( 'jpayment notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		die( 'error0' );
 	}
 
 	/**

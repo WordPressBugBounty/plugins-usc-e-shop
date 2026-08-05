@@ -69,7 +69,7 @@ if ( 1 === usces_sku_num() ) {
 } elseif ( 1 < usces_sku_num() ) {
 	usces_have_skus();
 
-	$html       .= '<h3>' . usces_the_itemName( 'return' ) . '&nbsp; (' . usces_the_itemCode( 'return' ) . ') </h3>';
+	$html       .= '<h3>' . esc_html( usces_the_itemName( 'return' ) ) . '&nbsp; (' . esc_html( usces_the_itemCode( 'return' ) ) . ') </h3>';
 	$html       .= '<div class="exp clearfix">';
 	$html       .= $content;
 	$item_custom = usces_get_item_custom( $post->ID, 'list', 'return' );
@@ -166,7 +166,7 @@ if ( usces_get_assistance_id_list( $post->ID ) ) {
 		$width  = apply_filters( 'usces_filter_assistance_item_width', 100 );
 		$height = apply_filters( 'usces_filter_assistance_item_height', 100 );
 
-		$assistance_item_title = '<h3>' . usces_the_itemCode( 'return' ) . esc_html__( 'An article concerned', 'usces' ) . '</h3>';
+		$assistance_item_title = '<h3>' . esc_html( usces_the_itemCode( 'return' ) ) . esc_html__( 'An article concerned', 'usces' ) . '</h3>';
 		$html                 .= apply_filters( 'usces_assistance_item_title', $assistance_item_title );
 		$html                 .= '<ul class="clearfix">';
 		while ( $r->have_posts() ) {
@@ -176,7 +176,7 @@ if ( usces_get_assistance_id_list( $post->ID ) ) {
 			$html .= '<li><div class="listbox clearfix">';
 			$html .= '<div class="slit"><a href="' . get_permalink() . '" rel="bookmark" title="' . esc_attr( get_the_title() ) . '">' . usces_the_itemImage( 0, $width, $height, $post, 'return' ) . '</a></div>';
 			$html .= '<div class="detail">';
-			$html .= '<h4>' . usces_the_itemName( 'return' ) . '</h4>';
+			$html .= '<h4>' . esc_html( usces_the_itemName( 'return' ) ) . '</h4>';
 			$html .= get_the_excerpt();
 			$html .= '<p>';
 			if ( usces_is_skus() ) {

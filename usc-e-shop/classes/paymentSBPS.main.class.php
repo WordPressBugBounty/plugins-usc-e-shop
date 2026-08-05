@@ -15,6 +15,20 @@
 class SBPS_MAIN {
 
 	/**
+	 * 各種通知の送信元IP許可リスト（本番環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_PUBLIC = array( '61.215.213.20' );
+
+	/**
+	 * 各種通知の送信元IP許可リスト（テスト環境・接続支援サイト）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_TEST = array( '61.215.213.47' );
+
+	/**
 	 * 決済代行会社ID
 	 *
 	 * @var string
@@ -529,6 +543,33 @@ class SBPS_MAIN {
 	}
 
 	/**
+	 * 各種通知の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 *
+	 * @param  array $data Notification data.
+	 * @return void
+	 */
+	private function acting_notice_ip_guard( $data ) {
+		$acting_opts = $this->get_acting_settings();
+		$allowed_ips = ( isset( $acting_opts['ope'] ) && 'public' === $acting_opts['ope'] ) ? self::ACTING_NOTICE_IPADDRS_PUBLIC : self::ACTING_NOTICE_IPADDRS_TEST;
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, $allowed_ips ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => $this->paymod_id,
+			'key'    => ( isset( $data['res_tracking_id'] ) ) ? $data['res_tracking_id'] : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => $data,
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( $this->acting_name . ' notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		die( 'NG,ip address error' );
+	}
+
+	/**
 	 * 結果通知処理
 	 * usces_after_cart_instant
 	 */
@@ -572,6 +613,7 @@ class SBPS_MAIN {
 					break;
 
 				case 'PY': /* 入金結果通知 */
+					$this->acting_notice_ip_guard( $data );
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
 					if ( ! $order_id ) {
 						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [PY] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );
@@ -604,6 +646,7 @@ class SBPS_MAIN {
 					break;
 
 				case 'CN': /* 期限切通知 */
+					$this->acting_notice_ip_guard( $data );
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
 					if ( ! $order_id ) {
 						// usces_log( $this->acting_name . ' ' . $data['res_pay_method'] . ' [CN] error1 : ' . print_r( $data, true ), 'acting_transaction.log' );

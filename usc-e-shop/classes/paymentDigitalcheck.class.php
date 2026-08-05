@@ -17,6 +17,13 @@
  */
 class DIGITALCHECK_SETTLEMENT {
 	/**
+	 * 決済結果通知の送信元IP許可リスト
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS = array( '27.110.52.0/27' );
+
+	/**
 	 * Instance of this class.
 	 *
 	 * @var object
@@ -764,6 +771,33 @@ class DIGITALCHECK_SETTLEMENT {
 				$name = $code;
 		}
 		return $name;
+	}
+
+	/**
+	 * 決済結果通知の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 * ブラウザ戻りを伴う結果戻りでは呼び出さない
+	 *
+	 * @param  array $data Notification data.
+	 * @return void
+	 */
+	public function acting_notice_ip_guard( $data ) {
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, self::ACTING_NOTICE_IPADDRS ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => 'digitalcheck_conv',
+			'key'    => ( isset( $data['SID'] ) ) ? $data['SID'] : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => $data,
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( 'digitalcheck notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		header( 'Content-Type: text/plain; charset=Shift_JIS' );
+		die( "9\r\n" );
 	}
 
 	/**

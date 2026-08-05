@@ -15,6 +15,13 @@
 class ZEUS_SETTLEMENT {
 
 	/**
+	 * 決済結果通知（zeus_conv / zeus_bank）の送信元IP許可リスト
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS = array( '210.164.6.67', '202.221.139.50' );
+
+	/**
 	 * Instance of this class.
 	 *
 	 * @var object
@@ -1455,7 +1462,7 @@ jQuery(document).ready(function($) {
 			$usces->action_message = __( 'Options are updated.', 'usces' );
 			if ( 'on' === $options['acting_settings']['zeus']['card_activate'] || 'on' === $options['acting_settings']['zeus']['bank_activate'] || 'on' === $options['acting_settings']['zeus']['conv_activate'] || 'on' === $options['acting_settings']['zeus']['bnpl_activate'] ) {
 				$options['acting_settings']['zeus']['activate'] = 'on';
-				$options['acting_settings']['zeus']['ipaddrs']  = array( '210.164.6.67', '202.221.139.50' );
+				$options['acting_settings']['zeus']['ipaddrs']  = self::ACTING_NOTICE_IPADDRS;
 				$toactive                                       = array();
 				if ( 'on' === $options['acting_settings']['zeus']['card_activate'] ) {
 					$options['acting_settings']['zeus']['card_url']          = 'https://linkpt.cardservice.co.jp/cgi-bin/secure.cgi';
@@ -1985,6 +1992,32 @@ jQuery(document).ready(function($) {
 	}
 
 	/**
+	 * 決済結果通知（zeus_conv / zeus_bank）の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 * ブラウザ戻りを伴う zeus_card では呼び出さない
+	 *
+	 * @return void
+	 */
+	private function acting_notice_ip_guard() {
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, self::ACTING_NOTICE_IPADDRS ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => ( isset( $_REQUEST['acting'] ) ) ? wp_unslash( $_REQUEST['acting'] ) : 'zeus',
+			'key'    => ( isset( $_REQUEST['sendpoint'] ) ) ? wp_unslash( $_REQUEST['sendpoint'] ) : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => wp_unslash( $_REQUEST ),
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( 'zeus notice denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		header( 'HTTP/1.0 200 OK' );
+		die( 'error0' );
+	}
+
+	/**
 	 * 結果通知処理
 	 * usces_after_cart_instant
 	 */
@@ -2085,6 +2118,7 @@ jQuery(document).ready(function($) {
 
 		/* zeus_bank */
 		} elseif ( isset( $_REQUEST['acting'] ) && 'zeus_bank' === $_REQUEST['acting'] && isset( $_REQUEST['order_no'] ) && isset( $_REQUEST['tracking_no'] ) ) {
+			$this->acting_notice_ip_guard();
 			foreach ( $_REQUEST as $key => $value ) {
 				if ( 'uscesid' === $key ) {
 					continue;
@@ -2167,6 +2201,7 @@ jQuery(document).ready(function($) {
 
 		/* zeus_conv */
 		} elseif ( isset( $_REQUEST['acting'] ) && 'zeus_conv' === $_REQUEST['acting'] && isset( $_REQUEST['status'] ) && isset( $_REQUEST['sendpoint'] ) && isset( $_REQUEST['clientip'] ) ) {
+			$this->acting_notice_ip_guard();
 			foreach ( $_REQUEST as $key => $value ) {
 				if ( 'uscesid' === $key ) {
 					continue;

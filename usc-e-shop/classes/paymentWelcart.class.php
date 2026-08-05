@@ -1914,6 +1914,7 @@ jQuery(document).ready( function( $ ) {
 		/* 入金通知 */
 		if ( isset( $_REQUEST['MerchantFree1'] ) && isset( $_REQUEST['MerchantId'] ) && isset( $_REQUEST['TransactionId'] ) && isset( $_REQUEST['RecvNum'] ) && isset( $_REQUEST['NyukinDate'] ) &&
 			( isset( $_REQUEST['MerchantFree2'] ) && 'acting_welcart_conv' === wp_unslash( $_REQUEST['MerchantFree2'] ) ) ) {
+			$this->acting_notice_ip_guard( wp_unslash( $_REQUEST ) );
 			$acting_opts = $this->get_acting_settings();
 			if ( $acting_opts['merchant_id'] === wp_unslash( $_REQUEST['MerchantId'] ) ) {
 				$response_data = wp_unslash( $_REQUEST );

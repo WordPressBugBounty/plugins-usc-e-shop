@@ -13,6 +13,20 @@
  */
 class REMISE_SETTLEMENT {
 	/**
+	 * 収納情報通知の送信元IP許可リスト（本番環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_PUBLIC = array( '210.160.253.128/26', '3.115.50.231', '3.113.156.98' );
+
+	/**
+	 * 収納情報通知の送信元IP許可リスト（sandbox環境）
+	 *
+	 * @var array
+	 */
+	const ACTING_NOTICE_IPADDRS_TEST = array( '183.177.132.57/29', '3.114.65.232' );
+
+	/**
 	 * Instance of this class.
 	 *
 	 * @var object
@@ -1285,6 +1299,34 @@ class REMISE_SETTLEMENT {
 				$html = '';
 		}
 		return $html;
+	}
+
+	/**
+	 * 収納情報通知の送信元IPを検証する
+	 *
+	 * 許可IP以外からのリクエストはエラーログを残して処理を終了する
+	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
+	 * ブラウザ戻りを伴う結果戻りでは呼び出さない
+	 *
+	 * @param  array $data Notification data.
+	 * @return void
+	 */
+	public function acting_notice_ip_guard( $data ) {
+		$acting_opts = $this->get_acting_settings();
+		$allowed_ips = ( isset( $acting_opts['conv_pc_ope'] ) && 'public' === $acting_opts['conv_pc_ope'] ) ? self::ACTING_NOTICE_IPADDRS_PUBLIC : self::ACTING_NOTICE_IPADDRS_TEST;
+		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+		if ( usces_acting_notice_ip_allowed( $remote_addr, $allowed_ips ) ) {
+			return;
+		}
+		$log = array(
+			'acting' => 'remise_conv',
+			'key'    => ( isset( $data['S_TORIHIKI_NO'] ) ) ? $data['S_TORIHIKI_NO'] : '',
+			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
+			'data'   => $data,
+		);
+		usces_save_order_acting_error( $log );
+		usces_log( 'remise conv denied ip : ' . $remote_addr, 'acting_transaction.log' );
+		die( 'error0' );
 	}
 
 	/**
