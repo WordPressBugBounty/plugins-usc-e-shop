@@ -1234,7 +1234,7 @@ function usces_get_item_select_option( $cat_id ) {
 		$product   = wel_get_product( $item->ID );
 		$item_name = $product['itemName'];
 		$item_code = $product['itemCode'];
-		$option   .= '<option value="' . urlencode( $item_code ) . '">' . $item_name . '(' . $item_code . ')</option>' . "\n";
+		$option   .= '<option value="' . urlencode( $item_code ) . '">' . esc_html( $item_name ) . '(' . esc_html( $item_code ) . ')</option>' . "\n";
 	}
 	return $option;
 }

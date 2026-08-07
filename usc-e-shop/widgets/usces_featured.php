@@ -59,7 +59,7 @@ class Welcart_featured extends WP_Widget {
 			<li class="featured_list<?php echo esc_attr( $class ); ?><?php echo apply_filters( 'usces_filter_featured_list_class', null, $list_index, $num ); ?>">
 			<?php
 			$list  = '<div class="thumimg"><a href="' . get_permalink( $post_id ) . '">' . usces_the_itemImage( 0, 150, 150, $post, 'return' ) . '</a></div>';
-			$list .= '<div class="thumtitle"><a href="' . get_permalink( $post_id ) . '" rel="bookmark">' . $usces->getItemName( $post_id ) . '&nbsp;(' . $usces->getItemCode( $post_id ) . ')</a></div>';
+			$list .= '<div class="thumtitle"><a href="' . get_permalink( $post_id ) . '" rel="bookmark">' . esc_html( $usces->getItemName( $post_id ) ) . '&nbsp;(' . esc_html( $usces->getItemCode( $post_id ) ) . ')</a></div>';
 			echo apply_filters( 'usces_filter_featured_widget', $list, $post, $list_index, $instance );
 			?>
 			</li>

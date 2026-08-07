@@ -2494,7 +2494,7 @@ function usces_trackPageview_ordercompletion( $push ) {
 		if ( $total_price < 0 ) {
 			$total_price = 0;
 		}
-		$push[]     = "'_addTrans', '" . $order_id . "', '" . html_entity_decode( get_option( 'blogname' ) ) . "', '" . $total_price . "', '" . $data['order_tax'] . "', '" . $data['order_shipping_charge'] . "', '" . $data['order_address1'].$data['order_address2'] . "', '" . $data['order_pref'] . "', '" . get_locale() . "'";
+		$push[]     = "'_addTrans', '" . $order_id . "', '" . esc_js( get_option( 'blogname' ) ) . "', '" . $total_price . "', '" . $data['order_tax'] . "', '" . $data['order_shipping_charge'] . "', '" . esc_js( $data['order_address1'] . $data['order_address2'] ) . "', '" . esc_js( $data['order_pref'] ) . "', '" . get_locale() . "'";
 		$cart_count = ( $cart && is_array( $cart ) ) ? count( $cart ) : 0;
 		for ( $i = 0; $i < $cart_count; $i++ ) {
 			$cart_row = $cart[ $i ];
@@ -2508,7 +2508,7 @@ function usces_trackPageview_ordercompletion( $push ) {
 				sort( $cats );
 			}
 			$category = ( isset( $cats[0] ) ) ? get_cat_name( $cats[0] ) : '';
-			$push[]   = "'_addItem', '" . $order_id . "', '" . $sku . "', '" . $itemName . "', '" . $category . "', '" . $skuPrice . "', '" . $quantity . "'";
+			$push[]   = "'_addItem', '" . $order_id . "', '" . esc_js( $sku ) . "', '" . esc_js( $itemName ) . "', '" . esc_js( $category ) . "', '" . $skuPrice . "', '" . $quantity . "'";
 		}
 		$push[] = "'_trackTrans'";
 	}
@@ -5605,7 +5605,7 @@ function usces_filter_content_wp_editor_preview() {
 		case 'preview_email_order_detail':
 			$content        = isset( $_POST['content'] ) ? $_POST['content'] : '';
 			$res['status']  = true;
-			$res['content'] = wpautop( $content );
+			$res['content'] = wpautop( wp_kses_post( $content ) );
 			break;
 	}
 	wp_send_json( $res );

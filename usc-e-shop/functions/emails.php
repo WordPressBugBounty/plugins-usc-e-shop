@@ -368,7 +368,7 @@ function usces_get_thanksmail_htmlbody( $args ) {
 		$sku                 = urldecode( $cart_row['sku'] );
 		$quantity            = $cart_row['quantity'];
 		$options             = ( ! empty( $cart_row['options'] ) ) ? $cart_row['options'] : array();
-		$cart_item_name      = $usces->getCartItemName( $post_id, $sku );
+		$cart_item_name      = esc_html( $usces->getCartItemName( $post_id, $sku ) );
 		if ( usces_is_tax_display() && $reduced_taxrate ) {
 			$applicable_taxrate = $usces_tax->get_sku_applicable_taxrate( $post_id, $sku );
 			if ( 'reduced' === $applicable_taxrate ) {
@@ -387,14 +387,14 @@ function usces_get_thanksmail_htmlbody( $args ) {
 					$key = urldecode( $key );
 					if ( is_array( $value ) ) {
 						$c       = '';
-						$optstr .= $key . ' : ';
+						$optstr .= esc_html( $key ) . ' : ';
 						foreach ( $value as $v ) {
-							$optstr .= $c . urldecode( $v );
+							$optstr .= $c . esc_html( urldecode( $v ) );
 							$c       = ', ';
 						}
 						$optstr .= '<br>';
 					} else {
-						$optstr .= $key . ' : ' . urldecode( $value ) . '<br>';
+						$optstr .= esc_html( $key ) . ' : ' . esc_html( urldecode( $value ) ) . '<br>';
 					}
 				}
 			}
@@ -850,7 +850,7 @@ function usces_get_adminmail_htmlbody( $args ) {
 		$sku            = urldecode( $cart_row['sku'] );
 		$quantity       = $cart_row['quantity'];
 		$options        = ( ! empty( $cart_row['options'] ) ) ? $cart_row['options'] : array();
-		$cart_item_name = $usces->getCartItemName_byOrder( $cart_row );
+		$cart_item_name = esc_html( $usces->getCartItemName_byOrder( $cart_row ) );
 		if ( 'activate' === $tax_display && $reduced_taxrate ) {
 			$applicable_taxrate = $usces_tax->get_ordercart_applicable_taxrate( $cart_row['cart_id'], $post_id, $sku );
 			if ( 'reduced' === $applicable_taxrate ) {
@@ -871,14 +871,14 @@ function usces_get_adminmail_htmlbody( $args ) {
 					$value = maybe_unserialize( $value );
 					if ( is_array( $value ) ) {
 						$c       = '';
-						$optstr .= $key . ' : ';
+						$optstr .= esc_html( $key ) . ' : ';
 						foreach ( $value as $v ) {
-							$optstr .= $c . rawurldecode( $v );
+							$optstr .= $c . esc_html( rawurldecode( $v ) );
 							$c       = ', ';
 						}
 						$optstr .= '<br>';
 					} else {
-						$optstr .= $key . ' : ' . rawurldecode( $value ) . '<br>';
+						$optstr .= esc_html( $key ) . ' : ' . esc_html( rawurldecode( $value ) ) . '<br>';
 					}
 				}
 			}

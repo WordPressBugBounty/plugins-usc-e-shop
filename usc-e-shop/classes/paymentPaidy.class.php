@@ -1659,9 +1659,9 @@ jQuery(document).ready( function($) {
 				$items = '';
 				foreach ( $cart as $cart_row ) {
 					$items .= "\n\t\t\t\t" . '{' . "\n";
-					$items .= "\t\t\t\t\t" . '"id": "' . $usces->getItemCode( $cart_row['post_id'] ) . '",' . "\n";
+					$items .= "\t\t\t\t\t" . '"id": ' . wp_json_encode( (string) $usces->getItemCode( $cart_row['post_id'] ) ) . ',' . "\n";
 					$items .= "\t\t\t\t\t" . '"quantity": ' . $cart_row['quantity'] . ',' . "\n";
-					$items .= "\t\t\t\t\t" . '"title": "' . $usces->getItemName( $cart_row['post_id'] ) . '",' . "\n";
+					$items .= "\t\t\t\t\t" . '"title": ' . wp_json_encode( (string) $usces->getItemName( $cart_row['post_id'] ) ) . ',' . "\n";
 					$items .= "\t\t\t\t\t" . '"unit_price": ' . $cart_row['price'] . "\n";
 					$items .= "\t\t\t\t" . '},';
 				}

@@ -447,7 +447,7 @@ if ( 'acting' != substr( $payment_settlement, 0, 6 ) || 0 === (int) $usces_entri
 			$html   .= '<form id="purchase_form" name="purchase_form" action="' . $send_url . '" method="post" onKeyDown="if (event.keyCode == 13) {return false;}" accept-charset="Shift_JIS">
 				<input type="hidden" name="IP" value="' . $acting_opts['card_ip'] . '" />
 				<input type="hidden" name="SID" value="' . $sid . '" />
-				<input type="hidden" name="N1" value="' . $item_name . '">
+				<input type="hidden" name="N1" value="' . esc_attr( $item_name ) . '">
 				<input type="hidden" name="K1" value="' . usces_crform( $usces_entries['order']['total_full_price'], false, false, 'return', false ) . '">
 				<input type="hidden" name="FUKA" value="' . $fuka . '" />
 				<input type="hidden" name="KAKUTEI" value="' . $kakutei . '" />

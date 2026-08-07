@@ -676,9 +676,9 @@ function usces_Universal_trackPageview() {
 
 					$push[] = "'ecommerce:addItem', {
 								id: '" . $order_id . "',
-								sku: '" . $sku . "',
-								name: '" . $itemname . "',
-								category: '" . $category . "',
+								sku: '" . esc_js( $sku ) . "',
+								name: '" . esc_js( $itemname ) . "',
+								category: '" . esc_js( $category ) . "',
 								price: '" . $skuprice . "',
 								quantity: '" . $quantity . "' }";
 				}

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.11.33
+Stable tag: 2.11.34
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,17 +69,23 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
+7 Aug 2026
+= V2.11.34 =
+-----------
+* Security enhancement (Cross-Site Scripting). Escaped the product name at every remaining output site, including ones not covered by the original report. Thanks to Yaswanth Reddy Sunkara for the report.
+* Security enhancement (Cross-Site Scripting). Escaped customer-supplied item option names and values in HTML order emails.
+
 5 Aug 2026
 = V2.11.33 =
 -----------
-* Security enhancement (Cross-Site Scripting). Follow-up to V2.11.32.
-* Security enhancement (Payment Notification Spoofing).
+* Security enhancement (Cross-Site Scripting). Follow-up to V2.11.32. Thanks to Yaswanth Reddy Sunkara for the report.
+* Security enhancement (Payment Notification Spoofing). Thanks to Pedro Pinho for the report.
 
 30 Jul 2026
 = V2.11.32 =
 -----------
-* Security enhancement (Cross-Site Scripting).
-* Security enhancement (SQL Injection).
+* Security enhancement (Cross-Site Scripting). Thanks to Yaswanth Reddy Sunkara for the report.
+* Security enhancement (SQL Injection). Thanks to Yaswanth Reddy Sunkara for the report.
 * Added an action hook that fires when a member login attempt fails.
 * Fixed the width of the quantity field on the order data editing page.
 * Fixed PHP errors.

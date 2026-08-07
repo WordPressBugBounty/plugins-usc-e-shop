@@ -375,7 +375,7 @@ foreach ( (array) $usces_member_history as $umhs ) :
 		$materials = compact( 'i', 'cart_row', 'post_id', 'sku', 'quantity', 'options', 'advance', 'itemCode', 'itemName', 'cartItemName', 'skuPrice', 'pictid', 'order_id' );
 		$optstr    = apply_filters( 'usces_filter_member_edit_form_row', $optstr, $cart, $materials );
 
-		$cart_item_name = apply_filters( 'usces_filter_admin_cart_item_name', $cartItemName, $materials ) . '<br />' . $optstr;
+		$cart_item_name = apply_filters( 'usces_filter_admin_cart_item_name', esc_html( $cartItemName ), $materials ) . '<br />' . $optstr;
 		$cart_item_name = apply_filters( 'usces_filter_admin_history_cart_item_name', $cart_item_name, $cartItemName, $optstr, $cart_row, $i );
 
 		$cart_thumbnail = ( ! empty( $pictid ) ) ? wp_get_attachment_image( $pictid, array( 60, 60 ), true ) : usces_get_attachment_noimage( array( 60, 60 ), $itemCode );
