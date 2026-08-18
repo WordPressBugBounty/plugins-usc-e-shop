@@ -63,7 +63,7 @@ class Welcart_login extends WP_Widget {
 			</p>
 			<?php
 			echo apply_filters( 'usces_filter_login_inform', null );
-			$noncekey = 'post_member' . $usces->get_uscesid( false );
+			$noncekey = $usces->member_nonce_key( 'post_member' );
 			wp_nonce_field( $noncekey, 'wel_nonce' );
 			?>
 			</form>

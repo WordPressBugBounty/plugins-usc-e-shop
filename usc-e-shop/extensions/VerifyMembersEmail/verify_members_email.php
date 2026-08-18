@@ -324,10 +324,11 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		global $usces;
 
 		$encrypt_value = $this->encrypt_value( $user );
+		// A1/C (Layer 3 / uscesid removal): 検証URL から uscesid を撤去。会員確認は暗号化 verify 値で
+		// 行われ session 非依存のため、uscesid は不要（A1 撤去後は無視される）.
 		$query         = array(
 			'verify'     => $encrypt_value,
 			'usces_page' => 'memberverified',
-			'uscesid'    => $usces->get_uscesid( false ),
 		);
 		$query         = apply_filters( 'usces_filter_verifymail_query', $query, $user );
 		$url           = add_query_arg( $query, USCES_MEMBER_URL );
@@ -1000,7 +1001,7 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 				<input type="button" name="back" class="top back" value="<?php esc_attr_e( 'Back to the member page.', 'usces' ); ?>" onclick="location.href='<?php echo esc_url( USCES_MEMBER_URL ); ?>'" />
 				<input type="submit" name="editmember" class="editmember" value="<?php esc_html_e( 'update it', 'usces' ); ?>" />
 				<input type="submit" name="deletemember" class="deletemember" value="<?php esc_html_e( 'delete it', 'usces' ); ?>" onclick="return confirm('<?php esc_attr_e( 'All information about the member is deleted. Are you all right?', 'usces' ); ?>');" />
-				<?php $noncekey = 'post_member' . $usces->get_uscesid( false ); ?>
+				<?php $noncekey = $usces->member_nonce_key( 'post_member' ); ?>
 				<?php wp_nonce_field( $noncekey, 'wc_nonce' ); ?>
 			</div><!-- .send -->
 		</form>

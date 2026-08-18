@@ -670,8 +670,25 @@ function usces_get_settlement_log_detail( $log_key ) {
 	$html .= '</thead><tbody>';
 	$num   = 1;
 	foreach ( $order_data['usces_cart'] as $serial => $row ) {
-		$array      = unserialize( $serial );
-		$ids        = array_keys( $array );
+		$array = @unserialize( $serial );
+		$ids   = ( is_array( $array ) && ! empty( $array ) ) ? array_keys( $array ) : array();
+		if ( empty( $ids ) || ! is_array( $array[ $ids[0] ] ) || empty( $array[ $ids[0] ] ) ) {
+			/*
+			 * The serial key is broken and the item cannot be identified.
+			 * When the cart in the session was empty, every posted row was
+			 * written to the same empty key and overwrote the previous one,
+			 * so the stored quantity and price cannot be attributed to a
+			 * particular item. Show the row without those figures.
+			 */
+			$html .= '<tr>';
+			$html .= '<td class="num">' . $num . '</td>';
+			$html .= '<td class="item_name">' . esc_html( __( 'The cart data is broken and the item details cannot be restored. The original number of items is also unknown. This line is not included when the order data is recreated.', 'usces' ) ) . '</td>';
+			$html .= '<td class="quantity">-</td>';
+			$html .= '<td class="price">-</td>';
+			$html .= '</tr>';
+			$num++;
+			continue;
+		}
 		$skus       = array_keys( $array[ $ids[0] ] );
 		$post_id    = $ids[0];
 		$sku        = $skus[0];

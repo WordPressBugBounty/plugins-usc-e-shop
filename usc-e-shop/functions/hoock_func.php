@@ -7,6 +7,10 @@
 
 add_action( 'usces_construct', 'usces_action_acting_construct', 10 );
 add_action( 'usces_after_cart_instant', 'usces_action_acting_transaction', 10 );
+// A3 (Layer 3 / uscesid removal): restore the shopper's cart/entry for settlement notifications
+// from the transaction-keyed DB store, uscesid-independently. Must run after usces_session_start()
+// (constructor end) and before usces_main()'s `new usces_cart()`, hence the usces_main hook.
+add_action( 'usces_main', 'usces_restore_acting_session_from_store', 1 );
 
 /**
  * Settlement Result Notification Processing.
@@ -20,8 +24,8 @@ function usces_action_acting_construct() {
 		$datas = array();
 		/* 決済成功の時のみセッション復帰 */
 		if ( 0 == $_POST['X-ERRLEVEL'] ) {
-			$datas           = usces_get_order_acting_data( $rand );
-			$_GET['uscesid'] = $datas['sesid'];
+			$datas = usces_get_order_acting_data( $rand );
+			// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 			if ( empty( $datas['sesid'] ) ) {
 				/* sesidが無い場合はファイルログのみ */
 				usces_log( 'remise construct : error1', 'acting_transaction.log' );
@@ -34,9 +38,9 @@ function usces_action_acting_construct() {
 		/* digitalcheck_conv */
 	} elseif ( isset( $_POST['SID'] ) && isset( $_POST['FUKA'] ) && isset( $_POST['CVS'] ) ) {
 
-		$sid             = wp_unslash( $_POST['SID'] );
-		$datas           = usces_get_order_acting_data( $sid );
-		$_GET['uscesid'] = $datas['sesid'];
+		$sid   = wp_unslash( $_POST['SID'] );
+		$datas = usces_get_order_acting_data( $sid );
+		// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 		if ( empty( $datas['sesid'] ) ) {
 			$log = array(
 				'acting' => 'digitalcheck',
@@ -53,9 +57,9 @@ function usces_action_acting_construct() {
 		/* AnotherLane */
 	} elseif ( isset( $_REQUEST['SiteId'] ) && isset( $_REQUEST['rand'] ) ) {
 
-		$rand            = wp_unslash( $_REQUEST['rand'] );
-		$datas           = usces_get_order_acting_data( $rand );
-		$_GET['uscesid'] = $datas['sesid'];
+		$rand  = wp_unslash( $_REQUEST['rand'] );
+		$datas = usces_get_order_acting_data( $rand );
+		// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 		if ( empty( $datas['sesid'] ) ) {
 			$log = array(
 				'acting' => 'anotherlane',
@@ -72,9 +76,11 @@ function usces_action_acting_construct() {
 		/* Veritrans */
 	} elseif ( isset( $_POST['orderId'] ) && isset( $_POST['merchantEncryptionKey'] ) ) {
 
-		$orderid         = wp_unslash( $_POST['orderId'] );
-		$datas           = usces_get_order_acting_data( $orderid );
-		$_GET['uscesid'] = $datas['sesid'];
+		$orderid = wp_unslash( $_POST['orderId'] );
+		$datas   = usces_get_order_acting_data( $orderid );
+		// A3: uscesid ブリッジは廃止（$_GET['uscesid'] を読む処理は撤廃済みのため代入は無意味だった）。
+		// ベリトランス Air-Web は選択可能な決済から除外済み（settlement.class.php）のため、DBストアからの
+		// セッション復元（usces_restore_acting_session_from_store）の対象外とする.
 		if ( empty( $datas['sesid'] ) ) {
 			$log = array(
 				'acting' => 'veritrans',
@@ -88,6 +94,81 @@ function usces_action_acting_construct() {
 			usces_log( 'Veritrans construct : ' . $orderid, 'acting_transaction.log' );
 		}
 	}
+}
+
+/**
+ * 決済通知（サーバー間・ブラウザ Cookie 無し）で、確定時に保存したカート/エントリを DBストア
+ * （usces_access）から $_SESSION へ復元する。uscesid セッション橋渡しの置き換え（Layer 3 / A3）。
+ *
+ * usces_session_start()（コンストラクタ末尾）より後・usces_main() の `new usces_cart()` より前に
+ * 実行する必要があるため usces_main フックに登録する（construct では直後の @session_start() に
+ * 上書きされてしまうため）。復元後、usces_cart 生成 → usces_after_cart_instant
+ * （usces_action_acting_transaction）が $usces->cart->get_cart() を参照して処理する。
+ *
+ * 対象はサーバー間通知でセッション復元が要る remise / digitalcheck_conv / AnotherLane。
+ *
+ * usces_main
+ */
+function usces_restore_acting_session_from_store() {
+	$rand = '';
+	if ( isset( $_POST['X-TRANID'] ) && ! isset( $_POST['OPT'] ) && isset( $_POST['X-S_TORIHIKI_NO'] ) ) {
+		/* remise: 決済成功時（X-ERRLEVEL == 0）のみ復元 */
+		if ( isset( $_POST['X-ERRLEVEL'] ) && 0 == $_POST['X-ERRLEVEL'] ) {
+			$rand = wp_unslash( $_POST['X-S_TORIHIKI_NO'] );
+		}
+	} elseif ( isset( $_POST['SID'] ) && isset( $_POST['FUKA'] ) && isset( $_POST['CVS'] ) ) {
+		/* digitalcheck_conv */
+		$rand = wp_unslash( $_POST['SID'] );
+	} elseif ( isset( $_REQUEST['SiteId'] ) && isset( $_REQUEST['rand'] ) ) {
+		/* AnotherLane: 通知は $_REQUEST（GET/POST 両様）。旧 usces_action_acting_construct の
+		 * $_GET['uscesid']=$datas['sesid'] ブリッジの置き換え。KickType サーバー通知で order_processing()
+		 * がカートを読む前にここで DBストアから復元する。 */
+		$rand = wp_unslash( $_REQUEST['rand'] );
+	}
+
+	if ( '' === $rand ) {
+		return;
+	}
+
+	$datas = usces_get_order_acting_data( $rand );
+	if ( empty( $datas ) || empty( $datas['order_data'] ) ) {
+		return;
+	}
+
+	$order_data = maybe_unserialize( $datas['order_data'] );
+	if ( ! is_array( $order_data ) ) {
+		return;
+	}
+
+	if ( isset( $order_data['cart'] ) && is_array( $order_data['cart'] ) ) {
+		/*
+		 * DBストア（usces_access）の cart は save_order_acting_data() が保存した
+		 * $usces->cart->get_cart() の「出力形式」＝ [ i => array( serial, post_id, sku, options,
+		 * price, unit_price, quantity, advance ) ]（インデックス配列）。
+		 * 一方 $_SESSION['usces_cart'] の「内部形式」は
+		 * [ '<serial>' => array( 'price', 'unit_price', 'quant', 'advance' ) ]（serial をキーにしたマップ）で、
+		 * usces_cart::get_cart()/key_unserialize() はこの内部形式を前提に読む
+		 * （キー=serial／数量キーは 'quant'）。そのまま代入すると整数キー 0 が serial として
+		 * unserialize され false → array_keys(false) で致命的エラーになるため、内部形式へ変換して復元する。
+		 */
+		$session_cart = array();
+		foreach ( $order_data['cart'] as $item ) {
+			if ( ! is_array( $item ) || ! isset( $item['serial'] ) ) {
+				continue;
+			}
+			$session_cart[ $item['serial'] ] = array(
+				'price'      => isset( $item['price'] ) ? $item['price'] : 0,
+				'unit_price' => isset( $item['unit_price'] ) ? $item['unit_price'] : 0,
+				'quant'      => isset( $item['quantity'] ) ? $item['quantity'] : 0,
+				'advance'    => isset( $item['advance'] ) ? $item['advance'] : '',
+			);
+		}
+		$_SESSION['usces_cart'] = $session_cart;
+	}
+	if ( isset( $order_data['entry'] ) ) {
+		$_SESSION['usces_entry'] = $order_data['entry'];
+	}
+	usces_log( 'acting session restored from DB store (uscesid-independent) : ' . $rand, 'acting_transaction.log' );
 }
 
 /**

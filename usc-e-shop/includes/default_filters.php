@@ -229,6 +229,9 @@ add_action( 'usces_action_order_edit_form_delivery_block', 'usces_add_tracking_n
 add_action( 'usces_action_update_orderdata', 'usces_update_tracking_number' );
 add_action( 'usces_action_session_start', 'usces_session_cache_limiter' );
 
+// Regenerate session ID on member login (session fixation countermeasure / Layer 1).
+add_action( 'usces_action_after_login', 'usces_regenerate_session_on_login', 1 );
+
 if ( $usces->use_ssl ) {
 	remove_action( 'init', 'usces_ob_start' );
 	add_action( 'init', 'usces_ssl_charm' );

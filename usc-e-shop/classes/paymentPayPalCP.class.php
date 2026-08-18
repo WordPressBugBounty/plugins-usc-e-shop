@@ -1785,7 +1785,7 @@ jQuery(document).ready( function($) {
 				let params = new URLSearchParams();
 				params.append( "action", "create_order_card" );
 				params.append( "tracking_id", document.getElementById( "paypal_tracking_id" ).value );
-				return fetch( uscesL10n.ajaxurl+"?uscesid="+uscesL10n.uscesid, {
+				return fetch( uscesL10n.ajaxurl, {
 					method: "POST",
 					body: params
 				}).then( function( res ) {
@@ -1863,7 +1863,7 @@ jQuery(document).ready( function($) {
 							params3ds.append( "action", "show_order_details_card" );
 							params3ds.append( "tracking_id", document.getElementById( "paypal_tracking_id" ).value );
 							params3ds.append( "resource_id", payload.orderId );
-							return fetch( uscesL10n.ajaxurl + "?uscesid=" + uscesL10n.uscesid, {
+							return fetch( uscesL10n.ajaxurl, {
 								method: "POST",
 								body: params3ds
 							}).then( function( res ) {
@@ -1975,7 +1975,7 @@ jQuery(document).ready( function($) {
 			params.append( "action", "create_billing_agreement" );
 			params.append( "tracking_id", document.getElementsByName( "tracking_id" )[0].value );
 			params.append( "billing", "<?php echo esc_html( $billing ); ?>" );
-			return fetch( uscesL10n.ajaxurl + "?uscesid=" + uscesL10n.uscesid, {
+			return fetch( uscesL10n.ajaxurl, {
 				method: "POST",
 				body: params
 			}).then( function( res ) {
@@ -1998,7 +1998,7 @@ jQuery(document).ready( function($) {
 			let params = new URLSearchParams();
 			params.append( "action", "create_order" );
 			params.append( "tracking_id", document.getElementsByName( "tracking_id" )[0].value );
-			return fetch( uscesL10n.ajaxurl + "?uscesid=" + uscesL10n.uscesid, {
+			return fetch( uscesL10n.ajaxurl, {
 				method: "POST",
 				body: params
 			}).then( function( res ) {
@@ -2067,7 +2067,7 @@ jQuery( document ).ready( function( $ ) {
 				let params = new URLSearchParams();
 				params.append( "action", "create_order_member" );
 				params.append( "tracking_id", document.getElementById( "paypal_tracking_id" ).value );
-				return fetch( uscesL10n.ajaxurl + "?uscesid=" + uscesL10n.uscesid, {
+				return fetch( uscesL10n.ajaxurl, {
 					method: "POST",
 					body: params
 				}).then( function( res ) {
@@ -2265,9 +2265,34 @@ jQuery( document ).ready( function( $ ) {
 	/**
 	 * Create billing agreement.
 	 */
+	/**
+	 * A5 (Layer 3 / uscesid removal): reopen the shopper's shop session from its own
+	 * same-origin session cookie (USCES_KEY) instead of decoding a crafted `uscesid` GET
+	 * param through uscesdc()/session_id(). These nopriv admin-ajax handlers run under
+	 * admin-ajax.php, where usces_close_session() (admin_init) has closed the bootstrap
+	 * session, so session_status() is PHP_SESSION_NONE here. get_entry()/get_cart()/
+	 * get_member() read $_SESSION live, so reattaching before they run restores the
+	 * shopper's cart/entry/member. Mirrors A2 (cart-monitor) / A6 (Zeus enrol).
+	 * The uk session cookie is HttpOnly but is still sent on same-origin fetch()
+	 * (default credentials: 'same-origin') and readable via $_COOKIE.
+	 * See .docs/welcart2.x/security-remediation_uscesid-layer3-a3-a6-design.md A5.
+	 */
+	private function reattach_shop_session() {
+		if ( PHP_SESSION_NONE === session_status() ) {
+			$usces_options = get_option( 'usces' );
+			$sess_name     = defined( 'USCES_KEY' ) ? USCES_KEY : ( isset( $usces_options['usces_key'] ) ? $usces_options['usces_key'] : '' );
+			if ( '' !== $sess_name && ! empty( $_COOKIE[ $sess_name ] ) ) {
+				$sess_id = preg_replace( '/[^A-Za-z0-9,\-]/', '', wp_unslash( $_COOKIE[ $sess_name ] ) );
+				session_id( $sess_id );
+				@session_start(); // phpcs:ignore
+			}
+		}
+	}
+
 	public function create_billing_agreement() {
 		global $usces;
 
+		$this->reattach_shop_session();
 		$entry = $usces->cart->get_entry();
 		$cart  = $usces->cart->get_cart();
 
@@ -2342,6 +2367,7 @@ jQuery( document ).ready( function( $ ) {
 	public function create_order() {
 		global $usces;
 
+		$this->reattach_shop_session();
 		$entry = $usces->cart->get_entry();
 		$cart  = $usces->cart->get_cart();
 
@@ -2367,6 +2393,7 @@ jQuery( document ).ready( function( $ ) {
 	public function create_order_card() {
 		global $usces;
 
+		$this->reattach_shop_session();
 		$entry = $usces->cart->get_entry();
 		$cart  = $usces->cart->get_cart();
 
@@ -2394,6 +2421,7 @@ jQuery( document ).ready( function( $ ) {
 	public function create_order_member() {
 		global $usces;
 
+		$this->reattach_shop_session();
 		$acting_opts = $this->get_acting_settings();
 		$tracking_id = wp_unslash( $_POST['tracking_id'] );
 

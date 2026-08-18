@@ -34,9 +34,8 @@ jQuery(function($) {
 				return false;
 			}
 			var s = wc2confirm.settings;
-			s.data = { 
+			s.data = {
 				'action' : 'welcart_confirm_check',
-				'uscesid' : uscesL10n.uscesid,
 				'wc_condition' : uscesL10n.condition,
 				'wc_nonce' : uscesL10n.wc_nonce
 			};

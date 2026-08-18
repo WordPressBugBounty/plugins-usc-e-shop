@@ -143,6 +143,16 @@ class usces_cart {
 			if ( $serial_option ) {
 				$this->up_serialize( $index, $post_id, $sku );
 			} else {
+				if ( ! isset( $keys[ $index ] ) ) {
+					/*
+					 * The cart in the session has fewer rows than the posted data
+					 * ( session GC, deletion in another tab, etc. ).
+					 * Skip it, because a null key is converted to "" and would
+					 * write a broken row into the session.
+					 */
+					$index++;
+					continue;
+				}
 				$this->serial = $keys[ $index ];
 			}
 
@@ -280,7 +290,13 @@ class usces_cart {
 
 		$i = 0;
 		foreach ( (array) $_SESSION['usces_cart'] as $serial => $qua ) {
-			$rows[ $i ] = $this->key_unserialize( $serial );
+			$row = $this->key_unserialize( $serial );
+			if ( false === $row ) {
+				/* A row that cannot be restored is unusable for display and ordering, so remove it from the session. */
+				unset( $_SESSION['usces_cart'][ $serial ] );
+				continue;
+			}
+			$rows[ $i ] = $row;
 			$i++;
 		}
 
@@ -383,12 +399,18 @@ class usces_cart {
 	 * Serial key decompression
 	 *
 	 * @param string $serial Serial key.
-	 * @return array
+	 * @return array|false False if the serial key cannot be restored ( unserialize failure or invalid format ).
 	 */
 	public function key_unserialize( $serial ) {
 		$array = @unserialize( $serial );
-		$ids   = array_keys( $array );
-		$skus  = array_keys( $array[ $ids[0] ] );
+		if ( ! is_array( $array ) || empty( $array ) ) {
+			return false;
+		}
+		$ids = array_keys( $array );
+		if ( ! is_array( $array[ $ids[0] ] ) || empty( $array[ $ids[0] ] ) ) {
+			return false;
+		}
+		$skus = array_keys( $array[ $ids[0] ] );
 
 		$row['serial']  = $serial;
 		$row['post_id'] = $ids[0];

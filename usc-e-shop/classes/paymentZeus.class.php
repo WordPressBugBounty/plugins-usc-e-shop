@@ -5685,7 +5685,7 @@ var zeusTokenIpcode = "<?php echo esc_attr( $acting_opts['clientip'] ); ?>";
 			params.append("sendid",document.getElementById("sendid").value);
 			params.append("sendpoint",document.getElementById("sendpoint").value);
 			params.append("_nonce","<?php echo esc_attr( wp_create_nonce( 'acting_zeus_card' ) ); ?>");
-			return fetch( uscesL10n.ajaxurl+"?uscesid="+uscesL10n.uscesid, {
+			return fetch( uscesL10n.ajaxurl, {
 				method:'POST',
 				cache:'no-cache',
 				body:params
@@ -7108,6 +7108,20 @@ jQuery.event.add(window,'load',function() {
 
 		check_ajax_referer( 'acting_zeus_card', '_nonce' );
 
+		// A6 (Layer 3 / uscesid removal): この nopriv admin-ajax は usces_close_session()（admin_init）
+		// の後に走るため session_status() は PHP_SESSION_NONE。旧実装は JS が付けた `?uscesid=` を
+		// usces_session_start() が復号して買い物客セッションへ切替えていたが、uscesid を廃し、
+		// 同一オリジンの USCES_KEY cookie から買い物客セッションを再開する（A2 と同一方式）.
+		if ( PHP_SESSION_NONE === session_status() ) {
+			$usces_options = get_option( 'usces' );
+			$sess_name     = defined( 'USCES_KEY' ) ? USCES_KEY : ( isset( $usces_options['usces_key'] ) ? $usces_options['usces_key'] : '' );
+			if ( '' !== $sess_name && ! empty( $_COOKIE[ $sess_name ] ) ) {
+				$sess_id = preg_replace( '/[^A-Za-z0-9,\-]/', '', wp_unslash( $_COOKIE[ $sess_name ] ) );
+				session_id( $sess_id );
+				@session_start(); // phpcs:ignore
+			}
+		}
+
 		$entry = $usces->cart->get_entry();
 		if ( empty( $entry ) ) {
 			$result_data = array(
@@ -7132,7 +7146,8 @@ jQuery.event.add(window,'load',function() {
 			$sendid    = ( 'on' === $acting_opts['quickcharge'] && isset( $_POST['sendid'] ) ) ? filter_input( INPUT_POST, 'sendid' ) : '';
 			$sendpoint = filter_input( INPUT_POST, 'sendpoint', FILTER_DEFAULT, array( 'options' => array( 'default' => '' ) ) );
 			$_nonce    = filter_input( INPUT_POST, '_nonce', FILTER_DEFAULT, array( 'options' => array( 'default' => wp_create_nonce( 'acting_zeus_card' ) ) ) );
-			$uscesid   = filter_input( INPUT_GET, 'uscesid', FILTER_DEFAULT, array( 'options' => array( 'default' => $usces->get_uscesid( false ) ) ) );
+			// A6: uscesid ブリッジ廃止。3DS 戻り（TermUrl）のセッションは sendpoint（取引キー）で
+			// acting_processing() が usces_restore_order_acting_data() 復元するため uscesid は不要.
 
 			$data                               = array();
 			$data['authentication']['clientip'] = $acting_opts['clientip'];
@@ -7194,7 +7209,6 @@ jQuery.event.add(window,'load',function() {
 						'purchase'  => '1',
 						'sendpoint' => $sendpoint,
 						'_nonce'    => $_nonce,
-						'uscesid'   => $uscesid,
 					);
 					$term_url    = add_query_arg( $term_data, USCES_CART_URL );
 					$result_data = array(
@@ -7363,7 +7377,6 @@ jQuery.event.add(window,'load',function() {
 								'acting_return' => 1,
 								'result'        => 1,
 								'_nonce'        => $_nonce,
-								'uscesid'       => $usces->get_uscesid( false ),
 							),
 							USCES_CART_URL
 						)

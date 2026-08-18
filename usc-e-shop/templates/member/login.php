@@ -38,7 +38,7 @@ $html       .= '<p class="nav">
 </p>';
 $html        = apply_filters( 'usces_filter_login_inform', $html );
 
-$noncekey = 'post_member' . $this->get_uscesid( false );
+$noncekey = $this->member_nonce_key( 'post_member' );
 $html    .= wp_nonce_field( $noncekey, 'wel_nonce', true, false );
 $html    .= '</form>
 
