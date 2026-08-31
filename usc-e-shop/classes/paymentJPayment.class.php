@@ -579,7 +579,7 @@ class JPAYMENT_SETTLEMENT {
 		global $usces;
 
 		if ( 'acting_jpayment_conv' == $payment['settlement'] ) {
-			$args         = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+			$args         = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 			$msg_payment .= '決済番号 : ' . $args['gid'] . "\r\n";
 			$msg_payment .= '決済金額 : ' . number_format( $args['ta'] ) . __( 'dollars', 'usces' ) . "\r\n";
 			$msg_payment .= 'お支払先 : ' . usces_get_conv_name( $args['cv'] ) . "\r\n";
@@ -590,7 +590,7 @@ class JPAYMENT_SETTLEMENT {
 			$msg_payment .= "\r\n" . usces_mail_line( 2, $data['order_email'] ) . "\r\n";
 
 		} elseif ( 'acting_jpayment_bank' == $payment['settlement'] ) {
-			$args         = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+			$args         = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 			$msg_payment .= '決済番号 : ' . $args['gid'] . "\r\n";
 			$msg_payment .= '決済金額 : ' . number_format( $args['ta'] ) . __( 'dollars', 'usces' ) . "\r\n";
 			$bank         = explode( '.', $args['bank'] );
@@ -623,7 +623,7 @@ class JPAYMENT_SETTLEMENT {
 		global $usces;
 
 		if ( 'acting_jpayment_conv' == $payment['settlement'] ) {
-			$args         = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+			$args         = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 			$msg_payment .= '決済番号 : ' . $args['gid'] . "\r\n";
 			$msg_payment .= '決済金額 : ' . number_format( $args['ta'] ) . __( 'dollars', 'usces' ) . "\r\n";
 			$msg_payment .= 'お支払先 : ' . usces_get_conv_name( $args['cv'] ) . "\r\n";
@@ -634,7 +634,7 @@ class JPAYMENT_SETTLEMENT {
 			$msg_payment .= "\r\n" . usces_mail_line( 2, $entry['customer']['mailaddress1'] ) . "\r\n";
 
 		} elseif ( 'acting_jpayment_bank' == $payment['settlement'] ) {
-			$args         = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+			$args         = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 			$msg_payment .= '決済番号 : ' . $args['gid'] . "\r\n";
 			$msg_payment .= '決済金額 : ' . number_format( $args['ta'] ) . __( 'dollars', 'usces' ) . "\r\n";
 			$bank         = explode( '.', $args['bank'] );

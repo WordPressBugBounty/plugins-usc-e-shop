@@ -5694,7 +5694,7 @@ jQuery.event.add( window, "load", function() {
 				foreach ( $options as $key => $value ) {
 					if ( ! empty( $key ) ) {
 						$key   = urldecode( $key );
-						$value = maybe_unserialize( $value );
+						$value = wel_safe_maybe_unserialize( $value );
 						if ( is_array( $value ) ) {
 							$c       = '';
 							$optstr .= '( ' . $key . ' : ';
@@ -5809,7 +5809,7 @@ jQuery.event.add( window, "load", function() {
 			foreach ( $options as $key => $value ) {
 				if ( ! empty( $key ) ) {
 					$key   = urldecode( $key );
-					$value = maybe_unserialize( $value );
+					$value = wel_safe_maybe_unserialize( $value );
 					if ( is_array( $value ) ) {
 						$c       = '';
 						$optstr .= '( ' . $key . ' : ';

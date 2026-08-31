@@ -425,7 +425,7 @@ class ItemData {
 				$reserved_key = ltrim( $key, '_' );
 
 				foreach ( $arr as $ind => $v ) {
-					$value_arr[] = @maybe_unserialize( $v );
+					$value_arr[] = @wel_safe_maybe_unserialize( $v );
 				}
 
 				if ( '_iopt_' === $key || '_isku_' === $key ) {
@@ -438,7 +438,7 @@ class ItemData {
 
 				} elseif ( ! array_key_exists( $key, $this->exclusion_key ) ) {
 
-					if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( maybe_unserialize( $key ) ) ) {
+					if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( wel_safe_maybe_unserialize( $key ) ) ) {
 						continue;
 					}
 					$ac = is_array( $arr ) ? count( $arr ) : null;
@@ -631,7 +631,7 @@ class ItemData {
 			$skus = array();
 
 			foreach ( $metas as $rows ) {
-				$values            = unserialize( $rows['meta_value'] );
+				$values            = wel_safe_unserialize( $rows['meta_value'] );
 				$values['meta_id'] = isset( $rows['meta_id'] ) ? (int) $rows['meta_id'] : '';
 				$key               = isset( $values[ $keyflag ] ) ? $values[ $keyflag ] : $values['sort'];
 
@@ -718,7 +718,7 @@ class ItemData {
 			$opts = array();
 			foreach ( $metas as $rows ) {
 
-				$values            = unserialize( $rows['meta_value'] );
+				$values            = wel_safe_unserialize( $rows['meta_value'] );
 				$key               = isset( $values[ $keyflag ] ) ? $values[ $keyflag ] : $values['sort'];
 				$values['meta_id'] = isset( $rows['meta_id'] ) ? (int) $rows['meta_id'] : '';
 				$new_values        = $this->opt_format;

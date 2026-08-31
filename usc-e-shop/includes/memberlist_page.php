@@ -281,7 +281,7 @@ foreach ( (array)$rows as $array ) :
 			$value = '&nbsp;';
 
 		if( 'csmb_' == substr($key, 0, 5) ){
-			$multi_value = maybe_unserialize($value);
+			$multi_value = wel_safe_maybe_unserialize($value);
 			if( is_array($multi_value) ){
 				$value = '';
 				foreach( $multi_value as $str ){

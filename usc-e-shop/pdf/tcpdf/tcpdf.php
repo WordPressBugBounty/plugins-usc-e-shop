@@ -7789,8 +7789,15 @@ class TCPDF {
 				closedir($handle);
 			}
 			if (isset($this->imagekeys)) {
+				$real_cache_path = realpath(K_PATH_CACHE);
 				foreach($this->imagekeys as $file) {
-					if (strpos($file, K_PATH_CACHE) === 0) {
+					if (!is_string($file)) {
+						continue;
+					}
+					$real_file = realpath($file);
+					// Resolve both paths before comparing, otherwise a value like K_PATH_CACHE.'../../wp-config.php'
+					// passes a naive strpos() prefix check while still pointing outside the cache directory.
+					if ($real_file !== false && $real_cache_path !== false && strpos($real_file, $real_cache_path . DIRECTORY_SEPARATOR) === 0) {
 						@unlink($file);
 					}
 				}

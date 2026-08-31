@@ -27,7 +27,7 @@ function usces_order_confirm_message( $order_id ) {
 		return '';
 	}
 
-	$deli = unserialize( $data['order_delivery'] );
+	$deli = wel_safe_unserialize( $data['order_delivery'] );
 	$cart = usces_get_ordercartdata( $order_id );
 
 	$country  = $usces->get_order_meta_value( 'customer_country', $order_id );
@@ -46,7 +46,7 @@ function usces_order_confirm_message( $order_id ) {
 		'fax'      => $data['order_fax'],
 	);
 
-	$condition       = unserialize( $data['order_condition'] );
+	$condition       = wel_safe_unserialize( $data['order_condition'] );
 	$tax_display     = ( isset( $condition['tax_display'] ) ) ? $condition['tax_display'] : usces_get_tax_display();
 	$reduced_taxrate = ( isset( $condition['applicable_taxrate'] ) && 'reduced' === $condition['applicable_taxrate'] ) ? true : false;
 	$usces_tax       = null;
@@ -868,7 +868,7 @@ function usces_get_adminmail_htmlbody( $args ) {
 			foreach ( $options as $key => $value ) {
 				if ( ! empty( $key ) ) {
 					$key   = urldecode( $key );
-					$value = maybe_unserialize( $value );
+					$value = wel_safe_maybe_unserialize( $value );
 					if ( is_array( $value ) ) {
 						$c       = '';
 						$optstr .= esc_html( $key ) . ' : ';
@@ -1178,7 +1178,7 @@ function usces_get_adminmail_textbody( $args ) {
 			foreach ( $options as $key => $value ) {
 				if ( ! empty( $key ) ) {
 					$key   = urldecode( $key );
-					$value = maybe_unserialize( $value );
+					$value = wel_safe_maybe_unserialize( $value );
 					if ( is_array( $value ) ) {
 						$c       = '';
 						$optstr .= $key . ' : ';
@@ -1405,7 +1405,7 @@ function usces_ajax_send_mail() {
 			$query = $wpdb->prepare( "SELECT `order_check` FROM $table_name WHERE ID = %d", $order_id );
 			$res   = $wpdb->get_var( $query );
 
-			$checkfield = is_serialized( $res ) ? unserialize( $res ) : array();
+			$checkfield = is_serialized( $res ) ? wel_safe_unserialize( $res ) : array();
 			if ( ! isset( $checkfield[ $checked ] ) ) {
 				$checkfield[ $checked ] = $checked;
 			}
@@ -2052,7 +2052,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 			switch ( $custom_field ) {
 				case 'order':
 					foreach ( $keys as $key ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
 						if ( is_array( $value ) ) {
 							$concatval = '';
 							$c         = '';
@@ -2064,7 +2064,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 						}
 						$msg_body .= '<tr>
 							<td style="padding: 0 0 10px; text-align: left; width: 100px; font-weight: normal; vertical-align: text-top;">' . $meta[ $key ]['name'] . '</td>
-							<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . $value . '</td>
+							<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . esc_html( $value ) . '</td>
 						</tr>';
 					}
 					break;
@@ -2073,7 +2073,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 				case 'delivery':
 					foreach ( $keys as $key ) {
 						if ( $meta[ $key ]['position'] === $position ) {
-							$value = maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
+							$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
 							if ( is_array( $value ) ) {
 								$concatval = '';
 								$c         = '';
@@ -2085,7 +2085,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 							}
 							$msg_body .= '<tr>
 								<td style="padding: 0 0 10px; text-align: left; width: 100px; font-weight: normal; vertical-align: text-top;">' . $meta[ $key ]['name'] . '</td>
-								<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . $value . '</td>
+								<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . esc_html( $value ) . '</td>
 							</tr>';
 						}
 					}
@@ -2094,7 +2094,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 				case 'member':
 					foreach ( $keys as $key ) {
 						if ( $meta[ $key ]['position'] === $position ) {
-							$value = maybe_unserialize( $usces->get_member_meta_value( $cs . $key, $id ) );
+							$value = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $cs . $key, $id ) );
 							if ( is_array( $value ) ) {
 								$concatval = '';
 								$c         = '';
@@ -2106,7 +2106,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 							}
 							$msg_body .= '<tr>
 								<td style="padding: 0 0 10px; text-align: left; width: 100px; font-weight: normal; vertical-align: text-top;">' . $meta[ $key ]['name'] . '</td>
-								<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . $value . '</td>
+								<td style="padding: 0 0 10px 50px; width: calc( 100% - 100px );">' . esc_html( $value ) . '</td>
 							</tr>';
 						}
 					}
@@ -2120,7 +2120,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 					$msg_body .= "\r\n";
 					$msg_body .= usces_mail_line( 1, $mailaddress );
 					foreach ( $keys as $key ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
 						if ( is_array( $value ) ) {
 							$concatval = '';
 							$c         = '';
@@ -2139,7 +2139,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 				case 'delivery':
 					foreach ( $keys as $key ) {
 						if ( $meta[ $key ]['position'] === $position ) {
-							$value = maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
+							$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cs . $key, $id ) );
 							if ( is_array( $value ) ) {
 								$concatval = '';
 								$c         = '';
@@ -2157,7 +2157,7 @@ function usces_mail_custom_field_info( $custom_field, $position, $id, $mailaddre
 				case 'member':
 					foreach ( $keys as $key ) {
 						if ( $meta[ $key ]['position'] === $position ) {
-							$value = maybe_unserialize( $usces->get_member_meta_value( $cs . $key, $id ) );
+							$value = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $cs . $key, $id ) );
 							if ( is_array( $value ) ) {
 								$concatval = '';
 								$c         = '';
@@ -2727,7 +2727,7 @@ function usces_mail_tax_label( $data ) {
 		$reduced_taxrate = usces_is_reduced_taxrate();
 		$tax_rate        = ( ! empty( $usces->options['tax_rate'] ) && ! $reduced_taxrate ) ? '(' . $usces->options['tax_rate'] . __( '%', 'usces' ) . ')' : '';
 	} else {
-		$condition = maybe_unserialize( $data['order_condition'] );
+		$condition = wel_safe_maybe_unserialize( $data['order_condition'] );
 		$tax_mode  = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : $usces->options['tax_mode'];
 		if ( isset( $condition['applicable_taxrate'] ) ) {
 			$reduced_taxrate = ( 'reduced' === $condition['applicable_taxrate'] ) ? true : false;
@@ -2780,7 +2780,7 @@ function usces_mail_tax( $data ) {
 		$condition = $usces->get_condition();
 		$tax_mode  = $usces->options['tax_mode'];
 	} else {
-		$condition = maybe_unserialize( $data['order_condition'] );
+		$condition = wel_safe_maybe_unserialize( $data['order_condition'] );
 		$tax_mode  = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : $usces->options['tax_mode'];
 	}
 
@@ -2811,7 +2811,7 @@ function usces_mail_tax( $data ) {
 				'cod_fee'           => $data['order_cod_fee'],
 				'use_point'         => $data['order_usedpoint'],
 				'carts'             => usces_get_ordercartdata( $data['ID'] ),
-				'condition'         => unserialize( $data['order_condition'] ),
+				'condition'         => wel_safe_unserialize( $data['order_condition'] ),
 			);
 			$tax_str   = '( ' . usces_crform( usces_internal_tax( $materials, 'return' ), true, false, 'return' ) . ' )';
 		} else {

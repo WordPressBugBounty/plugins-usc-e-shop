@@ -2178,7 +2178,7 @@ function usces_has_custom_field_meta( $fieldname ) {
 	} elseif ( is_array( $fields ) ) {
 		$meta = $fields;
 	} else {
-		$meta = unserialize( $fields );
+		$meta = wel_safe_unserialize( $fields );
 	}
 	return $meta;
 }
@@ -2611,7 +2611,7 @@ function get_usces_states( $country ) {
 	global $usces, $usces_states;
 
 	$states = array();
-	$prefs  = maybe_unserialize( $usces->options['province'] );
+	$prefs  = wel_safe_maybe_unserialize( $usces->options['province'] );
 	if ( ! isset( $prefs[ $country ] ) || empty( $prefs[ $country ] ) ) {
 		if ( $country == $usces->options['system']['base_country'] ) {
 			foreach ( (array) $prefs as $state ) {

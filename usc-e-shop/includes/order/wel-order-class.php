@@ -198,7 +198,7 @@ class OrderData {
 		$this->customer = array_merge( $this->customer, $cscs );
 
 		// delivery data.
-		$_delivery = unserialize( $_data->order_delivery );
+		$_delivery = wel_safe_unserialize( $_data->order_delivery );
 		$this->delivery = array(
 			'delivery_flag' => isset( $_delivery['delivery_flag'] ) ? $_delivery['delivery_flag'] : '',
 			'name1'         => $_delivery['name1'],
@@ -249,7 +249,7 @@ class OrderData {
 			'status'          => $_data->order_status,
 			'date'            => mysql2date( __( 'Y/m/d' ), $_data->order_date ),
 			'modified'        => mysql2date( __( 'Y/m/d' ), $_data->order_modified ),
-			'condition'       => unserialize( $_data->order_condition ),
+			'condition'       => wel_safe_unserialize( $_data->order_condition ),
 			'customer'        => $this->customer,
 			'delivery'        => $this->delivery,
 			'cart'            => $this->cart,

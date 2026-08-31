@@ -141,7 +141,7 @@ class MemberData {
 		}
 
 		foreach ( $_meta as $meta ) {
-			$this->meta[ $meta->meta_key ] = maybe_unserialize( $meta->meta_value );
+			$this->meta[ $meta->meta_key ] = wel_safe_maybe_unserialize( $meta->meta_value );
 		}
 
 		$this->data = array_merge( $this->data, $this->meta );

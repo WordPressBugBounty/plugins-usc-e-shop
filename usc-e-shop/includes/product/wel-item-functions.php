@@ -215,6 +215,89 @@ function wel_has_stock( $the_item, $sku_code, $cache = true ) {
 }
 
 /**
+ * Sanitize free text fields of the item core data before saving.
+ *
+ * These fields accept arbitrary text from the product edit screen and from CSV import,
+ * and they are rendered in many places (storefront, admin, e-mail, payment forms).
+ * sanitize_text_field() strips markup without converting characters to HTML entities,
+ * so values stay safe to store while the existing esc_html() calls on the output side
+ * keep rendering them exactly as before (no double escaping).
+ *
+ * @since 2.12.2
+ *
+ * @param array $data Core data associative array.
+ * @return array Sanitized core data associative array.
+ */
+function wel_sanitize_item_data( $data ) {
+	if ( ! is_array( $data ) ) {
+		return $data;
+	}
+
+	$text_keys = array( 'itemName' );
+	foreach ( $text_keys as $key ) {
+		if ( isset( $data[ $key ] ) && is_string( $data[ $key ] ) ) {
+			$data[ $key ] = sanitize_text_field( $data[ $key ] );
+		}
+	}
+
+	return $data;
+}
+
+/**
+ * Sanitize free text fields of the SKU data before saving.
+ *
+ * @since 2.12.2
+ *
+ * @param array $sku SKU data associative array.
+ * @return array Sanitized SKU data associative array.
+ */
+function wel_sanitize_sku_data( $sku ) {
+	if ( ! is_array( $sku ) ) {
+		return $sku;
+	}
+
+	$text_keys = array( 'code', 'name', 'unit' );
+	foreach ( $text_keys as $key ) {
+		if ( isset( $sku[ $key ] ) && is_string( $sku[ $key ] ) ) {
+			$sku[ $key ] = sanitize_text_field( $sku[ $key ] );
+		}
+	}
+
+	return $sku;
+}
+
+/**
+ * Sanitize free text fields of the option data before saving.
+ *
+ * The 'value' field holds the selectable choices separated by line breaks, so it must be
+ * sanitized with sanitize_textarea_field(). sanitize_text_field() would collapse every
+ * choice onto a single line and destroy the option.
+ *
+ * @since 2.12.2
+ *
+ * @param array $opt Option data associative array.
+ * @return array Sanitized option data associative array.
+ */
+function wel_sanitize_opt_data( $opt ) {
+	if ( ! is_array( $opt ) ) {
+		return $opt;
+	}
+
+	$text_keys = array( 'code', 'name' );
+	foreach ( $text_keys as $key ) {
+		if ( isset( $opt[ $key ] ) && is_string( $opt[ $key ] ) ) {
+			$opt[ $key ] = sanitize_text_field( $opt[ $key ] );
+		}
+	}
+
+	if ( isset( $opt['value'] ) && is_string( $opt['value'] ) ) {
+		$opt['value'] = sanitize_textarea_field( $opt['value'] );
+	}
+
+	return $opt;
+}
+
+/**
  * The function for updating core data for the Item object.
  * The data should consist only of the keys you want to update, not the ones you don't want to update.
  * For details of data, refer to the member variable ($data) of ItemData class.
@@ -227,6 +310,7 @@ function wel_has_stock( $the_item, $sku_code, $cache = true ) {
  * @return true|false Execution result.
  */
 function wel_update_item_data( $data, $post_id, $delete = false ) {
+	$data    = wel_sanitize_item_data( $data );
 	$WelItem = new Welcart\ItemData( $post_id, false );
 	return $WelItem->update_item_data( $data, $delete );
 }
@@ -255,6 +339,7 @@ function wel_delete_item_data( $post_id ) {
  * @return true|false Execution result.
  */
 function wel_update_sku_data_by_id( $meta_id, $post_id, $sku ) {
+	$sku            = wel_sanitize_sku_data( $sku );
 	$WelItem        = new Welcart\ItemData( $post_id, false );
 	$sku['meta_id'] = $meta_id;
 	return $WelItem->update_sku_data( $sku );
@@ -270,6 +355,7 @@ function wel_update_sku_data_by_id( $meta_id, $post_id, $sku ) {
  * @return int New meta_id.
  */
 function wel_add_sku_data( $post_id, $sku ) {
+	$sku     = wel_sanitize_sku_data( $sku );
 	$WelItem = new Welcart\ItemData( $post_id, false );
 	return $WelItem->add_sku_data( $sku );
 }
@@ -312,6 +398,7 @@ function wel_delete_all_sku_data( $post_id ) {
  * @return true|false Execution result.
  */
 function wel_update_opt_data_by_id( $meta_id, $post_id, $opt ) {
+	$opt            = wel_sanitize_opt_data( $opt );
 	$WelItem        = new Welcart\ItemData( $post_id, false );
 	$opt['meta_id'] = $meta_id;
 	return $WelItem->update_opt_data( $opt );
@@ -327,6 +414,7 @@ function wel_update_opt_data_by_id( $meta_id, $post_id, $opt ) {
  * @return int New meta_id.
  */
 function wel_add_opt_data( $post_id, $opt ) {
+	$opt     = wel_sanitize_opt_data( $opt );
 	$WelItem = new Welcart\ItemData( $post_id, false );
 	return $WelItem->add_opt_data( $opt );
 }

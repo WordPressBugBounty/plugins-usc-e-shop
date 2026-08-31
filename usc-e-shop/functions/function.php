@@ -378,7 +378,11 @@ function usces_new_orderdata() {
 	}
 
 	if ( ! empty( $_POST['custom_order'] ) ) {
+		$csod_meta = usces_has_custom_field_meta( 'order' );
 		foreach ( $_POST['custom_order'] as $key => $value ) {
+			if ( ! is_array( $csod_meta ) || ! isset( $csod_meta[ $key ] ) ) {
+				continue;
+			}
 			$csod_key = 'csod_' . $key;
 			if ( is_array( $value ) ) {
 				$value = serialize( $value );
@@ -761,7 +765,7 @@ function usces_get_serialized_cart( $order_id ) {
 	$order_table_name = $wpdb->prefix . 'usces_order';
 	$query            = $wpdb->prepare( "SELECT order_cart FROM $order_table_name WHERE ID = %d", $order_id );
 	$order_cart       = $wpdb->get_var( $query );
-	$cart             = unserialize( $order_cart );
+	$cart             = wel_safe_unserialize( $order_cart );
 	foreach ( $cart as $cart_index => $cart_row ) {
 		$options = array();
 		if ( ! empty( $cart_row['options'] ) ) {
@@ -972,7 +976,7 @@ function usces_update_ordercheck() {
 	$query = $wpdb->prepare( "SELECT `order_check` FROM $tableName WHERE ID = %d", $order_id );
 	$res   = $wpdb->get_var( $query );
 
-	$checkfield = ! empty( $res ) ? unserialize( $res ) : array();
+	$checkfield = ! empty( $res ) ? wel_safe_unserialize( $res ) : array();
 	if ( ! is_array( $checkfield ) ) {
 		$checkfield = array();
 	}
@@ -1066,7 +1070,7 @@ function usces_update_orderdata() {
 		return 1;
 	}
 
-	$old_deli = unserialize( $old_orderdata->order_delivery );
+	$old_deli = wel_safe_unserialize( $old_orderdata->order_delivery );
 	foreach ( (array) $_POST['delivery'] as $dk => $dv ) {
 		$old_deli[ $dk ] = $dv;
 	}
@@ -1197,7 +1201,11 @@ function usces_update_orderdata() {
 	}
 	$i = 1;
 	if ( ! empty( $_POST['custom_order'] ) ) {
+		$csod_meta = usces_has_custom_field_meta( 'order' );
 		foreach ( $_POST['custom_order'] as $key => $value ) {
+			if ( ! is_array( $csod_meta ) || ! isset( $csod_meta[ $key ] ) ) {
+				continue;
+			}
 			$csod_key = 'csod_' . $key;
 			if ( is_array( $value ) ) {
 				$value = serialize( $value );
@@ -2244,7 +2252,7 @@ function usces_ordered_acting_data( $rand, $key = 'order_received' ) {
 	global $usces, $wpdb;
 
 	$datas = usces_get_order_acting_data( $rand );
-	$data  = unserialize( $datas['order_data'] );
+	$data  = wel_safe_unserialize( $datas['order_data'] );
 	usces_log( 'usces_ordered_acting_data', 'acting_transaction.log' );
 	$data[ $key ] = 1;
 
@@ -2271,7 +2279,7 @@ function usces_is_trusted_acting_data( $rand ) {
 	global $usces, $wpdb;
 
 	$datas = usces_get_order_acting_data( $rand );
-	$data  = unserialize( $datas['order_data'] );
+	$data  = wel_safe_unserialize( $datas['order_data'] );
 	usces_log( 'usces_is_trusted_acting_data', 'acting_transaction.log' );
 	if ( isset( $data['propriety'] ) && $data['propriety'] && ! isset( $data['order_received'] ) ) {
 		return true;
@@ -2489,7 +2497,7 @@ function usces_trackPageview_ordercompletion( $push ) {
 	if ( isset( $sesdata['order']['ID'] ) && ! empty( $sesdata['order']['ID'] ) ) {
 		$order_id    = $sesdata['order']['ID'];
 		$data        = $usces->get_order_data( $order_id, 'direct' );
-		$cart        = unserialize( $data['order_cart'] );
+		$cart        = wel_safe_unserialize( $data['order_cart'] );
 		$total_price = $usces->get_total_price( $cart ) + $data['order_discount'] - $data['order_usedpoint'];
 		if ( $total_price < 0 ) {
 			$total_price = 0;
@@ -3243,7 +3251,7 @@ function usces_paypal_doecp( &$results ) {
 				foreach ( $options as $key => $value ) {
 					if ( ! empty( $key ) ) {
 						$key   = urldecode( $key );
-						$value = maybe_unserialize( $value );
+						$value = wel_safe_maybe_unserialize( $value );
 						if ( is_array( $value ) ) {
 							$c       = '';
 							$optstr .= $key . ' : ';
@@ -3972,7 +3980,7 @@ function usces_make_option_field( $materials, $cart ) {
 
 	foreach ( (array) $options as $option ) {
 		if ( ! isset( $option['flag'] ) ) {
-			$meta_value = maybe_unserialize( $option['meta_value'] );
+			$meta_value = wel_safe_maybe_unserialize( $option['meta_value'] );
 			if ( ! is_array( $meta_value ) ) {
 				$meta_value = (array) $meta_value;
 			}
@@ -4030,7 +4038,7 @@ function usces_get_itemOption( $field_data, $materials, $label = '#default#' ) {
 	switch ( $means ) {
 		case 0: //Single-select.
 			$selects     = explode( "\n", $field_data['value'] );
-			$value       = maybe_unserialize( $value );
+			$value       = wel_safe_maybe_unserialize( $value );
 			$check_value = array();
 			if ( ! is_array( $value ) ) {
 				$check_value = (array) $value;
@@ -4072,7 +4080,7 @@ function usces_get_itemOption( $field_data, $materials, $label = '#default#' ) {
 			break;
 		case 1: //Multi-select.
 			$selects = explode( "\n", $field_data['value'] );
-			$value   = maybe_unserialize( $value );
+			$value   = wel_safe_maybe_unserialize( $value );
 			if ( ! is_array( $value ) ) {
 				$value = (array) $value;
 			}
@@ -4099,7 +4107,7 @@ function usces_get_itemOption( $field_data, $materials, $label = '#default#' ) {
 				}
 				$i = 0;
 
-				$value_arr = maybe_unserialize( $value );
+				$value_arr = wel_safe_maybe_unserialize( $value );
 
 				foreach ( $selects as $v ) {
 					$v       = trim( $v );
@@ -4121,7 +4129,7 @@ function usces_get_itemOption( $field_data, $materials, $label = '#default#' ) {
 			break;
 		case 3: //Radio-button.
 			$selects = explode( "\n", $field_data['value'] );
-			$value   = maybe_unserialize( $value );
+			$value   = wel_safe_maybe_unserialize( $value );
 			if ( ! is_array( $value ) ) {
 				$value = (array) $value;
 			}
@@ -4154,7 +4162,7 @@ function usces_get_itemOption( $field_data, $materials, $label = '#default#' ) {
 			break;
 		case 4: //Check-box.
 			$selects = explode( "\n", $field_data['value'] );
-			$value   = maybe_unserialize( $value );
+			$value   = wel_safe_maybe_unserialize( $value );
 			if ( ! is_array( $value ) ) {
 				$value = (array) $value;
 			}
@@ -4893,7 +4901,7 @@ function usces_is_reduced_taxrate( $order_id = '' ) {
 function usces_get_order_condition( $order_id ) {
 	global $wpdb;
 	$order_condition = $wpdb->get_var( $wpdb->prepare( "SELECT order_condition FROM {$wpdb->prefix}usces_order WHERE ID = %d", $order_id ) );
-	return maybe_unserialize( $order_condition );
+	return wel_safe_maybe_unserialize( $order_condition );
 }
 
 function usces_tax_rounding_off( $tax, $tax_method = '' ) {

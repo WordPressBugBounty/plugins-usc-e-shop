@@ -135,7 +135,7 @@ function usces_restore_acting_session_from_store() {
 		return;
 	}
 
-	$order_data = maybe_unserialize( $datas['order_data'] );
+	$order_data = wel_safe_maybe_unserialize( $datas['order_data'] );
 	if ( ! is_array( $order_data ) ) {
 		return;
 	}
@@ -578,7 +578,7 @@ function usces_action_acting_transaction() {
 		}
 		die( 'PayPal' );
 
-		/* telecom edy */
+		/* telecom edy 提供対象外のため無効化. CVE-2026-19887(PHP Object Injection)対応.
 	} elseif ( isset( $_REQUEST['clientip'] ) && isset( $_REQUEST['sendid'] ) && ( isset( $_REQUEST['acting'] ) && 'telecom_edy' == $_REQUEST['acting'] ) ) {
 		$data = array();
 		foreach ( $_REQUEST as $key => $value ) {
@@ -595,7 +595,7 @@ function usces_action_acting_transaction() {
 			$table_meta_name          = $wpdb->prefix . 'usces_order_meta';
 			$mquery                   = $wpdb->prepare( "SELECT order_id, meta_value FROM $table_meta_name WHERE meta_key = %s", wp_unslash( $_REQUEST['option'] ) );
 			$mvalue                   = $wpdb->get_row( $mquery, ARRAY_A );
-			$value                    = unserialize( $mvalue['meta_value'] );
+			$value                    = wel_safe_maybe_unserialize( $mvalue['meta_value'] );
 			$_SESSION['usces_cart']   = $value['usces_cart'];
 			$_SESSION['usces_entry']  = $value['usces_entry'];
 			$_SESSION['usces_member'] = $value['usces_member'];
@@ -625,6 +625,7 @@ function usces_action_acting_transaction() {
 			usces_log( 'telecom edy - Error 2 : ' . print_r( $data, true ), 'acting_transaction.log' );
 		}
 		die( 'SuccessOK' );
+		*/
 
 		/* telecom credit */
 	} elseif ( isset( $_REQUEST['clientip'] ) && isset( $_REQUEST['sendid'] ) && isset( $_REQUEST['rel'] ) ) {

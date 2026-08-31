@@ -765,7 +765,7 @@ class Log_List_Table extends WP_List_Table {
 	 */
 	private function display_data_popup( $item ) {
 		$output        = '';
-		$data          = maybe_unserialize( $item['data'] );
+		$data          = wel_safe_maybe_unserialize( $item['data'] );
 		$compared_mode = ! empty( $data['differed'] );
 		$item['mode']  = ( $compared_mode ) ? 'diff' : 'all';
 		$diff_ele_id   = 'log-dialog-' . $item['ID'];

@@ -2134,7 +2134,7 @@ class usc_e_shop {
 		if ( ! $value ) {
 			$res = null;
 		} else {
-			$res = @unserialize( $value );
+			$res = wel_safe_unserialize( $value );
 		}
 
 		return $res;
@@ -4841,7 +4841,7 @@ class usc_e_shop {
 					$_SESSION['usces_member']['tel']           = $member['mem_tel'];
 					$_SESSION['usces_member']['fax']           = $member['mem_fax'];
 					$_SESSION['usces_member']['delivery_flag'] = $member['mem_delivery_flag'];
-					$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? unserialize( $member['mem_delivery'] ) : '';
+					$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? wel_safe_unserialize( $member['mem_delivery'] ) : '';
 					$_SESSION['usces_member']['registered']    = $member['mem_registered'];
 					$_SESSION['usces_member']['nicename']      = $member['mem_nicename'];
 					$_SESSION['usces_member']['country']       = $this->get_member_meta_value( 'customer_country', $member['ID'] );
@@ -4929,7 +4929,7 @@ class usc_e_shop {
 				$_SESSION['usces_member']['tel']           = $member['mem_tel'];
 				$_SESSION['usces_member']['fax']           = $member['mem_fax'];
 				$_SESSION['usces_member']['delivery_flag'] = $member['mem_delivery_flag'];
-				$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? unserialize( $member['mem_delivery'] ) : '';
+				$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? wel_safe_unserialize( $member['mem_delivery'] ) : '';
 				$_SESSION['usces_member']['registered']    = $member['mem_registered'];
 				$_SESSION['usces_member']['nicename']      = $member['mem_nicename'];
 				$_SESSION['usces_member']['country']       = $this->get_member_meta_value( 'customer_country', $member['ID'] );
@@ -4988,7 +4988,7 @@ class usc_e_shop {
 			$_SESSION['usces_member']['tel']           = $member['mem_tel'];
 			$_SESSION['usces_member']['fax']           = $member['mem_fax'];
 			$_SESSION['usces_member']['delivery_flag'] = $member['mem_delivery_flag'];
-			$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? unserialize( $member['mem_delivery'] ) : '';
+			$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? wel_safe_unserialize( $member['mem_delivery'] ) : '';
 			$_SESSION['usces_member']['registered']    = $member['mem_registered'];
 			$_SESSION['usces_member']['nicename']      = $member['mem_nicename'];
 			$_SESSION['usces_member']['country']       = $this->get_member_meta_value( 'customer_country', $member['ID'] );
@@ -5029,7 +5029,7 @@ class usc_e_shop {
 			$_SESSION['usces_member']['tel']           = $member['mem_tel'];
 			$_SESSION['usces_member']['fax']           = $member['mem_fax'];
 			$_SESSION['usces_member']['delivery_flag'] = $member['mem_delivery_flag'];
-			$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? unserialize( $member['mem_delivery'] ) : '';
+			$_SESSION['usces_member']['delivery']      = ! empty( $member['mem_delivery'] ) ? wel_safe_unserialize( $member['mem_delivery'] ) : '';
 			$_SESSION['usces_member']['registered']    = $member['mem_registered'];
 			$_SESSION['usces_member']['nicename']      = $member['mem_nicename'];
 			$_SESSION['usces_member']['country']       = $this->get_member_meta_value( 'customer_country', $member['ID'] );
@@ -5116,7 +5116,7 @@ class usc_e_shop {
 			$metas = $wpdb->get_results( $query, ARRAY_A );
 
 			foreach ( $metas as $meta ) {
-				$infos[ $meta['meta_key'] ] = maybe_unserialize( $meta['meta_value'] );
+				$infos[ $meta['meta_key'] ] = wel_safe_maybe_unserialize( $meta['meta_value'] );
 			}
 		}
 		return $infos;
@@ -5253,8 +5253,8 @@ class usc_e_shop {
 		$res = array(
 			'ID'              => $value->ID,
 			'mem_id'          => $value->mem_id,
-			'cart'            => unserialize( $value->order_cart ),
-			'condition'       => unserialize( $value->order_condition ),
+			'cart'            => wel_safe_unserialize( $value->order_cart ),
+			'condition'       => wel_safe_unserialize( $value->order_condition ),
 			'getpoint'        => $value->order_getpoint,
 			'usedpoint'       => $value->order_usedpoint,
 			'discount'        => $value->order_discount,
@@ -5285,7 +5285,7 @@ class usc_e_shop {
 				if ( strpos( $row['order_status'], 'cancel' ) !== false || strpos( $row['order_status'], 'estimate' ) !== false ) {
 					continue;
 				} else {
-					$carts = unserialize( $row['order_cart'] );
+					$carts = wel_safe_unserialize( $row['order_cart'] );
 					foreach ( $carts as $cart ) {
 						if ( $post_id == $cart['post_id'] ) {
 							$res[] = $row['ID'];
@@ -7428,7 +7428,7 @@ class usc_e_shop {
 						$type = 'once';
 					} else {
 						if ( is_array( $cart['advance'] ) && array_key_exists( 'regular', $cart['advance'] ) ) {
-							$regular = maybe_unserialize( $cart['advance']['regular'] );
+							$regular = wel_safe_maybe_unserialize( $cart['advance']['regular'] );
 						} else {
 							$advance     = $this->cart->wc_unserialize( $cart['advance'] );
 							$sku         = urldecode( $cart['sku'] );
@@ -8726,7 +8726,7 @@ class usc_e_shop {
 			$data = array(
 				'ID'                         => $value->ID,
 				'cart'                       => $cart,
-				'condition'                  => unserialize( $value->order_condition ),
+				'condition'                  => wel_safe_unserialize( $value->order_condition ),
 				'getpoint'                   => $value->order_getpoint,
 				'usedpoint'                  => $value->order_usedpoint,
 				'discount'                   => $value->order_discount,
@@ -9067,7 +9067,7 @@ class usc_e_shop {
 		}
 
 		foreach ( (array) $dbres as $carts ) {
-			$rows = unserialize( $carts );
+			$rows = wel_safe_unserialize( $carts );
 			foreach ( (array) $rows as $carts ) {
 				if ( 'publish' != get_post_status( $carts['post_id'] ) ) {
 					continue;
@@ -9396,7 +9396,7 @@ class usc_e_shop {
 			$keys = array_keys( $meta );
 			foreach ( $keys as $key ) {
 				$csmb_key = 'csmb_' . $key;
-				$_SESSION['usces_member']['custom_member'][ $key ] = maybe_unserialize( $this->get_member_meta_value( $csmb_key, $member_id ) );
+				$_SESSION['usces_member']['custom_member'][ $key ] = wel_safe_maybe_unserialize( $this->get_member_meta_value( $csmb_key, $member_id ) );
 			}
 		}
 	}
@@ -9532,7 +9532,7 @@ class usc_e_shop {
 			if ( in_array( $value['meta_key'], $meta_keys ) ) {
 				$meta_key = $value['meta_key'];
 				if ( 'settlement_id' == $meta_key ) {
-					$meta_values = maybe_unserialize( $value['meta_value'] );
+					$meta_values = wel_safe_maybe_unserialize( $value['meta_value'] );
 					if ( is_array( $meta_values ) ) {
 						foreach ( $meta_values as $key => $meta_value ) {
 							$fields[ $key ] = $meta_value;
@@ -9550,7 +9550,7 @@ class usc_e_shop {
 						$fields[ $key ] = $meta_value;
 					}
 				} else {
-					$meta_values = maybe_unserialize( $value['meta_value'] );
+					$meta_values = wel_safe_maybe_unserialize( $value['meta_value'] );
 					if ( is_array( $meta_values ) ) {
 						foreach ( $meta_values as $key => $meta_value ) {
 							$fields[ $key ] = $meta_value;

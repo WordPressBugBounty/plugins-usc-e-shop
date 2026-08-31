@@ -62,7 +62,7 @@ function usces_tax_label( $data = array(), $out = '' ) {
 		$condition = $usces->get_condition();
 		$tax_mode  = $usces->options['tax_mode'];
 	} else {
-		$condition = maybe_unserialize( $data['order_condition'] );
+		$condition = wel_safe_maybe_unserialize( $data['order_condition'] );
 		$tax_mode  = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : $usces->options['tax_mode'];
 	}
 	if ( 'exclude' === $tax_mode ) {
@@ -107,7 +107,7 @@ function usces_tax( $data, $out = '' ) {
 		$condition = $usces->get_condition();
 		$tax_mode  = $usces->options['tax_mode'];
 	} else {
-		$condition = maybe_unserialize( $data['order_condition'] );
+		$condition = wel_safe_maybe_unserialize( $data['order_condition'] );
 		$tax_mode  = ( isset( $condition['tax_mode'] ) ) ? $condition['tax_mode'] : $usces->options['tax_mode'];
 	}
 
@@ -143,7 +143,7 @@ function usces_tax( $data, $out = '' ) {
 					'cod_fee'           => $data['order_cod_fee'],
 					'use_point'         => $data['order_usedpoint'],
 					'carts'             => usces_get_ordercartdata( $data['ID'] ),
-					'condition'         => unserialize( $data['order_condition'] ),
+					'condition'         => wel_safe_unserialize( $data['order_condition'] ),
 				);
 				$tax_str   = '( ' . usces_crform( usces_internal_tax( $materials, 'return' ), true, false, 'return' ) . ' )';
 			} elseif ( array_key_exists( 'tax', $data ) ) {
@@ -3977,7 +3977,7 @@ function usces_member_history( $out = '' ) {
 					foreach ( $options as $key => $value ) {
 						if ( ! empty( $key ) ) {
 							$key   = urldecode( $key );
-							$value = maybe_unserialize( $value );
+							$value = wel_safe_maybe_unserialize( $value );
 							if ( is_array( $value ) ) {
 								$c       = '';
 								$optstr .= esc_html( $key ) . ' : ';

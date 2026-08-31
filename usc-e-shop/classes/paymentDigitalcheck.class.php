@@ -701,7 +701,7 @@ class DIGITALCHECK_SETTLEMENT {
 			return $msg_payment;
 		}
 
-		$args = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+		$args = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 		if ( isset( $args['CVS'] ) ) {
 			$msg_payment .= '支払先 : ' . $this->get_conv_name( $args['CVS'] ) . "\r\n";
 		}
@@ -733,7 +733,7 @@ class DIGITALCHECK_SETTLEMENT {
 		}
 
 		if ( 'orderConfirmMail' == $_POST['mode'] ) {
-			$args = maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
+			$args = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $payment['settlement'], $order_id ) );
 			if ( isset( $args['CVS'] ) ) {
 				$msg_payment .= '支払先 : ' . $this->get_conv_name( $args['CVS'] ) . "\r\n";
 			}

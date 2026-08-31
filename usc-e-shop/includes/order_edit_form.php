@@ -156,11 +156,11 @@ if ( 'new' === $order_action ) {
 	$order_id = isset( $_REQUEST['order_id'] ) ? (int) wp_kses( wp_unslash( $_REQUEST['order_id'] ), array() ) : 0;
 	$data     = $this->get_order_data( $order_id, 'direct' );
 
-	$deli            = stripslashes_deep( maybe_unserialize( $data['order_delivery'] ) );
-	$seriarized_cart = stripslashes_deep( maybe_unserialize( $data['order_cart'] ) );
+	$deli            = stripslashes_deep( wel_safe_maybe_unserialize( $data['order_delivery'] ) );
+	$seriarized_cart = stripslashes_deep( wel_safe_maybe_unserialize( $data['order_cart'] ) );
 	$cart            = usces_get_ordercartdata( $order_id );
-	$condition       = stripslashes_deep( maybe_unserialize( $data['order_condition'] ) );
-	$ordercheck      = stripslashes_deep( maybe_unserialize( $data['order_check'] ) );
+	$condition       = stripslashes_deep( wel_safe_maybe_unserialize( $data['order_condition'] ) );
+	$ordercheck      = stripslashes_deep( wel_safe_maybe_unserialize( $data['order_check'] ) );
 
 	if ( ! is_array( $ordercheck ) ) {
 		$ordercheck = array();
@@ -209,7 +209,7 @@ if ( 'new' === $order_action ) {
 		$keys = array_keys( $csod_meta );
 		foreach ( $keys as $key ) {
 			$csod_key                  = 'csod_' . $key;
-			$csod_meta[ $key ]['data'] = maybe_unserialize( $this->get_order_meta_value( $csod_key, $order_id ) );
+			$csod_meta[ $key ]['data'] = wel_safe_maybe_unserialize( $this->get_order_meta_value( $csod_key, $order_id ) );
 		}
 	}
 	// Start - Display data of the deleted order custom fields.
@@ -226,11 +226,11 @@ if ( 'new' === $order_action ) {
 			$order_meta_key = str_replace( 'csod_', '', $order_meta['meta_key'] );
 			$deleted        = ! isset( $csod_meta[ $order_meta_key ] );
 			if ( $deleted ) {
-				$display_order_meta = maybe_unserialize( $order_meta['meta_value'] );
+				$display_order_meta = wel_safe_maybe_unserialize( $order_meta['meta_value'] );
 				if ( is_array( $display_order_meta ) ) {
 					$display_order_meta = implode( ',', $display_order_meta );
 				}
-				$deleted_csod_meta_display .= '<tr><td class="label">' . $order_meta_key . '</td><td>' . $display_order_meta . '</td></tr>';
+				$deleted_csod_meta_display .= '<tr><td class="label">' . esc_html( $order_meta_key ) . '</td><td>' . esc_html( $display_order_meta ) . '</td></tr>';
 			}
 		}
 	}
@@ -240,7 +240,7 @@ if ( 'new' === $order_action ) {
 		$keys = array_keys( $cscs_meta );
 		foreach ( $keys as $key ) {
 			$cscs_key                  = 'cscs_' . $key;
-			$cscs_meta[ $key ]['data'] = maybe_unserialize( $this->get_order_meta_value( $cscs_key, $order_id ) );
+			$cscs_meta[ $key ]['data'] = wel_safe_maybe_unserialize( $this->get_order_meta_value( $cscs_key, $order_id ) );
 		}
 	}
 	$csde_meta = usces_has_custom_field_meta( 'delivery' );
@@ -248,7 +248,7 @@ if ( 'new' === $order_action ) {
 		$keys = array_keys( $csde_meta );
 		foreach ( $keys as $key ) {
 			$csde_key                  = 'csde_' . $key;
-			$csde_meta[ $key ]['data'] = maybe_unserialize( $this->get_order_meta_value( $csde_key, $order_id ) );
+			$csde_meta[ $key ]['data'] = wel_safe_maybe_unserialize( $this->get_order_meta_value( $csde_key, $order_id ) );
 		}
 	}
 

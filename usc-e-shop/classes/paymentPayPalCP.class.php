@@ -2907,7 +2907,7 @@ jQuery( document ).ready( function( $ ) {
 							foreach ( $options as $key => $value ) {
 								if ( ! empty( $key ) ) {
 									$key   = urldecode( $key );
-									$value = maybe_unserialize( $value );
+									$value = wel_safe_maybe_unserialize( $value );
 									if ( is_array( $value ) ) {
 										$c            = '';
 										$description .= $key . ' : ';
@@ -3201,7 +3201,7 @@ jQuery( document ).ready( function( $ ) {
 						foreach ( $options as $key => $value ) {
 							if ( ! empty( $key ) ) {
 								$key   = urldecode( $key );
-								$value = maybe_unserialize( $value );
+								$value = wel_safe_maybe_unserialize( $value );
 								if ( is_array( $value ) ) {
 									$c            = '';
 									$description .= $key . ' : ';
@@ -4742,7 +4742,7 @@ jQuery.event.add( window, "load", function() {
 					$shipping = usces_have_shipped( $cart );
 					if ( $shipping ) {
 						$order_data                    = $usces->get_order_data( $order_id, 'direct' );
-						$delivery                      = unserialize( $order_data['order_delivery'] );
+						$delivery                      = wel_safe_unserialize( $order_data['order_delivery'] );
 						$entry['delivery']['name1']    = $delivery['name1'];
 						$entry['delivery']['name2']    = $delivery['name2'];
 						$entry['delivery']['country']  = $delivery['country'];
@@ -5704,7 +5704,7 @@ jQuery.event.add( window, "load", function() {
 			$cart                               = usces_get_ordercartdata( $order_id );
 			$shipping                           = usces_have_shipped( $cart );
 			if ( $shipping ) {
-				$delivery                      = unserialize( $order_data['order_delivery'] );
+				$delivery                      = wel_safe_unserialize( $order_data['order_delivery'] );
 				$entry['delivery']['name1']    = $delivery['name1'];
 				$entry['delivery']['name2']    = $delivery['name2'];
 				$entry['delivery']['country']  = $delivery['country'];
@@ -5942,7 +5942,7 @@ jQuery.event.add( window, "load", function() {
 				foreach ( $options as $key => $value ) {
 					if ( ! empty( $key ) ) {
 						$key   = urldecode( $key );
-						$value = maybe_unserialize( $value );
+						$value = wel_safe_maybe_unserialize( $value );
 						if ( is_array( $value ) ) {
 							$c       = '';
 							$optstr .= '( ' . $key . ' : ';
@@ -6050,7 +6050,7 @@ jQuery.event.add( window, "load", function() {
 			foreach ( $options as $key => $value ) {
 				if ( ! empty( $key ) ) {
 					$key   = urldecode( $key );
-					$value = maybe_unserialize( $value );
+					$value = wel_safe_maybe_unserialize( $value );
 					if ( is_array( $value ) ) {
 						$c       = '';
 						$optstr .= '( ' . $key . ' : ';
@@ -6443,7 +6443,7 @@ jQuery.event.add( window, "load", function() {
 			$shipping = usces_have_shipped( $cart );
 			if ( $shipping ) {
 				$regular_data                  = $this->get_regular_data( $member_id, $reg_id );
-				$delivery                      = (array) unserialize( $regular_data['reg_delivery'] );
+				$delivery                      = (array) wel_safe_unserialize( $regular_data['reg_delivery'] );
 				$entry['delivery']['name1']    = $delivery['name1'];
 				$entry['delivery']['name2']    = $delivery['name2'];
 				$entry['delivery']['country']  = $delivery['country'];

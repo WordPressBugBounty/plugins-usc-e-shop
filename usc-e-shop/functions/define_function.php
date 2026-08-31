@@ -2517,7 +2517,7 @@ function usces_define_functions() {
 			$product = wel_get_product( $row['ID'] );
 			$metas   = $product['_ext'];
 			foreach ( $metas as $key => $value ) {
-				if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( maybe_unserialize( $key ) ) ) {
+				if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( wel_safe_maybe_unserialize( $key ) ) ) {
 					continue;
 				}
 				$meta_keys[ $key ] = 'null';
@@ -2536,7 +2536,7 @@ function usces_define_functions() {
 			$new['item_name']    = $product['itemName'];
 
 			foreach ( $metas as $key => $values ) {
-				if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( maybe_unserialize( $key ) ) ) {
+				if ( '' === $key || '_' === substr( $key, 0, 1 ) || is_array( wel_safe_maybe_unserialize( $key ) ) ) {
 					continue;
 				}
 				$vc = is_array( $values ) ? count( $values ) : 0;

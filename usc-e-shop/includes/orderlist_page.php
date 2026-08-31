@@ -368,7 +368,7 @@ foreach ( (array) $rows as $data ) :
 		}
 		$tempkey = substr( $key, 0, 5 );
 		if ( in_array( $tempkey, array( 'csod_', 'cscs_', 'csde_' ) ) ) {
-			$multi_value = maybe_unserialize( $value );
+			$multi_value = wel_safe_maybe_unserialize( $value );
 			if ( is_array( $multi_value ) ) {
 				$value = '';
 				foreach ( $multi_value as $str ) {
@@ -487,7 +487,7 @@ foreach ( (array) $rows as $data ) :
 				break;
 
 			case 'deli_name':
-				$deliinfo       = unserialize( $value );
+				$deliinfo       = wel_safe_unserialize( $value );
 				$deliname       = $deliinfo['name1'] . $deliinfo['name2'];
 				$deliname_class = apply_filters( 'usces_filter_orderlist_deliname_class', '', $deliinfo, $deliname );
 				if ( $deliname ) {
@@ -533,7 +533,7 @@ foreach ( (array) $rows as $data ) :
 
 			case 'order_check':
 				$p_status = '';
-				$value    = maybe_unserialize( $value );
+				$value    = wel_safe_maybe_unserialize( $value );
 				if ( ! is_array( $value ) ) {
 					$value = array();
 				}
@@ -582,7 +582,7 @@ foreach ( (array) $rows as $data ) :
 				break;
 
 			case 'meta_value':
-				$value = maybe_unserialize( $value );
+				$value = wel_safe_maybe_unserialize( $value );
 				if ( is_array( $value ) ) {
 					$opt_values = '';
 					foreach ( $value as $opt_value ) {

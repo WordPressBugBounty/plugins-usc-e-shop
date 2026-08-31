@@ -191,7 +191,7 @@ function usces_download_member_list() {
 					$name = $entry['name'];
 					$csmb_key = 'csmb_'.$key;
 					if( isset( $_REQUEST['check'][$csmb_key] ) ) {
-						$value = maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -226,7 +226,7 @@ function usces_download_member_list() {
 					$name = $entry['name'];
 					$csmb_key = 'csmb_'.$key;
 					if( isset( $_REQUEST['check'][$csmb_key] ) ) {
-						$value = maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -277,7 +277,7 @@ function usces_download_member_list() {
 					$name = $entry['name'];
 					$csmb_key = 'csmb_'.$key;
 					if( isset( $_REQUEST['check'][$csmb_key] ) ) {
-						$value = maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $csmb_key, $member_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -468,7 +468,7 @@ function usces_download_product_list() {
 				if( $options && is_array( $options ) && count( $options ) > 0 ) {
 					foreach( (array)$options as $key => $value ) {
 						if( !empty( $value['meta_key'] ) ) {
-							$meta_value = maybe_unserialize( $value['meta_value'] );
+							$meta_value = wel_safe_maybe_unserialize( $value['meta_value'] );
 							if( is_array( $meta_value ) ) {
 								$meta_vals = '';
 								foreach( $meta_value as $array_val ) {
@@ -848,7 +848,7 @@ function usces_download_order_list() {
 		$order_id = $array['ID'];
 		$query = $wpdb->prepare( "SELECT * FROM $usces_order_table WHERE ID = %d", $order_id );
 		$data = $wpdb->get_row( $query, ARRAY_A );
-		$deli = unserialize( $data['order_delivery'] );
+		$deli = wel_safe_unserialize( $data['order_delivery'] );
 
 		$line .= $tr_h;
 		$line .= $td_h1.$order_id.$td_f;
@@ -862,7 +862,7 @@ function usces_download_order_list() {
 					$name = $entry['name'];
 					$cscs_key = 'cscs_'.$key;
 					if( isset( $_REQUEST['check'][$cscs_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -897,7 +897,7 @@ function usces_download_order_list() {
 					$name = $entry['name'];
 					$cscs_key = 'cscs_'.$key;
 					if( isset( $_REQUEST['check'][$cscs_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -948,7 +948,7 @@ function usces_download_order_list() {
 					$name = $entry['name'];
 					$cscs_key = 'cscs_'.$key;
 					if( isset( $_REQUEST['check'][$cscs_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $cscs_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -973,7 +973,7 @@ function usces_download_order_list() {
 					$name = $entry['name'];
 					$csde_key = 'csde_'.$key;
 					if( isset( $_REQUEST['check'][$csde_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -1008,7 +1008,7 @@ function usces_download_order_list() {
 					$name = $entry['name']."</td>";
 					$csde_key = 'csde_'.$key;
 					if( isset( $_REQUEST['check'][$csde_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -1058,7 +1058,7 @@ function usces_download_order_list() {
 					$name = $entry['name'];
 					$csde_key = 'csde_'.$key;
 					if( isset( $_REQUEST['check'][$csde_key] ) ) {
-						$value = maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
+						$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $csde_key, $order_id ) );
 						if( empty( $value ) ) {
 							$value = '';
 						} elseif( is_array( $value ) ) {
@@ -1128,7 +1128,7 @@ function usces_download_order_list() {
 				$name = $entry['name'];
 				$csod_key = 'csod_'.$key;
 				if( isset( $_REQUEST['check'][$csod_key] ) ) {
-					$value = maybe_unserialize( $usces->get_order_meta_value( $csod_key, $order_id ) );
+					$value = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $csod_key, $order_id ) );
 					if( empty( $value ) ) {
 						$value = '';
 					} elseif( is_array( $value ) ) {

@@ -66,7 +66,7 @@ function usces_login_with_openid($email) {
 		$_SESSION['usces_member']['tel'] = $member['mem_tel'];
 		$_SESSION['usces_member']['fax'] = $member['mem_fax'];
 		$_SESSION['usces_member']['delivery_flag'] = $member['mem_delivery_flag'];
-		$_SESSION['usces_member']['delivery'] = !empty($member['mem_delivery']) ? unserialize($member['mem_delivery']) : '';
+		$_SESSION['usces_member']['delivery'] = !empty($member['mem_delivery']) ? wel_safe_unserialize($member['mem_delivery']) : '';
 		$_SESSION['usces_member']['registered'] = $member['mem_registered'];
 		$_SESSION['usces_member']['nicename'] = $member['mem_nicename'];
 		$_SESSION['usces_member']['country'] = $usces->get_member_meta_value('customer_country', $member['ID']);

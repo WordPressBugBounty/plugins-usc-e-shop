@@ -548,7 +548,7 @@ function wel_update_db_2_7( $version ) {
 		wel_backup_remove_data( $data_opt );
 		$meta_id = $data_opt->meta_id;
 		$post_id = $data_opt->post_id;
-		$opt     = unserialize( $data_opt->meta_value );
+		$opt     = wel_safe_unserialize( $data_opt->meta_value );
 		$res     = wel_update_opt_data_by_id( $meta_id, $post_id, $opt );
 	}
 
@@ -601,7 +601,7 @@ function wel_update_db_2_7( $version ) {
 				if ( array_key_exists( $reserved_key, $WelItem->get_item_format() ) ) {
 
 					wel_backup_remove_data( $meta );
-					$item[ $reserved_key ] = maybe_unserialize( $meta->meta_value );
+					$item[ $reserved_key ] = wel_safe_maybe_unserialize( $meta->meta_value );
 				}
 			}
 
@@ -620,7 +620,7 @@ function wel_update_db_2_7( $version ) {
 			foreach ( (array) $res_sku as $data_sku ) {
 				wel_backup_remove_data( $data_sku );
 				$meta_id = $data_sku->meta_id;
-				$sku     = unserialize( $data_sku->meta_value );
+				$sku     = wel_safe_unserialize( $data_sku->meta_value );
 				$res     = wel_update_sku_data_by_id( $meta_id, $post_id, $sku );
 			}
 
@@ -635,7 +635,7 @@ function wel_update_db_2_7( $version ) {
 			foreach ( (array) $res_opt as $data_opt ) {
 				wel_backup_remove_data( $data_opt );
 				$meta_id = $data_opt->meta_id;
-				$opt     = unserialize( $data_opt->meta_value );
+				$opt     = wel_safe_unserialize( $data_opt->meta_value );
 				$res     = wel_update_opt_data_by_id( $meta_id, $post_id, $opt );
 			}
 

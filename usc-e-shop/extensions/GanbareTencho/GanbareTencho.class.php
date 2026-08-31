@@ -219,7 +219,7 @@ class USCES_GANBARE_TENCHO {
 		foreach ( (array) $ids as $order_id ) {
 
 			$data     = $usces->get_order_data( $order_id, 'direct' );
-			$delivery = unserialize( $data['order_delivery'] );
+			$delivery = wel_safe_unserialize( $data['order_delivery'] );
 			$cart     = usces_get_ordercartdata( $order_id );
 			if ( isset( $delivery['delivery_flag'] ) && 2 === (int) $delivery['delivery_flag'] && ! empty( $data['mem_id'] ) && function_exists( 'msa_get_orderdestination' ) ) {
 				$orderdestination = msa_get_orderdestination( $order_id );
@@ -250,7 +250,7 @@ class USCES_GANBARE_TENCHO {
 			$order_memo           = $usces->get_order_meta_value( 'order_memo', $order_id );
 			$delivery_company     = $usces->get_order_meta_value( 'delivery_company', $order_id );
 			$tracking_number      = $usces->get_order_meta_value( apply_filters( 'usces_filter_tracking_meta_key', 'tracking_number' ), $order_id );
-			$order_condition      = unserialize( $data['order_condition'] );
+			$order_condition      = wel_safe_unserialize( $data['order_condition'] );
 			$tax_div              = ( 'include' == $order_condition['tax_mode'] ) ? '税込' : '税別';
 
 			$cart_count = ( $cart && is_array( $cart ) ) ? count( $cart ) : 0;

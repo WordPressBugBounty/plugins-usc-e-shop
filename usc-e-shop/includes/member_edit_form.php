@@ -79,14 +79,14 @@ if ( 'new' === $member_action ) {
 	if ( is_array( $csmb_meta ) ) {
 		$keys = array_keys( $csmb_meta );
 		foreach ( $keys as $key ) {
-			$csmb_meta[ $key ]['data'] = maybe_unserialize( $this->get_member_meta_value( 'csmb_' . $key, $member_id ) );
+			$csmb_meta[ $key ]['data'] = wel_safe_maybe_unserialize( $this->get_member_meta_value( 'csmb_' . $key, $member_id ) );
 		}
 	}
 	$admb_meta = usces_has_custom_field_meta( 'admin_member' );
 	if ( is_array( $admb_meta ) ) {
 		$keys = array_keys( $admb_meta );
 		foreach ( $keys as $key ) {
-			$admb_meta[ $key ]['data'] = maybe_unserialize( $this->get_member_meta_value( 'admb_' . $key, $member_id ) );
+			$admb_meta[ $key ]['data'] = wel_safe_maybe_unserialize( $this->get_member_meta_value( 'admb_' . $key, $member_id ) );
 		}
 	}
 
@@ -358,7 +358,7 @@ foreach ( (array) $usces_member_history as $umhs ) :
 		foreach ( (array) $options as $key => $value ) {
 			if ( ! empty( $key ) ) {
 				$key   = urldecode( $key );
-				$value = maybe_unserialize( $value );
+				$value = wel_safe_maybe_unserialize( $value );
 				if ( is_array( $value ) ) {
 					$c       = '';
 					$optstr .= esc_html( $key ) . ' : ';

@@ -334,10 +334,11 @@ class usces_cart {
 				if ( 3 === (int) $option['means'] || 4 === (int) $option['means'] ) {
 					if ( is_array( $value ) ) {
 						foreach ( $value as $k => $v ) {
-							$pots[ $key ][ trim( $v ) ] = trim( $v );
+							$v                  = trim( wel_safe_text_serialize( $v ) );
+							$pots[ $key ][ $v ] = $v;
 						}
 					} else {
-						$pots[ $key ] = $value;
+						$pots[ $key ] = wel_safe_text_serialize( $value );
 					}
 				} else {
 					if ( is_array( $value ) ) {
@@ -380,10 +381,11 @@ class usces_cart {
 			foreach ( $_POST['itemOption'][ $index ][ $id ][ $sku ] as $key => $value ) {
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {
+						$v                  = wel_safe_text_serialize( $v );
 						$pots[ $key ][ $v ] = $v;
 					}
 				} else {
-					$pots[ $key ] = $value;
+					$pots[ $key ] = wel_safe_text_serialize( $value );
 				}
 			}
 			ksort( $pots );
@@ -402,7 +404,7 @@ class usces_cart {
 	 * @return array|false False if the serial key cannot be restored ( unserialize failure or invalid format ).
 	 */
 	public function key_unserialize( $serial ) {
-		$array = @unserialize( $serial );
+		$array = wel_safe_unserialize( $serial );
 		if ( ! is_array( $array ) || empty( $array ) ) {
 			return false;
 		}
@@ -566,12 +568,16 @@ class usces_cart {
 
 		if ( isset( $_POST['reserve'] ) ) {
 			foreach ( $_POST['reserve'] as $key => $value ) {
-				$_SESSION['usces_entry']['reserve'][ $key ] = trim( $value );
+				$_SESSION['usces_entry']['reserve'][ $key ] = trim( wel_safe_text_serialize( $value ) );
 			}
 		}
 		if ( isset( $_POST['custom_order'] ) ) {
 			unset( $_SESSION['usces_entry']['custom_order'] );
+			$csod_meta = usces_has_custom_field_meta( 'order' );
 			foreach ( $_POST['custom_order'] as $key => $value ) {
+				if ( ! is_array( $csod_meta ) || ! isset( $csod_meta[ $key ] ) ) {
+					continue;
+				}
 				$value = wel_safe_text_serialize( $value );
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {

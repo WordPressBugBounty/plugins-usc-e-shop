@@ -38,11 +38,11 @@ class orderDataObject
 		$this->customer['country_code'] = ( isset( $data['order_country'] ) ) ? $data['order_country'] : null;
 		$this->customer['country']      = ( isset( $usces_settings['country'][$data['order_country']] ) ) ? $usces_settings['country'][$data['order_country']] : '';
 
-		$this->deliveri = (array) unserialize( $data['order_delivery'] );
+		$this->deliveri = (array) wel_safe_unserialize( $data['order_delivery'] );
 
 		$this->cart = usces_get_ordercartdata( $order_id );
 
-		$this->condition = (array) unserialize( $data['order_condition'] );
+		$this->condition = (array) wel_safe_unserialize( $data['order_condition'] );
 
 		$this->order['ID']               = $order_id;
 		$this->order['note']             = ( isset( $data['order_note'] ) ) ? $data['order_note'] : null;

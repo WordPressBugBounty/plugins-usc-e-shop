@@ -409,7 +409,7 @@ class Logger {
 			$keys = array_keys( $custom_member_metas );
 			foreach ( $keys as $key ) {
 				$custom_member_meta_key     = $member_field_prefix . $key;
-				$custom_member_data[ $key ] = maybe_unserialize( $usces->get_member_meta_value( $custom_member_meta_key, $member_id ) );
+				$custom_member_data[ $key ] = wel_safe_maybe_unserialize( $usces->get_member_meta_value( $custom_member_meta_key, $member_id ) );
 			}
 		}
 
@@ -456,7 +456,7 @@ class Logger {
 			$keys = array_keys( $custom_order_metas );
 			foreach ( $keys as $key ) {
 				$custom_order_meta_key     = $order_field_prefix . $key;
-				$custom_order_data[ $key ] = maybe_unserialize( $usces->get_order_meta_value( $custom_order_meta_key, $order_id ) );
+				$custom_order_data[ $key ] = wel_safe_maybe_unserialize( $usces->get_order_meta_value( $custom_order_meta_key, $order_id ) );
 			}
 		}
 
@@ -627,8 +627,8 @@ class Logger {
 	private function prepare_repeater_data( $field, $before_value, $after_value ) {
 		$field_data   = array();
 		$parent_group = $field['group'];
-		$before_data  = maybe_unserialize( $before_value );
-		$after_data   = maybe_unserialize( $after_value );
+		$before_data  = wel_safe_maybe_unserialize( $before_value );
+		$after_data   = wel_safe_maybe_unserialize( $after_value );
 		if ( ! empty( $before_data ) || ! empty( $after_data ) ) {
 			$repeater_data_rows = array();
 			$is_key_and_value   = isset( $field['is_key_and_value'] );
@@ -664,14 +664,14 @@ class Logger {
 				$before_repeater_row = isset( $before_data[ $index ] ) ? $before_data[ $index ] : '';
 
 				if ( $is_key_and_value ) {
-					$before_repeater_row = maybe_unserialize( $before_repeater_row );
+					$before_repeater_row = wel_safe_maybe_unserialize( $before_repeater_row );
 					$sub_field           = array(
 						'group' => $parent_group,
 						'label' => $index,
 					);
 
 					$after_repeater_row = isset( $after_data[ $index ] ) ? $after_data[ $index ] : '';
-					$after_repeater_row = maybe_unserialize( $after_repeater_row );
+					$after_repeater_row = wel_safe_maybe_unserialize( $after_repeater_row );
 
 					$repeater_data_rows[ $index ] = $this->prepare_field_data( $sub_field, $before_repeater_row, $after_repeater_row );
 					$is_diff                      = $is_diff || ! empty( $repeater_data_rows[ $index ]['is_diff'] );
@@ -711,8 +711,8 @@ class Logger {
 	 */
 	private function prepare_group_data( $field, $before_value, $after_value ) {
 		$field_data  = array();
-		$before_data = maybe_unserialize( $before_value );
-		$after_data  = maybe_unserialize( $after_value );
+		$before_data = wel_safe_maybe_unserialize( $before_value );
+		$after_data  = wel_safe_maybe_unserialize( $after_value );
 		if ( ! empty( $before_data ) || ! empty( $after_data ) ) {
 			$sub_field_data = array();
 			$sub_fields     = $field['fields'];

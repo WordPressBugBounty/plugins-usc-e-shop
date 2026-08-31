@@ -519,7 +519,7 @@ function usces_get_acting_data( $key ) {
 	$query          = $wpdb->prepare( "SELECT * FROM {$log_table_name} WHERE `log_type` = %s AND `log_key` = %s", 'acting_data', $key );
 	$data           = $wpdb->get_row( $query, ARRAY_A );
 	if ( $data ) {
-		$order_data             = unserialize( $data['log'] );
+		$order_data             = wel_safe_unserialize( $data['log'] );
 		$order_data['key']      = $data['log_key'];
 		$order_data['datetime'] = $data['datetime'];
 	} else {
@@ -596,7 +596,7 @@ function usces_get_settlement_log( $log_key = '' ) {
 	if ( $log_data ) {
 		$html = '<table class="list"><tr><th></th><th></th><th>' . __( 'Register date', 'usces' ) . '</th><th>' . __( 'Link key', 'usces' ) . '</th><th>' . __( 'Name', 'usces' ) . '</th><th>' . __( 'Type of payment', 'usces' ) . '</th><th>IP</th></tr>';
 		foreach ( (array) $log_data as $data ) {
-			$log               = unserialize( $data['log'] );
+			$log               = wel_safe_unserialize( $data['log'] );
 			$name              = esc_html( $log['usces_entry']['customer']['name1'] ) . esc_html( $log['usces_entry']['customer']['name2'] );
 			$payment_name      = esc_html( $log['usces_entry']['order']['payment_name'] );
 			$payments          = usces_get_payments_by_name( $payment_name );
@@ -670,7 +670,7 @@ function usces_get_settlement_log_detail( $log_key ) {
 	$html .= '</thead><tbody>';
 	$num   = 1;
 	foreach ( $order_data['usces_cart'] as $serial => $row ) {
-		$array = @unserialize( $serial );
+		$array = wel_safe_unserialize( $serial );
 		$ids   = ( is_array( $array ) && ! empty( $array ) ) ? array_keys( $array ) : array();
 		if ( empty( $ids ) || ! is_array( $array[ $ids[0] ] ) || empty( $array[ $ids[0] ] ) ) {
 			/*
@@ -700,7 +700,7 @@ function usces_get_settlement_log_detail( $log_key ) {
 			$options[ $name ] = ( isset( $options[ $name ] ) ) ? $options[ $name ] : '';
 			if ( ! empty( $name ) ) {
 				$key   = urldecode( $name );
-				$value = maybe_unserialize( $options[ $name ] );
+				$value = wel_safe_maybe_unserialize( $options[ $name ] );
 				if ( is_array( $value ) ) {
 					$c       = '';
 					$optstr .= esc_html( $key ) . ' : ';
@@ -894,7 +894,7 @@ function usces_get_settlement_error_log() {
 	if ( $log_data ) {
 		$html = '<table class="list"><tr><th></th><th></th><th>' . __( 'Register date', 'usces' ) . '</th><th>' . __( 'Link key', 'usces' ) . '</th><th>' . __( 'Type of payment', 'usces' ) . '</th><th>' . __( 'Status', 'usces' ) . '</th></tr>';
 		foreach ( (array) $log_data as $data ) {
-			$log    = unserialize( $data['log'] );
+			$log    = wel_safe_unserialize( $data['log'] );
 			$result = ( ! empty( $log['result'] ) ) ? $log['result'] : '';
 			$acting = ( ! empty( $log['acting'] ) ) ? $log['acting'] : '';
 			$html  .= '<tr>
@@ -944,7 +944,7 @@ function usces_get_settlement_error_log_detail( $log_id ) {
 	$query          = $wpdb->prepare( "SELECT * FROM {$log_table_name} WHERE `log_type` = %s AND `ID` = %s", 'acting_error', $log_id );
 	$data           = $wpdb->get_row( $query, ARRAY_A );
 	if ( $data ) {
-		$log   = unserialize( $data['log'] );
+		$log   = wel_safe_unserialize( $data['log'] );
 		$html  = '<table class="detail">';
 		$html .= '<tr><th>' . __( 'Register date', 'usces' ) . '</th><td>' . $data['datetime'] . '</td></tr>';
 		$html .= '<tr><th>' . __( 'Link key', 'usces' ) . '</th><td>' . $log['key'] . '</td></tr>';
@@ -1046,7 +1046,7 @@ function usces_download_settlement_error_log() {
 	}
 	$log_data = $wpdb->get_results( $query, ARRAY_A );
 	foreach ( (array) $log_data as $data ) {
-		$log   = unserialize( $data['log'] );
+		$log   = wel_safe_unserialize( $data['log'] );
 		$line .= __( 'Register date', 'usces' ) . ' = ' . $data['datetime'] . "\r\n";
 		$line .= __( 'Link key', 'usces' ) . ' = ' . $log['key'] . "\r\n";
 		$line .= __( 'Result', 'usces' ) . ' = ' . $log['result'] . "\r\n";

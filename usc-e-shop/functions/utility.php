@@ -71,7 +71,7 @@ function usces_upgrade_141() {
 			if ( $order_id == $order->ID ) {
 				continue;
 			}
-			$condition = maybe_unserialize( $order->order_condition );
+			$condition = wel_safe_maybe_unserialize( $order->order_condition );
 			if ( ! isset( $condition['tax_mode'] ) ) {
 				$condition['tax_mode'] = $options['tax_mode'];
 			}
@@ -82,7 +82,7 @@ function usces_upgrade_141() {
 				$condition['tax_target'] = $options['tax_target'];
 			}
 
-			$cart = unserialize( $order->order_cart );
+			$cart = wel_safe_unserialize( $order->order_cart );
 			foreach ( (array) $cart as $row_index => $value ) {
 				$product     = wel_get_product( $value['post_id'] );
 				$item_code   = $product['itemCode'];
@@ -136,7 +136,7 @@ function usces_upgrade_141() {
 					}
 					if ( $value['advance'] ) {
 						foreach ( (array) $value['advance'] as $akey => $avalue ) {
-							$advance = maybe_unserialize( $avalue );
+							$advance = wel_safe_maybe_unserialize( $avalue );
 							if ( is_array( $advance ) ) {
 								$post_id = $value['post_id'];
 								if ( is_array( $advance[ $post_id ][ $sku_encoded ] ) ) {
@@ -233,7 +233,7 @@ function usces_upgrade_14() {
 	$results = $wpdb->get_results( $query );
 	if ( $results ) {
 		foreach ( $results as $order ) {
-			$condition = maybe_unserialize( $order->order_condition );
+			$condition = wel_safe_maybe_unserialize( $order->order_condition );
 			if ( ! isset( $condition['tax_mode'] ) ) {
 				$condition['tax_mode'] = $options['tax_mode'];
 			}
@@ -244,7 +244,7 @@ function usces_upgrade_14() {
 				$condition['tax_target'] = $options['tax_target'];
 			}
 
-			$cart = unserialize( $order->order_cart );
+			$cart = wel_safe_unserialize( $order->order_cart );
 			foreach ( (array) $cart as $row_index => $value ) {
 				$product     = wel_get_product( $value['post_id'] );
 				$item_code   = $product['itemCode'];
@@ -298,7 +298,7 @@ function usces_upgrade_14() {
 					}
 					if ( $value['advance'] ) {
 						foreach ( (array) $value['advance'] as $akey => $avalue ) {
-							$advance = maybe_unserialize( $avalue );
+							$advance = wel_safe_maybe_unserialize( $avalue );
 							if ( is_array( $advance ) ) {
 								$post_id = $value['post_id'];
 								if ( is_array( $advance[ $post_id ][ $sku_encoded ] ) ) {
@@ -480,7 +480,7 @@ function usces_upgrade_11() {
 	$check_code  = array();
 	$dep_num     = array();
 	foreach ( (array) $res as $metarow ) {
-		$meta_value       = unserialize( $metarow['meta_value'] );
+		$meta_value       = wel_safe_unserialize( $metarow['meta_value'] );
 		$newvalue         = array();
 		$newvalue['code'] = substr( $metarow['meta_key'], 6 );
 		if ( $pre_post_id == $metarow['post_id'] ) {
@@ -554,7 +554,7 @@ function usces_upgrade_11() {
 	$check_code  = array();
 	$dep_num     = array();
 	foreach ( (array) $res as $metarow ) {
-		$meta_value       = unserialize( $metarow['meta_value'] );
+		$meta_value       = wel_safe_unserialize( $metarow['meta_value'] );
 		$newvalue         = array();
 		$newvalue['name'] = substr( $metarow['meta_key'], 6 );
 		if ( $pre_post_id == $metarow['post_id'] ) {
@@ -893,6 +893,9 @@ function usces_filter_delivery_check_custom_order( $mes ) {
 		unset( $_SESSION['usces_entry']['custom_order'] );
 		if ( isset( $_POST['custom_order'] ) ) {
 			foreach ( $_POST['custom_order'] as $key => $value ) {
+				if ( ! isset( $meta[ $key ] ) ) {
+					continue;
+				}
 				if ( is_array( $value ) ) {
 					foreach ( $value as $k => $v ) {
 						$_SESSION['usces_entry']['custom_order'][ $key ][ trim( $v ) ] = trim( $v );
@@ -1734,4 +1737,68 @@ function wel_safe_text_serialize( $data ) {
 	}
 
 	return maybe_serialize( $result );
+}
+
+/**
+ * Safely unserialize a value without restoring PHP objects.
+ * Drop-in replacement for maybe_unserialize() that blocks PHP Object Injection.
+ *
+ * unserialize() with allowed_classes=false still returns a __PHP_Incomplete_Class
+ * stand-in object for any object it encounters (it just refuses to instantiate the
+ * real class). That stand-in has no __toString(), so callers that echo/concatenate
+ * the result would still hit a fatal error on poisoned data. wel_strip_unserialized_objects()
+ * replaces any such object with an empty string so the result is always safe to display.
+ *
+ * @param mixed $data Possibly serialized data.
+ *
+ * @return mixed
+ */
+function wel_safe_maybe_unserialize( $data ) {
+	if ( ! is_serialized( $data ) ) {
+		return $data;
+	}
+
+	$result = @unserialize( $data, array( 'allowed_classes' => false ) );
+
+	return wel_strip_unserialized_objects( $result );
+}
+
+/**
+ * Safely unserialize a value without restoring PHP objects.
+ * Drop-in replacement for a bare unserialize() call.
+ *
+ * Unlike wel_safe_maybe_unserialize(), this keeps the semantics of unserialize()
+ * itself: a value that is not valid serialized data yields false rather than being
+ * returned untouched. Use this when replacing an existing unserialize() call so the
+ * surrounding code keeps behaving the same way on malformed input.
+ *
+ * @param mixed $data Serialized data.
+ *
+ * @return mixed False if the data cannot be unserialized.
+ */
+function wel_safe_unserialize( $data ) {
+	$result = @unserialize( $data, array( 'allowed_classes' => false ) );
+
+	return wel_strip_unserialized_objects( $result );
+}
+
+/**
+ * Recursively replace any object found in a value with an empty string.
+ *
+ * @param mixed $value Value to sanitize.
+ *
+ * @return mixed
+ */
+function wel_strip_unserialized_objects( $value ) {
+	if ( is_object( $value ) ) {
+		return '';
+	}
+
+	if ( is_array( $value ) ) {
+		foreach ( $value as $key => $item ) {
+			$value[ $key ] = wel_strip_unserialized_objects( $item );
+		}
+	}
+
+	return $value;
 }

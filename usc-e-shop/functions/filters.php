@@ -25,7 +25,7 @@ function usces_filter_get_post_metadata( $null, $object_id, $meta_key, $single )
 	$query = $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $object_id, $meta_key );
 	$metas = $wpdb->get_col( $query );
 	if ( ! empty( $metas ) ) {
-		return array_map( 'maybe_unserialize', $metas );
+		return array_map( 'wel_safe_maybe_unserialize', $metas );
 	}
 
 	if ( $single ) {
@@ -647,7 +647,7 @@ function usces_Universal_trackPageview() {
 			if ( isset( $sesdata['order']['ID'] ) && ! empty( $sesdata['order']['ID'] ) ) {
 				$order_id    = $sesdata['order']['ID'];
 				$data        = $usces->get_order_data( $order_id, 'direct' );
-				$cart        = unserialize( $data['order_cart'] );
+				$cart        = wel_safe_unserialize( $data['order_cart'] );
 				$total_price = $usces->get_total_price( $cart ) + $data['order_discount'] - $data['order_usedpoint'];
 				if ( $total_price < 0 ) {
 					$total_price = 0;
@@ -857,7 +857,7 @@ function usces_Universal_trackPageview_by_Yoast( $push ) {
 			if ( isset( $sesdata['order']['ID'] ) && ! empty( $sesdata['order']['ID'] ) ) {
 				$order_id    = $sesdata['order']['ID'];
 				$data        = $usces->get_order_data( $order_id, 'direct' );
-				$cart        = unserialize( $data['order_cart'] );
+				$cart        = wel_safe_unserialize( $data['order_cart'] );
 				$total_price = $usces->get_total_price( $cart ) + $data['order_discount'] - $data['order_usedpoint'];
 				if ( $total_price < 0 ) {
 					$total_price = 0;
@@ -973,7 +973,7 @@ function usces_ecommerce_reporting() {
 	if ( isset( $sesdata['order']['ID'] ) && ! empty( $sesdata['order']['ID'] ) ) {
 		$order_id    = $sesdata['order']['ID'];
 		$data        = $usces->get_order_data( $order_id, 'direct' );
-		$cart        = unserialize( $data['order_cart'] );
+		$cart        = wel_safe_unserialize( $data['order_cart'] );
 		$total_price = $usces->get_total_price( $cart ) + $data['order_discount'] - $data['order_usedpoint'];
 		if ( $total_price < 0 ) {
 			$total_price = 0;
@@ -1233,7 +1233,7 @@ function usces_Classic_trackPageview_by_Yoast( $push ) {
 			if ( isset( $sesdata['order']['ID'] ) && ! empty( $sesdata['order']['ID'] ) ) {
 				$order_id    = $sesdata['order']['ID'];
 				$data        = $usces->get_order_data( $order_id, 'direct' );
-				$cart        = unserialize( $data['order_cart'] );
+				$cart        = wel_safe_unserialize( $data['order_cart'] );
 				$total_price = $usces->get_total_price( $cart ) + $data['order_discount'] - $data['order_usedpoint'];
 				if ( $total_price < 0 ) {
 					$total_price = 0;
@@ -2310,7 +2310,7 @@ function wel_order_edit_customer_additional_information( $data, $cscs_meta, $act
 		return;
 	}
 
-	$infos = unserialize( $value );
+	$infos = wel_safe_unserialize( $value );
 	$html  = '<tr>
 	<td colspan="2" class="label cus_note_label">' . __( 'Others', 'usces' ) . '</td>
 	<td colspan="4" class="cus_note_label">' . "\n";
