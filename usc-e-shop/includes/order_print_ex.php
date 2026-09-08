@@ -490,7 +490,7 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 			$x = $leftside + $width;
 			$y = $pdf->GetY() - $lineheight;
 			$pdf->SetXY( $x, $y );
-			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ) ) );
+			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) );
 			$y = $pdf->GetY() + $lineheight + $linetop + 1;
 			$pdf->SetLineWidth( 0.1 );
 			$pdf->Line( $leftside, $y, $leftside + $width + 7, $y );
@@ -499,7 +499,7 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 			$x = $leftside + $width;
 			$y = $pdf->GetY() - $lineheight;
 			$pdf->SetXY( $x, $y );
-			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'customer' ) ) );
+			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) );
 			$y = $pdf->GetY() + $lineheight + $linetop;
 			$pdf->SetLineWidth( 0.1 );
 			$pdf->Line( $leftside, $y, $leftside + $width + 7, $y );
@@ -507,7 +507,7 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 			list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['customer_attn'] );
 			$pdf->SetFont( $font, '', $fontsize );
 			$pdf->SetXY( $leftside, $y );
-			$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ), $type, $company, $data->order['ID'] );
+			$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $company, $data->order['ID'] );
 			$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 			$y = $pdf->GetY() + $linetop + 1;
 		}
@@ -555,19 +555,19 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 					$x = $leftside + $width;
 					$y = $pdf->GetY() - $lineheight;
 					$pdf->SetXY( $x, $y );
-					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ) ) );
+					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) );
 					$y = $pdf->GetY() + $lineheight + $linetop + 2;
 				} else {
 					$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $company ), 0, 'L' );
 					$x = $leftside + $width;
 					$y = $pdf->GetY() - $lineheight;
 					$pdf->SetXY( $x, $y );
-					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'customer' ) ) );
+					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) );
 					$y                                       = $pdf->GetY() + $lineheight + $linetop;
 					list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['customer_attn'] );
 					$pdf->SetFont( $font, '', $fontsize );
 					$pdf->SetXY( $leftside, $y );
-					$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ), $type, $company, $data->order['ID'] );
+					$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $company, $data->order['ID'] );
 					$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 					$y = $pdf->GetY() + $linetop + 2;
 				}
@@ -598,19 +598,19 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 					$x = $leftside + $width;
 					$y = $pdf->GetY() - $lineheight;
 					$pdf->SetXY( $x, $y );
-					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'delivery' ) ) );
+					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) );
 					$y = $pdf->GetY() + $lineheight + $linetop + 2;
 				} else {
 					$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $delivery_company ), 0, 'L' );
 					$x = $leftside + $width;
 					$y = $pdf->GetY() - $lineheight;
 					$pdf->SetXY( $x, $y );
-					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'delivery' ) ) );
+					$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) );
 					$y                                       = $pdf->GetY() + $lineheight + $linetop;
 					list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['customer_attn'] );
 					$pdf->SetFont( $font, '', $fontsize );
 					$pdf->SetXY( $leftside, $y );
-					$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_shipping_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'delivery' ), $type, $delivery_company, $data->order['ID'] );
+					$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_shipping_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $delivery_company, $data->order['ID'] );
 					$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 					$y = $pdf->GetY() + $linetop + 2;
 				}
@@ -646,19 +646,19 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 				$x = $leftside + $width;
 				$y = $pdf->GetY() - $lineheight;
 				$pdf->SetXY( $x, $y );
-				$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ) ) );
+				$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) );
 				$y = $pdf->GetY() + $lineheight + $linetop + 2;
 			} else {
 				$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $company ), 0, 'L' );
 				$x = $leftside + $width;
 				$y = $pdf->GetY() - $lineheight;
 				$pdf->SetXY( $x, $y );
-				$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'customer' ) ) );
+				$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) );
 				$y                                       = $pdf->GetY() + $lineheight + $linetop;
 				list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['customer_attn'] );
 				$pdf->SetFont( $font, '', $fontsize );
 				$pdf->SetXY( $leftside, $y );
-				$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ), $type, $company, $data->order['ID'] );
+				$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $company, $data->order['ID'] );
 				$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 				$y = $pdf->GetY() + $linetop + 2;
 			}
@@ -713,19 +713,19 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 						$x = $leftside + $width;
 						$y = $pdf->GetY() - $lineheight - $linetop;
 						$pdf->SetXY( $x, $y );
-						$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'delivery' ) ) ); // 様.
+						$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) ); // 様.
 						$y = $pdf->GetY() + $lineheight + $linetop;
 					} else {
 						$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $delivery_company ), 0, 'L' );
 						$x = $leftside + $width;
 						$y = $pdf->GetY() - $lineheight;
 						$pdf->SetXY( $x, $y );
-						$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'delivery' ) ) ); // 御中.
+						$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) ); // 御中.
 						$y                                       = $pdf->GetY() + $lineheight + $linetop;
 						list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['delivery_address'] );
 						$pdf->SetFont( $font, '', $fontsize );
 						$pdf->SetXY( $leftside, $y );
-						$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_shipping_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'delivery' ), $type, $delivery_company, $data->order['ID'] );
+						$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_shipping_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $delivery_company, $data->order['ID'] );
 						$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 						$y = $pdf->GetY() + $linetop;
 					}
@@ -779,19 +779,19 @@ function usces_pdfSetHeader( $pdf, $data, $page, $font ) {
 			$x = $leftside + $width;
 			$y = $pdf->GetY() - $lineheight;
 			$pdf->SetXY( $x, $y );
-			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ) ) );
+			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_person_honor', $person_honor ) ) );
 			$y = $pdf->GetY() + $lineheight + $linetop + 2;
 		} else {
 			$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $company ), 0, 'L' );
 			$x = $leftside + $width;
 			$y = $pdf->GetY() - $lineheight;
 			$pdf->SetXY( $x, $y );
-			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor, $type, $data, 'customer' ) ) );
+			$pdf->Write( $lineheight, usces_conv_euc( apply_filters( 'usces_filters_pdf_company_honor', $company_honor ) ) );
 			$y                                       = $pdf->GetY() + $lineheight + $linetop;
 			list( $fontsize, $lineheight, $linetop ) = usces_set_font_size( $fontsizes['customer_attn'] );
 			$pdf->SetFont( $font, '', $fontsize );
 			$pdf->SetXY( $leftside, $y );
-			$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor, $type, $data, 'customer' ), $type, $company, $data->order['ID'] );
+			$person = apply_filters( 'usces_filter_pdf_contact_person', __( 'Attn', 'usces' ) . ' : ' . usces_conv_euc( usces_get_pdf_name( $data ) ) . apply_filters( 'usces_filters_pdf_person_honor', $person_honor ), $type, $company, $data->order['ID'] );
 			$pdf->MultiCell( $width, $lineheight, usces_conv_euc( $person ), 0, 'L' );
 			$y = $pdf->GetY() + $linetop + 2;
 		}
