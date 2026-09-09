@@ -49,7 +49,7 @@ if ( usces_is_membersystem_state() ) {
 	$html .= '<div class="send"><input name="customerlogin" type="submit" value="' . esc_html__( ' Next ', 'usces' ) . '" /></div>';
 	$html  = apply_filters( 'usces_filter_customer_page_member_inform', $html, $usces_entries );
 
-	$noncekey = 'post_member' . $this->get_uscesid( false );
+	$noncekey = $this->member_nonce_key( 'post_member' );
 	$html    .= wp_nonce_field( $noncekey, 'wel_nonce', true, false );
 	$html    .= '</form>';
 }
@@ -100,7 +100,7 @@ if ( ! wel_have_ex_order() ) {
 	$html    .= usces_get_customer_button( 'return' );
 	$html    .= '</div>';
 	$html    .= usces_agree_member_field( 'return' );
-	$noncekey = 'post_member' . $this->get_uscesid( false );
+	$noncekey = $this->member_nonce_key( 'post_member' );
 	$html    .= wp_nonce_field( $noncekey, 'wc_nonce', true, false );
 	$html    .= apply_filters( 'usces_filter_customer_inform', null );
 	$html    .= '</form>';

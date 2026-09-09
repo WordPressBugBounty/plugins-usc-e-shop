@@ -150,7 +150,7 @@ if ( 'activate' === $this->options['membersystem_state'] && 'activate' === $this
 	$confirm_point_table = apply_filters( 'usces_filter_confirm_point_table', $confirm_point_table );
 	$html                = apply_filters( 'usces_filter_confirm_point_inform', $html . $confirm_point_table );
 
-	$noncekey = 'use_point' . $this->get_uscesid( false );
+	$noncekey = $this->member_nonce_key( 'use_point' );
 	$html    .= wp_nonce_field( $noncekey, 'wc_nonce', true, false );
 	$html    .= '</form>';
 }

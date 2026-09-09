@@ -2022,11 +2022,11 @@ class usc_e_shop {
 			}
 		}
 
-		if ( isset( $_GET['uscesid'] ) && ! WCUtils::is_blank( $_GET['uscesid'] ) ) {
-			$sessid = $_GET['uscesid'];
-			$sessid = $this->uscesdc( $sessid );
-			session_id( $sessid );
-		}
+		// A1 (Layer 3 / uscesid removal): uscesid によるセッションID設定を撤廃。
+		// かつては GET uscesid を uscesdc() で復号し session_id() に渡していたが、これがセッション
+		// 固定の温床だった（会員乗っ取り・Mantis #0005562）。決済通知のセッション復元は取引キーの
+		// DBストア（A3）／同一オリジンの uk cookie 再開（A2/A5/A6）へ移行済みのため撤廃する。
+		// See .docs/welcart2.x/security-remediation_uscesid-layer3-a1c-teardown-design.md .
 
 		do_action( 'usces_action_session_start' );
 
@@ -2071,90 +2071,24 @@ class usc_e_shop {
 			return;
 		}
 
-		$actionflag = false;
-		$sess       = null;
-		$addr       = null;
-		$rckid      = null;
-		$none       = null;
-		$cookie     = $this->get_cookie();
-
-		if ( isset( $_GET['uscesid'] ) && ! WCUtils::is_blank( $_GET['uscesid'] ) ) {
-			$sessid = base64_decode( urldecode( $_GET['uscesid'] ) );
-			list( $sess, $addr, $rckid, $none ) = explode( '_', $sessid, 4 );
-		}
-		if ( 'acting' == $addr ) {
-			return;
-		}
+		// A1/C (Layer 3 / uscesid removal): 旧「GET uscesid を復号して addr='acting' を判定」ブロックを撤廃。
+		// uscesid 機構撤廃に伴い addr 判定は成立しない。以降は旧SSL同期デッドコード（A7 で撤去済）で return.
 		if ( apply_filters( 'usces_filter_cookie', false ) ) {
 			return;
 		}
 
-		// We need to consider.
+		// NOTE (Layer 3 / uscesid removal, A7): the legacy "common domain + separate SSL domain"
+		// cookie-sync block that used to follow here was already unreachable (an unconditional
+		// return above) and relied on the old SSL/uscesid scheme. Removed during the uscesid
+		// mechanism teardown. See .docs/welcart2.x/security-remediation_uscesid-session-fixation.md 4.3.A A7.
 		return;
-
-		if ( $this->use_ssl && ( $this->is_cart_or_member_page( $_SERVER['REQUEST_URI'] ) || $this->is_inquiry_page( $_SERVER['REQUEST_URI'] ) ) ) {
-
-			$refer   = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : null;
-			$sslid   = isset( $cookie['sslid'] ) ? $cookie['sslid'] : null;
-			$option  = get_option( 'usces' );
-			$parsed  = parse_url( get_option( 'home' ) );
-			$home    = $parsed['host'] . ( isset( $parsed['path'] ) ? $parsed['path'] : '' );
-			$parsed  = parse_url( $option['ssl_url'] );
-			$sslhome = $parsed['host'] . ( isset( $parsed['path'] ) ? $parsed['path'] : '' );
-
-			if ( empty( $refer ) || ( false === strpos( $refer, $home ) && false === strpos( $refer, $sslhome ) ) ) {
-				if ( ! empty( $sslid ) && ! empty( $rckid ) && $sslid === $rckid ) {
-					$actionflag = true;
-				} else {
-					$actionflag = false;
-				}
-			} else {
-				if ( ! empty( $sslid ) && $sslid !== $rckid ) {
-					$actionflag = false;
-				} else {
-					$actionflag = true;
-				}
-			}
-
-			if ( $actionflag ) {
-				$values = array(
-					'id'    => $rckid,
-					'sslid' => $rckid,
-					'name'  => '',
-					'rme'   => '',
-				);
-				if ( 'acting' !== $rckid ) {
-					$this->set_cookie( $values );
-				}
-			} else {
-				if ( 'acting' !== $rckid ) {
-					unset( $_SESSION['usces_member'], $_SESSION['usces_cart'], $_SESSION['usces_entry'] );
-					wp_redirect( 'http://' . $home );
-				}
-			}
-		} else {
-			if ( ! isset( $cookie['id'] ) || WCUtils::is_blank( $cookie['id'] ) ) {
-				$values = array(
-					'id'   => md5( uniqid( rand(), true ) ),
-					'name' => '',
-					'rme'  => '',
-				);
-				$this->set_cookie( $values );
-				$_SESSION['usces_cookieid'] = $values['id'];
-			} else {
-				if ( ! isset( $_SESSION['usces_cookieid'] ) || $_SESSION['usces_cookieid'] != $cookie['id'] ) {
-					$_SESSION['usces_cookieid'] = $cookie['id'];
-				}
-			}
-
-			$actionflag = true;
-		}
 	}
 
 	public function set_cookie( $values, $key = 'usces_cookie' ) {
-		if ( ! isset( $_GET['uscesid'] ) || WCUtils::is_blank( $_GET['uscesid'] ) ) {
-			session_regenerate_id( true );
-		}
+		// A1/C (Layer 3 / uscesid removal): 旧実装は uscesid 付きリクエストで再生成をスキップしていたが、
+		// uscesid 機構を撤廃したため常に再生成する（＝uscesid 以前のオーガニック挙動に一致）。
+		// 決済のセッション継続は取引キーDBストア（A3）／uk cookie（A2/A5/A6）で担保.
+		session_regenerate_id( true );
 		$value   = usces_serialize( $values );
 		$timeout = time()+7*86400;
 		$timeout = apply_filters( 'usces_filter_set_cookie_timeout', $timeout, $values, $key );
@@ -2230,11 +2164,58 @@ class usc_e_shop {
 		}
 	}
 
+	/**
+	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 機構は撤廃済み（A1）。本体はこの関数を
+	 * セッション設定にもURL/nonce生成にも使わない。現状 acting_data の acc_str1 マーカー（save_order_acting_data）
+	 * と、未移行の拡張・クライアントの後方互換のためだけに残置している。**全拡張・全クライアント移行後に
+	 * uscescv()/uscesdc() ともども削除する**（最終クリーンアップ）。
+	 */
 	public function get_uscesid( $flag = true ) {
 		$sessname = session_name();
 		$sessid   = session_id();
 		$sessid   = $this->uscescv( $sessid, $flag );
 		return $sessid;
+	}
+
+	/**
+	 * Session-bound nonce action key for shop-member forms (uscesid-free).
+	 *
+	 * Welcart shop members are not WordPress users (uid=0, empty WP session token), so a
+	 * per-session component is mixed into the nonce action string to keep nonces scoped to
+	 * the individual shop session. This replaces the legacy `$action . get_uscesid(false)`
+	 * (which encoded the same session id via the uscesid obfuscation). The session id is
+	 * used only as a server-side hash input — it is never output to the client or a URL.
+	 *
+	 * @param string $action Base action (e.g. 'post_member' / 'use_point' / 'wc_purchase_nonce').
+	 * @return string
+	 */
+	public function member_nonce_key( $action ) {
+		return $action . session_id();
+	}
+
+	/**
+	 * Create a shop-member nonce bound to the current session.
+	 *
+	 * @param string $action Base action.
+	 * @return string
+	 */
+	public function create_member_nonce( $action ) {
+		return wp_create_nonce( $this->member_nonce_key( $action ) );
+	}
+
+	/**
+	 * Verify a shop-member nonce.
+	 *
+	 * A1/C (Layer 3 / uscesid removal): 移行期の後方互換だった「旧 uscesid ベースキーの二重受理」を撤廃。
+	 * 以降はセッション束縛の新方式キー（member_nonce_key）のみ受理する。未移行の拡張・テーマの
+	 * フォーム（旧キー生成）は新方式へ移行するまで nonce 不一致になる（協調リリースで同時展開）。
+	 *
+	 * @param string $nonce  Nonce value from the request.
+	 * @param string $action Base action.
+	 * @return int|false 1|2 on success, false on failure.
+	 */
+	public function verify_member_nonce( $nonce, $action ) {
+		return wp_verify_nonce( $nonce, $this->member_nonce_key( $action ) );
 	}
 
 	public function shop_head() {
@@ -2333,7 +2314,7 @@ class usc_e_shop {
 			'itemRestriction': "<?php echo esc_js( $itemRestriction ); ?>",
 			'itemOrderAcceptable': "<?php echo esc_js( $itemOrderAcceptable ); ?>",
 			'uscespage': "<?php echo esc_js( $wcpage ); ?>",
-			'uscesid': "<?php echo esc_js( $this->get_uscesid( false ) ); ?>",
+			<?php // A1/C (Layer 3 / uscesid removal): JS グローバル uscesL10n.uscesid の供給を撤廃。消費側は uk cookie 依存へ移行. ?>
 			'wc_nonce': "<?php echo wp_create_nonce( $nonce_action ); ?>"
 		}
 	</script>
@@ -3089,27 +3070,27 @@ class usc_e_shop {
 				$ssl_path        = $ssl_perse['host'] . $ssl_perse_path;
 				if ( $home_perse_path != $ssl_perse_path ) {
 					if ( ! defined( 'USCES_CUSTOMER_URL' ) ) {
-						define( 'USCES_CUSTOMER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER . '&customerinfo=1&uscesid=' . $this->get_uscesid() );
+						define( 'USCES_CUSTOMER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER . '&customerinfo=1' );
 					}
 					if ( ! defined( 'USCES_CART_URL' ) ) {
-						define( 'USCES_CART_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER . '&uscesid=' . $this->get_uscesid() );
+						define( 'USCES_CART_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER );
 					}
 					if ( ! defined( 'USCES_LOSTMEMBERPASSWORD_URL' ) ) {
-						define( 'USCES_LOSTMEMBERPASSWORD_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=lostmemberpassword' );
+						define( 'USCES_LOSTMEMBERPASSWORD_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=lostmemberpassword' );
 					}
 					if ( ! defined( 'USCES_NEWMEMBER_URL' ) ) {
-						define( 'USCES_NEWMEMBER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=newmember' );
+						define( 'USCES_NEWMEMBER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=newmember' );
 					}
 					if ( ! defined( 'USCES_LOGIN_URL' ) ) {
-						define( 'USCES_LOGIN_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=login' );
+						define( 'USCES_LOGIN_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=login' );
 					}
 					if ( ! defined( 'USCES_LOGOUT_URL' ) ) {
-						define( 'USCES_LOGOUT_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=logout' );
+						define( 'USCES_LOGOUT_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=logout' );
 					}
 					if ( ! defined( 'USCES_MEMBER_URL' ) ) {
-						define( 'USCES_MEMBER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() );
+						define( 'USCES_MEMBER_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_MEMBER_NUMBER );
 					}
-					$inquiry_url = empty( $this->options['inquiry_id'] ) ? '' : $this->options['ssl_url'] . '/index.php?page_id=' . $this->options['inquiry_id'] . '&uscesid=' . $this->get_uscesid();
+					$inquiry_url = empty( $this->options['inquiry_id'] ) ? '' : $this->options['ssl_url'] . '/index.php?page_id=' . $this->options['inquiry_id'];
 					if ( ! defined( 'USCES_INQUIRY_URL' ) ) {
 						define( 'USCES_INQUIRY_URL', $inquiry_url );
 					}
@@ -3117,37 +3098,37 @@ class usc_e_shop {
 						define( 'USCES_CART_NONSESSION_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER );
 					}
 					if ( ! defined( 'USCES_PAYPAL_NOTIFY_URL' ) ) {
-						define( 'USCES_PAYPAL_NOTIFY_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn&uscesid=' . $this->get_uscesid( false ) );
+						define( 'USCES_PAYPAL_NOTIFY_URL', $this->options['ssl_url'] . '/index.php?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn' );
 					}
 				} else {
 					$ssl_plink_cart   = str_replace( 'http://','https://', str_replace( $home_path, $ssl_path, get_page_link( USCES_CART_NUMBER ) ) );
 					$ssl_plink_member = str_replace( 'http://','https://', str_replace( $home_path, $ssl_path, get_page_link( USCES_MEMBER_NUMBER ) ) );
 					if ( ! defined( 'USCES_CUSTOMER_URL' ) ) {
-						define( 'USCES_CUSTOMER_URL', $ssl_plink_cart . '?uscesid=' . $this->get_uscesid() . '&customerinfo=1' );
+						define( 'USCES_CUSTOMER_URL', $ssl_plink_cart . '?customerinfo=1' );
 					}
 					if ( ! defined( 'USCES_CART_URL' ) ) {
-						define( 'USCES_CART_URL', $ssl_plink_cart . '?uscesid=' . $this->get_uscesid() );
+						define( 'USCES_CART_URL', $ssl_plink_cart );
 					}
 					if ( ! defined( 'USCES_LOSTMEMBERPASSWORD_URL' ) ) {
-						define( 'USCES_LOSTMEMBERPASSWORD_URL', $ssl_plink_member . '?uscesid=' . $this->get_uscesid() . '&usces_page=lostmemberpassword' );
+						define( 'USCES_LOSTMEMBERPASSWORD_URL', $ssl_plink_member . '?usces_page=lostmemberpassword' );
 					}
 					if ( ! defined( 'USCES_NEWMEMBER_URL' ) ) {
-						define( 'USCES_NEWMEMBER_URL', $ssl_plink_member . '?uscesid=' . $this->get_uscesid() . '&usces_page=newmember' );
+						define( 'USCES_NEWMEMBER_URL', $ssl_plink_member . '?usces_page=newmember' );
 					}
 					if ( ! defined( 'USCES_LOGIN_URL' ) ) {
-						define( 'USCES_LOGIN_URL', $ssl_plink_member . '?uscesid=' . $this->get_uscesid() . '&usces_page=login' );
+						define( 'USCES_LOGIN_URL', $ssl_plink_member . '?usces_page=login' );
 					}
 					if ( ! defined( 'USCES_LOGOUT_URL' ) ) {
-						define( 'USCES_LOGOUT_URL', $ssl_plink_member . '?uscesid=' . $this->get_uscesid() . '&usces_page=logout' );
+						define( 'USCES_LOGOUT_URL', $ssl_plink_member . '?usces_page=logout' );
 					}
 					if ( ! defined( 'USCES_MEMBER_URL' ) ) {
-						define( 'USCES_MEMBER_URL', $ssl_plink_member . '?uscesid=' . $this->get_uscesid() );
+						define( 'USCES_MEMBER_URL', $ssl_plink_member );
 					}
 					if ( ! isset( $this->options['inquiry_id'] ) || ! ( (int) $this->options['inquiry_id'] ) ) {
 						$inquiry_url = get_home_url();
 					} else {
 						$ssl_plink_inquiry = str_replace( 'http://', 'https://', str_replace( $home_path, $ssl_path, get_page_link( $this->options['inquiry_id'] ) ) );
-						$inquiry_url       = empty( $this->options['inquiry_id'] ) ? '' : $ssl_plink_inquiry . '?uscesid=' . $this->get_uscesid();
+						$inquiry_url       = empty( $this->options['inquiry_id'] ) ? '' : $ssl_plink_inquiry;
 					}
 					if ( ! defined( 'USCES_INQUIRY_URL' ) ) {
 						define( 'USCES_INQUIRY_URL', $inquiry_url );
@@ -3156,33 +3137,33 @@ class usc_e_shop {
 						define( 'USCES_CART_NONSESSION_URL', $ssl_plink_cart );
 					}
 					if ( ! defined( 'USCES_PAYPAL_NOTIFY_URL' ) ) {
-						define( 'USCES_PAYPAL_NOTIFY_URL', $ssl_plink_cart . '?acting=paypal_ipn&uscesid=' . $this->get_uscesid( false ) );
+						define( 'USCES_PAYPAL_NOTIFY_URL', $ssl_plink_cart . '?acting=paypal_ipn' );
 					}
 				}
 			} else {
 				$this->delim = '&';
 				if ( ! defined( 'USCES_CUSTOMER_URL' ) ) {
-					define( 'USCES_CUSTOMER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER . '&customerinfo=1&uscesid=' . $this->get_uscesid() );
+					define( 'USCES_CUSTOMER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER . '&customerinfo=1' );
 				}
 				if ( ! defined( 'USCES_CART_URL' ) ) {
-					define( 'USCES_CART_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER . '&uscesid=' . $this->get_uscesid() );
+					define( 'USCES_CART_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER );
 				}
 				if ( ! defined( 'USCES_LOSTMEMBERPASSWORD_URL' ) ) {
-					define( 'USCES_LOSTMEMBERPASSWORD_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=lostmemberpassword' );
+					define( 'USCES_LOSTMEMBERPASSWORD_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=lostmemberpassword' );
 				}
 				if ( ! defined( 'USCES_NEWMEMBER_URL' ) ) {
-					define( 'USCES_NEWMEMBER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=newmember' );
+					define( 'USCES_NEWMEMBER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=newmember' );
 				}
 				if ( ! defined( 'USCES_LOGIN_URL' ) ) {
-					define( 'USCES_LOGIN_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=login' );
+					define( 'USCES_LOGIN_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=login' );
 				}
 				if ( ! defined( 'USCES_LOGOUT_URL' ) ) {
-					define( 'USCES_LOGOUT_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() . '&usces_page=logout' );
+					define( 'USCES_LOGOUT_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&usces_page=logout' );
 				}
 				if ( ! defined( 'USCES_MEMBER_URL' ) ) {
-					define( 'USCES_MEMBER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER . '&uscesid=' . $this->get_uscesid() );
+					define( 'USCES_MEMBER_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_MEMBER_NUMBER );
 				}
-				$inquiry_url = empty( $this->options['inquiry_id'] ) ? '' : $this->options['ssl_url'] . '/?page_id=' . $this->options['inquiry_id'] . '&uscesid=' . $this->get_uscesid();
+				$inquiry_url = empty( $this->options['inquiry_id'] ) ? '' : $this->options['ssl_url'] . '/?page_id=' . $this->options['inquiry_id'];
 				if ( ! defined( 'USCES_INQUIRY_URL' ) ) {
 					define( 'USCES_INQUIRY_URL', $inquiry_url );
 				}
@@ -3190,7 +3171,7 @@ class usc_e_shop {
 					define( 'USCES_CART_NONSESSION_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER );
 				}
 				if ( ! defined( 'USCES_PAYPAL_NOTIFY_URL' ) ) {
-					define( 'USCES_PAYPAL_NOTIFY_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn&uscesid=' . $this->get_uscesid( false ) );
+					define( 'USCES_PAYPAL_NOTIFY_URL', $this->options['ssl_url'] . '/?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn' );
 				}
 			}
 			if ( ! is_admin() ) {
@@ -3234,7 +3215,7 @@ class usc_e_shop {
 					define( 'USCES_CART_NONSESSION_URL', get_page_link( USCES_CART_NUMBER ) );
 				}
 				if ( ! defined( 'USCES_PAYPAL_NOTIFY_URL' ) ) {
-					define( 'USCES_PAYPAL_NOTIFY_URL', get_page_link( USCES_CART_NUMBER ) . '?acting=paypal_ipn&uscesid=' . $this->get_uscesid( false ) );
+					define( 'USCES_PAYPAL_NOTIFY_URL', get_page_link( USCES_CART_NUMBER ) . '?acting=paypal_ipn' );
 				}
 			} else {
 				$this->delim = '&';
@@ -3270,7 +3251,7 @@ class usc_e_shop {
 					define( 'USCES_CART_NONSESSION_URL', get_option( 'home' ) . '/?page_id=' . USCES_CART_NUMBER );
 				}
 				if ( ! defined( 'USCES_PAYPAL_NOTIFY_URL' ) ) {
-					define( 'USCES_PAYPAL_NOTIFY_URL', get_option( 'home' ) . '/?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn&uscesid=' . $this->get_uscesid( false ) );
+					define( 'USCES_PAYPAL_NOTIFY_URL', get_option( 'home' ) . '/?page_id=' . USCES_CART_NUMBER . '&acting=paypal_ipn' );
 				}
 			}
 		}
@@ -3538,8 +3519,7 @@ class usc_e_shop {
 		}
 
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $this->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) && ! $this->is_member_logged_in() ) {
+		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) && ! $this->is_member_logged_in() ) {
 			die( 'Security check2' );
 		}
 		$check_verify_recaptcha = $this->verifyGoogleRecapcha();
@@ -3667,9 +3647,7 @@ class usc_e_shop {
 
 	public function use_point() {
 		global $wp_query, $usces;
-		$noncekey = 'use_point' . $usces->get_uscesid( false );
-
-		if ( ! isset( $_REQUEST['wc_nonce'] ) || ! wp_verify_nonce( $_REQUEST['wc_nonce'], $noncekey ) ) {
+		if ( ! isset( $_REQUEST['wc_nonce'] ) || ! $usces->verify_member_nonce( $_REQUEST['wc_nonce'], 'use_point' ) ) {
 			die( 'Security check1' );
 		}
 
@@ -3865,8 +3843,7 @@ class usc_e_shop {
 
 	public function regmember() {
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $this->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) ) {
+		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) ) {
 			die( 'Security check2' );
 		}
 
@@ -3896,8 +3873,7 @@ class usc_e_shop {
 
 	public function editmember() {
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $this->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) ) {
+		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) ) {
 			die( 'Security check3' );
 		}
 
@@ -3920,8 +3896,7 @@ class usc_e_shop {
 
 	public function deletemember() {
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $this->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) ) {
+		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) ) {
 			die( 'Security check4' );
 		}
 
@@ -3954,8 +3929,7 @@ class usc_e_shop {
 		global $usces, $wp_query;
 
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $usces->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) ) {
+		if ( ! $usces->verify_member_nonce( $nonce, 'post_member' ) ) {
 			$wp_query->set_403();
 			status_header( 403 );
 			exit();
@@ -3995,8 +3969,7 @@ class usc_e_shop {
 		global $usces;
 
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		$noncekey = 'post_member' . $usces->get_uscesid( false );
-		if ( ! wp_verify_nonce( $nonce, $noncekey ) ) {
+		if ( ! $usces->verify_member_nonce( $nonce, 'post_member' ) ) {
 			die( 'Security check6' );
 		}
 
@@ -4903,8 +4876,7 @@ class usc_e_shop {
 				if ( ! $nonce ) {
 					$nonce = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
 				}
-				$noncekey = 'post_member' . $this->get_uscesid( false );
-				if ( ! wp_verify_nonce( $nonce, $noncekey ) && ! $this->is_member_logged_in() ) {
+				if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) && ! $this->is_member_logged_in() ) {
 					$rateLimiter->saveLoginFailed();
 					do_action( 'usces_action_member_login_failed', trim( $_POST['loginmail'] ), 'invalid_nonce' );
 					die( 'Security check4' );
@@ -8823,6 +8795,10 @@ class usc_e_shop {
 		return $id;
 	}
 
+	/**
+	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 難読化生成。本体は不使用。未移行の拡張・
+	 * クライアント後方互換のためのみ残置。全消費側移行後に get_uscesid()/uscesdc() ともども削除する。
+	 */
 	public function uscescv( $sessid, $flag ) {
 		$chars        = '';
 		$i            = 0;
@@ -8856,6 +8832,11 @@ class usc_e_shop {
 		return $sessid;
 	}
 
+	/**
+	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 復号。本体は不使用（A1 で唯一の呼び出しを撤去）。
+	 * 未移行の拡張・クライアント（直接 uscesdc()→session_id() する nopriv AJAX）後方互換のためのみ残置。
+	 * 全消費側移行後に get_uscesid()/uscescv() ともども削除する。
+	 */
 	public function uscesdc( $sessid ) {
 		$sessid = base64_decode( urldecode( $sessid ) );
 		list( $sess, $addr, $cookieid, $none ) = explode( '_', $sessid, 4 );
