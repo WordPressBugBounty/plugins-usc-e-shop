@@ -142,6 +142,7 @@ add_filter( 'usces_filter_membercompletion_page_footer', array( &$usces, 'filter
 add_filter( 'usces_filter_uscesL10n', 'usces_confirm_uscesL10n', 11, 2 );
 add_filter( 'usces_filter_states_form_js', 'usces_search_zipcode_check' );
 add_filter( 'usces_purchase_check', 'wc_purchase_nonce_check', 1 );
+add_filter( 'usces_purchase_check', 'wc_purchase_entry_recheck', 3 );
 
 add_action( 'usces_action_cart_page_header', array( &$usces, 'action_cart_page_header' ) );
 add_action( 'usces_action_cart_page_footer', array( &$usces, 'action_cart_page_footer' ) );

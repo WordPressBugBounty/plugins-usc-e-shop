@@ -1128,26 +1128,57 @@ function usces_get_key( $digit ) {
 }
 
 /**
- * Welcart.com connection
+ * Send this site's profile to the Welcart endpoint server.
+ *
+ * The payload carries the shared secret `usces_wcid` along with the shop's
+ * company details, so it must not travel in clear text.
+ *
+ * This deliberately uses curl directly rather than the WP HTTP API: the site
+ * survey is a first-party channel that must not be switchable off from the
+ * site, and the WP HTTP API can be disabled wholesale by a single
+ * WP_HTTP_BLOCK_EXTERNAL constant or intercepted by a one-line filter.
  *
  * @param array $params Parameters.
  */
 function usces_wcsite_connection( $params ) {
-	if ( extension_loaded( 'curl' ) ) {
-		$conn = curl_init();
-		curl_setopt( $conn, CURLOPT_CONNECTTIMEOUT, 2 );
-		curl_setopt( $conn, CURLOPT_FOLLOWLOCATION, 1 );
-		curl_setopt( $conn, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $conn, CURLOPT_HEADER, true );
-		$user_agent = 'Welcart ' . USCES_VERSION;
-		curl_setopt( $conn, CURLOPT_USERAGENT, $user_agent );
-		$url = 'http://endpoint.welcart.org/point1/';
-		curl_setopt( $conn, CURLOPT_URL, $url );
-		curl_setopt( $conn, CURLOPT_POST, true );
-		curl_setopt( $conn, CURLOPT_POSTFIELDS, $params );
-		$response = curl_exec( $conn );
-		unset( $conn );
+	if ( ! extension_loaded( 'curl' ) ) {
+		return;
 	}
+
+	// Do NOT "fix" this to wp_remote_post(). The WP HTTP API can be switched off
+	// from the site with a single WP_HTTP_BLOCK_EXTERNAL constant, or hijacked by
+	// a one-line pre_http_request/http_request_args filter, which would let a
+	// site silently opt out of the survey. curl bypasses all of that.
+	// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_init
+	// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_setopt
+	// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_exec
+	// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_close
+	$conn = curl_init();
+	curl_setopt( $conn, CURLOPT_URL, USCES_WCSITE_ENDPOINT_URL );
+	curl_setopt( $conn, CURLOPT_POST, true );
+	curl_setopt( $conn, CURLOPT_POSTFIELDS, $params );
+	curl_setopt( $conn, CURLOPT_RETURNTRANSFER, 1 );
+	curl_setopt( $conn, CURLOPT_HEADER, true );
+	curl_setopt( $conn, CURLOPT_CONNECTTIMEOUT, 2 );
+	// The weekly cron runs this inline; without a total cap one slow response
+	// can consume the whole PHP execution time.
+	curl_setopt( $conn, CURLOPT_TIMEOUT, 20 );
+	curl_setopt( $conn, CURLOPT_SSL_VERIFYPEER, true );
+	curl_setopt( $conn, CURLOPT_SSL_VERIFYHOST, 2 );
+	// Verify against the CA bundle WordPress ships, not the host OS trust store.
+	// The endpoint uses Let's Encrypt, and an OS store without ISRG Root X1
+	// would fail verification and stop the survey on that host.
+	curl_setopt( $conn, CURLOPT_CAINFO, ABSPATH . WPINC . '/certificates/ca-bundle.crt' );
+	// Refuse redirects: curl downgrades POST to GET on a 301/302, which would
+	// silently drop the payload, and a redirect could point back at plain HTTP.
+	curl_setopt( $conn, CURLOPT_FOLLOWLOCATION, false );
+	curl_setopt( $conn, CURLOPT_USERAGENT, 'Welcart ' . USCES_VERSION );
+	curl_exec( $conn );
+	curl_close( $conn );
+	// phpcs:enable WordPress.WP.AlternativeFunctions.curl_curl_init
+	// phpcs:enable WordPress.WP.AlternativeFunctions.curl_curl_setopt
+	// phpcs:enable WordPress.WP.AlternativeFunctions.curl_curl_exec
+	// phpcs:enable WordPress.WP.AlternativeFunctions.curl_curl_close
 }
 
 /**

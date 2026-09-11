@@ -1140,31 +1140,11 @@
 	};
 
 	uscesInformation = {
+		// `url` is set by every caller below; no default is kept here on purpose.
+		// The former default pointed at a plain-HTTP welcart.com endpoint.
 		settings: {
-			url: 'http://www.welcart.com/util/welcart_information.php',
 			type: 'POST',
 			cache: false
-		},
-
-		getinfo : function() {
-			var s = uscesInformation.settings;
-			s.data = "v=" + encodeURIComponent(uscesL10n.version);
-			s.data += "&wcid=" + encodeURIComponent(uscesL10n.wcid);
-			s.data += "&wcurl=" + encodeURIComponent(uscesL10n.USCES_PLUGIN_URL);
-			s.data += "&locale=" + encodeURIComponent(uscesL10n.locale);
-			s.data += "&theme=" + encodeURIComponent(uscesL10n.theme);
-			s.data += "&wcex=";
-			var de = '';
-			for( var i = 0; i < uscesL10n.wcex.length; i++) {
-				s.data += de + encodeURIComponent(uscesL10n.wcex[i]);
-				de =',';
-			}
-			$.ajax( s ).done(function( data ){
-				$("#wc_information").html( data );
-			}).fail(function( msg ){
-				$("#wc_information").html( 'error : ' +  msg );
-			});
-			return false;
 		},
 
 		getinfo2 : function() {

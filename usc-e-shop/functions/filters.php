@@ -1520,20 +1520,62 @@ function usces_schedules_intervals( $schedules ) {
 }
 
 /**
- * Welcart activate.
+ * Respond to the Welcart endpoint server's site survey.
+ *
+ * The endpoint server periodically polls every Welcart site to refresh its site
+ * ledger. Authentication is the fixed endpoint address plus the per-site shared
+ * secret `usces_wcid`, and the response carries only the four values the
+ * endpoint consumes. The raw `usces` option must never be exposed - it holds
+ * every payment gateway credential, the bank transfer account, mail bodies and
+ * the log output paths.
+ *
+ * On any mismatch this returns instead of dying, so the request falls through to
+ * the normal page render and the endpoint's own "is Welcart active" fallback
+ * keeps working.
+ *
  * plugins_loaded
  */
 function usces_responce_wcsite() {
-	$my_wcid = get_option( 'usces_wcid' );
-
-	if ( isset( $_POST['sname'] ) && isset( $_POST['wcid'] ) && '54.64.221.23' == $_SERVER['REMOTE_ADDR'] ) {
-		$data['usces']                     = get_option( 'usces', array() );
-		$data['usces_settlement_selected'] = get_option( 'usces_settlement_selected', array() );
-		$res                               = json_encode( $data );
-		header( 'Content-Type: application/json' );
-		wel_esc_script_e( $res );
-		exit;
+	// No nonce here by design: this is a server-to-server channel with no
+	// browser session to bind a nonce to. The shared secret below is the check.
+	if ( ! isset( $_POST['sname'], $_POST['wcid'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		return;
 	}
+
+	// Compared verbatim against a literal address, so no sanitization applies.
+	$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	if ( USCES_WCSITE_ENDPOINT_IP !== $remote_addr ) {
+		return;
+	}
+
+	// is_string() guards against `wcid[]=x`, which would make hash_equals() throw.
+	$my_wcid  = (string) get_option( 'usces_wcid' );
+	$req_wcid = is_string( $_POST['wcid'] ) ? sanitize_text_field( wp_unslash( $_POST['wcid'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	if ( '' === $my_wcid || ! hash_equals( $my_wcid, $req_wcid ) ) {
+		return;
+	}
+
+	$options = get_option( 'usces', array() );
+	$options = is_array( $options ) ? $options : array();
+	$system  = ( isset( $options['system'] ) && is_array( $options['system'] ) ) ? $options['system'] : array();
+
+	$data = array(
+		'usces'                     => array(
+			'company_name' => isset( $options['company_name'] ) ? (string) $options['company_name'] : '',
+			'inquiry_mail' => isset( $options['inquiry_mail'] ) ? (string) $options['inquiry_mail'] : '',
+			// Kept nested because the endpoint reads `usces.system.base_country`.
+			// The key is always emitted: an empty PHP array encodes to `[]`, not
+			// `{}`, which would break that property access on the endpoint.
+			'system'       => array(
+				'base_country' => isset( $system['base_country'] ) ? (string) $system['base_country'] : '',
+			),
+		),
+		'usces_settlement_selected' => get_option( 'usces_settlement_selected', array() ),
+	);
+
+	header( 'Content-Type: application/json; charset=utf-8' );
+	echo wp_json_encode( $data );
+	exit;
 }
 
 /**
@@ -2238,7 +2280,24 @@ function wc_purchase_nonce_check() {
 	$nonacting_settlements = apply_filters( 'usces_filter_nonacting_settlements', $usces->nonacting_settlements );
 	$payments              = usces_get_payments_by_name( $entry['order']['payment_name'] );
 	if ( in_array( $payments['settlement'], $nonacting_settlements ) ) {
-		return true;
+		/*
+		 * Non-acting settlements (cash on delivery, bank transfer and the like)
+		 * used to return here without any nonce check at all, which let a
+		 * crafted request reach order registration without passing through the
+		 * checkout screens. The standard checkout button always emits the
+		 * 'wc_purchase_nonce' field for these settlements (see
+		 * includes/purchase_button.php), so requiring it does not reject a
+		 * legitimate order. Gateway (acting) settlements keep their previous
+		 * behaviour and are handled by the '_purchase_nonce' check below.
+		 */
+		$purchase_nonce = isset( $_POST['wc_purchase_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wc_purchase_nonce'] ) ) : '';
+		if ( ! empty( $purchase_nonce ) && wp_verify_nonce( $purchase_nonce, 'wc_purchase_nonce' ) ) {
+			return true;
+		}
+
+		usces_log( 'purchase nonce check failed: missing or invalid wc_purchase_nonce for a non-acting settlement', 'acting_transaction.log' );
+		wp_safe_redirect( USCES_CART_URL );
+		exit;
 	}
 
 	$nonce    = isset( $_REQUEST['_purchase_nonce'] ) ? $_REQUEST['_purchase_nonce'] : '';
@@ -2247,6 +2306,218 @@ function wc_purchase_nonce_check() {
 	}
 
 	wp_redirect( home_url() );
+	exit;
+}
+
+/**
+ * Re-validate the session entry before an order is registered.
+ * usces_purchase_check
+ *
+ * usces_purchase() does not call customer_check() or delivery_check(); the
+ * required-field validation only runs inside confirm() when $_POST['confirm']
+ * is set. A request that triggers confirm through the query string skips that
+ * validation while cart::entry() still writes the posted customer, delivery
+ * and offer values into the session, so an order could be registered with an
+ * empty shipping address (which in turn produces a zero shipping fee because
+ * the prefecture key is missing from the shipping charge table).
+ *
+ * This guard re-validates the stored entry at the purchase gate. It applies to
+ * non-acting settlements only, so gateway payment flows are untouched.
+ *
+ * @param bool $result Result passed down the filter chain.
+ * @return bool
+ */
+function wc_purchase_entry_recheck( $result ) {
+	global $usces;
+
+	/* Another callback already rejected the request. Do not redirect twice. */
+	if ( false === $result ) {
+		return $result;
+	}
+
+	/* Escape hatch so a site can disable this guard without editing core. */
+	if ( ! apply_filters( 'usces_filter_purchase_entry_recheck_enable', true ) ) {
+		return $result;
+	}
+
+	$entry = $usces->cart->get_entry();
+	$cart  = $usces->cart->get_cart();
+
+	/*
+	 * Extension point: let plugins re-run their own checkout validation here.
+	 * Extensions register their rules on 'usces_filter_customer_check' and
+	 * 'usces_filter_delivery_check', but those filters only run inside
+	 * confirm(), so a request that skips the confirm step skips them too --
+	 * WCEX DLSeller's terms-of-use agreement check is one example. Returning a
+	 * non-empty message from this filter rejects the purchase.
+	 *
+	 * This runs for every settlement, not just the non-acting ones, because a
+	 * rule such as the terms agreement applies regardless of how the order is
+	 * paid. The default is an empty message, so nothing changes until an
+	 * extension opts in.
+	 */
+	$message = apply_filters( 'usces_filter_purchase_recheck', '', $entry, $cart );
+	if ( ! WCUtils::is_blank( $message ) ) {
+		wc_purchase_recheck_fail( 'filter' );
+	}
+
+	$payment_name          = isset( $entry['order']['payment_name'] ) ? $entry['order']['payment_name'] : '';
+	$nonacting_settlements = apply_filters( 'usces_filter_nonacting_settlements', $usces->nonacting_settlements );
+	$payments              = usces_get_payments_by_name( $payment_name );
+	$settlement            = isset( $payments['settlement'] ) ? $payments['settlement'] : '';
+
+	/*
+	 * Gate: non-acting settlements only, and fail closed when the settlement
+	 * cannot be resolved. usces_get_payments_by_name() returns a stub array
+	 * with a null settlement for an unknown payment name. Treating that as
+	 * "not our concern" would let a forged payment name skip this guard
+	 * entirely, and usces_purchase() only rejects an unresolved payment when
+	 * the order total is greater than zero, so a zero-total order would slip
+	 * through. An unresolved settlement is therefore validated here.
+	 */
+	$unresolved = WCUtils::is_blank( $settlement );
+	if ( ! $unresolved && ! in_array( $settlement, $nonacting_settlements, true ) ) {
+		return $result;
+	}
+
+	/* Customer name and e-mail address are always required, as in customer_check(). */
+	$customer = isset( $entry['customer'] ) ? $entry['customer'] : array();
+	$name1    = isset( $customer['name1'] ) ? $customer['name1'] : '';
+	$mail     = isset( $customer['mailaddress1'] ) ? $customer['mailaddress1'] : '';
+	if ( WCUtils::is_blank( $name1 ) || ! is_email( $mail ) ) {
+		wc_purchase_recheck_fail( 'customer' );
+	}
+
+	/*
+	 * Address fields are validated only when the cart actually ships. A
+	 * download-only or recurring-charge cart (WCEX DLSeller) never collects an
+	 * address, so an empty address is valid in that case.
+	 */
+	if ( wc_purchase_cart_needs_shipping() ) {
+		/* Use the separate shipping address when the buyer chose one. */
+		$delivery_flag = isset( $entry['delivery']['delivery_flag'] ) ? (int) $entry['delivery']['delivery_flag'] : 0;
+		$address       = ( 1 === $delivery_flag && isset( $entry['delivery'] ) ) ? $entry['delivery'] : $customer;
+
+		/*
+		 * Whether a field is required comes from the site configuration, never
+		 * hard-coded. Only the prefecture uses a different key in the entry
+		 * ('states' as the essential-mark key, 'pref' in the entry).
+		 */
+		$field_map = array(
+			'name1'    => 'name1',
+			'zipcode'  => 'zipcode',
+			'states'   => 'pref',
+			'address1' => 'address1',
+			'address2' => 'address2',
+			'tel'      => 'tel',
+		);
+		foreach ( $field_map as $mark_key => $entry_key ) {
+			if ( ! usces_is_required_field( $mark_key ) ) {
+				continue;
+			}
+			$value = isset( $address[ $entry_key ] ) ? $address[ $entry_key ] : '';
+			if ( wc_purchase_recheck_value_is_empty( $mark_key, $value ) ) {
+				wc_purchase_recheck_fail( $mark_key );
+			}
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Whether a submitted field value counts as empty for the purchase recheck.
+ *
+ * The prefecture select renders its placeholder with the literal label as the
+ * option value, so an unselected prefecture arrives as the '-- Select --'
+ * string rather than an empty string. customer_check() and delivery_check()
+ * compare against that literal, and this guard has to do the same or it would
+ * accept an unselected prefecture, which in turn yields a zero shipping fee.
+ * The select is translated with the 'usces_dual' text domain while the core
+ * checks use 'usces', so both translations and the raw literal are compared.
+ *
+ * @param string $mark_key Essential mark key.
+ * @param string $value    Submitted value.
+ * @return bool
+ */
+function wc_purchase_recheck_value_is_empty( $mark_key, $value ) {
+	if ( WCUtils::is_blank( $value ) ) {
+		return true;
+	}
+
+	if ( 'states' === $mark_key ) {
+		$placeholders = array(
+			'-- Select --',
+			__( '-- Select --', 'usces' ),
+			__( '-- Select --', 'usces_dual' ),
+		);
+		if ( in_array( $value, $placeholders, true ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Whether the current cart contains at least one item that has to be shipped.
+ *
+ * Mirrors the division check used by usc_e_shop::getShippingCharge(): when
+ * WCEX DLSeller is active its own helper is authoritative, otherwise each cart
+ * row is inspected through getItemDivision().
+ *
+ * @return bool
+ */
+function wc_purchase_cart_needs_shipping() {
+	global $usces;
+
+	$cart = $usces->cart->get_cart();
+	if ( empty( $cart ) ) {
+		return false;
+	}
+
+	if ( function_exists( 'dlseller_have_shipped' ) ) {
+		return (bool) dlseller_have_shipped( $cart );
+	}
+
+	foreach ( (array) $cart as $cart_row ) {
+		if ( ! isset( $cart_row['post_id'] ) ) {
+			/*
+			 * Fail closed: a row we cannot inspect must not be able to switch
+			 * the address validation off.
+			 */
+			return true;
+		}
+
+		$division = $usces->getItemDivision( $cart_row['post_id'] );
+		if ( 'shipped' === $division ) {
+			return true;
+		}
+
+		/*
+		 * getItemDivision() returns null when the post is not a registered
+		 * Welcart product. Treat that as shipping required rather than as
+		 * "no shipping needed", otherwise a single unresolvable cart row
+		 * would silently skip every address check. An explicit non-shipped
+		 * division (a download item, for example) is still honoured above.
+		 */
+		if ( null === $division ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Reject a purchase request that failed the entry recheck.
+ *
+ * @param string $reason Field or group that failed, recorded in the log.
+ * @return void
+ */
+function wc_purchase_recheck_fail( $reason ) {
+	usces_log( 'purchase entry recheck failed: ' . $reason, 'acting_transaction.log' );
+	wp_safe_redirect( USCES_CART_URL );
 	exit;
 }
 

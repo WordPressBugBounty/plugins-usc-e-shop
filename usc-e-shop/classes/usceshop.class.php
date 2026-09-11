@@ -2658,7 +2658,6 @@ class usc_e_shop {
 				'requestFile': "<?php echo site_url(); ?>/wp-admin/admin-ajax.php",
 				'USCES_PLUGIN_URL': "<?php echo USCES_PLUGIN_URL; ?>",
 				'version': "<?php echo USCES_VERSION; ?>",
-				'wcid': "<?php echo get_option( 'usces_wcid' ); ?>",
 				'locale': '<?php echo get_locale(); ?>',
 				'cart_number': "<?php echo get_option( 'usces_cart_number' ); ?>",
 				'purchase_limit': "<?php echo esc_js( $this->options['purchase_limit'] ); ?>",

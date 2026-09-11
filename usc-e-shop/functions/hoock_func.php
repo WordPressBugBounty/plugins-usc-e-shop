@@ -629,6 +629,11 @@ function usces_action_acting_transaction() {
 
 		/* telecom credit */
 	} elseif ( isset( $_REQUEST['clientip'] ) && isset( $_REQUEST['sendid'] ) && isset( $_REQUEST['rel'] ) ) {
+		$acting_clientip = ( isset( $usces->options['acting_settings']['telecom']['clientip'] ) ) ? (string) $usces->options['acting_settings']['telecom']['clientip'] : '';
+		if ( '' === $acting_clientip || (string) wp_unslash( $_REQUEST['clientip'] ) !== $acting_clientip ) {
+			/* 設定済みクライアントIPと一致しない通知は正規のものではないため記録せず終了 */
+			die( 'SuccessOK' );
+		}
 		$data = array();
 		foreach ( $_REQUEST as $key => $value ) {
 			$data[ $key ] = $value;

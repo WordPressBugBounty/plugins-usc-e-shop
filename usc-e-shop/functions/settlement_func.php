@@ -577,6 +577,25 @@ function usces_save_order_acting_error( $log, $mobile = false ) {
 }
 
 /**
+ * Escape a settlement log field for HTML output.
+ *
+ * Log fields come from unauthenticated payment-gateway callbacks, so a field
+ * may arrive as an array (e.g. `?rand[]=x`) or as an object. Flatten anything
+ * non-scalar before escaping, because esc_html() cannot take an array.
+ *
+ * Use this for text nodes only. Attribute values need esc_attr().
+ *
+ * @param mixed $value Raw log field.
+ * @return string Escaped, HTML-safe string.
+ */
+function wel_esc_settlement_log( $value ) {
+	if ( null === $value || is_scalar( $value ) ) {
+		return esc_html( (string) $value );
+	}
+	return esc_html( wp_json_encode( $value ) );
+}
+
+/**
  * 決済直前ログ一覧
  *
  * @param string $log_key Log key.
@@ -605,13 +624,13 @@ function usces_get_settlement_log( $log_key = '' ) {
 			$class             = ( ! empty( $log['revival'] ) ) ? ' class="revival"' : '';
 			$ip                = ( ! empty( $log['remote_addr'] ) ) ? $log['remote_addr'] : '';
 			$html             .= '<tr' . $class . '>
-				<td class="check"><input type="checkbox" class="log-check" value="' . $data['log_key'] . '"></td>
-				<td class="detail"><input type="button" class="log-detail button" id="' . $data['log_key'] . '" value="' . __( 'Detail', 'usces' ) . '"></td>
-				<td class="datetime">' . $data['datetime'] . '</td>
-				<td class="key">' . $data['log_key'] . '</td>
+				<td class="check"><input type="checkbox" class="log-check" value="' . esc_attr( $data['log_key'] ) . '"></td>
+				<td class="detail"><input type="button" class="log-detail button" id="' . esc_attr( $data['log_key'] ) . '" value="' . esc_attr__( 'Detail', 'usces' ) . '"></td>
+				<td class="datetime">' . esc_html( $data['datetime'] ) . '</td>
+				<td class="key">' . esc_html( $data['log_key'] ) . '</td>
 				<td class="name">' . $name . '</td>
 				<td class="payment">' . $payment_name . $payment_structure . '</td>
-				<td class="ip">' . $ip . '</td>
+				<td class="ip">' . esc_html( $ip ) . '</td>
 			</tr>';
 		}
 		$html .= '</table>';
@@ -639,10 +658,10 @@ function usces_get_settlement_log_detail( $log_key ) {
 	$usces_entries = $order_data['usces_entry'];
 
 	$html  = '<table class="detail-head">';
-	$html .= '<tr><th>' . __( 'Register date', 'usces' ) . '</th><td>' . $order_data['datetime'] . '</td><td>
+	$html .= '<tr><th>' . __( 'Register date', 'usces' ) . '</th><td>' . esc_html( $order_data['datetime'] ) . '</td><td>
 		<label for="register_date_1"><input type="radio" name="register_date" id="register_date_1" value="1" checked="checked" /><span>' . __( 'Set the Registered Date to the Order Date.', 'usces' ) . '</span></label><br />
 		<label for="register_date_0"><input type="radio" name="register_date" id="register_date_0" value="0" /><span>' . __( 'Set the current time to the Order Date.', 'usces' ) . '</span></label></td></tr>';
-	$html .= '<tr><th>' . __( 'Link key', 'usces' ) . '</th><td colspan="2">' . $order_data['key'] . '</td></tr>';
+	$html .= '<tr><th>' . __( 'Link key', 'usces' ) . '</th><td colspan="2">' . wel_esc_settlement_log( $order_data['key'] ) . '</td></tr>';
 	$html .= '</table>';
 
 	$html .= '<table class="detail-customer">';
@@ -747,7 +766,7 @@ function usces_get_settlement_log_detail( $log_key ) {
 	}
 	$html .= '<tr><th colspan="3">' . __( 'Payment amount', 'usces' ) . '</th><td class="total_full_price">' . usces_crform( $usces_entries['order']['total_full_price'], true, false, 'return' ) . '</td></tr>';
 	$html .= '</tfoot></table>';
-	$html .= '<input type="hidden" id="log_key" value="' . $order_data['key'] . '" />';
+	$html .= '<input type="hidden" id="log_key" value="' . esc_attr( $order_data['key'] ) . '" />';
 
 	$resdata           = array();
 	$resdata['status'] = 'OK';
@@ -898,12 +917,12 @@ function usces_get_settlement_error_log() {
 			$result = ( ! empty( $log['result'] ) ) ? $log['result'] : '';
 			$acting = ( ! empty( $log['acting'] ) ) ? $log['acting'] : '';
 			$html  .= '<tr>
-				<td class="check"><input type="checkbox" class="error-log-check" value="' . $data['ID'] . '"></td>
-				<td class="detail"><input type="button" class="error-log-detail button" id="' . $data['ID'] . '" value="' . __( 'Detail', 'usces' ) . '"></td>
-				<td class="datetime">' . $data['datetime'] . '</td>
-				<td class="key">' . $data['log_key'] . '</td>
-				<td class="payment">' . $acting . '</td>
-				<td class="status">' . $result . '</td>
+				<td class="check"><input type="checkbox" class="error-log-check" value="' . esc_attr( $data['ID'] ) . '"></td>
+				<td class="detail"><input type="button" class="error-log-detail button" id="' . esc_attr( $data['ID'] ) . '" value="' . esc_attr__( 'Detail', 'usces' ) . '"></td>
+				<td class="datetime">' . esc_html( $data['datetime'] ) . '</td>
+				<td class="key">' . esc_html( $data['log_key'] ) . '</td>
+				<td class="payment">' . wel_esc_settlement_log( $acting ) . '</td>
+				<td class="status">' . wel_esc_settlement_log( $result ) . '</td>
 			</tr>';
 		}
 		$html .= '</table>';
@@ -946,9 +965,9 @@ function usces_get_settlement_error_log_detail( $log_id ) {
 	if ( $data ) {
 		$log   = wel_safe_unserialize( $data['log'] );
 		$html  = '<table class="detail">';
-		$html .= '<tr><th>' . __( 'Register date', 'usces' ) . '</th><td>' . $data['datetime'] . '</td></tr>';
-		$html .= '<tr><th>' . __( 'Link key', 'usces' ) . '</th><td>' . $log['key'] . '</td></tr>';
-		$html .= '<tr><th>' . __( 'Result', 'usces' ) . '</th><td>' . $log['result'] . '</td></tr>';
+		$html .= '<tr><th>' . __( 'Register date', 'usces' ) . '</th><td>' . esc_html( $data['datetime'] ) . '</td></tr>';
+		$html .= '<tr><th>' . __( 'Link key', 'usces' ) . '</th><td>' . wel_esc_settlement_log( $log['key'] ) . '</td></tr>';
+		$html .= '<tr><th>' . __( 'Result', 'usces' ) . '</th><td>' . wel_esc_settlement_log( $log['result'] ) . '</td></tr>';
 		foreach ( (array) $log['data'] as $key => $value ) {
 			if ( in_array( $key, $exemption ) ) {
 				continue;
@@ -959,17 +978,17 @@ function usces_get_settlement_error_log_detail( $log_id ) {
 						continue;
 					}
 					if ( is_array( $value2 ) ) {
-						$html .= '<tr><th>' . $key . ':' . $key2 . '</th><td>' . esc_html( serialize( $value2 ) ) . '</td></tr>';
+						$html .= '<tr><th>' . esc_html( $key ) . ':' . esc_html( $key2 ) . '</th><td>' . esc_html( serialize( $value2 ) ) . '</td></tr>';
 					} else {
-						$html .= '<tr><th>' . $key . ':' . $key2 . '</th><td>' . esc_html( $value2 ) . '</td></tr>';
+						$html .= '<tr><th>' . esc_html( $key ) . ':' . esc_html( $key2 ) . '</th><td>' . esc_html( $value2 ) . '</td></tr>';
 					}
 				}
 			} else {
-				$html .= '<tr><th>' . $key . '</th><td>' . esc_html( $value ) . '</td></tr>';
+				$html .= '<tr><th>' . esc_html( $key ) . '</th><td>' . esc_html( $value ) . '</td></tr>';
 			}
 		}
 		$html .= '</table>';
-		$html .= '<input type="hidden" id="log_id" value="' . $data['ID'] . '" />';
+		$html .= '<input type="hidden" id="log_id" value="' . esc_attr( $data['ID'] ) . '" />';
 	}
 
 	$resdata           = array();
@@ -1025,7 +1044,13 @@ function usces_display_settlement_notice() {
 		return false;
 	}
 	$datetime = get_option( 'usces_settlement_notice' );
-	echo '<div class="message error"><p>' . sprintf( __( "Settlement error has occurred. Please check <a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">the settlement error log</a>. The date of occurrence:[ %s ]", 'usces' ), $datetime ) . '</p></div>';
+	echo '<div class="message error"><p>' . wp_kses_post(
+		sprintf(
+			/* translators: %s: date and time when the settlement error occurred */
+			__( 'Settlement error has occurred. Please check <a href="admin.php?page=usces_orderlist&order_action=settlement_notice">the settlement error log</a>. The date of occurrence:[ %s ]', 'usces' ),
+			$datetime
+		)
+	) . '</p></div>';
 }
 
 /**

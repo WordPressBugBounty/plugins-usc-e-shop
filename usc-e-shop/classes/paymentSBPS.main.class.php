@@ -598,6 +598,7 @@ class SBPS_MAIN {
 			$_GET['acting'] = $acting;
 			switch ( $data['res_result'] ) {
 				case 'OK': /* 決済処理OK */
+					$this->acting_notice_ip_guard( $data );
 					$order_id = $this->get_order_id( $data['res_tracking_id'] );
 					if ( ! $order_id ) {
 						$res = $usces->order_processing( $data );
