@@ -41,6 +41,7 @@ class dataList {
 	var $enddate;
 
 	public $listOption;
+	public $cookie_key;
 	public $totalRow;
 	public $selectedRow;
 	public $headers;
@@ -52,9 +53,14 @@ class dataList {
 	 * @param array  $arr_column Column.
 	 */
 	public function __construct( $tableName, $arr_column ) {
+		global $wpdb;
 		$this->table   = $tableName;
 		$this->columns = $arr_column;
 		$this->rows    = array();
+
+		// 旧受注リストは新受注リスト(WlcOrderList)と同じ Cookie キーを共有すると, 検索条件やページング状態が
+		// 混在して警告や表示崩れの原因になる. 受注リストのみ専用の Cookie キーを使い, 状態を完全に分離する.
+		$this->cookie_key = ( $wpdb->prefix . 'usces_order' === $this->table ) ? $this->table . '_old' : $this->table;
 
 		$this->maxRow         = apply_filters( 'usces_filter_orderlist_maxrow', 30 );
 		$this->naviMaxButton  = 11;
@@ -273,8 +279,9 @@ class dataList {
 				$this->sortSwitchs[ $value ] = 'DESC';
 			}
 		}
-		$this->startdate = ( isset( $_REQUEST['startdate'] ) ) ? $_REQUEST['startdate'] : ( ( isset( $this->data_cookie['startdate'] ) ) ? $this->data_cookie['startdate'] : '' );
-		$this->enddate   = ( isset( $_REQUEST['enddate'] ) ) ? $_REQUEST['enddate'] : ( ( isset( $this->data_cookie['enddate'] ) ) ? $this->data_cookie['enddate'] : '' );
+		// startdate / enddate は画面のフォーム value や JS へ出力される. 書式外を空に落とし, 反映型 XSS を防ぐ.
+		$this->startdate = $this->sanitize_search_date( ( isset( $_REQUEST['startdate'] ) ) ? $_REQUEST['startdate'] : ( ( isset( $this->data_cookie['startdate'] ) ) ? $this->data_cookie['startdate'] : '' ) );
+		$this->enddate   = $this->sanitize_search_date( ( isset( $_REQUEST['enddate'] ) ) ? $_REQUEST['enddate'] : ( ( isset( $this->data_cookie['enddate'] ) ) ? $this->data_cookie['enddate'] : '' ) );
 		$this->SetTotalRow();
 	}
 
@@ -485,6 +492,24 @@ class dataList {
 	}
 
 	/**
+	 * 期間検索の日付をサニタイズする
+	 *
+	 * リクエストまたは検索条件 Cookie 由来の startdate / enddate は、
+	 * WHERE 句へ文字列連結される. 書式に合わない値は空文字に落とし、
+	 * 「日付指定なし」として扱う.
+	 *
+	 * @param  mixed $date Date string.
+	 * @return string
+	 */
+	private function sanitize_search_date( $date ) {
+		if ( ! is_scalar( $date ) ) {
+			return '';
+		}
+		$date = trim( (string) $date );
+		return ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) ? $date : '';
+	}
+
+	/**
 	 * Set Total Rows.
 	 */
 	public function SetTotalRow() {
@@ -492,15 +517,15 @@ class dataList {
 		$where = '';
 		if ( $this->period_specified_index == $this->arr_search['period'] ) {
 			if ( isset( $_REQUEST['startdate'] ) ) {
-				$startdate = $_REQUEST['startdate'];
+				$startdate = $this->sanitize_search_date( $_REQUEST['startdate'] );
 			} else {
-				$startdate = $this->data_cookie['startdate'];
+				$startdate = $this->sanitize_search_date( $this->data_cookie['startdate'] );
 			}
 
 			if ( isset( $_REQUEST['enddate'] ) ) {
-				$enddate = $_REQUEST['enddate'];
+				$enddate = $this->sanitize_search_date( $_REQUEST['enddate'] );
 			} else {
-				$enddate = $this->data_cookie['enddate'];
+				$enddate = $this->sanitize_search_date( $this->data_cookie['enddate'] );
 			}
 			if ( '' != $startdate || '' != $enddate ) {
 				if ( '' == $enddate ) {
@@ -531,15 +556,15 @@ class dataList {
 		$where = '';
 		if ( $this->period_specified_index == $this->arr_search['period'] ) {
 			if ( isset( $_REQUEST['startdate'] ) ) {
-				$startdate = $_REQUEST['startdate'];
+				$startdate = $this->sanitize_search_date( $_REQUEST['startdate'] );
 			} else {
-				$startdate = $this->data_cookie['startdate'];
+				$startdate = $this->sanitize_search_date( $this->data_cookie['startdate'] );
 			}
 
 			if ( isset( $_REQUEST['enddate'] ) ) {
-				$enddate = $_REQUEST['enddate'];
+				$enddate = $this->sanitize_search_date( $_REQUEST['enddate'] );
 			} else {
-				$enddate = $this->data_cookie['enddate'];
+				$enddate = $this->sanitize_search_date( $this->data_cookie['enddate'] );
 			}
 			if ( '' != $startdate || '' != $enddate ) {
 				if ( '' == $enddate ) {
@@ -748,7 +773,7 @@ class dataList {
 	 * Get Cookie.
 	 */
 	public function getCookie() {
-		$this->data_cookie = ( isset( $_COOKIE[ $this->table ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->table ] ) ), true ) : array();
+		$this->data_cookie = ( isset( $_COOKIE[ $this->cookie_key ] ) ) ? json_decode( str_replace( "\'", "'", str_replace( '\"', '"', $_COOKIE[ $this->cookie_key ] ) ), true ) : array();
 	}
 
 	/**

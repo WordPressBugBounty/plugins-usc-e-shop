@@ -349,6 +349,73 @@ class PAYGENT_SETTLEMENT {
 	}
 
 	/**
+	 * 証明書ディレクトリに公開遮断ファイルを設置する
+	 *
+	 * 秘密鍵を含む証明書が HTTP で配信される領域に保存されている場合に備え、
+	 * ディレクトリ名の推測困難性だけに頼らず Web サーバー側でも遮断する.
+	 * 効果があるのは .htaccess を読む Apache のみ. nginx では無効.
+	 *
+	 * 証明書が実際に置かれているディレクトリのときにのみ設置する.
+	 * 証明書ファイルパスは管理画面で任意のディレクトリに変更できるため、
+	 * 証明書と無関係なディレクトリには触れないようにする.
+	 *
+	 * 呼び出し元はディレクトリ作成時・証明書アップロード時・管理画面の読み込み時の3箇所.
+	 *
+	 * @param  string $dir Certificate directory path.
+	 * @return bool True if the directory has the blocking file.
+	 */
+	private function protect_certificate_dir( $dir ) {
+		if ( WCUtils::is_blank( $dir ) || ! is_dir( $dir ) ) {
+			return false;
+		}
+
+		$htaccess = $dir . '/.htaccess';
+		if ( file_exists( $htaccess ) ) {
+			return true;
+		}
+
+		if ( ! is_writable( $dir ) || ! $this->has_certificate_file( $dir ) ) {
+			return false;
+		}
+
+		$content  = "<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n";
+		$content .= "<IfModule !mod_authz_core.c>\n\tOrder deny,allow\n\tDeny from all\n</IfModule>\n";
+
+		return ( false !== file_put_contents( $htaccess, $content ) );
+	}
+
+	/**
+	 * 証明書が置かれているディレクトリかを判定する
+	 *
+	 * クライアント証明書（.pem）かCAファイル（.crt）が1つでもあれば true.
+	 * 拡張子はアップロード時の検証と揃えてある.
+	 * 証明書が無いディレクトリでは決済設定画面の表示ごとにこの判定が走るため、
+	 * ファイル名を配列に溜めずに1件ずつ調べ、見つかった時点で打ち切る.
+	 *
+	 * @param  string $dir Certificate directory path.
+	 * @return bool True if the directory holds a certificate file.
+	 */
+	private function has_certificate_file( $dir ) {
+		$handle = opendir( $dir );
+		if ( false === $handle ) {
+			return false;
+		}
+
+		$extensions = array( 'pem', 'crt' );
+		$found      = false;
+
+		while ( false !== ( $entry = readdir( $handle ) ) ) {
+			if ( in_array( strtolower( pathinfo( $entry, PATHINFO_EXTENSION ) ), $extensions, true ) ) {
+				$found = true;
+				break;
+			}
+		}
+		closedir( $handle );
+
+		return $found;
+	}
+
+	/**
 	 * 決済有効判定
 	 * 支払方法で使用している場合に true
 	 *
@@ -1595,6 +1662,7 @@ jQuery( document ).ready( function( $ ) {
 			if ( ! is_dir( $certificate_path ) ) {
 				wp_mkdir_p( $certificate_path );
 			}
+			$this->protect_certificate_dir( $certificate_path );
 			if ( ! empty( $post_data['file'] ) ) {
 				$full_path = $certificate_path . '/' . $post_data['file'];
 				foreach ( $invalid_wrappers as $wrapper ) {
@@ -1647,6 +1715,7 @@ jQuery( document ).ready( function( $ ) {
 			if ( 0 < $upfile['error'] ) {
 				$data['status'] = $upfile['error'];
 			} else {
+				$this->protect_certificate_dir( $acting_opts['certificate_path'] );
 				$filename = sanitize_file_name( $upfile['name'] );
 				$res      = move_uploaded_file( $upfile['tmp_name'], $acting_opts['certificate_path'] . '/' . $filename );
 				if ( $res ) {
@@ -1939,6 +2008,9 @@ jQuery( document ).ready( function( $ ) {
 		$acting_opts         = $this->get_acting_settings();
 		$settlement_selected = get_option( 'usces_settlement_selected' );
 		if ( in_array( $this->paymod_id, (array) $settlement_selected ) ) :
+			/* 証明書ディレクトリの遮断ファイルを点検する. */
+			$this->protect_certificate_dir( ( isset( $acting_opts['certificate_path'] ) ) ? $acting_opts['certificate_path'] : '' );
+
 			$seq_merchant_id  = ( isset( $acting_opts['seq_merchant_id'] ) ) ? $acting_opts['seq_merchant_id'] : '';
 			$connect_id       = ( isset( $acting_opts['connect_id'] ) ) ? $acting_opts['connect_id'] : '';
 			$connect_password = ( isset( $acting_opts['connect_password'] ) ) ? $acting_opts['connect_password'] : '';
@@ -2158,21 +2230,21 @@ jQuery( document ).ready( function( $ ) {
 					<input name="certificate_path_before" type="hidden" value="<?php echo esc_attr( $certificate_path ); ?>" />
 				</td>
 			</tr>
-			<tr id="ex_certificate_path_paygent" class="explanation paygent_card_form"><td colspan="2">モジュールタイプで利用するときは必須です。</td></tr>
+			<tr id="ex_certificate_path_paygent" class="explanation paygent_card_form"><td colspan="2">証明書を保存するフォルダです。モジュールタイプで利用するときは必須です。通常は初期値のままで問題ありません。変更する場合は、証明書だけを入れる専用のフォルダを指定してください。画像などが入っているフォルダを指定すると、それらが表示されなくなります。</td></tr>
 			<tr class="paygent_card_form">
 				<th><a class="explanation-label" id="label_ex_client_file_paygent">クライアント証明書ファイル</a></th>
 				<td><input name="client_file" type="text" id="client_file_paygent" value="<?php echo esc_attr( $client_file ); ?>" class="regular-text"<?php echo esc_html( $client_file_disabled ); ?> /><br />
 					<input type="button" class="button" value="アップロード" id="client_file_upload"<?php echo esc_html( $client_file_disabled ); ?> /><span id="client_file_upload_result"></span>
 				</td>
 			</tr>
-			<tr id="ex_client_file_paygent" class="explanation paygent_card_form"><td colspan="2">モジュールタイプで利用するときは必須です。クライアント証明書ファイルは試験環境と本番環境で異なります。アップロードができない場合は wp-content/uploads/ フォルダのパーミッションを確認してください。</td></tr>
+			<tr id="ex_client_file_paygent" class="explanation paygent_card_form"><td colspan="2">モジュールタイプで利用するときは必須です。クライアント証明書ファイルは試験環境と本番環境で異なります。アップロードができない場合は、証明書ファイルパスのフォルダの書き込み権限を確認してください。</td></tr>
 			<tr class="paygent_card_form">
 				<th><a class="explanation-label" id="label_ex_ca_file_paygent">CAファイル</a></th>
 				<td><input name="ca_file" type="text" id="ca_file_paygent" value="<?php echo esc_attr( $ca_file ); ?>" class="regular-text"<?php echo esc_html( $ca_file_disabled ); ?> /><br />
 					<input type="button" class="button" value="アップロード" id="ca_file_upload"<?php echo esc_html( $ca_file_disabled ); ?> /><span id="ca_file_upload_result"></span>
 				</td>
 			</tr>
-			<tr id="ex_ca_file_paygent" class="explanation paygent_card_form"><td colspan="2">モジュールタイプで利用するときは必須です。アップロードができない場合は wp-content/uploads/ フォルダのパーミッションを確認してください。</td></tr>
+			<tr id="ex_ca_file_paygent" class="explanation paygent_card_form"><td colspan="2">モジュールタイプで利用するときは必須です。アップロードができない場合は、証明書ファイルパスのフォルダの書き込み権限を確認してください。</td></tr>
 			<tr class="paygent_card_form paygent_card_module">
 				<th><a class="explanation-label" id="label_ex_token_key_paygent">トークン生成鍵</a></th>
 				<td><input name="token_key" type="text" id="token_key_paygent" value="<?php echo esc_attr( $token_key ); ?>" class="regular-text" /></td>
@@ -5262,19 +5334,22 @@ jQuery( document ).ready( function( $ ) {
 			<form action="<?php echo esc_url( USCES_CART_URL ); ?>" method="post" id="redirectForm">
 			<?php
 			foreach ( (array) $post_data as $key => $value ) {
-				echo '<input type="hidden" name="' . $key . '" value="' . $value . '" />' . "\n";
+				if ( is_array( $value ) ) {
+					continue;
+				}
+				echo '<input type="hidden" name="' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '" />' . "\n";
 			}
 			if ( isset( $_GET['result'] ) ) {
-				echo '<input type="hidden" name="result" value="' . $_GET['result'] . '" />' . "\n";
+				echo '<input type="hidden" name="result" value="' . esc_attr( wp_unslash( $_GET['result'] ) ) . '" />' . "\n";
 			}
 			if ( isset( $_GET['3ds_auth_id'] ) ) {
-				echo '<input type="hidden" name="3ds_auth_id" value="' . $_GET['3ds_auth_id'] . '" />' . "\n";
+				echo '<input type="hidden" name="3ds_auth_id" value="' . esc_attr( wp_unslash( $_GET['3ds_auth_id'] ) ) . '" />' . "\n";
 			}
 			if ( isset( $_GET['3dsecure_ds_transaction_id'] ) ) {
-				echo '<input type="hidden" name="3dsecure_ds_transaction_id" value="' . $_GET['3dsecure_ds_transaction_id'] . '" />' . "\n";
+				echo '<input type="hidden" name="3dsecure_ds_transaction_id" value="' . esc_attr( wp_unslash( $_GET['3dsecure_ds_transaction_id'] ) ) . '" />' . "\n";
 			}
 			if ( isset( $_GET['attempt_kbn'] ) ) {
-				echo '<input type="hidden" name="attempt_kbn" value="' . $_GET['attempt_kbn'] . '" />' . "\n";
+				echo '<input type="hidden" name="attempt_kbn" value="' . esc_attr( wp_unslash( $_GET['attempt_kbn'] ) ) . '" />' . "\n";
 			}
 			?>
 			<input type="hidden" name="purchase" value="purchase" />

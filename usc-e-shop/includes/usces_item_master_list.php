@@ -46,8 +46,8 @@ $dataTableNavigation       = $DT->GetDataTableNavigation();
 $dataTableNavigationBottom = $DT->GetDataTableNavigationBottom();
 $rows                      = $DT->rows;
 $zaiko_status              = get_option( 'usces_zaiko_status' );
-$usces_status              = isset( $_REQUEST['usces_status'] ) ? $_REQUEST['usces_status'] : $DT->get_action_status();
-$usces_message             = isset( $_REQUEST['usces_message'] ) ? urldecode( $_REQUEST['usces_message'] ) : $DT->get_action_message();
+$usces_status              = $DT->get_action_status();
+$usces_message             = $DT->get_action_message();
 $curent_url                = urlencode( esc_url( USCES_ADMIN_URL . '?' . $_SERVER['QUERY_STRING'] ) );
 $usces_opt_item            = get_option( 'usces_opt_item' );
 

@@ -355,8 +355,8 @@ $data_cookie['startdate']          = $DT->startdate;
 $data_cookie['enddate']            = $DT->enddate;
 // phpcs:enable
 ?>
-		$.cookie('<?php echo "{$DT->table}" . "_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
-		$.cookie('<?php echo "{$DT->table}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
+		$.cookie('<?php echo "{$DT->cookie_key}" . "_path"; ?>', '<?php echo esc_url( $usces_admin_path ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
+		$.cookie('<?php echo "{$DT->cookie_key}"; ?>', '<?php echo str_replace( "'", "\'", json_encode( $data_cookie ) ); ?>', { path: "<?php echo esc_url( $usces_admin_path ); ?>", domain: ""});
 	})();
 	$("table#mainDataTable tr:even").addClass("rowSelection_even");
 	$("table#mainDataTable tr").hover(function() {

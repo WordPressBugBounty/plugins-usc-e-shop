@@ -304,7 +304,7 @@ function usces_admin_action_status( $status = '', $message = '' ) {
 		?>
 <div id="usces_admin_status">
 	<div id="usces_action_status" class="<?php echo esc_attr( $class ); ?> notice is-dismissible">
-		<p><strong><?php wel_esc_script_e( $message ); ?></strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'usces' ); ?></span></button>
+		<p><strong><?php echo wp_kses_post( $message ); ?></strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'usces' ); ?></span></button>
 	</div>
 </div>
 		<?php

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.12.3
+Stable tag: 2.12.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,6 +68,15 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 3. Top page (Free official theme 'Welcart Basic')
 
 == Changelog ==
+
+17 Sep 2026
+= V2.12.4 =
+-----------
+* Security enhancement (Cross-Site Scripting). Stopped accepting the notification message on the item list screen from the request parameters, and escaped the output. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
+* Security enhancement (Cross-Site Scripting). Escaped the output on the 3-D Secure return screen of Paygent. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
+* Security enhancement. The certificate directory of Paygent is now protected with an access blocking file, and the description of the certificate settings was revised.
+* Security enhancement. Strengthened the validation of the period specified in the search conditions on the order list screen.
+* Fixed PHP errors.
 
 11 Sep 2026
 = V2.12.3 =
