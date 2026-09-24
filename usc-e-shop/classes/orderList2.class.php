@@ -373,27 +373,6 @@ class WlcOrderList {
 	}
 
 	/**
-	 * Get Default Search Parameters.
-	 *
-	 * @return array
-	 */
-	public function get_default_arr_search() {
-		$arr_search = array(
-			'period'            => array( '', '' ),
-			'order_column'      => array( '', '' ),
-			'order_word'        => array( '', '' ),
-			'order_word_term'   => array( 'contain', 'contain' ),
-			'order_term'        => 'AND',
-			'product_column'    => array( '', '' ),
-			'product_word'      => array( '', '' ),
-			'product_word_term' => array( 'contain', 'contain' ),
-			'option_word'       => array( '', '' ),
-			'product_term'      => 'AND',
-		);
-		return apply_filters( 'usces_filter_order_list_arr_search', $arr_search, $this );
-	}
-
-	/**
 	 * Default Parameters.
 	 */
 	public function SetDefaultParam() {
@@ -406,7 +385,19 @@ class WlcOrderList {
 		if ( isset( $this->data_cookie['arr_search'] ) ) {
 			$this->arr_search = $this->data_cookie['arr_search'];
 		} else {
-			$this->arr_search = $this->get_default_arr_search();
+			$arr_search       = array(
+				'period'            => array( '', '' ),
+				'order_column'      => array( '', '' ),
+				'order_word'        => array( '', '' ),
+				'order_word_term'   => array( 'contain', 'contain' ),
+				'order_term'        => 'AND',
+				'product_column'    => array( '', '' ),
+				'product_word'      => array( '', '' ),
+				'product_word_term' => array( 'contain', 'contain' ),
+				'option_word'       => array( '', '' ),
+				'product_term'      => 'AND',
+			);
+			$this->arr_search = apply_filters( 'usces_filter_order_list_arr_search', $arr_search, $this );
 		}
 		if ( isset( $this->data_cookie['sortSwitchs'] ) ) {
 			$this->sortSwitchs = $this->data_cookie['sortSwitchs'];
@@ -582,8 +573,6 @@ class WlcOrderList {
 	 * Validation Search Parameters.
 	 */
 	public function validationSearchParameters() {
-		$this->arr_search = wp_parse_args( (array) $this->arr_search, $this->get_default_arr_search() );
-
 		$default_order_word_term   = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_product_word_term = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_order_term        = [ 'AND', 'OR' ];

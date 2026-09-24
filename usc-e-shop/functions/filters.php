@@ -1879,6 +1879,7 @@ function welcart_confirm_check_ajax() {
 
 	$nonce     = filter_input( INPUT_POST, 'wc_nonce', FILTER_SANITIZE_SPECIAL_CHARS );
 	$ajax      = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_SPECIAL_CHARS );
+	$uscesid   = filter_input( INPUT_POST, 'uscesid', FILTER_SANITIZE_SPECIAL_CHARS );
 	$condition = filter_input( INPUT_POST, 'wc_condition' );
 
 	if ( 'welcart_confirm_check' !== $ajax ) {
@@ -1890,22 +1891,10 @@ function welcart_confirm_check_ajax() {
 		$res = 'not permitted2';
 		wp_send_json_error( $res );
 	}
-	// Session fixation remediation (Layer 3 / uscesid removal, A2): reopen the shopper's shop
-	// session via its own same-origin session cookie instead of decoding a crafted `uscesid`
-	// through uscesdc()/session_id(). This AJAX runs under admin-ajax.php, where
-	// usces_close_session() (admin_init) has closed the bootstrap session, so session_status()
-	// is PHP_SESSION_NONE here and we (re)attach to the frontend shop session identified by its
-	// cookie. Verified on trunk: the confirm-page uscesid decodes to exactly this cookie's
-	// session id, so reading the cookie reaches the same cart (result unchanged).
-	// See .docs/welcart2.x/security-remediation_uscesid-session-fixation.md 4.3.A A2.
-	if ( PHP_SESSION_NONE === session_status() ) {
-		$usces_options = get_option( 'usces' );
-		$sess_name     = defined( 'USCES_KEY' ) ? USCES_KEY : ( isset( $usces_options['usces_key'] ) ? $usces_options['usces_key'] : '' );
-		if ( '' !== $sess_name && ! empty( $_COOKIE[ $sess_name ] ) ) {
-			$sess_id = preg_replace( '/[^A-Za-z0-9,\-]/', '', wp_unslash( $_COOKIE[ $sess_name ] ) );
-			session_id( $sess_id );
-			@session_start(); // phpcs:ignore
-		}
+	if ( PHP_SESSION_NONE === session_status() && $uscesid ) {
+		$sessid = $usces->uscesdc( $uscesid );
+		session_id( $sessid );
+		@session_start(); // phpcs:ignore
 	}
 
 	$current['entry'] = $usces->cart->get_entry();
@@ -2259,7 +2248,7 @@ function wc_purchase_nonce( $html, $payments, $acting_flag, $rand, $purchase_dis
 		return $html;
 	}
 
-	$noncekey = $usces->member_nonce_key( 'wc_purchase_nonce' );
+	$noncekey = 'wc_purchase_nonce' . $usces->get_uscesid( false );
 	$html    .= wp_nonce_field( $noncekey, '_purchase_nonce', false, false ) . "\n";
 	return $html;
 }
@@ -2301,7 +2290,8 @@ function wc_purchase_nonce_check() {
 	}
 
 	$nonce    = isset( $_REQUEST['_purchase_nonce'] ) ? $_REQUEST['_purchase_nonce'] : '';
-	if ( empty( $nonce ) || $usces->verify_member_nonce( $nonce, 'wc_purchase_nonce' ) ) {
+	$noncekey = 'wc_purchase_nonce' . $usces->get_uscesid( false );
+	if ( empty( $nonce ) || wp_verify_nonce( $nonce, $noncekey ) ) {
 		return true;
 	}
 
@@ -2528,7 +2518,7 @@ function wc_purchase_recheck_fail( $reason ) {
 function usces_use_point_nonce() {
 	global $usces;
 
-	$noncekey = $usces->member_nonce_key( 'use_point' );
+	$noncekey = 'use_point' . $usces->get_uscesid( false );
 	wp_nonce_field( $noncekey, 'wc_nonce' );
 }
 
@@ -2543,7 +2533,7 @@ function usces_use_point_nonce() {
 function usces_post_member_nonce() {
 	global $usces;
 
-	$noncekey = $usces->member_nonce_key( 'post_member' );
+	$noncekey = 'post_member' . $usces->get_uscesid( false );
 	wp_nonce_field( $noncekey, 'wc_nonce' );
 }
 
@@ -2555,7 +2545,7 @@ function usces_post_member_nonce() {
 function usces_member_login_nonce() {
 	global $usces;
 
-	$noncekey = $usces->member_nonce_key( 'post_member' );
+	$noncekey = 'post_member' . $usces->get_uscesid( false );
 	wp_nonce_field( $noncekey, 'wel_nonce' );
 }
 
@@ -2660,13 +2650,15 @@ function usces_close_session() {
 
 /**
  * Regenerate the session ID on member login (session fixation countermeasure).
+ *
+ * The uscesid mechanism sets the session id from $_GET['uscesid'], and set_cookie()
+ * skips regeneration whenever that parameter is present, so without this the session
+ * id chosen by an attacker survives the login. member_just_login() does not call
+ * set_cookie() at all.
+ *
  * usces_action_after_login
  *
- * Fires on every successful member login path (member_login() / member_just_login()
- * and extension logins that trigger usces_action_after_login). The uscesid mechanism
- * itself has been removed (A1/C) and set_cookie() now regenerates unconditionally,
- * but not every login path calls set_cookie() (member_just_login() does not), so this
- * hook is what guarantees regeneration on all of them.
+ * @since 2.11.35
  */
 function usces_regenerate_session_on_login() {
 	if ( session_status() == PHP_SESSION_ACTIVE && ! headers_sent() ) {

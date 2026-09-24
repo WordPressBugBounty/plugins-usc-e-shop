@@ -192,25 +192,6 @@ class WlcMemberList {
 	}
 
 	/**
-	 * Get Default Search Parameters.
-	 *
-	 * @return array
-	 */
-	public function get_default_arr_search() {
-		return array(
-			'period'           => '3',
-			'member_column'    => array( '', '' ),
-			'member_word'      => array( '', '' ),
-			'member_word_term' => array( 'contain', 'contain' ),
-			'member_term'      => 'AND',
-			'order_column'     => array( '', '' ),
-			'order_word'       => array( '', '' ),
-			'order_word_term'  => array( 'contain', 'contain' ),
-			'order_term'       => 'AND',
-		);
-	}
-
-	/**
 	 * Default Parameters.
 	 */
 	public function SetDefaultParam() {
@@ -222,7 +203,17 @@ class WlcMemberList {
 		if ( isset( $this->data_cookie['arr_search'] ) ) {
 			$this->arr_search = $this->data_cookie['arr_search'];
 		} else {
-			$this->arr_search = $this->get_default_arr_search();
+			$this->arr_search = array(
+				'period'           => '3',
+				'member_column'    => array( '', '' ),
+				'member_word'      => array( '', '' ),
+				'member_word_term' => array( 'contain', 'contain' ),
+				'member_term'      => 'AND',
+				'order_column'     => array( '', '' ),
+				'order_word'       => array( '', '' ),
+				'order_word_term'  => array( 'contain', 'contain' ),
+				'order_term'       => 'AND',
+			);
 		}
 		if ( isset( $this->data_cookie['sortSwitchs'] ) ) {
 			$this->sortSwitchs = $this->data_cookie['sortSwitchs'];
@@ -404,8 +395,6 @@ class WlcMemberList {
 	 * Validation Search Parameters.
 	 */
 	public function validationSearchParameters() {
-		$this->arr_search = wp_parse_args( (array) $this->arr_search, $this->get_default_arr_search() );
-
 		$default_member_word_term = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_order_word_term  = [ 'contain', 'notcontain', 'equal', 'morethan', 'lessthan' ];
 		$default_order_term       = [ 'AND', 'OR' ];
