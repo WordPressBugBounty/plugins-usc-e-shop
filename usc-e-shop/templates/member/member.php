@@ -88,7 +88,7 @@ $html .= '</table>
 	<input name="editmember" type="submit" value="' . esc_html__( 'update it', 'usces' ) . '" />
 	<input name="deletemember" type="submit" value="' . esc_html__( 'delete it', 'usces' ) . '" onclick="return confirm(\'' . esc_html__( 'All information about the member is deleted. Are you all right?', 'usces' ) . '\');" /></div>';
 
-$noncekey = 'post_member' . $this->get_uscesid( false );
+$noncekey = $this->member_nonce_key( 'post_member' );
 $html    .= wp_nonce_field( $noncekey, 'wc_nonce', true, false );
 $html    .= '</form>';
 

@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.11.36
+Stable tag: 2.12.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,18 +69,21 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
-24 Sep 2026
-= V2.11.36 =
+17 Sep 2026
+= V2.12.4 =
 -----------
-* This is a security release for the V2.11 series. V2.12.4 already contains these fixes, so there is no need to update if you are running V2.12.x.
 * Security enhancement (Cross-Site Scripting). Stopped accepting the notification message on the item list screen from the request parameters, and escaped the output. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
 * Security enhancement (Cross-Site Scripting). Escaped the output on the 3-D Secure return screen of Paygent. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
+* Security enhancement. The certificate directory of Paygent is now protected with an access blocking file, and the description of the certificate settings was revised.
+* Security enhancement. Strengthened the validation of the period specified in the search conditions on the order list screen.
+* Fixed PHP errors.
+
+11 Sep 2026
+= V2.12.3 =
+-----------
 * Security enhancement (Cross-Site Scripting). Escaped the output on the settlement log and the settlement error log screens, and added a client IP check to the Telecom Credit payment notification. Thanks to minhgalaxy - GalaxyOne for the report.
 * Security enhancement (Missing Authorization). Added an origin check to the payment notification handler of SB Payment Service.
 * Security enhancement (Missing Authorization). Restricted access to the wcsite linkage endpoint and reduced the setting information output on the administration screen.
-* Security enhancement. The certificate directory of Paygent is now protected with an access blocking file, and the description of the certificate settings was revised.
-* Security enhancement. Strengthened the validation of the period specified in the search conditions on the order list screen.
 * The purchase nonce is now required for non-gateway settlements such as cash on delivery and bank transfer, and the entry data is re-validated before an order is registered. Themes that build the checkout form without usces_purchase_button() need to output the wc_purchase_nonce field.
-* Fixed PHP errors.
 
 For older versions, please see the [Changelog Archive (Japanese)](https://www.welcart.com/about/changelog/).

@@ -5796,6 +5796,10 @@ msgstr "受注日時に登録日を設定"
 msgid "Set the current time to the Order Date."
 msgstr "受注日時に現在の時刻を設定"
 
+#: functions/settlement_func.php:685
+msgid "The cart data is broken and the item details cannot be restored. The original number of items is also unknown. This line is not included when the order data is recreated."
+msgstr "カートデータが壊れているため、明細の内容を復元できません。元の明細数も特定できません。この行は受注データ再作成には含まれません。"
+
 #: functions/settlement_func.php:902
 msgid "Settlement error has occurred. Please check <a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">the settlement error log</a>. The date of occurrence:[ %s ]"
 msgstr "決済エラーが発生しました。<a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">決済エラーログ</a>を確認してください。発生日時: [ %s ]"

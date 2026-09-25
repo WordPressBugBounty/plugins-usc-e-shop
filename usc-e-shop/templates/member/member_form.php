@@ -51,7 +51,7 @@ $html           .= apply_filters( 'usces_filter_newmember_button', $newmemberbut
 $html           .= '</div>';
 $html            = apply_filters( 'usces_filter_newmember_inform', $html );
 
-$noncekey = 'post_member' . $this->get_uscesid( false );
+$noncekey = $this->member_nonce_key( 'post_member' );
 $html    .= wp_nonce_field( $noncekey, 'wc_nonce', true, false );
 
 $html .= '</form>';

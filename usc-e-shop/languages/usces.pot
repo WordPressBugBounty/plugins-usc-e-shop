@@ -5797,6 +5797,10 @@ msgstr ""
 msgid "Set the current time to the Order Date."
 msgstr ""
 
+#: functions/settlement_func.php:685
+msgid "The cart data is broken and the item details cannot be restored. The original number of items is also unknown. This line is not included when the order data is recreated."
+msgstr ""
+
 #: functions/settlement_func.php:902
 msgid "Settlement error has occurred. Please check <a href=\"admin.php?page=usces_orderlist&order_action=settlement_notice\">the settlement error log</a>. The date of occurrence:[ %s ]"
 msgstr ""
