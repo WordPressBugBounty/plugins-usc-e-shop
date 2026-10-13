@@ -324,8 +324,8 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 		global $usces;
 
 		$encrypt_value = $this->encrypt_value( $user );
-		// A1/C (Layer 3 / uscesid removal): 検証URL から uscesid を撤去。会員確認は暗号化 verify 値で
-		// 行われ session 非依存のため、uscesid は不要（A1 撤去後は無視される）.
+		// 検証URL から uscesid を撤去。会員確認は暗号化 verify 値で
+		// 行われ session 非依存のため、uscesid は不要.
 		$query         = array(
 			'verify'     => $encrypt_value,
 			'usces_page' => 'memberverified',

@@ -7,7 +7,7 @@
 
 add_action( 'usces_construct', 'usces_action_acting_construct', 10 );
 add_action( 'usces_after_cart_instant', 'usces_action_acting_transaction', 10 );
-// A3 (Layer 3 / uscesid removal): restore the shopper's cart/entry for settlement notifications
+// Restore the shopper's cart/entry for settlement notifications
 // from the transaction-keyed DB store, uscesid-independently. Must run after usces_session_start()
 // (constructor end) and before usces_main()'s `new usces_cart()`, hence the usces_main hook.
 add_action( 'usces_main', 'usces_restore_acting_session_from_store', 1 );
@@ -25,7 +25,7 @@ function usces_action_acting_construct() {
 		/* 決済成功の時のみセッション復帰 */
 		if ( 0 == $_POST['X-ERRLEVEL'] ) {
 			$datas = usces_get_order_acting_data( $rand );
-			// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
+			// uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 			if ( empty( $datas['sesid'] ) ) {
 				/* sesidが無い場合はファイルログのみ */
 				usces_log( 'remise construct : error1', 'acting_transaction.log' );
@@ -40,7 +40,7 @@ function usces_action_acting_construct() {
 
 		$sid   = wp_unslash( $_POST['SID'] );
 		$datas = usces_get_order_acting_data( $sid );
-		// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
+		// uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 		if ( empty( $datas['sesid'] ) ) {
 			$log = array(
 				'acting' => 'digitalcheck',
@@ -59,7 +59,7 @@ function usces_action_acting_construct() {
 
 		$rand  = wp_unslash( $_REQUEST['rand'] );
 		$datas = usces_get_order_acting_data( $rand );
-		// A3: uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
+		// uscesid ブリッジは廃止。セッション復元は usces_restore_acting_session_from_store()（usces_main）で DBストアから実施.
 		if ( empty( $datas['sesid'] ) ) {
 			$log = array(
 				'acting' => 'anotherlane',
@@ -78,7 +78,7 @@ function usces_action_acting_construct() {
 
 		$orderid = wp_unslash( $_POST['orderId'] );
 		$datas   = usces_get_order_acting_data( $orderid );
-		// A3: uscesid ブリッジは廃止（$_GET['uscesid'] を読む処理は撤廃済みのため代入は無意味だった）。
+		// uscesid ブリッジは廃止（$_GET['uscesid'] を読む処理は撤廃済みのため代入は無意味だった）。
 		// ベリトランス Air-Web は選択可能な決済から除外済み（settlement.class.php）のため、DBストアからの
 		// セッション復元（usces_restore_acting_session_from_store）の対象外とする.
 		if ( empty( $datas['sesid'] ) ) {
@@ -98,7 +98,7 @@ function usces_action_acting_construct() {
 
 /**
  * 決済通知（サーバー間・ブラウザ Cookie 無し）で、確定時に保存したカート/エントリを DBストア
- * （usces_access）から $_SESSION へ復元する。uscesid セッション橋渡しの置き換え（Layer 3 / A3）。
+ * （usces_access）から $_SESSION へ復元する。uscesid セッション橋渡しの置き換え。
  *
  * usces_session_start()（コンストラクタ末尾）より後・usces_main() の `new usces_cart()` より前に
  * 実行する必要があるため usces_main フックに登録する（construct では直後の @session_start() に
@@ -664,6 +664,7 @@ function usces_action_acting_transaction() {
 		$sid = ( isset( $data['SID'] ) ) ? $data['SID'] : '';
 
 		if ( isset( $data['SEQ'] ) ) {
+			DIGITALCHECK_SETTLEMENT::get_instance()->acting_notice_ip_guard( $data, 'digitalcheck_card' );
 			$table_meta_name = $wpdb->prefix . 'usces_order_meta';
 			$query           = $wpdb->prepare( "SELECT `order_id` FROM $table_meta_name WHERE `meta_key` = %s AND `meta_value` = %s", 'SID', $sid );
 			$order_id        = $wpdb->get_var( $query );

@@ -6,9 +6,20 @@
  */
 class RateLimiter {
 
-	public $folder_log_path;
-	public $login_failed_log_path;
-	public $ip_blocked_path;
+	/**
+	 * Log type of member login failed.
+	 *
+	 * @since 2.12.5
+	 */
+	const LOG_TYPE_LOGIN_FAILED = 'member_login_failed';
+
+	/**
+	 * Log type of IP addresses blocked.
+	 *
+	 * @since 2.12.5
+	 */
+	const LOG_TYPE_IP_BLOCKED = 'ip_addresses_blocked';
+
 	public $monitoring; /* minutes */
 	public $num_of_errors;
 	public $rejection_time; /* minutes */
@@ -20,10 +31,6 @@ class RateLimiter {
 	 */
 	public function __construct() {
 
-		$this->folder_log_path       = USCES_WP_CONTENT_DIR . '/uploads/usces_logs/';
-		$this->login_failed_log_path = $this->folder_log_path . 'member_login_failed.log';
-		$this->ip_blocked_path       = $this->folder_log_path . 'ip_addresses_blocked.log';
-
 		// get brute force config.
 		$options              = get_option( 'usces_ex', array() );
 		$this->monitoring     = ( ! isset( $options['system']['brute_force']['monitoring_span'] ) ) ? 5 : (int) $options['system']['brute_force']['monitoring_span'];
@@ -31,10 +38,6 @@ class RateLimiter {
 		$this->rejection_time = ( ! isset( $options['system']['brute_force']['rejection_time'] ) ) ? 10 : (int) $options['system']['brute_force']['rejection_time'];
 		$this->status         = ( ! isset( $options['system']['brute_force']['status'] ) ) ? 0 : (int) $options['system']['brute_force']['status'];
 		$this->excluded_ip    = ( ! isset( $options['system']['brute_force']['excluded_ip'] ) ) ? array() : $options['system']['brute_force']['excluded_ip'];
-
-		if ( $this->status ) {
-			$this->initLogsFolder();
-		}
 	}
 
 	/**
@@ -50,26 +53,14 @@ class RateLimiter {
 					return false;
 				}
 
-				$data       = $this->getLoginFailedDataByIP( $ip );
-				$ip_blocked = $this->getIpAddressesBlocked();
-
-				if ( isset( $ip_blocked[ $ip ] ) && ( strtotime( "-{$this->rejection_time} minutes" ) < $ip_blocked[ $ip ] ) ) {
+				if ( $this->is_blocked( $ip ) ) {
 					$this->saveLoginFailed();
 					return true;
 				}
 
-				if ( count( $data ) ) {
-					$count = 0;
-					foreach ( $data as $key => $value ) {
-						if ( strtotime( "-{$this->monitoring} minutes" ) < $key ) {
-							$count += $value;
-						}
-					}
-					if ( $count >= $this->num_of_errors ) {
-						$ip_blocked[ $ip ] = strtotime( 'now' );
-						file_put_contents( $this->ip_blocked_path, json_encode( $ip_blocked ) );
-						return true;
-					}
+				if ( $this->count_login_failed( $ip ) >= $this->num_of_errors ) {
+					$this->insert_log( self::LOG_TYPE_IP_BLOCKED, $ip );
+					return true;
 				}
 			} catch ( Throwable $exception ) {
 
@@ -91,28 +82,11 @@ class RateLimiter {
 					return;
 				}
 
-				$content = $this->getLoginFailedData();
-				$row     = $this->getLoginFailedDataByIP( $ip );
+				$this->delete_expired_logs();
+				$this->insert_log( self::LOG_TYPE_LOGIN_FAILED, $ip );
 
-				$row[ strtotime( 'now' ) ] = ( isset( $row[ strtotime( 'now' ) ] ) ) ? ( $row[ strtotime( 'now' ) ] + 1 ) : 1;
-
-				if ( count( $row ) > $this->num_of_errors ) {
-					unset( $row[ array_key_first( $row ) ] );
-				}
-				$content[ $ip ] = $row;
-				file_put_contents( $this->login_failed_log_path, json_encode( $content ) );
-
-				$number_of_login_fail = 0;
-				foreach ( $content[ $ip ] as $key => $value ) {
-					if ( strtotime( "-{$this->monitoring} minutes" ) < $key ) {
-						$number_of_login_fail++;
-					}
-				}
-
-				if ( $number_of_login_fail >= $this->num_of_errors ) {
-					$ip_blocked        = $this->getIpAddressesBlocked();
-					$ip_blocked[ $ip ] = strtotime( 'now' );
-					file_put_contents( $this->ip_blocked_path, json_encode( $ip_blocked ) );
+				if ( $this->count_login_failed( $ip ) >= $this->num_of_errors ) {
+					$this->insert_log( self::LOG_TYPE_IP_BLOCKED, $ip );
 
 					$wp_query->set_403();
 					status_header( 403 );
@@ -128,12 +102,18 @@ class RateLimiter {
 	 * Clear login failed
 	 */
 	public function clear_login_failed() {
+		global $wpdb;
+
 		try {
 			if ( $this->status ) {
-				$ip      = $_SERVER['REMOTE_ADDR'];
-				$content = $this->getLoginFailedData();
-				unset( $content[ $ip ] );
-				file_put_contents( $this->login_failed_log_path, json_encode( $content ) );
+				$ip = $_SERVER['REMOTE_ADDR'];
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->prefix}usces_log WHERE `log_type` = %s AND `log_key` = %s",
+						self::LOG_TYPE_LOGIN_FAILED,
+						$ip
+					)
+				);
 			}
 		} catch ( Throwable $exception ) {
 
@@ -141,50 +121,120 @@ class RateLimiter {
 	}
 
 	/**
-	 * Get login failed data
+	 * Clear all logs of login failed and IP addresses blocked.
 	 *
-	 * @return array
+	 * @since 2.12.5
 	 */
-	public function getLoginFailedData() {
-		if ( usces_is_reserved_file( $this->login_failed_log_path, 1 ) ) {
-			$res = json_decode( file_get_contents( $this->login_failed_log_path ), true );
-		} else {
-			$res = array();
-		}
-		return $res;
+	public static function clear_all() {
+		global $wpdb;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}usces_log WHERE `log_type` IN ( %s, %s )",
+				self::LOG_TYPE_LOGIN_FAILED,
+				self::LOG_TYPE_IP_BLOCKED
+			)
+		);
 	}
 
 	/**
-	 * Get login failed data by IP
+	 * Insert log.
+	 *
+	 * @since 2.12.5
+	 *
+	 * @param string $log_type Log type.
+	 * @param string $ip IP Address.
+	 */
+	private function insert_log( $log_type, $ip ) {
+		global $wpdb;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$wpdb->prefix}usces_log ( `datetime`, `log_type`, `log_key` ) VALUES ( %s, %s, %s )",
+				current_time( 'mysql' ),
+				$log_type,
+				$ip
+			)
+		);
+	}
+
+	/**
+	 * Count login failed within the monitoring span.
+	 *
+	 * @since 2.12.5
 	 *
 	 * @param string $ip IP Address.
-	 * @return array
+	 * @return int
 	 */
-	public function getLoginFailedDataByIP( $ip ) {
-		$content = $this->getLoginFailedData();
-		return ( isset( $content[ $ip ] ) ) ? $content[ $ip ] : array();
+	private function count_login_failed( $ip ) {
+		global $wpdb;
+
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(`ID`) FROM {$wpdb->prefix}usces_log WHERE `datetime` > %s AND `log_type` = %s AND `log_key` = %s",
+				$this->get_cutoff_datetime( $this->monitoring ),
+				self::LOG_TYPE_LOGIN_FAILED,
+				$ip
+			)
+		);
+		return (int) $count;
 	}
 
 	/**
-	 * Get IP Addresses blocked
+	 * Is the IP address blocked within the rejection time.
 	 *
-	 * @return array
+	 * @since 2.12.5
+	 *
+	 * @param string $ip IP Address.
+	 * @return bool
 	 */
-	public function getIpAddressesBlocked() {
-		if ( usces_is_reserved_file( $this->ip_blocked_path, 1 ) ) {
-			$res = json_decode( file_get_contents( $this->ip_blocked_path ), true );
-		} else {
-			$res = array();
-		}
-		return $res;
+	private function is_blocked( $ip ) {
+		global $wpdb;
+
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(`ID`) FROM {$wpdb->prefix}usces_log WHERE `datetime` > %s AND `log_type` = %s AND `log_key` = %s",
+				$this->get_cutoff_datetime( $this->rejection_time ),
+				self::LOG_TYPE_IP_BLOCKED,
+				$ip
+			)
+		);
+		return ( 0 < (int) $count );
 	}
 
 	/**
-	 * Init logs folder
+	 * Delete logs older than the monitoring span and the rejection time.
+	 *
+	 * @since 2.12.5
 	 */
-	public function initLogsFolder() {
-		if ( ! is_dir( $this->folder_log_path ) ) {
-			mkdir( $this->folder_log_path, 0775 );
-		}
+	private function delete_expired_logs() {
+		global $wpdb;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}usces_log WHERE `datetime` <= %s AND `log_type` = %s",
+				$this->get_cutoff_datetime( $this->monitoring ),
+				self::LOG_TYPE_LOGIN_FAILED
+			)
+		);
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}usces_log WHERE `datetime` <= %s AND `log_type` = %s",
+				$this->get_cutoff_datetime( $this->rejection_time ),
+				self::LOG_TYPE_IP_BLOCKED
+			)
+		);
+	}
+
+	/**
+	 * Get the datetime the specified minutes ago.
+	 *
+	 * @since 2.12.5
+	 *
+	 * @param int $minutes Minutes.
+	 * @return string
+	 */
+	private function get_cutoff_datetime( $minutes ) {
+		return wp_date( 'Y-m-d H:i:s', time() - ( $minutes * MINUTE_IN_SECONDS ) );
 	}
 }

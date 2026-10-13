@@ -1025,7 +1025,11 @@ class Https_Request_Sender {
 	 */
 	public function post_request_body( $form_data ) {
 		// 通信開始.
-		$this->init_curl();
+		$ret_code = $this->init_curl();
+		if ( true !== $ret_code ) {
+			$this->close_curl();
+			return $ret_code;
+		}
 
 		// リクエストを送信.
 		$ret_code = $this->send( $form_data );
@@ -1102,34 +1106,55 @@ class Https_Request_Sender {
 	/**
 	 * 接続のための初期化処理
 	 *
-	 * @return mixed
+	 * @return mixed TRUE:成功、他:エラーコード
 	 */
 	public function init_curl() {
-		$rslt = true;
-
 		// 初期化.
 		$this->ch = curl_init( $this->url );
+		if ( false === $this->ch ) {
+			$this->ch             = null;
+			$this->result_message = KS_CONNECT_ERROR . ': curl_init failed';
+			return KS_CONNECT_ERROR;
+		}
 
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_RETURNTRANSFER, true );
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_POST, true );
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_HEADER, true );
+		$options = array(
+			'CURLOPT_HTTP_VERSION'   => CURL_HTTP_VERSION_1_0,
+			'CURLOPT_RETURNTRANSFER' => true,
+			'CURLOPT_POST'           => true,
+			'CURLOPT_HEADER'         => true,
+			// 証明書.
+			'CURLOPT_SSL_VERIFYHOST' => false,
+			// クライアント証明書.
+			'CURLOPT_SSLCERT'        => $this->client_certificate_path,
+			'CURLOPT_SSLKEYPASSWD'   => $this->keystore_password,
+			// CA証明書.
+			'CURLOPT_SSL_VERIFYPEER' => true,
+			'CURLOPT_CAINFO'         => $this->ca_certificate_path,
+			// タイムアウト.
+			'CURLOPT_TIMEOUT'        => $this->timeout,
+		);
 
-		// 証明書.
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_SSL_VERIFYHOST, false );
+		// 1つの失敗で以降の設定が飛ばされないよう、すべて個別に設定する.
+		$failed_options = array();
+		foreach ( $options as $name => $value ) {
+			if ( ! curl_setopt( $this->ch, constant( $name ), $value ) ) {
+				$failed_options[] = $name;
+			}
+		}
+		if ( empty( $failed_options ) ) {
+			return true;
+		}
 
-		// クライアント証明書.
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_SSLCERT, $this->client_certificate_path );
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_SSLKEYPASSWD, $this->keystore_password );
-
-		// CA証明書.
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_SSL_VERIFYPEER, true );
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_CAINFO, $this->ca_certificate_path );
-
-		// タイムアウト.
-		$rslt = $rslt && curl_setopt( $this->ch, CURLOPT_TIMEOUT, $this->timeout );
-
-		return $rslt;
+		// 証明書ファイルの設定に失敗した場合は証明書エラーとする.
+		$certificate_options = array( 'CURLOPT_SSLCERT', 'CURLOPT_SSLKEYPASSWD', 'CURLOPT_CAINFO' );
+		if ( array_intersect( $failed_options, $certificate_options ) ) {
+			$ret_code = CERTIFICATE_ERROR;
+		} else {
+			$ret_code = KS_CONNECT_ERROR;
+		}
+		$this->result_message  = $ret_code . ': curl_setopt failed (' . implode( ', ', $failed_options ) . ')';
+		$this->result_message .= $this->get_certificate_file_status();
+		return $ret_code;
 	}
 
 	/**
@@ -1190,20 +1215,29 @@ class Https_Request_Sender {
 			// その他のエラー.
 			$ret_code = KS_CONNECT_ERROR;
 		}
-		$this->result_message = $ret_code . ': ' . $error_msg;
+		$this->result_message  = $ret_code . ': ' . $error_msg;
+		$this->result_message .= $this->get_certificate_file_status();
+		return $ret_code;
+	}
 
-		// 証明書ファイルの状態チェック.
+	/**
+	 * 証明書ファイルの状態チェック
+	 *
+	 * @return string 問題がある場合はその内容、なければ空文字
+	 */
+	protected function get_certificate_file_status() {
+		$status = '';
 		if ( ! file_exists( $this->client_certificate_path ) ) {
-			$this->result_message .= '(file is not exists: ' . $this->client_certificate_path . ')';
+			$status .= '(file is not exists: ' . $this->client_certificate_path . ')';
 		} elseif ( ! is_readable( $this->client_certificate_path ) ) {
-			$this->result_message .= '(file is not readable: ' . $this->client_certificate_path . ')';
+			$status .= '(file is not readable: ' . $this->client_certificate_path . ')';
 		}
 		if ( ! file_exists( $this->ca_certificate_path ) ) {
-			$this->result_message .= '(file is not exists: ' . $this->ca_certificate_path . ')';
+			$status .= '(file is not exists: ' . $this->ca_certificate_path . ')';
 		} elseif ( ! is_readable( $this->ca_certificate_path ) ) {
-			$this->result_message .= '(file is not readable: ' . $this->ca_certificate_path . ')';
+			$status .= '(file is not readable: ' . $this->ca_certificate_path . ')';
 		}
-		return $ret_code;
+		return $status;
 	}
 
 	/**

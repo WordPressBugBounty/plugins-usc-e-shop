@@ -208,12 +208,14 @@ class dataList {
 			case 'collective_order_reciept':
 				check_admin_referer( 'order_list', 'wc_nonce' );
 				usces_all_change_order_reciept( $this );
+				$this->SearchIn();
 				$res = $this->GetRows();
 				break;
 
 			case 'collective_order_status':
 				check_admin_referer( 'order_list', 'wc_nonce' );
 				usces_all_change_order_status( $this );
+				$this->SearchIn();
 				$res = $this->GetRows();
 				break;
 
@@ -221,6 +223,7 @@ class dataList {
 				check_admin_referer( 'order_list', 'wc_nonce' );
 				usces_all_delete_order_data( $this );
 				$this->SetTotalRow();
+				$this->SearchIn();
 				$res = $this->GetRows();
 				break;
 
@@ -472,6 +475,11 @@ class dataList {
 
 		$rows              = $wpdb->get_results( $query, ARRAY_A );
 		$this->selectedRow = ( $rows && is_array( $rows ) ) ? count( $rows ) : 0;
+		// 絞り込み結果の件数より開始行が後ろにある場合は先頭ページへ戻す.
+		if ( $this->startRow >= $this->selectedRow ) {
+			$this->currentPage = 1;
+			$this->startRow    = 0;
+		}
 		if ( 'on' == $this->pageLimit ) {
 			$this->rows = array_slice( (array) $rows, $this->startRow, $this->maxRow );
 		} else {
@@ -635,6 +643,9 @@ class dataList {
 	 */
 	public function SearchIn() {
 		global $wpdb;
+		// Cookie から読み戻した SQL 断片は使わず, arr_search から毎回作り直す.
+		$this->searchSql    = '';
+		$this->searchSkuSql = '';
 		switch ( $this->arr_search['column'] ) {
 			case 'ID':
 				$column          = 'ID';

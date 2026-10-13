@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.12.4
+Stable tag: 2.12.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ During activation, Welcart writes data to tables such as postmeta, options, and 
 
 == Frequently Asked Questions ==
 
+= Where do I report security bugs found in this plugin? =
+Please report security vulnerabilities found in the Welcart e-Commerce plugin to support@welcart.com. Please do not post them on the public forum.
+
 Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Screenshots ==
@@ -69,21 +72,17 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
-17 Sep 2026
-= V2.12.4 =
+13 Oct 2026
+= V2.12.5 =
 -----------
-* Security enhancement (Cross-Site Scripting). Stopped accepting the notification message on the item list screen from the request parameters, and escaped the output. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
-* Security enhancement (Cross-Site Scripting). Escaped the output on the 3-D Secure return screen of Paygent. Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation for the report.
-* Security enhancement. The certificate directory of Paygent is now protected with an access blocking file, and the description of the certificate settings was revised.
-* Security enhancement. Strengthened the validation of the period specified in the search conditions on the order list screen.
-* Fixed PHP errors.
-
-11 Sep 2026
-= V2.12.3 =
------------
-* Security enhancement (Cross-Site Scripting). Escaped the output on the settlement log and the settlement error log screens, and added a client IP check to the Telecom Credit payment notification. Thanks to minhgalaxy - GalaxyOne for the report.
-* Security enhancement (Missing Authorization). Added an origin check to the payment notification handler of SB Payment Service.
-* Security enhancement (Missing Authorization). Restricted access to the wcsite linkage endpoint and reduced the setting information output on the administration screen.
-* The purchase nonce is now required for non-gateway settlements such as cash on delivery and bank transfer, and the entry data is re-validated before an order is registered. Themes that build the checkout form without usces_purchase_button() need to output the wc_purchase_nonce field.
+* Security enhancement (SQL Injection). Stopped restoring the search condition SQL from the cookie on the old order list screen. Thanks to Wordfence PRISM - Wordfence for the report.
+* Security enhancement. [PayPal] The order details request of the credit card payment now returns only the order created in the current session.
+* Security enhancement. The member login and the member information update on the cart page are no longer processed when the nonce verification fails while a member is logged in.
+* Security enhancement. [Payment For] Added a client IP check to the card payment notification.
+* Security enhancement. [ZEUS] The payment amount sent to the payment gateway is now taken from the order data instead of the request parameters.
+* Security enhancement. The log of the login attempt limit is now stored in the database instead of a file.
+* [Paygent] Fixed the bug that the sending process continued even if the initial setting of the communication failed, and the cause of the error was not displayed correctly.
+* [Paygent] Fixed the bug that the payment status on the order list and the order edit screen sometimes did not change to the cleared status after the sales processing.
+* Fixed the bug that orders were not displayed on the old order list screen when the filtered result fit on a single page.
 
 For older versions, please see the [Changelog Archive (Japanese)](https://www.welcart.com/about/changelog/).

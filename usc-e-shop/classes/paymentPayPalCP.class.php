@@ -2263,19 +2263,10 @@ jQuery( document ).ready( function( $ ) {
 	}
 
 	/**
-	 * Create billing agreement.
-	 */
-	/**
-	 * A5 (Layer 3 / uscesid removal): reopen the shopper's shop session from its own
-	 * same-origin session cookie (USCES_KEY) instead of decoding a crafted `uscesid` GET
-	 * param through uscesdc()/session_id(). These nopriv admin-ajax handlers run under
-	 * admin-ajax.php, where usces_close_session() (admin_init) has closed the bootstrap
-	 * session, so session_status() is PHP_SESSION_NONE here. get_entry()/get_cart()/
-	 * get_member() read $_SESSION live, so reattaching before they run restores the
-	 * shopper's cart/entry/member. Mirrors A2 (cart-monitor) / A6 (Zeus enrol).
-	 * The uk session cookie is HttpOnly but is still sent on same-origin fetch()
-	 * (default credentials: 'same-origin') and readable via $_COOKIE.
-	 * See .docs/welcart2.x/security-remediation_uscesid-layer3-a3-a6-design.md A5.
+	 * Reattach the shopper's shop session from its session cookie.
+	 *
+	 * On admin-ajax.php the bootstrap session is already closed by
+	 * usces_close_session() (admin_init), so reopen it before reading the cart.
 	 */
 	private function reattach_shop_session() {
 		if ( PHP_SESSION_NONE === session_status() ) {
@@ -2289,6 +2280,9 @@ jQuery( document ).ready( function( $ ) {
 		}
 	}
 
+	/**
+	 * Create billing agreement.
+	 */
 	public function create_billing_agreement() {
 		global $usces;
 
@@ -2412,6 +2406,9 @@ jQuery( document ).ready( function( $ ) {
 
 		/* Create order */
 		$response_data = $this->api_create_order( $access_token, $bn_code, '', $tracking_id, $entry, $cart, false );
+		if ( isset( $response_data->id ) ) {
+			$usces->cart->set_order_entry( array( 'paypal_cp_card_resource_id' => $response_data->id ) );
+		}
 		wp_send_json( $response_data );
 	}
 
@@ -2492,9 +2489,19 @@ jQuery( document ).ready( function( $ ) {
 	 * Show Order Details.
 	 */
 	public function show_order_details_card() {
+		global $usces;
+
+		$this->reattach_shop_session();
+
 		$bn_code     = self::API_BN_CODE_ACDC;
 		$tracking_id = ( isset( $_POST['tracking_id'] ) ) ? wp_unslash( $_POST['tracking_id'] ) : ''; /* rand|reference_id */
 		$resource_id = ( isset( $_POST['resource_id'] ) ) ? wp_unslash( $_POST['resource_id'] ) : '';
+
+		/* Only an order created in the current shop session can be referenced. */
+		$saved_resource_id = $usces->cart->get_order_entry( 'paypal_cp_card_resource_id' );
+		if ( '' === $resource_id || empty( $saved_resource_id ) || ! hash_equals( (string) $saved_resource_id, $resource_id ) ) {
+			wp_send_json( array() );
+		}
 
 		/* Get Access Token */
 		$access_token = $this->get_access_token();

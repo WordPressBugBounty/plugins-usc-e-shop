@@ -2022,11 +2022,8 @@ class usc_e_shop {
 			}
 		}
 
-		// A1 (Layer 3 / uscesid removal): uscesid によるセッションID設定を撤廃。
-		// かつては GET uscesid を uscesdc() で復号し session_id() に渡していたが、これがセッション
-		// 固定の温床だった（会員乗っ取り・Mantis #0005562）。決済通知のセッション復元は取引キーの
-		// DBストア（A3）／同一オリジンの uk cookie 再開（A2/A5/A6）へ移行済みのため撤廃する。
-		// See .docs/welcart2.x/security-remediation_uscesid-layer3-a1c-teardown-design.md .
+		// uscesid によるセッションID設定は廃止。決済通知のセッション復元は取引キーの DBストア／
+		// 同一オリジンの uk cookie で行う.
 
 		do_action( 'usces_action_session_start' );
 
@@ -2071,23 +2068,23 @@ class usc_e_shop {
 			return;
 		}
 
-		// A1/C (Layer 3 / uscesid removal): 旧「GET uscesid を復号して addr='acting' を判定」ブロックを撤廃。
-		// uscesid 機構撤廃に伴い addr 判定は成立しない。以降は旧SSL同期デッドコード（A7 で撤去済）で return.
+		// 旧「GET uscesid を復号して addr='acting' を判定」ブロックを撤廃。
+		// uscesid 機構撤廃に伴い addr 判定は成立しない。以降は旧SSL同期デッドコード（撤去済）で return.
 		if ( apply_filters( 'usces_filter_cookie', false ) ) {
 			return;
 		}
 
-		// NOTE (Layer 3 / uscesid removal, A7): the legacy "common domain + separate SSL domain"
+		// NOTE: the legacy "common domain + separate SSL domain"
 		// cookie-sync block that used to follow here was already unreachable (an unconditional
 		// return above) and relied on the old SSL/uscesid scheme. Removed during the uscesid
-		// mechanism teardown. See .docs/welcart2.x/security-remediation_uscesid-session-fixation.md 4.3.A A7.
+		// mechanism teardown.
 		return;
 	}
 
 	public function set_cookie( $values, $key = 'usces_cookie' ) {
-		// A1/C (Layer 3 / uscesid removal): 旧実装は uscesid 付きリクエストで再生成をスキップしていたが、
+		// 旧実装は uscesid 付きリクエストで再生成をスキップしていたが、
 		// uscesid 機構を撤廃したため常に再生成する（＝uscesid 以前のオーガニック挙動に一致）。
-		// 決済のセッション継続は取引キーDBストア（A3）／uk cookie（A2/A5/A6）で担保.
+		// 決済のセッション継続は取引キーDBストア／uk cookie で担保.
 		session_regenerate_id( true );
 		$value   = usces_serialize( $values );
 		$timeout = time()+7*86400;
@@ -2165,7 +2162,7 @@ class usc_e_shop {
 	}
 
 	/**
-	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 機構は撤廃済み（A1）。本体はこの関数を
+	 * @deprecated uscesid 機構は撤廃済み。本体はこの関数を
 	 * セッション設定にもURL/nonce生成にも使わない。現状 acting_data の acc_str1 マーカー（save_order_acting_data）
 	 * と、未移行の拡張・クライアントの後方互換のためだけに残置している。**全拡張・全クライアント移行後に
 	 * uscescv()/uscesdc() ともども削除する**（最終クリーンアップ）。
@@ -2206,7 +2203,7 @@ class usc_e_shop {
 	/**
 	 * Verify a shop-member nonce.
 	 *
-	 * A1/C (Layer 3 / uscesid removal): 移行期の後方互換だった「旧 uscesid ベースキーの二重受理」を撤廃。
+	 * 移行期の後方互換だった「旧 uscesid ベースキーの二重受理」を撤廃。
 	 * 以降はセッション束縛の新方式キー（member_nonce_key）のみ受理する。未移行の拡張・テーマの
 	 * フォーム（旧キー生成）は新方式へ移行するまで nonce 不一致になる（協調リリースで同時展開）。
 	 *
@@ -2314,7 +2311,7 @@ class usc_e_shop {
 			'itemRestriction': "<?php echo esc_js( $itemRestriction ); ?>",
 			'itemOrderAcceptable': "<?php echo esc_js( $itemOrderAcceptable ); ?>",
 			'uscespage': "<?php echo esc_js( $wcpage ); ?>",
-			<?php // A1/C (Layer 3 / uscesid removal): JS グローバル uscesL10n.uscesid の供給を撤廃。消費側は uk cookie 依存へ移行. ?>
+			<?php // JS グローバル uscesL10n.uscesid の供給を撤廃。消費側は uk cookie 依存へ移行. ?>
 			'wc_nonce': "<?php echo wp_create_nonce( $nonce_action ); ?>"
 		}
 	</script>
@@ -3518,8 +3515,16 @@ class usc_e_shop {
 		}
 
 		$nonce    = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
-		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) && ! $this->is_member_logged_in() ) {
-			die( 'Security check2' );
+		if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) ) {
+			if ( ! $this->is_member_logged_in() ) {
+				die( 'Security check2' );
+			}
+			// ログイン中は nonce 無効の会員情報を登録・更新せず、お客様情報画面を出し直す.
+			$this->page = 'customer';
+			add_filter( 'yoast-ga-push-after-pageview', 'usces_trackPageview_customer' );
+			add_action( 'the_post', array( $this, 'action_cartFilter' ) );
+			add_action( 'template_redirect', array( $this, 'template_redirect' ) );
+			return;
 		}
 		$check_verify_recaptcha = $this->verifyGoogleRecapcha();
 		if ( $check_verify_recaptcha ) {
@@ -4875,7 +4880,11 @@ class usc_e_shop {
 				if ( ! $nonce ) {
 					$nonce = isset( $_REQUEST['wc_nonce'] ) ? $_REQUEST['wc_nonce'] : '';
 				}
-				if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) && ! $this->is_member_logged_in() ) {
+				if ( ! $this->verify_member_nonce( $nonce, 'post_member' ) ) {
+					if ( $this->is_member_logged_in() ) {
+						// ログイン中は nonce 無効の資格情報を処理せず、現在のログイン状態を維持する.
+						return 'member';
+					}
 					$rateLimiter->saveLoginFailed();
 					do_action( 'usces_action_member_login_failed', trim( $_POST['loginmail'] ), 'invalid_nonce' );
 					die( 'Security check4' );
@@ -8795,7 +8804,7 @@ class usc_e_shop {
 	}
 
 	/**
-	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 難読化生成。本体は不使用。未移行の拡張・
+	 * @deprecated uscesid 難読化生成。本体は不使用。未移行の拡張・
 	 * クライアント後方互換のためのみ残置。全消費側移行後に get_uscesid()/uscesdc() ともども削除する。
 	 */
 	public function uscescv( $sessid, $flag ) {
@@ -8832,7 +8841,7 @@ class usc_e_shop {
 	}
 
 	/**
-	 * @deprecated A1/C (Layer 3 / uscesid removal). uscesid 復号。本体は不使用（A1 で唯一の呼び出しを撤去）。
+	 * @deprecated uscesid 復号。本体は不使用（唯一の呼び出しは撤去済み）。
 	 * 未移行の拡張・クライアント（直接 uscesdc()→session_id() する nopriv AJAX）後方互換のためのみ残置。
 	 * 全消費側移行後に get_uscesid()/uscescv() ともども削除する。
 	 */

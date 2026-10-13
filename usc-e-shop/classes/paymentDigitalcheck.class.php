@@ -780,16 +780,17 @@ class DIGITALCHECK_SETTLEMENT {
 	 * 入金状態を変更するサーバー間通知でのみ呼び出すこと
 	 * ブラウザ戻りを伴う結果戻りでは呼び出さない
 	 *
-	 * @param  array $data Notification data.
+	 * @param  array  $data   Notification data.
+	 * @param  string $acting Acting name for the error log.
 	 * @return void
 	 */
-	public function acting_notice_ip_guard( $data ) {
+	public function acting_notice_ip_guard( $data, $acting = 'digitalcheck_conv' ) {
 		$remote_addr = ( isset( $_SERVER['REMOTE_ADDR'] ) ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
 		if ( usces_acting_notice_ip_allowed( $remote_addr, self::ACTING_NOTICE_IPADDRS ) ) {
 			return;
 		}
 		$log = array(
-			'acting' => 'digitalcheck_conv',
+			'acting' => $acting,
 			'key'    => ( isset( $data['SID'] ) ) ? $data['SID'] : '',
 			'result' => 'IP ADDRESS NOT ALLOWED: ' . $remote_addr,
 			'data'   => $data,

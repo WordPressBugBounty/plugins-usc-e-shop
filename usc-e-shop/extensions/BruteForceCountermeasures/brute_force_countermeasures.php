@@ -25,18 +25,10 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 	public static $default_option;
 
 	/**
-	 * Log file path
-	 *
-	 * @var string
-	 */
-	private $uploads_folder_path;
-
-	/**
 	 * Class Constructor
 	 */
 	public function __construct() {
 		self::initialize_data();
-		$this->uploads_folder_path = USCES_WP_CONTENT_DIR . '/uploads';
 		if ( is_admin() ) {
 			add_action( 'usces_action_admin_system_extentions', array( $this, 'setting_form' ) );
 			add_action( 'init', array( $this, 'save_data' ) );
@@ -80,25 +72,12 @@ class USCES_BRUTE_FORCE_COUNTER_MEASURES {
 				wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 			}
 
-			if ( ! file_exists( $this->uploads_folder_path ) || ! is_writable( $this->uploads_folder_path ) ) {
-				self::$opts['error_message'] = __( "You can't write to the wp-content/uploads/ folder. Please check the permissions.", 'usces' );
-				self::$opts['status']        = 0;
-			} else {
-				if ( isset( self::$opts['error_message'] ) ) {
-					unset( self::$opts['error_message'] );
+			self::$opts['status'] = ( isset( $_POST['brute_force_status'] ) ) ? (int) $_POST['brute_force_status'] : 0;
+			if ( 0 === self::$opts['status'] ) {
+				if ( ! class_exists( 'RateLimiter' ) ) {
+					require USCES_PLUGIN_DIR . '/classes/rateLimiter.class.php';
 				}
-				self::$opts['status'] = ( isset( $_POST['brute_force_status'] ) ) ? (int) $_POST['brute_force_status'] : 0;
-				if ( 0 === self::$opts['status'] ) {
-					$usces_log_folder      = USCES_WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'usces_logs';
-					$login_failed_log_path = $usces_log_folder . DIRECTORY_SEPARATOR . 'member_login_failed.log';
-					$ip_blocked_path       = $usces_log_folder . DIRECTORY_SEPARATOR . 'ip_addresses_blocked.log';
-					if ( file_exists( $login_failed_log_path ) ) {
-						rename( $login_failed_log_path, $usces_log_folder . DIRECTORY_SEPARATOR . 'member_login_failed' . date_i18n( '-YmdHis' ) . '.log' );
-					}
-					if ( file_exists( $ip_blocked_path ) ) {
-						rename( $ip_blocked_path, $usces_log_folder . DIRECTORY_SEPARATOR . 'ip_addresses_blocked' . date_i18n( '-YmdHis' ) . '.log' );
-					}
-				}
+				RateLimiter::clear_all();
 			}
 
 			self::$opts['monitoring_span'] = ( isset( $_POST['monitoring_span'] ) ) ? (int) $_POST['monitoring_span'] : 5;

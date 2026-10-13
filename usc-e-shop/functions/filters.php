@@ -1890,14 +1890,8 @@ function welcart_confirm_check_ajax() {
 		$res = 'not permitted2';
 		wp_send_json_error( $res );
 	}
-	// Session fixation remediation (Layer 3 / uscesid removal, A2): reopen the shopper's shop
-	// session via its own same-origin session cookie instead of decoding a crafted `uscesid`
-	// through uscesdc()/session_id(). This AJAX runs under admin-ajax.php, where
-	// usces_close_session() (admin_init) has closed the bootstrap session, so session_status()
-	// is PHP_SESSION_NONE here and we (re)attach to the frontend shop session identified by its
-	// cookie. Verified on trunk: the confirm-page uscesid decodes to exactly this cookie's
-	// session id, so reading the cookie reaches the same cart (result unchanged).
-	// See .docs/welcart2.x/security-remediation_uscesid-session-fixation.md 4.3.A A2.
+	// On admin-ajax.php the bootstrap session is already closed by usces_close_session()
+	// (admin_init), so reopen the shopper's shop session from its session cookie.
 	if ( PHP_SESSION_NONE === session_status() ) {
 		$usces_options = get_option( 'usces' );
 		$sess_name     = defined( 'USCES_KEY' ) ? USCES_KEY : ( isset( $usces_options['usces_key'] ) ? $usces_options['usces_key'] : '' );
@@ -2282,13 +2276,9 @@ function wc_purchase_nonce_check() {
 	if ( in_array( $payments['settlement'], $nonacting_settlements ) ) {
 		/*
 		 * Non-acting settlements (cash on delivery, bank transfer and the like)
-		 * used to return here without any nonce check at all, which let a
-		 * crafted request reach order registration without passing through the
-		 * checkout screens. The standard checkout button always emits the
-		 * 'wc_purchase_nonce' field for these settlements (see
-		 * includes/purchase_button.php), so requiring it does not reject a
-		 * legitimate order. Gateway (acting) settlements keep their previous
-		 * behaviour and are handled by the '_purchase_nonce' check below.
+		 * require 'wc_purchase_nonce', which the standard checkout button always
+		 * emits for these settlements (see includes/purchase_button.php).
+		 * Acting settlements are handled by the '_purchase_nonce' check below.
 		 */
 		$purchase_nonce = isset( $_POST['wc_purchase_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['wc_purchase_nonce'] ) ) : '';
 		if ( ! empty( $purchase_nonce ) && wp_verify_nonce( $purchase_nonce, 'wc_purchase_nonce' ) ) {
@@ -2367,13 +2357,8 @@ function wc_purchase_entry_recheck( $result ) {
 	$settlement            = isset( $payments['settlement'] ) ? $payments['settlement'] : '';
 
 	/*
-	 * Gate: non-acting settlements only, and fail closed when the settlement
-	 * cannot be resolved. usces_get_payments_by_name() returns a stub array
-	 * with a null settlement for an unknown payment name. Treating that as
-	 * "not our concern" would let a forged payment name skip this guard
-	 * entirely, and usces_purchase() only rejects an unresolved payment when
-	 * the order total is greater than zero, so a zero-total order would slip
-	 * through. An unresolved settlement is therefore validated here.
+	 * Non-acting settlements only. A settlement that cannot be resolved
+	 * from the payment name is also validated here (fail closed).
 	 */
 	$unresolved = WCUtils::is_blank( $settlement );
 	if ( ! $unresolved && ! in_array( $settlement, $nonacting_settlements, true ) ) {
@@ -2664,7 +2649,7 @@ function usces_close_session() {
  *
  * Fires on every successful member login path (member_login() / member_just_login()
  * and extension logins that trigger usces_action_after_login). The uscesid mechanism
- * itself has been removed (A1/C) and set_cookie() now regenerates unconditionally,
+ * itself has been removed and set_cookie() now regenerates unconditionally,
  * but not every login path calls set_cookie() (member_just_login() does not), so this
  * hook is what guarantees regeneration on all of them.
  */

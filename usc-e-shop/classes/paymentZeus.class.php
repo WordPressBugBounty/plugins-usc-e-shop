@@ -4836,6 +4836,8 @@ jQuery(document).ready(function($) {
 			/* Secure Link */
 		} elseif ( 'acting_zeus_card' === $acting_flg && 1 === (int) $acting_opts['connection'] ) {
 
+			// Use the amount from the session, not the posted value.
+			$entry     = $usces->cart->get_entry();
 			$sendid    = ( 'on' === $acting_opts['quickcharge'] && $usces->is_member_logged_in() && isset( $post_data['sendid'] ) ) ? $post_data['sendid'] : '';
 			$sendpoint = ( isset( $post_data['sendpoint'] ) ) ? $post_data['sendpoint'] : '';
 
@@ -4849,7 +4851,7 @@ jQuery(document).ready(function($) {
 			} elseif ( isset( $post_data['token_key'] ) ) {
 				$params['token_key'] = $post_data['token_key'];
 			}
-			$params['money']        = $post_data['money'];
+			$params['money']        = apply_filters( 'zeus_secure_payreq_amount', usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ), $entry );
 			$params['telno']        = str_replace( '-', '', $post_data['telno'] );
 			$params['email']        = $post_data['email'];
 			$params['sendid']       = $sendid;
@@ -4901,11 +4903,13 @@ jQuery(document).ready(function($) {
 		} elseif ( 'acting_zeus_conv' === $acting_flg ) {
 
 			$interface = $this->get_interface( $acting_opts['conv_url'] );
+			// Use the amount from the session, not the posted value.
+			$entry = $usces->cart->get_entry();
 
 			$params              = array();
 			$params['clientip']  = $acting_opts['clientip_conv'];
 			$params['act']       = $post_data['act'];
-			$params['money']     = $post_data['money'];
+			$params['money']     = usces_crform( $entry['order']['total_full_price'], false, false, 'return', false );
 			$params['username']  = mb_convert_encoding( $post_data['username'], 'SJIS', 'UTF-8' );
 			$params['telno']     = str_replace( '-', '', $post_data['telno'] );
 			$params['email']     = $post_data['email'];
@@ -5044,7 +5048,7 @@ jQuery(document).ready(function($) {
 				'sectionName'   => '',
 				'tel'           => $post_data['tel_mobile'],
 				'email'         => trim( $entry['customer']['mailaddress1'] ),
-				'billedAmount'  => $post_data['money'],
+				'billedAmount'  => usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ),
 				'expand1'       => '',
 				'service'       => '2',
 			);
@@ -5131,7 +5135,7 @@ jQuery(document).ready(function($) {
 				( isset( $response['response']['transactionInfo']['autoAuthoriresult'] ) && 'OK' === $response['response']['transactionInfo']['autoAuthoriresult'] ) ) {
 				$result_data = array(
 					'acting'   => 'zeus_bnpl',
-					'money'    => $post_data['money'],
+					'money'    => usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ),
 					'response' => $response['response'],
 				);
 				$res         = $usces->order_processing( $result_data );
@@ -7108,10 +7112,10 @@ jQuery.event.add(window,'load',function() {
 
 		check_ajax_referer( 'acting_zeus_card', '_nonce' );
 
-		// A6 (Layer 3 / uscesid removal): この nopriv admin-ajax は usces_close_session()（admin_init）
+		// この nopriv admin-ajax は usces_close_session()（admin_init）
 		// の後に走るため session_status() は PHP_SESSION_NONE。旧実装は JS が付けた `?uscesid=` を
 		// usces_session_start() が復号して買い物客セッションへ切替えていたが、uscesid を廃し、
-		// 同一オリジンの USCES_KEY cookie から買い物客セッションを再開する（A2 と同一方式）.
+		// 同一オリジンの USCES_KEY cookie から買い物客セッションを再開する.
 		if ( PHP_SESSION_NONE === session_status() ) {
 			$usces_options = get_option( 'usces' );
 			$sess_name     = defined( 'USCES_KEY' ) ? USCES_KEY : ( isset( $usces_options['usces_key'] ) ? $usces_options['usces_key'] : '' );
@@ -7146,7 +7150,7 @@ jQuery.event.add(window,'load',function() {
 			$sendid    = ( 'on' === $acting_opts['quickcharge'] && isset( $_POST['sendid'] ) ) ? filter_input( INPUT_POST, 'sendid' ) : '';
 			$sendpoint = filter_input( INPUT_POST, 'sendpoint', FILTER_DEFAULT, array( 'options' => array( 'default' => '' ) ) );
 			$_nonce    = filter_input( INPUT_POST, '_nonce', FILTER_DEFAULT, array( 'options' => array( 'default' => wp_create_nonce( 'acting_zeus_card' ) ) ) );
-			// A6: uscesid ブリッジ廃止。3DS 戻り（TermUrl）のセッションは sendpoint（取引キー）で
+			// uscesid ブリッジ廃止。3DS 戻り（TermUrl）のセッションは sendpoint（取引キー）で
 			// acting_processing() が usces_restore_order_acting_data() 復元するため uscesid は不要.
 
 			$data                               = array();
@@ -7450,7 +7454,9 @@ jQuery.event.add(window,'load',function() {
 		} elseif ( isset( $_POST['token_key'] ) ) {
 			$data['token_key'] = filter_input( INPUT_POST, 'token_key' );
 		}
-		$data['payment']['amount'] = apply_filters( 'zeus_secure_payreq_amount', filter_input( INPUT_POST, 'money' ), $entry );
+		// Use the amount from the session, not the posted value.
+		$entry                     = $usces->cart->get_entry();
+		$data['payment']['amount'] = apply_filters( 'zeus_secure_payreq_amount', usces_crform( $entry['order']['total_full_price'], false, false, 'return', false ), $entry );
 		if ( isset( $_POST['howpay'] ) && WCUtils::is_zero( filter_input( INPUT_POST, 'howpay' ) ) ) {
 			$data['payment']['count'] = filter_input( INPUT_POST, 'div' );
 		} else {

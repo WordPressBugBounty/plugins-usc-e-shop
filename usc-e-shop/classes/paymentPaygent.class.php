@@ -8194,19 +8194,59 @@ jQuery.event.add( window, "load", function() {
 	/**
 	 * 決済ステータス取得
 	 *
+	 * 決済ログには決済ステータスと電文種別が混在して記録されているため、
+	 * 電文種別の記録を除外したうえで最新の決済ステータスを返す。
+	 *
 	 * @param  int    $order_id Order number.
 	 * @param  string $trading_id Trading ID.
 	 * @return string
 	 */
 	private function get_payment_status( $order_id, $trading_id ) {
-		global $wpdb;
-
 		$payment_status = '';
-		$latest_log     = $this->get_acting_latest_log( $order_id, $trading_id, RESULT_STATUS_ALL );
-		if ( isset( $latest_log['status'] ) ) {
-			$payment_status = $latest_log['status'];
+		$log_data       = $this->get_acting_log( $order_id, $trading_id, RESULT_STATUS_ALL );
+		foreach ( (array) $log_data as $data ) {
+			if ( empty( $data['status'] ) ) {
+				continue;
+			}
+			/* 電文種別は実行した処理の記録であって決済状況ではないため除外する. */
+			if ( $this->is_telegram_kind( $data['status'] ) ) {
+				continue;
+			}
+			$payment_status = $data['status'];
+			break;
+		}
+		/* 決済ステータスの記録が無い場合は従来どおり最新の記録を採用する. */
+		if ( '' === $payment_status ) {
+			$latest_log = $this->get_acting_latest_log( $order_id, $trading_id, RESULT_STATUS_ALL );
+			if ( isset( $latest_log['status'] ) ) {
+				$payment_status = $latest_log['status'];
+			}
 		}
 		return $payment_status;
+	}
+
+	/**
+	 * 電文種別判定
+	 *
+	 * 決済ログの status に記録された値が、決済ステータスではなく
+	 * 加盟店側で実行した処理の電文種別であるかを判定する。
+	 *
+	 * @param  string $status Status.
+	 * @return bool
+	 */
+	private function is_telegram_kind( $status ) {
+		$telegram_kinds = array(
+			PAYGENT_CREDIT,                  /* 020 カード決済オーソリ */
+			PAYGENT_AUTH_CANCEL,             /* 021 カード決済オーソリキャンセル */
+			PAYGENT_CARD_COMMIT,             /* 022 カード決済売上 */
+			PAYGENT_CARD_COMMIT_CANCEL,      /* 023 カード決済売上キャンセル */
+			PAYGENT_CARD_COMMIT_AUTH_REVISE, /* 028 カード決済補正オーソリ */
+			PAYGENT_CARD_COMMIT_REVISE,      /* 029 カード決済補正売上 */
+			PAYGENT_PAIDY_AUTH_CANCEL,       /* 340 Paidyオーソリキャンセル */
+			PAYGENT_PAIDY_CAPTURE,           /* 341 Paidy売上 */
+			PAYGENT_PAIDY_REFUND,            /* 342 Paidy返金 */
+		);
+		return in_array( (string) $status, $telegram_kinds, true );
 	}
 
 	/**
