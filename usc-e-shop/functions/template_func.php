@@ -3271,6 +3271,8 @@ function usces_settle_info_field( $order_id, $type = 'nl', $out = 'echo' ) {
 			}
 		}
 		$value = apply_filters( 'usces_filter_settle_info_field_value', $value, $key, $acting );
+		$key   = esc_html( $key );
+		$value = esc_html( $value );
 		switch ( $type ) {
 			case 'nl':
 				$str .= $key . ' : ' . $value . "<br />\n";

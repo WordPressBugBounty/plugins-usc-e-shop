@@ -1000,6 +1000,15 @@ class ItemData {
 
 		$table        = $wpdb->prefix . 'usces_skus';
 		$placeholders = $this->sku_placeholders;
+
+		// Do not overwrite SKU data that belongs to another item.
+		if ( ! empty( $meta_id ) ) {
+			$owner_id = $wpdb->get_var( $wpdb->prepare( "SELECT `post_id` FROM {$table} WHERE `meta_id` = %d", $meta_id ) );
+			if ( null !== $owner_id && (int) $owner_id !== $this->id ) {
+				return false;
+			}
+		}
+
 		$res = $wpdb->replace( $table, $new_sku, $placeholders );
 
 		$this->set_data( $this->id, false );
@@ -1085,8 +1094,11 @@ class ItemData {
 		}
 
 		$table  = $wpdb->prefix . 'usces_skus';
-		$where  = array( 'meta_id' => $meta_id );
-		$format = array( '%d' );
+		$where  = array(
+			'meta_id' => $meta_id,
+			'post_id' => $this->id,
+		);
+		$format = array( '%d', '%d' );
 		$res    = $wpdb->delete( $table, $where, $format );
 
 		return $res;
@@ -1156,6 +1168,12 @@ class ItemData {
 		$table        = $wpdb->prefix . 'usces_opts';
 		$placeholders = $this->opt_placeholders;
 
+		// Do not overwrite option data that belongs to another item.
+		$owner_id = $wpdb->get_var( $wpdb->prepare( "SELECT `post_id` FROM {$table} WHERE `meta_id` = %d", $meta_id ) );
+		if ( null !== $owner_id && (int) $owner_id !== $this->id ) {
+			return false;
+		}
+
 		$res = $wpdb->replace( $table, $new_opt, $placeholders );
 
 		$this->set_data( $this->id, false );
@@ -1211,8 +1229,11 @@ class ItemData {
 		}
 
 		$table  = $wpdb->prefix . 'usces_opts';
-		$where  = array( 'meta_id' => $meta_id );
-		$format = array( '%d' );
+		$where  = array(
+			'meta_id' => $meta_id,
+			'post_id' => $this->id,
+		);
+		$format = array( '%d', '%d' );
 		$res    = $wpdb->delete( $table, $where, $format );
 
 		return $res;

@@ -1349,6 +1349,13 @@ function usces_define_functions() {
 			$res                  = $dt->MakeTable();
 			$rows                 = $dt->rows;
 
+			// Exclude items that the current user cannot read.
+			foreach ( (array) $rows as $key => $row ) {
+				if ( ! current_user_can( 'read_post', $row['ID'] ) ) {
+					unset( $rows[ $key ] );
+				}
+			}
+
 			// Processing branch for each mode.
 			$results = apply_filters( 'usces_filter_item_downloadcsv_mode', array(), $rows, $usces_opt_item );
 			if ( ! empty( $results ) ) {
@@ -1463,7 +1470,7 @@ function usces_define_functions() {
 					$line_item .= $td_h . usces_entity_decode( $post->post_excerpt, $ext ) . $td_f;
 					$line_item .= $td_h . $post->post_status . $td_f;
 					$line_item .= $td_h . $post->comment_status . $td_f;
-					$line_item .= $td_h . $post->post_password . $td_f;
+					$line_item .= $td_h . ( current_user_can( 'edit_post', $post_id ) ? $post->post_password : '' ) . $td_f;
 					$line_item .= $td_h . urldecode( $post->post_name ) . $td_f;
 					$line_item .= $td_h . $post->post_date . $td_f;
 

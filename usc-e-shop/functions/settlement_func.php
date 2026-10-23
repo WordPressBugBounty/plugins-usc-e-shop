@@ -785,9 +785,16 @@ function usces_delete_settlement_log( $log_key = '' ) {
 
 	$log_table_name = $wpdb->prefix . 'usces_log';
 	if ( '' !== $log_key ) {
-		$keys  = explode( ':', $log_key );
-		$query = $wpdb->prepare( "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_data' AND `log_key` IN( %s )", implode( "','", $keys ) );
-		$query = stripslashes( $query );
+		$keys = array_filter(
+			explode( ':', $log_key ),
+			function ( $key ) {
+				return '' !== $key;
+			}
+		);
+		if ( empty( $keys ) ) {
+			return 0;
+		}
+		$query = $wpdb->prepare( "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_data' AND `log_key` IN( " . implode( ',', array_fill( 0, count( $keys ), '%s' ) ) . ' )', $keys );
 	} else {
 		$query = "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_data'";
 	}
@@ -1008,9 +1015,11 @@ function usces_delete_settlement_error_log( $log_id = '' ) {
 
 	$log_table_name = $wpdb->prefix . 'usces_log';
 	if ( '' !== $log_id ) {
-		$ids   = explode( ':', $log_id );
-		$query = $wpdb->prepare( "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_error' AND `ID` IN( %s )", implode( "','", $ids ) );
-		$query = stripslashes( $query );
+		$ids = array_map( 'intval', array_filter( explode( ':', $log_id ), 'ctype_digit' ) );
+		if ( empty( $ids ) ) {
+			return 0;
+		}
+		$query = $wpdb->prepare( "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_error' AND `ID` IN( " . implode( ',', array_fill( 0, count( $ids ), '%d' ) ) . ' )', $ids );
 	} else {
 		$query = "DELETE FROM {$log_table_name} WHERE `log_type` = 'acting_error'";
 	}
@@ -1062,14 +1071,17 @@ function usces_download_settlement_error_log() {
 	$log_table_name = $wpdb->prefix . 'usces_log';
 	$exemption      = usces_get_settlement_error_log_exemption();
 	$line           = '';
+	$log_data       = array();
 	if ( ! empty( $_GET['log_id'] ) ) {
-		$ids   = explode( ':', wp_unslash( $_GET['log_id'] ) );
-		$query = $wpdb->prepare( "SELECT * FROM {$log_table_name} WHERE `log_type` = 'acting_error' AND `ID` IN( %s )", implode( "','", $ids ) );
-		$query = stripslashes( $query );
+		$ids = array_map( 'intval', array_filter( explode( ':', wp_unslash( $_GET['log_id'] ) ), 'ctype_digit' ) );
+		if ( ! empty( $ids ) ) {
+			$query    = $wpdb->prepare( "SELECT * FROM {$log_table_name} WHERE `log_type` = 'acting_error' AND `ID` IN( " . implode( ',', array_fill( 0, count( $ids ), '%d' ) ) . ' )', $ids );
+			$log_data = $wpdb->get_results( $query, ARRAY_A );
+		}
 	} else {
-		$query = "SELECT * FROM {$log_table_name} WHERE `log_type` = 'acting_error' ORDER BY datetime DESC";
+		$query    = "SELECT * FROM {$log_table_name} WHERE `log_type` = 'acting_error' ORDER BY datetime DESC";
+		$log_data = $wpdb->get_results( $query, ARRAY_A );
 	}
-	$log_data = $wpdb->get_results( $query, ARRAY_A );
 	foreach ( (array) $log_data as $data ) {
 		$log   = wel_safe_unserialize( $data['log'] );
 		$line .= __( 'Register date', 'usces' ) . ' = ' . $data['datetime'] . "\r\n";

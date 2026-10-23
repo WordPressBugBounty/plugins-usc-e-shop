@@ -188,13 +188,16 @@ jQuery( function($) {';
 			orderfunc.make_delivery_date(($('#delivery_method_select option:selected').val()-0));
 		}
 	});
-	$(document).on( 'blur', '#search_zipcode', function() {
-		if( $('#delivery_flag2').prop('checked') && undefined != $('#delivery_pref').get(0) && 0 < $('#delivery_pref').get(0).selectedIndex ) {
-			$('#search_zipcode_change').val($('#zipcode').val());
-			delivery_pref = $('#delivery_pref').val();
-			orderfunc.make_delivery_date(($('#delivery_method_select option:selected').val()-0));
-		}
-	});
+	if ( 'undefined' !== typeof AjaxZip3 ) {
+		var prevOnSuccess = AjaxZip3.onSuccess;
+		AjaxZip3.onSuccess = function() {
+			if ( 'function' === typeof prevOnSuccess ) {
+				prevOnSuccess.apply( this, arguments );
+			}
+			$( '#search_zipcode_change' ).val( $( '#zipcode' ).val() );
+			$( '#delivery_pref' ).trigger( 'change' );
+		};
+	}
 
 	orderfunc = {
 		make_delivery_date : function(selected) {

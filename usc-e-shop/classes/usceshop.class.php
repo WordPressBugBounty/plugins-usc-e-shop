@@ -3881,6 +3881,13 @@ class usc_e_shop {
 			die( 'Security check3' );
 		}
 
+		if ( ! $this->is_member_logged_in() ) {
+			$this->page = 'login';
+			add_action( 'the_post', array( $this, 'action_memberFilter' ) );
+			add_action( 'template_redirect', array( $this, 'template_redirect' ) );
+			return;
+		}
+
 		global $wp_query;
 		$res = $this->regist_member();
 		if ( 'editmemberform' == $res ) {
@@ -5389,10 +5396,12 @@ class usc_e_shop {
 				if ( isset( $parse_url['port'] ) && ! empty( $parse_url['port'] ) ) {
 					$port = ':' . $parse_url['port'];
 				}
-				header( 'location: ' . $parse_url['scheme'] . '://' . $parse_url['host'] . $port . esc_url( $_POST['usces_referer'] ) . apply_filters( 'usces_filter_incart_redirect', '#cart_button', $post_id, $sku ) );
+				$redirect_url = $parse_url['scheme'] . '://' . $parse_url['host'] . $port . esc_url( $_POST['usces_referer'] );
 			} else {
-				header( 'location: ' . esc_url( $_POST['usces_referer'] ) . apply_filters( 'usces_filter_incart_redirect', '#cart_button', $post_id, $sku ) );
+				$redirect_url = esc_url( $_POST['usces_referer'] );
 			}
+			$redirect_url = wp_validate_redirect( $redirect_url, home_url( '/' ) );
+			header( 'location: ' . $redirect_url . apply_filters( 'usces_filter_incart_redirect', '#cart_button', $post_id, $sku ) );
 			exit;
 		}
 
@@ -5507,6 +5516,9 @@ class usc_e_shop {
 		$mes              = '';
 		$usces_member_old = $_SESSION['usces_member'];
 		foreach ( $_POST['member'] as $key => $vlue ) {
+			if ( in_array( $key, array( 'ID', 'edit_auth', 'point', 'status', 'registered' ), true ) ) {
+				continue;
+			}
 			if ( 'password1' !== $key && 'password2' !== $key && 'mailaddress2' !== $key ) {
 				$_SESSION['usces_member'][ $key ] = trim( $vlue );
 			}

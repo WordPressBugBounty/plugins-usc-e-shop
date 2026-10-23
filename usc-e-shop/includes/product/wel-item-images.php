@@ -391,7 +391,7 @@ function wel_item_image_ajax() {
 	$mode    = isset( $_POST['mode'] ) ? sanitize_text_field( wp_unslash( $_POST['mode'] ) ) : '';
 	$post_id = isset( $_POST['post_id'] ) ? (int) $_POST['post_id'] : 0;
 
-	if ( ! current_user_can( 'wel_publish_products', $post_id ) ) {
+	if ( ! current_user_can( 'wel_publish_products' ) || ! current_user_can( 'edit_post', $post_id ) ) {
 		$arr_res['status'] = false;
 		$arr_res['msg']   .= __( 'You are not allowed to edit this item.', 'usces' ) . '<br>';
 		wp_send_json( $arr_res );
@@ -506,7 +506,14 @@ function wel_item_image_ajax() {
 			check_ajax_referer( 'wel_item_images_delete_none' );
 			$delete_pict_ids = filter_input( INPUT_POST, 'item_pict_ids', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 			$delete_pict_ids = array_map( 'intval', $delete_pict_ids );
-			if ( is_array( $delete_pict_ids ) && 0 < count( $delete_pict_ids ) ) {
+			$can_delete      = true;
+			foreach ( (array) $delete_pict_ids as $del_pict_id ) {
+				if ( ! current_user_can( 'delete_post', $del_pict_id ) ) {
+					$can_delete = false;
+					break;
+				}
+			}
+			if ( $can_delete && is_array( $delete_pict_ids ) && 0 < count( $delete_pict_ids ) ) {
 				// update exclude other item product if has.
 				foreach ( $delete_pict_ids as $del_pict_id ) {
 					// find all other product has pict id.
@@ -728,6 +735,10 @@ function wel_save_pict_info( &$arr_res ) {
 	$field   = filter_input( INPUT_POST, 'field' );
 	$pict_id = (int) filter_input( INPUT_POST, 'pict_id' );
 	$value   = filter_input( INPUT_POST, 'value' );
+	if ( 'attachment' !== get_post_type( $pict_id ) || ! current_user_can( 'edit_post', $pict_id ) ) {
+		$arr_res['status'] = false;
+		return;
+	}
 	switch ( $field ) {
 		case 'alt':
 			$alt = wp_unslash( $value );

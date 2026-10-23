@@ -43,7 +43,7 @@ class usces_cart {
 
 		$_POST = $usces->stripslashes_deep_post( $_POST );
 		if ( $_SERVER['HTTP_REFERER'] ) {
-			$_SESSION['usces_previous_url'] = esc_url( $_SERVER['HTTP_REFERER'] );
+			$_SESSION['usces_previous_url'] = esc_url( wp_validate_redirect( $_SERVER['HTTP_REFERER'], home_url( '/' ) ) );
 		} else {
 			$_SESSION['usces_previous_url'] = str_replace( 'https://', 'http://', get_home_url() ) . '/';
 		}

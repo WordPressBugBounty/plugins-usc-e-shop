@@ -366,9 +366,23 @@ class dataList {
 	 */
 	public function SetTotalRow() {
 		global $wpdb;
-		$query          = "SELECT COUNT(ID) AS `ct` FROM {$this->table} WHERE post_mime_type = 'item' AND post_type = 'post' AND post_status <> 'trash'";
+		$query          = "SELECT COUNT(ID) AS `ct` FROM {$this->table} AS `post` WHERE post_mime_type = 'item' AND post_type = 'post' AND post_status <> 'trash'" . $this->get_private_where();
 		$res            = $wpdb->get_var( $query );
 		$this->totalRow = $res;
+	}
+
+	/**
+	 * Condition to exclude private items of other users.
+	 *
+	 * @since 2.12.6
+	 * @return string
+	 */
+	public function get_private_where() {
+		global $wpdb;
+		if ( current_user_can( 'read_private_posts' ) ) {
+			return '';
+		}
+		return $wpdb->prepare( " AND ( post.post_status <> 'private' OR post.post_author = %d )", get_current_user_id() );
 	}
 
 	/**
@@ -377,15 +391,16 @@ class dataList {
 	 * @return string
 	 */
 	public function GetWhere() {
-		$sql_where = apply_filters( 'usces_filter_item_class_sql_where', '', $this->searchSql, $this );
+		$sql_where   = apply_filters( 'usces_filter_item_class_sql_where', '', $this->searchSql, $this );
+		$sql_private = $this->get_private_where();
 		if ( '' != $this->searchSql ) {
 			if ( 'display_status' == $this->arr_search['column'] ) {
-				$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND " . $this->searchSql . $sql_where . ' GROUP BY post.ID';
+				$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND " . $this->searchSql . $sql_private . $sql_where . ' GROUP BY post.ID';
 			} else {
-				$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND post.post_status <> 'trash' AND " . $this->searchSql . $sql_where . ' GROUP BY post.ID';
+				$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND post.post_status <> 'trash' AND " . $this->searchSql . $sql_private . $sql_where . ' GROUP BY post.ID';
 			}
 		} else {
-			$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND post.post_status <> 'trash'" . $sql_where . ' GROUP BY post.ID';
+			$str = "WHERE post.post_mime_type = 'item' AND post.post_type = 'post' AND post.post_status <> 'trash'" . $sql_private . $sql_where . ' GROUP BY post.ID';
 		}
 		return $str;
 	}

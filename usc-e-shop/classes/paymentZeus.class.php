@@ -7896,11 +7896,9 @@ jQuery.event.add(window,'load',function() {
 		if ( empty( $order_id ) ) {
 			if ( 'OK' === $result ) {
 				$query = $wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `tracking_id` = %s AND `result` IN( %s ) ORDER BY `ID` DESC, `datetime` DESC",
-					$tracking_id,
-					implode( "','", $this->payment_normal_results )
+					"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `tracking_id` = %s AND `result` IN( " . implode( ',', array_fill( 0, count( $this->payment_normal_results ), '%s' ) ) . ' ) ORDER BY `ID` DESC, `datetime` DESC',
+					array_merge( array( $tracking_id ), $this->payment_normal_results )
 				);
-				$query = stripslashes( $query );
 			} else {
 				$query = $wpdb->prepare(
 					"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `tracking_id` = %s ORDER BY `ID` DESC, `datetime` DESC",
@@ -7911,12 +7909,9 @@ jQuery.event.add(window,'load',function() {
 			if ( empty( $tracking_id ) ) {
 				if ( 'OK' === $result ) {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` IN( %s ) ORDER BY `ID` DESC, `datetime` DESC",
-						$order_id,
-						$order_id,
-						implode( "','", $this->payment_normal_results )
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d AND `result` IN( " . implode( ',', array_fill( 0, count( $this->payment_normal_results ), '%s' ) ) . ' ) ORDER BY `ID` DESC, `datetime` DESC',
+						array_merge( array( $order_id, $order_id ), $this->payment_normal_results )
 					);
-					$query = stripslashes( $query );
 				} else {
 					$query = $wpdb->prepare(
 						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `datetime` IN( SELECT MAX( `datetime` ) FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d GROUP BY `tracking_id` ) AND `order_id` = %d ORDER BY `ID` DESC, `datetime` DESC",
@@ -7927,12 +7922,9 @@ jQuery.event.add(window,'load',function() {
 			} else {
 				if ( 'OK' === $result ) {
 					$query = $wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d AND `tracking_id` = %s AND `result` IN( %s ) ORDER BY `ID` DESC, `datetime` DESC",
-						$order_id,
-						$tracking_id,
-						implode( "','", $this->payment_normal_results )
+						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d AND `tracking_id` = %s AND `result` IN( " . implode( ',', array_fill( 0, count( $this->payment_normal_results ), '%s' ) ) . ' ) ORDER BY `ID` DESC, `datetime` DESC',
+						array_merge( array( $order_id, $tracking_id ), $this->payment_normal_results )
 					);
-					$query = stripslashes( $query );
 				} else {
 					$query = $wpdb->prepare(
 						"SELECT * FROM {$wpdb->prefix}usces_acting_log WHERE `order_id` = %d AND `tracking_id` = %s ORDER BY `ID` DESC, `datetime` DESC",

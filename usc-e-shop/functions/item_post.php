@@ -1617,6 +1617,12 @@ function item_option_ajax() {
 
 	$post_id = $inputs['ID'];
 
+	// Reading common options is allowed on the item edit screen.
+	$is_common_select = ( null === $inputs['update'] && null === $inputs['delete'] && null !== $inputs['select'] && (int) USCES_CART_NUMBER === $post_id );
+	if ( ! $is_common_select && ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.' ) );
+	}
+
 	if ( null !== $inputs['update'] ) {
 
 		$id = up_item_option_meta( $post_id );
@@ -1668,7 +1674,7 @@ function item_sku_ajax() {
 	$post_id = (int) $_POST['ID'];
 	$msg     = '';
 
-	if ( ! current_user_can( 'wel_publish_products', $post_id ) ) {
+	if ( ! current_user_can( 'wel_publish_products' ) || ! current_user_can( 'edit_post', $post_id ) ) {
 		$response = array(
 			'meta_id'  => 0,
 			'meta_row' => 0,

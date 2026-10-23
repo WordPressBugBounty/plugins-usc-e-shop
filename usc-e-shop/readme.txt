@@ -4,7 +4,7 @@ Tags: Welcart, e-Commerce, shopping, cart, store
 Requires at least: 5.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.12.5
+Stable tag: 2.12.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,17 +72,19 @@ Please see [Welcart Forum (Japanese)](https://www.welcart.com/community/forums).
 
 == Changelog ==
 
-13 Oct 2026
-= V2.12.5 =
+23 Oct 2026
+= V2.12.6 =
 -----------
-* Security enhancement (SQL Injection). Stopped restoring the search condition SQL from the cookie on the old order list screen. Thanks to Wordfence PRISM - Wordfence for the report.
-* Security enhancement. [PayPal] The order details request of the credit card payment now returns only the order created in the current session.
-* Security enhancement. The member login and the member information update on the cart page are no longer processed when the nonce verification fails while a member is logged in.
-* Security enhancement. [Payment For] Added a client IP check to the card payment notification.
-* Security enhancement. [ZEUS] The payment amount sent to the payment gateway is now taken from the order data instead of the request parameters.
-* Security enhancement. The log of the login attempt limit is now stored in the database instead of a file.
-* [Paygent] Fixed the bug that the sending process continued even if the initial setting of the communication failed, and the cause of the error was not displayed correctly.
-* [Paygent] Fixed the bug that the payment status on the order list and the order edit screen sometimes did not change to the cleared status after the sales processing.
-* Fixed the bug that orders were not displayed on the old order list screen when the filtered result fit on a single page.
+* Security enhancement (SQL Injection). Fixed the SQL injection in the download and deletion of the payment error log. Thanks to Karthik Ramakrishnan - WPScan for the report.
+* Security enhancement. The redirect destination after adding an item to the cart is now limited to the own site. Thanks to Jasper Weijts (Onvio Pentesting) - WPScan for the report.
+* Security enhancement. Added the permission check to the Ajax processing of the item SKU and image on the item edit screen. Thanks to Usama Arshad - WPScan for the report.
+* Security enhancement (SQL Injection). [ZEUS] Fixed the SQL injection in retrieving the payment information on the order edit screen.
+* Security enhancement. Added the permission check to the Ajax processing of the item image, SKU and option on the item edit screen.
+* Security enhancement. The item CSV export no longer includes private items and passwords of other users.
+* Security enhancement. The return destination of "Continue shopping" on the cart page is now limited to the own site.
+* Security enhancement (XSS). The values in the payment information field on the order edit screen are now escaped.
+* Security enhancement. The member information update now updates only the logged-in member, and is no longer applied before the email verification.
+* Security enhancement. [PayPal] The order ID used to check the order details request of the credit card payment can no longer be overwritten by the request parameters.
+* Fixed the bug that the desired delivery date was not recalculated after the postal code search on Safari.
 
 For older versions, please see the [Changelog Archive (Japanese)](https://www.welcart.com/about/changelog/).

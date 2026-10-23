@@ -2407,7 +2407,7 @@ jQuery( document ).ready( function( $ ) {
 		/* Create order */
 		$response_data = $this->api_create_order( $access_token, $bn_code, '', $tracking_id, $entry, $cart, false );
 		if ( isset( $response_data->id ) ) {
-			$usces->cart->set_order_entry( array( 'paypal_cp_card_resource_id' => $response_data->id ) );
+			$_SESSION['usces_paypal_cp_card_resource_id'] = $response_data->id;
 		}
 		wp_send_json( $response_data );
 	}
@@ -2498,7 +2498,7 @@ jQuery( document ).ready( function( $ ) {
 		$resource_id = ( isset( $_POST['resource_id'] ) ) ? wp_unslash( $_POST['resource_id'] ) : '';
 
 		/* Only an order created in the current shop session can be referenced. */
-		$saved_resource_id = $usces->cart->get_order_entry( 'paypal_cp_card_resource_id' );
+		$saved_resource_id = ( isset( $_SESSION['usces_paypal_cp_card_resource_id'] ) ) ? $_SESSION['usces_paypal_cp_card_resource_id'] : '';
 		if ( '' === $resource_id || empty( $saved_resource_id ) || ! hash_equals( (string) $saved_resource_id, $resource_id ) ) {
 			wp_send_json( array() );
 		}

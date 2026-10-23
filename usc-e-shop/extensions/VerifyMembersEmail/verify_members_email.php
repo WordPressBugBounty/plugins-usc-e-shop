@@ -78,6 +78,7 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 				add_action( 'wp_print_styles', array( $this, 'print_styles' ) );
 				add_action( 'usces_main', array( $this, 'member_auth_first' ), 1 );
 				add_filter( 'usces_filter_template_redirect', array( $this, 'member_auth' ), 1 );
+				add_action( 'usces_action_pre_edit_memberdata', array( $this, 'require_edit_auth_before_update' ) );
 				add_action( 'usces_main', array( $this, 'verified_member' ) );
 				add_filter( 'usces_filter_login_inform', array( $this, 'login_inform' ) );
 				add_action( 'usces_action_login_page_inform', array( $this, 'login_page_inform' ) );
@@ -820,6 +821,25 @@ class USCES_VERIFY_MEMBERS_EMAIL {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Require edit authentication before member data is updated.
+	 * usces_action_pre_edit_memberdata
+	 */
+	public function require_edit_auth_before_update() {
+		global $usces;
+
+		if ( ! $usces->is_member_page( $_SERVER['REQUEST_URI'] ) ) {
+			return;
+		}
+		$member = $usces->get_member();
+		if ( $this->member_auth_check( $member ) ) {
+			return;
+		}
+		$usces->set_member_session_data( $member['ID'] );
+		wp_safe_redirect( add_query_arg( 'usces_page', 'member_edit', USCES_MEMBER_URL ) );
+		exit();
 	}
 
 	/**
